@@ -1,0 +1,2211 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="11408及公共课复习知识库">
+      
+      
+        <meta name="author" content="Your Name">
+      
+      
+      
+        <link rel="prev" href="../%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%80%BB%E7%BB%93/">
+      
+      
+        <link rel="next" href="../%E7%AC%AC2%E7%AB%A0%20%E4%B8%80%E5%85%83%E5%87%BD%E6%95%B0%E5%BE%AE%E5%88%86%E5%AD%A6/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>第1章 函数的极限与连续 - 2026考研笔记资料库</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="2026考研笔记资料库" class="md-header__button md-logo" aria-label="2026考研笔记资料库" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            2026考研笔记资料库
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第1章 函数的极限与连续
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../408/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%AC%94%E8%AE%B0/%E7%AC%AC1%E7%AB%A0%20%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/" class="md-tabs__link">
+          
+  
+  
+  408
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%80%BB%E7%BB%93/" class="md-tabs__link">
+          
+  
+  
+  数学
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../%E8%8B%B1%E8%AF%AD/%E5%8D%95%E8%AF%8D/" class="md-tabs__link">
+          
+  
+  
+  英语
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="2026考研笔记资料库" class="md-nav__button md-logo" aria-label="2026考研笔记资料库" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    2026考研笔记资料库
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    408
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    408
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_1" id="__nav_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    操作系统
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    操作系统
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_1_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_1_1" id="__nav_1_1_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    笔记
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_1_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_1_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    笔记
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E7%AC%94%E8%AE%B0/%E7%AC%AC1%E7%AB%A0%20%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 计算机系统概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数据结构
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    数据结构
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E4%BD%9C%E4%B8%9A/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    作业
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2_2" id="__nav_1_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    笔记
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    笔记
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%AC%94%E8%AE%B0/%E7%AC%AC1%E7%AB%A0_%E7%BB%AA%E8%AE%BA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 绪论
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%AC%94%E8%AE%B0/%E7%AC%AC2%E7%AB%A0%20%E7%BA%BF%E6%80%A7%E8%A1%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 线性表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    计算机组成原理
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    计算机组成原理
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3_1" id="__nav_1_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    笔记
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    笔记
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E7%AC%94%E8%AE%B0/%E7%AC%AC1%E7%AB%A0_%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 计算机系统概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/%E7%AC%94%E8%AE%B0/%E7%AC%AC2%E7%AB%A0%20%E6%95%B0%E6%8D%AE%E7%9A%84%E8%A1%A8%E7%A4%BA%E5%92%8C%E8%AE%A1%E7%AE%97/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 数据的表示和计算
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    计算机网络
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    计算机网络
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_4_1" id="__nav_1_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    笔记
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    笔记
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%AC%94%E8%AE%B0/%E7%AC%AC1%E7%AB%A0%20%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 计算机网络体系结构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%AC%94%E8%AE%B0/%E7%AC%AC2%E7%AB%A0%20%E7%89%A9%E7%90%86%E5%B1%82/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 物理层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数学
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    数学
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    高数
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    高数
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B%E6%80%BB%E7%BB%93/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    微分方程总结
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 函数的极限与连续
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 函数的极限与连续
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、定义
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、性质
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、极限计算法则
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、两个重要极限
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、极限存在准则
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        六、无穷小量和无穷大量
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        七、连续性
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        八、间断点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        九、闭区间上的连续函数的性质
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC2%E7%AB%A0%20%E4%B8%80%E5%85%83%E5%87%BD%E6%95%B0%E5%BE%AE%E5%88%86%E5%AD%A6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 一元函数微分学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC3%E7%AB%A0%20%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 不定积分
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC4%E7%AB%A0%20%E5%AE%9A%E7%A7%AF%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 定积分
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC5%E7%AB%A0%20%E5%BE%AE%E5%88%86%E6%96%B9%E7%A8%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 微分方程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC6%E7%AB%A0%20%E5%90%91%E9%87%8F%E4%BB%A3%E6%95%B0%E4%B8%8E%E7%A9%BA%E9%97%B4%E8%A7%A3%E6%9E%90%E5%87%A0%E4%BD%95/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 向量代数与空间解析几何
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC7%E7%AB%A0%20%E5%A4%9A%E5%85%83%E5%87%BD%E6%95%B0%E5%BE%AE%E5%88%86%E5%AD%A6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章 多元函数微分学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%AC%AC8%E7%AB%A0%20%E4%BA%8C%E9%87%8D%E7%A7%AF%E5%88%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章 二重积分
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    英语
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    英语
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../%E8%8B%B1%E8%AF%AD/%E5%8D%95%E8%AF%8D/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    单词
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、定义
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、性质
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、极限计算法则
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、两个重要极限
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、极限存在准则
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        六、无穷小量和无穷大量
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        七、连续性
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        八、间断点
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        九、闭区间上的连续函数的性质
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>第1章 函数的极限与连续</h1>
+
+<h3 align="center">第一章 函数的极限与连续</h3>
+
+<h4 id="_1">一、定义<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h4>
+<ol>
+<li>数列的极限：设<span class="arithmatex">\(a_n\)</span>是一个数列，如果存在一个常数<span class="arithmatex">\(L\)</span>，使得对于任意<span class="arithmatex">\(\epsilon&gt;0\)</span>，当<span class="arithmatex">\(n\to\infty\)</span>时，有</li>
+</ol>
+<div class="arithmatex">\[
+|a_n-L|&lt;\epsilon
+\]</div>
+<p>​   则称<span class="arithmatex">\(L\)</span>是数列<span class="arithmatex">\(a_n\)</span>的极限，记作<span class="arithmatex">\(lim_{n\to\infty}a_n=L\)</span>。称<span class="arithmatex">\(a_n\)</span>收敛于<span class="arithmatex">\(L\)</span></p>
+<ul>
+<li>数列极限与前有限项项无关，即<span class="arithmatex">\(lim_{n\to\infty}a_n=lim_{n\to\infty}a_{n+1}\)</span>。</li>
+<li>子列极限和数列极限的关系：<span class="arithmatex">\(lim_{n\to\infty}a_n\leftrightarrow任意子列a_{n_k}收敛于L，则称a_{n_k}收敛于L\)</span>。</li>
+<li>函数的极限：设<span class="arithmatex">\(f(x)\)</span>是一个函数，如果存在一个常数<span class="arithmatex">\(L\)</span>，使得对于任意<span class="arithmatex">\(\epsilon&gt;0\)</span>，当<span class="arithmatex">\(x\to x_0\)</span>时，有
+$$
+|f(x)-L|&lt;\epsilon
+$$
+则称<span class="arithmatex">\(L\)</span>是函数<span class="arithmatex">\(f(x)\)</span>的极限，记作<span class="arithmatex">\(lim_{x\to x_0}f(x)=L\)</span>。</li>
+<li><strong>极限存在的充要条件</strong>：</li>
+</ul>
+<div class="arithmatex">\[
+lim_{x\to x_0}f(x)=L\leftrightarrow lim_{x\to x_0^-}f(x)=lim_{x\to x_0^+}f(x)=L
+\]</div>
+<ul>
+<li>
+<p>例子：求解<span class="arithmatex">\(<span class="arithmatex">\(I = \lim_{x \to 0} \left[ \frac{e^{\frac{1}{x}} - \pi}{e^{\frac{1}{x}} + 1} + k \cdot \arctan \frac{1}{x} \right]\)</span>\)</span></p>
+</li>
+<li>
+<p>分步计算左右极限</p>
+</li>
+<li>
+<p><strong>右极限 (<span class="arithmatex">\(x \to 0^+\)</span>)：</strong></p>
+<ul>
+<li>此时 <span class="arithmatex">\(\frac{1}{x} \to +\infty\)</span>，<span class="arithmatex">\(e^{\frac{1}{x}} \to +\infty\)</span>，<span class="arithmatex">\(\arctan \frac{1}{x} \to \frac{\pi}{2}\)</span>。</li>
+<li><span class="arithmatex">\(e^{\frac{1}{x}} \to +\infty\)</span>，利用抓大头原则：<span class="arithmatex">\(\frac{e^{\frac{1}{x}} - \pi}{e^{\frac{1}{x}} + 1} \to 1\)</span>。</li>
+<li><strong>右极限结果：</strong> <span class="arithmatex">\(I_+ = 1 + k \cdot \frac{\pi}{2}\)</span>。</li>
+</ul>
+</li>
+<li>
+<p><strong>左极限 (<span class="arithmatex">\(x \to 0^-\)</span>)：</strong></p>
+<ul>
+<li>此时 <span class="arithmatex">\(\frac{1}{x} \to -\infty\)</span>，<span class="arithmatex">\(e^{\frac{1}{x}} \to 0\)</span>，<span class="arithmatex">\(\arctan \frac{1}{x} \to -\frac{\pi}{2}\)</span>。</li>
+<li>分式部分：<span class="arithmatex">\(\frac{0 - \pi}{0 + 1} \to -\pi\)</span>。</li>
+<li>
+<p><strong>左极限结果：</strong> <span class="arithmatex">\(I_- = -\pi - k \cdot \frac{\pi}{2}\)</span>。</p>
+</li>
+<li>
+<p>判定 <span class="arithmatex">\(k\)</span> 的值与极限 <span class="arithmatex">\(I\)</span></p>
+</li>
+</ul>
+<p>为了使极限 <span class="arithmatex">\(I\)</span> 存在（即满足局部有界性与唯一性），必须满足 <strong><span class="arithmatex">\(I_+ = I_-\)</span></strong>：</p>
+<div class="arithmatex">\[1 + k \cdot \frac{\pi}{2} = -\pi - k \cdot \frac{\pi}{2}\]</div>
+<ul>
+<li>
+<p><strong>求解 <span class="arithmatex">\(k\)</span>：</strong><span class="arithmatex">\(k = \frac{-\pi - 1}{\pi} = -1 - \frac{1}{\pi}\)</span></p>
+</li>
+<li>
+<p><strong>计算极限 <span class="arithmatex">\(I\)</span>：</strong></p>
+</li>
+</ul>
+<p>将 <span class="arithmatex">\(k\)</span> 代入右极限式中：</p>
+<p><span class="arithmatex">\(<span class="arithmatex">\(I = 1 + \left( -1 - \frac{1}{\pi} \right) \cdot \frac{\pi}{2} = 1 - \frac{\pi}{2} - \frac{1}{2} = \frac{1 - \pi}{2}\)</span>\)</span></p>
+</li>
+</ul>
+<h3 id="_2">二、性质<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<ol>
+<li>唯一性：若函数/数列极限存在，则极限唯一</li>
+<li>(局部)有界性： 若<span class="arithmatex">\(\lim_{x \to x_0} f(x) = A\)</span>，则<span class="arithmatex">\(\exists M &gt; 0, \exists \delta &gt; 0\)</span>，使得当<span class="arithmatex">\(0 &lt; |x-x_0| &lt; \delta\)</span> <strong>(注意是去心领域)</strong> 时，有<span class="arithmatex">\(|f(x)| &lt; M\)</span>。</li>
+<li>(局部)保号性：若 <span class="arithmatex">\(\lim_{x \to x_0} f(x) = A\)</span></li>
+<li>如果 <span class="arithmatex">\(A &gt; 0\)</span>，则存在 <span class="arithmatex">\(x_0\)</span> 的某个去心邻域，使得在该邻域内恒有 <span class="arithmatex">\(f(x) &gt; 0\)</span>。</li>
+<li>如果 <span class="arithmatex">\(A &lt; 0\)</span>，则存在 <span class="arithmatex">\(x_0\)</span> 的某个去心邻域，使得在该邻域内恒有 <span class="arithmatex">\(f(x) &lt; 0\)</span>。</li>
+<li><strong>反之</strong>，若<span class="arithmatex">\(f(x) &gt; 0\)</span>，<span class="arithmatex">\(\lim_{x \to x_0} f(x) = A\)</span>，则<span class="arithmatex">\(A \ge 0\)</span>。</li>
+</ol>
+<h3 id="_3">三、极限计算法则<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<ol>
+<li>四则运算法则</li>
+</ol>
+<p>若 <span class="arithmatex">\(\lim f(x) = A, \lim g(x) = B\)</span>，则：</p>
+<ul>
+<li><strong>加减法：</strong> <span class="arithmatex">\(\lim [f(x) \pm g(x)] = A \pm B\)</span>。</li>
+<li><strong>乘法：</strong> <span class="arithmatex">\(\lim [f(x) \cdot g(x)] = A \cdot B\)</span>。</li>
+<li><em>推论：</em> 极限号可以提取常数因子，即 <span class="arithmatex">\(\lim [c \cdot f(x)] = c \cdot \lim f(x)\)</span>。</li>
+<li>
+<p><strong>除法：</strong> <span class="arithmatex">\(\lim \frac{f(x)}{g(x)} = \frac{A}{B}\)</span>（要求分母极限 <span class="arithmatex">\(B \neq 0\)</span>）。</p>
+</li>
+<li>
+<p>复合函数运算法则（极其重要）</p>
+</li>
+<li>
+<p>如果 <span class="arithmatex">\(\lim_{x \to x_0} g(x) = u_0\)</span>，且 <span class="arithmatex">\(f(u)\)</span> 在 <span class="arithmatex">\(u_0\)</span> 处连续，则 <span class="arithmatex">\(\lim_{x \to x_0} f(g(x)) = f(u_0)\)</span>。</p>
+</li>
+<li>
+<p>应用举例： 在计算 <span class="arithmatex">\(\lim e^{\frac{1}{x-1}}\)</span> 时，先计算指数部分 <span class="arithmatex">\(\frac{1}{x-1}\)</span> 的极限，再代入指数函数。</p>
+</li>
+<li>
+<p>无穷小量与有界量的乘积性质</p>
+</li>
+</ul>
+<p>在判定极限时，这是一个非常实用的“非标准”运算法则：</p>
+<ul>
+<li><strong>性质：</strong> <strong>无穷小量 <span class="arithmatex">\(\times\)</span> 有界量 = 无穷小量</strong>。</li>
+<li><strong>应用：</strong> 在 <span class="arithmatex">\(\lim_{x \to \infty} \frac{\arctan x}{x}\)</span> 中，<span class="arithmatex">\(\frac{1}{x}\)</span> 是无穷小量，<span class="arithmatex">\(\arctan x\)</span> 是有界量（绝对值不超过 <span class="arithmatex">\(\frac{\pi}{2}\)</span>），因此结果为 <span class="arithmatex">\(0\)</span>。</li>
+</ul>
+<h3 id="_4">四、两个重要极限<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ol>
+<li><span class="arithmatex">\(\lim_{x\to 0} \frac{sin(x)}{x}=1\)</span></li>
+<li>例子：求解<span class="arithmatex">\(\lim_{x\to 0} \frac{\tan(3x)}{x}\)</span>
+    <span class="arithmatex">\(\lim_{x\to 0} \frac{\tan(3x)}{x}=\lim_{x\to 0} \frac{\sin(3x)}{\cos(3x)}\frac{1}{x}=\lim_{x\to 0} \frac{\sin(3x)}{x}\frac{3}{\cos(3x)}=1\)</span></li>
+<li><span class="arithmatex">\(\lim_{x\to\infty} (1+\frac{1}{x})^x=e\)</span></li>
+<li><span class="arithmatex">\(\lim f(x)=1,\lim g(x)=\infty,则\lim [f(x)]^{g(x)}=\lim [f(x)]^{g(x)} = \lim \left\{ 1 + [f(x) - 1] \right\}^{\frac{1}{f(x) - 1} \cdot [f(x) - 1] \cdot g(x)}= e^{\lim [f(x) - 1] \cdot g(x)}\)</span></li>
+</ol>
+<h3 id="_5">五、极限存在准则<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>1.夹逼准则：
+* 函数形式：若在<span class="arithmatex">\(x\to x_0\)</span>的某去心邻域(或<span class="arithmatex">\(|x|&gt;M&gt;0\)</span>) 内，恒有<span class="arithmatex">\(g(x)\le f(x)\le h(x)\)</span>，且<span class="arithmatex">\(\lim_{x\to x_0} g(x)=\lim_{x\to x_0} h(x)=A\)</span>，则<span class="arithmatex">\(\lim_{x\to x_0} f(x)=A\)</span>。
+* 数列形式：若<span class="arithmatex">\(a_n\le b_n\le c_n(n&gt; N)\)</span>，且<span class="arithmatex">\(\lim_{n\to\infty} a_n=\lim_{n\to\infty} c_n=A\)</span>，则<span class="arithmatex">\(\lim_{n\to\infty} b_n=A\)</span>。</p>
+<p>2.单调有界准则：
+* 若<span class="arithmatex">\({a_n}\)</span>单调递增/减且有上/下界，则<span class="arithmatex">\(\lim_{n\to\infty} a_n\)</span>存在。</p>
+<h3 id="_6">六、无穷小量和无穷大量<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<ol>
+<li>无穷小量：</li>
+<li>定义：若<span class="arithmatex">\(\lim_{x \to x_0}{\alpha(x)}=0\)</span>，则称<span class="arithmatex">\(\alpha(x_0)\)</span>为<span class="arithmatex">\(x \to x_0\)</span>时的无穷小量。</li>
+<li>性质：</li>
+<li><span class="arithmatex">\(\lim_{x \to x_0}{f(x)}=a\)</span>的充要条件为<span class="arithmatex">\(f(x)=a+\alpha(x)\)</span>，其中<span class="arithmatex">\(\alpha(x)\)</span>是<span class="arithmatex">\(x \to x_0\)</span>时的无穷小量。</li>
+<li>
+<p><span class="arithmatex">\(x \to x_0 <span class="arithmatex">\(时，\)</span>\alpha,\beta\)</span>为无穷小，则<span class="arithmatex">\(\alpha \sim \beta \leftrightarrow \beta = \alpha+o(\alpha)\)</span></p>
+</li>
+<li>
+<p>运算：</p>
+</li>
+<li>加/减：有限个无穷小量相加/相减<strong>仍是无穷小</strong></li>
+<li>有界变量乘无穷小量：<span class="arithmatex">\(\alpha(x) \cdot f(x)\)</span><strong>仍是无穷小量</strong></li>
+<li>比较(比较趋近于0的速度快慢)：设<span class="arithmatex">\(\alpha(x)\)</span>和<span class="arithmatex">\(\beta(x)\)</span>是<span class="arithmatex">\(x \to x_0\)</span>是在同一个自变量变化过程中的无穷小，且<span class="arithmatex">\(\beta(x) \ne 0\)</span>，<span class="arithmatex">\(\lim \frac{\alpha(x)}{\beta(x)}\)</span>是<span class="arithmatex">\(x \to x_0\)</span>也是在此变化过程中的极限</li>
+<li>若<span class="arithmatex">\(\lim \frac{\alpha(x)}{\beta(x)}=0\)</span>，则称<span class="arithmatex">\(\alpha(x)\)</span>是<span class="arithmatex">\(\beta(x)\)</span>的<strong>高阶无穷小</strong>，记作<span class="arithmatex">\(\alpha(x)=o(\beta(x))\)</span>。</li>
+<li>若<span class="arithmatex">\(\lim \frac{\alpha(x)}{\beta(x)}=\pm\infty\)</span>，则称<span class="arithmatex">\(\alpha(x)\)</span>是<span class="arithmatex">\(\beta(x)\)</span>的<strong>低阶无穷小</strong></li>
+<li>若<span class="arithmatex">\(\lim \frac{\alpha(x)}{\beta(x)}=c \ne 0\)</span>，则称<span class="arithmatex">\(\alpha(x)\)</span>是<span class="arithmatex">\(\beta(x)\)</span>的<strong>同阶无穷小</strong></li>
+<li>特别的，若<span class="arithmatex">\(\lim \frac{\alpha(x)}{\beta(x)}=1\)</span>，称<span class="arithmatex">\(\alpha(x)\)</span>是<span class="arithmatex">\(\beta(x)\)</span>的<strong>等价无穷小</strong>，记作<span class="arithmatex">\(\alpha(x)\sim\beta(x)\)</span>。</li>
+<li><strong>若<span class="arithmatex">\(\lim \frac{\alpha(x)}{{\beta(x)}^n}=c \ne 0\)</span>，则称<span class="arithmatex">\(\alpha(x)\)</span>是<span class="arithmatex">\(\beta(x)\)</span>的<span class="arithmatex">\(n\)</span>阶无穷小</strong></li>
+<li>常见等价无穷小：</li>
+<li>当<span class="arithmatex">\(x \to 0\)</span>时</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">基础公式 (<span class="arithmatex">\(x \to 0\)</span>)</th>
+<th style="text-align: left;">差值公式 (<span class="arithmatex">\(x \to 0\)</span>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(\sin x \sim x \sim \tan x \sim \arcsin x \sim \arctan x\)</span></td>
+<td style="text-align: left;"><span class="arithmatex">\(x - \sin x \sim \frac{1}{6}x^3\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(\ln(1+x) \sim x\)</span></td>
+<td style="text-align: left;"><span class="arithmatex">\(x - \arcsin x \sim -\frac{1}{6}x^3\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(e^x - 1 \sim x\)</span></td>
+<td style="text-align: left;"><span class="arithmatex">\(x - \tan x \sim -\frac{1}{3}x^3\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(1 - \cos x \sim \frac{1}{2}x^2\)</span></td>
+<td style="text-align: left;"><span class="arithmatex">\(x - \arctan x \sim \frac{1}{3}x^3\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\((1+x)^a - 1 \sim ax\)</span></td>
+<td style="text-align: left;"><span class="arithmatex">\(x - \ln(1+x) \sim \frac{1}{2}x^2\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(a^x - 1 \sim x\ln a\)</span></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>等价无穷小替换定理：若<span class="arithmatex">\(x \to x_0\)</span>时<span class="arithmatex">\(\alpha \to \alpha_1,\beta \to \beta_1\)</span>，则<span class="arithmatex">\(\lim_{x \to x_0}\frac{\alpha}{\beta}=\lim_{x \to x_0}\frac{\alpha_1}{\beta_1}\)</span>。</li>
+<li><strong>注意：一般在乘除中使用，在加减中最好不要用。</strong></li>
+<li>
+<p>例：<span class="arithmatex">\(\lim_{x \to 0} \frac{\ln \frac{\arcsin x}{x}}{x^2}= \lim_{x \to 0} \frac{ \frac{\arcsin x}{x}-1}{x^2}=\lim_{x \to 0} {\frac{ \arcsin x-x}{x^3}}=\lim_{x \to 0} \frac{\frac{1}{6}x^3}{x^3}=\frac{1}{6}\)</span></p>
+</li>
+<li>
+<p>无穷大量</p>
+</li>
+<li>
+<p>定义：若<span class="arithmatex">\(\lim_{x \to x_0}{\alpha(x)}=\infty\)</span>，称<span class="arithmatex">\(\alpha(x)\)</span>为<span class="arithmatex">\(x \to x_0\)</span>时的无穷大量</p>
+</li>
+<li>
+<p>无穷小量和无穷大量的关系：在自变量同一变化的过程中，若<span class="arithmatex">\(f(x)\)</span>为无穷大，则其倒数<span class="arithmatex">\(\frac{1}{f(x)}\)</span>必为无穷小，反之，若<span class="arithmatex">\(f(x)\)</span>为无穷小，且<span class="arithmatex">\(f(x)\ne 0\)</span>，则其倒数<span class="arithmatex">\(\frac{1}{f(x)}\)</span>必为无穷大。</p>
+</li>
+<li>
+<p><span class="arithmatex">\(f(x)\)</span>一定为无界无穷大量与无界的关系：在自变量同一变化的过程中，若<span class="arithmatex">\(f(x)\)</span>为无穷大，则<span class="arithmatex">\(f(x)\)</span>一定为无界；反之，若<span class="arithmatex">\(f(x)\)</span>为无界，<span class="arithmatex">\(f(x)\)</span>不一定为无穷大</p>
+</li>
+</ul>
+<h3 id="_7">七、连续性<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ol>
+<li>定义：设函数<span class="arithmatex">\(y=f(x)\)</span>在点<span class="arithmatex">\(x_0\)</span>某领域内有定义，当自变量增量<span class="arithmatex">\(\Delta x=x-x_0 \to 0\)</span>时，对应的函数值增量<span class="arithmatex">\(\Delta y=f(x_0+\Delta x)-f(x_0) \to 0\)</span>，即<span class="arithmatex">\(\lim_{\Delta x \to 0} \Delta y=0\)</span>，或<span class="arithmatex">\(\lim_{x \to x_0} f(x)=f(x_0)\)</span>，则称<span class="arithmatex">\(f(x)\)</span>在点<span class="arithmatex">\(x_0\)</span>处连续。</li>
+<li>
+<p>左/右连续：</p>
+</li>
+<li>
+<p>若<span class="arithmatex">\(\lim_{x \to x_0^-}f(x)=f(x_0)\)</span>，则称<span class="arithmatex">\(f(x)\)</span>在点<span class="arithmatex">\(x_0\)</span>处左连续。</p>
+</li>
+<li>若<span class="arithmatex">\(\lim_{x \to x_0^+}f(x)=f(x_0)\)</span>，则称<span class="arithmatex">\(f(x)\)</span>在点<span class="arithmatex">\(x_0\)</span>处右连续。</li>
+<li>显然，函数<span class="arithmatex">\(f(x)\)</span>在<span class="arithmatex">\(x _0\)</span>处连续的充分必要条件时<span class="arithmatex">\(f(x)\)</span>在点<span class="arithmatex">\(x _0\)</span>处既左连续又右连续</li>
+<li>
+<p>区间连续：</p>
+</li>
+<li>
+<p>如果函数<span class="arithmatex">\(f(x)\)</span>在区间<span class="arithmatex">\((a,b)\)</span>内的每一个点都连续，则称<span class="arithmatex">\(f(x)\)</span>在开区间<span class="arithmatex">\((a,b)\)</span>内连续。</p>
+</li>
+<li>若<span class="arithmatex">\(f(x)\)</span>在开区间<span class="arithmatex">\((a,b)\)</span>内连续，且在点<span class="arithmatex">\(a\)</span>处右连续，在点<span class="arithmatex">\(b\)</span>处左连续，则称<span class="arithmatex">\(f(x)\)</span>在闭区间<span class="arithmatex">\([a,b]\)</span>内连续。</li>
+<li>
+<p>连续性的运算</p>
+</li>
+<li>
+<p>如果函数 <span class="arithmatex">\(f(x)\)</span> 和 <span class="arithmatex">\(g(x)\)</span> 在点 <span class="arithmatex">\(x_0\)</span> 处都连续，那么它们的线性组合和乘除法在点 <span class="arithmatex">\(x_0\)</span> 处也连续。</p>
+<ul>
+<li>加减法： <span class="arithmatex">\(f(x) \pm g(x)\)</span> 在 <span class="arithmatex">\(x_0\)</span> 处连续。</li>
+<li>乘法： <span class="arithmatex">\(f(x) \cdot g(x)\)</span> 在 <span class="arithmatex">\(x_0\)</span> 处连续。</li>
+<li>除法： <span class="arithmatex">\(\frac{f(x)}{g(x)}\)</span> 在 <span class="arithmatex">\(x_0\)</span> 处连续（前提是分母 <span class="arithmatex">\(g(x_0) \neq 0\)</span>）。</li>
+</ul>
+</li>
+<li>
+<p>复合函数的连续性：如果内层函数 <span class="arithmatex">\(u = \varphi(x)\)</span> 在点 <span class="arithmatex">\(x_0\)</span> 处连续，且外层函数 <span class="arithmatex">\(y = f(u)\)</span> 在点 <span class="arithmatex">\(u_0\)</span>（其中 <span class="arithmatex">\(u_0 = \varphi(x_0)\)</span>）处连续，那么复合函数 <span class="arithmatex">\(y = f(\varphi(x))\)</span> 在点<span class="arithmatex">\(x_0\)</span>处也连续。即
+     $$
+     \lim_{x \to x_0} f(\varphi(x)) = f\left(\lim_{x \to x_0} \varphi(x)\right) = f(\varphi(x_0))
+     $$</p>
+</li>
+</ol>
+<h3 id="_8">八、间断点<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<ol>
+<li>定义：设函数<span class="arithmatex">\(f(x)\)</span>在点<span class="arithmatex">\(x_0\)</span>的某去心邻域内有定义，若函数<span class="arithmatex">\(f(x)\)</span>在点<span class="arithmatex">\(x_0\)</span>处不连续，则称<span class="arithmatex">\(x_0\)</span>为<span class="arithmatex">\(f(x)\)</span>的间断点。、</li>
+<li>
+<p>通常有两个出处：</p>
+<ul>
+<li>初等函数找无定义的点</li>
+<li>分段函数找分段点</li>
+</ul>
+</li>
+<li>
+<p>分类：若<span class="arithmatex">\(x=x_0\)</span>为函数<span class="arithmatex">\(y=f(x)\)</span>的间断点</p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>大类</strong></th>
+<th style="text-align: center;"><strong>左右极限状态</strong></th>
+<th style="text-align: center;"><strong>具体类型</strong></th>
+<th style="text-align: center;"><strong>判断特征</strong></th>
+<th style="text-align: center;"><strong>典型例子 (在 x=0 处)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>第一类间断点</strong></td>
+<td style="text-align: center;"><strong>均存在</strong> (且为常数)</td>
+<td style="text-align: center;"><strong>可去间断点</strong></td>
+<td style="text-align: center;">左极限 <span class="arithmatex">\(=\)</span> 右极限 <span class="arithmatex">\(\neq\)</span> 函数值 (或未定义)</td>
+<td style="text-align: center;"><span class="arithmatex">\(f(x) = \frac{\sin x}{x}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>第一类间断点</strong></td>
+<td style="text-align: center;"><strong>均存在</strong> (且为常数)</td>
+<td style="text-align: center;"><strong>跳跃间断点</strong></td>
+<td style="text-align: center;">左极限 <span class="arithmatex">\(\neq\)</span> 右极限</td>
+<td style="text-align: center;"><span class="arithmatex">\(f(x) = \text{sgn}(x)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>第二类间断点</strong></td>
+<td style="text-align: center;"><strong>至少一个不存在</strong></td>
+<td style="text-align: center;"><strong>无穷间断点</strong></td>
+<td style="text-align: center;">左极限或右极限趋向于 <span class="arithmatex">\(\infty\)</span></td>
+<td style="text-align: center;"><span class="arithmatex">\(f(x) = \frac{1}{x}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>第二类间断点</strong></td>
+<td style="text-align: center;"><strong>至少一个不存在</strong></td>
+<td style="text-align: center;"><strong>振荡间断点</strong></td>
+<td style="text-align: center;">函数在靠近该点时疯狂振荡，无确定极限</td>
+<td style="text-align: center;"><span class="arithmatex">\(f(x) = \sin\frac{1}{x}\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_9">九、闭区间上的连续函数的性质<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<ol>
+<li>最值定理：闭区间上的连续函数必有最大值和最小值</li>
+<li>有界性定理：闭区间上的连续函数在该闭区间上一定有界</li>
+<li>
+<p>若函数<span class="arithmatex">\(f(x)\)</span>在开区间<span class="arithmatex">\((a,b)\)</span>连续，且<span class="arithmatex">\(\lim_{x \to a^+}f(x),\lim_{x \to b^-}f(x)\)</span>都存在，则<span class="arithmatex">\(f(x)\)</span>在开区间<span class="arithmatex">\((a,b)\)</span>内有界</p>
+</li>
+<li>
+<p>介值定理：设函数<span class="arithmatex">\(f(x)\)</span>在闭区间<span class="arithmatex">\([a,b]\)</span>上连续，且<span class="arithmatex">\(f(a) \ne f(b)\)</span>，则对于<span class="arithmatex">\(f(a)\)</span>和<span class="arithmatex">\(f(b)\)</span>之间的任一常数<span class="arithmatex">\(C\)</span>，必在开区间<span class="arithmatex">\((a,b)\)</span>内存在任意一点<span class="arithmatex">\(\xi\)</span>，使得<span class="arithmatex">\(f(\xi)=C\)</span>。</p>
+</li>
+<li>
+<p>推广：在闭区间上连续的函数必可取得介于最大值<span class="arithmatex">\(M\)</span>和最小值<span class="arithmatex">\(m\)</span>之间的任何值</p>
+</li>
+<li>
+<p><strong>零点定理</strong>：如果函数 <span class="arithmatex">\(f(x)\)</span> 同时满足：在闭区间 <span class="arithmatex">\([a, b]\)</span> 上连续(<strong>连续性</strong>)，在区间两端点的函数值符号相反，即 <span class="arithmatex">\(f(a) \cdot f(b) &lt; 0\)</span>(<strong>端点异号</strong>)，那么，在开区间 <span class="arithmatex">\((a, b)\)</span> 内<strong>至少存在一点</strong> <span class="arithmatex">\(\xi\)</span>，使得 <span class="arithmatex">\(f(\xi) = 0\)</span>。这个点 <span class="arithmatex">\(\xi\)</span> 就被称为函数 <span class="arithmatex">\(f(x)\)</span> 的一个零点。</p>
+</li>
+<li>推广：设函数<span class="arithmatex">\(f(x)\)</span>在开区间<span class="arithmatex">\((a,b)\)</span>上连续，且 <span class="arithmatex">\(\lim_{x \to a^+} f(x)  \cdot  \lim_{x \to b^-} f(x)&lt; 0\)</span> ，至少有一点<span class="arithmatex">\(\xi \in (a, b)\)</span>，使得<span class="arithmatex">\(f(\xi)=0\)</span>。</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.expand", "navigation.top", "search.suggest"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+      
+    
+  </body>
+</html>
