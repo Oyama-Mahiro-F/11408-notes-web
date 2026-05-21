@@ -193,8 +193,9 @@ def add_nav(filepath):
         href = mkdocs_base + (f'{t}/' if t != '政治' else '')
         tabs.append(f'<a class="tab{ac}" href="{href}">{t}</a>')
 
-    # Left nav tree
+    # Left nav tree - fix mkdocs links with proper relative prefix
     nav_tree = '\n'.join(make_tree(NAV_TREE, rel_path))
+    nav_tree = nav_tree.replace('href="mkdocs/', f'href="{mkdocs_base}')
 
     # Build shell
     shell = f"""<!-- NAV_SHELL_START -->
