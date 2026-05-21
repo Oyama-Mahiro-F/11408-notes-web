@@ -438,10 +438,9 @@ for dirpath in sorted(sections_to_generate):
             elif name.endswith('.html') and name != 'index.html':
                 children.append({'title': name[:-5], 'href': f'{dirpath}/{name}'})
 
-    if children:
-        gen_section_index(full_dir, title, children, depth)
-        print(f'  Created: {dirpath}/index.html')
-        idx_count += 1
+    gen_section_index(full_dir, title, children, depth)
+    print(f'  Created: {dirpath}/index.html')
+    idx_count += 1
 
 # Generate main index page
 def gen_main_index():
