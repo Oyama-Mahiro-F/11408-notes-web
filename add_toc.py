@@ -88,11 +88,12 @@ def inject_toc(filepath):
 
     marker = '<!-- TOC_START -->' + TOC_CSS + TOC_JS + toc + '<!-- TOC_END -->'
 
-    # Inject after <body> or after <div id="write">
-    if '<div id="write">' in html:
-        html = html.replace('<div id="write">', '<div id="write">\n' + marker)
+    # Inject after <body> or after <div id="write"> (handles any attributes/quote style)
+    m = re.search(r'<div\s+id=[\'\"]write[\'\"]\s*[^>]*>', html, re.IGNORECASE)
+    if m:
+        html = html[:m.end()] + '\n' + marker + html[m.end():]
     else:
-        html = html.replace('<body>', '<body>\n' + marker)
+        html = re.sub(r'(<body\s[^>]*>)', r'\1\n' + marker, html, count=1, flags=re.IGNORECASE)
 
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(html)
