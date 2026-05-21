@@ -1,25 +1,7 @@
 import re, os, glob
 
-# ── Site navigation tree ───────────────────────────────────────────
+# ── Site navigation tree (only HTML pages that actually exist) ──────
 NAV_TREE = [
-    {'title': '408', 'children': [
-        {'title': '操作系统', 'children': [
-            {'title': '第1章 计算机系统概述', 'href': 'mkdocs/408/操作系统/笔记/第1章 计算机系统概述/'},
-        ]},
-        {'title': '数据结构', 'children': [
-            {'title': '作业', 'href': 'mkdocs/408/数据结构/作业/'},
-            {'title': '第1章 绪论', 'href': 'mkdocs/408/数据结构/笔记/第1章_绪论/'},
-            {'title': '第2章 线性表', 'href': 'mkdocs/408/数据结构/笔记/第2章 线性表/'},
-        ]},
-        {'title': '计算机组成原理', 'children': [
-            {'title': '第1章 计算机系统概述', 'href': 'mkdocs/408/计算机组成原理/笔记/第1章_计算机系统概述/'},
-            {'title': '第2章 数据的表示和计算', 'href': 'mkdocs/408/计算机组成原理/笔记/第2章 数据的表示和计算/'},
-        ]},
-        {'title': '计算机网络', 'children': [
-            {'title': '第1章 计算机网络体系结构', 'href': 'mkdocs/408/计算机网络/笔记/第1章 计算机网络体系结构/'},
-            {'title': '第2章 物理层', 'href': 'mkdocs/408/计算机网络/笔记/第2章 物理层/'},
-        ]},
-    ]},
     {'title': '数学', 'children': [
         {'title': '高数', 'children': [
             {'title': '第1章 函数的极限与连续', 'href': '数学/高数/第1章 函数的极限与连续.html'},
@@ -42,15 +24,7 @@ NAV_TREE = [
             {'title': '第4章 线性方程组', 'href': '数学/线性代数/第4章 线性方程组.html'},
             {'title': '第5章 矩阵的特征值和特征向量', 'href': '数学/线性代数/第5章 矩阵的特征值和特征向量.html'},
         ]},
-        {'title': '概率与统计', 'children': [
-            {'title': '第1章 随机事件和概率', 'href': 'mkdocs/数学/概率与统计/第1章 随机事件和概率/'},
-            {'title': '第2章 三大概型', 'href': 'mkdocs/数学/概率与统计/第2章 三大概型/'},
-        ]},
     ]},
-    {'title': '英语', 'children': [
-        {'title': '单词', 'href': 'mkdocs/英语/单词/'},
-    ]},
-    {'title': '政治', 'children': []},
 ]
 
 # ── Layout CSS ──────────────────────────────────────────────────────
@@ -186,16 +160,18 @@ def add_nav(filepath):
     active_tab = get_active_tab(rel_path)
     depth = rel_path.count('/')
     mkdocs_base = '../' * depth + 'mkdocs/' if depth > 0 else 'mkdocs/'
+    home_base = '../' * depth + 'index.html' if depth > 0 else 'index.html'
 
-    tabs = []
-    for t in ['408', '数学', '英语', '政治']:
-        ac = ' active' if t == active_tab else ''
-        href = mkdocs_base + (f'{t}/' if t != '政治' else '')
-        tabs.append(f'<a class="tab{ac}" href="{href}">{t}</a>')
+    tabs = (
+        f'<a class="tab" href="{home_base}">首页</a>'
+        f'<a class="tab" href="{mkdocs_base}408/">408</a>'
+        f'<a class="tab{" active" if active_tab == "数学" else ""}" href="{home_base}">数学</a>'
+        f'<a class="tab" href="{mkdocs_base}英语/">英语</a>'
+        f'<a class="tab" href="{mkdocs_base}">政治</a>'
+    )
 
-    # Left nav tree - fix mkdocs links with proper relative prefix
+    # Left nav tree - all links are relative HTML files
     nav_tree = '\n'.join(make_tree(NAV_TREE, rel_path))
-    nav_tree = nav_tree.replace('href="mkdocs/', f'href="{mkdocs_base}')
 
     # Build shell
     shell = f"""<!-- NAV_SHELL_START -->
@@ -204,7 +180,7 @@ def add_nav(filepath):
 <div class="nav-header">
 <button class="nav-hamburger">&#9776;</button>
 <span class="logo">2026考研笔记</span>
-{' '.join(tabs)}
+{tabs}
 </div>
 <div class="nav-body">
 <aside class="nav-sidebar">
