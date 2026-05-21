@@ -192,20 +192,25 @@ def add_nav(filepath):
         if level == 3:
             current_h3 = {'hid': hid, 'text': text, 'children': []}
             toc_tree.append(current_h3)
-        elif level == 4 and current_h3 is not None:
-            current_h3['children'].append({'hid': hid, 'text': text})
+        elif level == 4:
+            if current_h3 is not None:
+                current_h3['children'].append({'hid': hid, 'text': text})
+            else:
+                # No parent h3 — add h4 directly as top-level
+                toc_tree.append({'hid': hid, 'text': text, 'children': []})
 
     toc_items = []
-    for h3 in toc_tree:
-        has_kids = len(h3['children']) > 0
-        toggle = '<span class="toc-toggle">▼</span>' if has_kids else ''
+    for item in toc_tree:
+        has_kids = len(item['children']) > 0
         toc_items.append(f'<div class="toc-section collapsed">')
-        toc_items.append(f'<a class="toc-h3" href="#{h3["hid"]}">{toggle}{h3["text"]}</a>')
         if has_kids:
+            toc_items.append(f'<a class="toc-h3" href="#{item["hid"]}"><span class="toc-toggle">▼</span>{item["text"]}</a>')
             toc_items.append('<div class="toc-children">')
-            for h4 in h3['children']:
-                toc_items.append(f'<a class="toc-h4" href="#{h4["hid"]}">{h4["text"]}</a>')
+            for child in item['children']:
+                toc_items.append(f'<a class="toc-h4" href="#{child["hid"]}">{child["text"]}</a>')
             toc_items.append('</div>')
+        else:
+            toc_items.append(f'<a class="toc-h3" href="#{item["hid"]}">{item["text"]}</a>')
         toc_items.append('</div>')
     toc_html = '<div class="toc-label">目录</div>\n' + '\n'.join(toc_items) if toc_items else ''
 
