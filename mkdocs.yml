@@ -3,6 +3,7 @@ site_description: 11408及公共课复习知识库
 site_author: Oyama Mahiro
 
 docs_dir: 考研
+site_url: https://oyama-mahiro-f.github.io/11408-notes-web/mkdocs/
 site_dir: site/mkdocs
 
 exclude_docs: |
