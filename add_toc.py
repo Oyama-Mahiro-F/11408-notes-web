@@ -31,12 +31,12 @@ TOC_CSS = """
 
 TOC_JS = """
 <script>
-(function(){
+document.addEventListener('DOMContentLoaded', function(){
   var t = document.querySelector('.toc-title');
   if (t) t.addEventListener('click', function(){
     document.querySelector('.toc').classList.toggle('collapsed');
   });
-})();
+});
 </script>
 """
 
@@ -81,9 +81,7 @@ def inject_toc(filepath):
 
     toc = build_toc(headings)
 
-    # Remove existing TOC if any
-    html = re.sub(r'<div class="toc">.*?</div>\s*', '', html, flags=re.DOTALL)
-    # Remove existing TOC style/script if any (by marker comment)
+    # Remove existing TOC (by marker comment)
     html = re.sub(r'<!-- TOC_START -->.*?<!-- TOC_END -->', '', html, flags=re.DOTALL)
 
     marker = '<!-- TOC_START -->' + TOC_CSS + TOC_JS + toc + '<!-- TOC_END -->'
