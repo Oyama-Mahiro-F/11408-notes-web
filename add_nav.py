@@ -1,54 +1,52 @@
 import re, os, glob
 
-# ── Site navigation tree (only HTML pages that actually exist) ──────
-NAV_TREE = [
-    {'title': '408', 'children': [
-        {'title': '操作系统', 'children': [
-            {'title': '第1章 计算机系统概述', 'href': '408/操作系统/笔记/第1章 计算机系统概述.html'},
-        ]},
-        {'title': '数据结构', 'children': [
-            {'title': '作业', 'href': '408/数据结构/作业.html'},
-            {'title': '第1章 绪论', 'href': '408/数据结构/笔记/第1章 绪论.html'},
-            {'title': '第2章 线性表', 'href': '408/数据结构/笔记/第2章 线性表.html'},
-        ]},
-        {'title': '计算机组成原理', 'children': [
-            {'title': '第1章 计算机系统概述', 'href': '408/计算机组成原理/笔记/第1章 计算机系统概述.html'},
-            {'title': '第2章 数据的表示和计算', 'href': '408/计算机组成原理/笔记/第2章 数据的表示和计算.html'},
-        ]},
-        {'title': '计算机网络', 'children': [
-            {'title': '第1章 计算机网络体系结构', 'href': '408/计算机网络/笔记/第1章 计算机网络体系结构.html'},
-            {'title': '第2章 物理层', 'href': '408/计算机网络/笔记/第2章 物理层.html'},
-        ]},
-    ]},
-    {'title': '数学', 'children': [
-        {'title': '高数', 'children': [
-            {'title': '第1章 函数的极限与连续', 'href': '数学/高数/第1章 函数的极限与连续.html'},
-            {'title': '第2章 一元函数微分学', 'href': '数学/高数/第2章 一元函数微分学.html'},
-            {'title': '第3章 不定积分', 'href': '数学/高数/第3章 不定积分.html'},
-            {'title': '第4章 定积分', 'href': '数学/高数/第4章 定积分.html'},
-            {'title': '第5章 微分方程', 'href': '数学/高数/第5章 微分方程.html'},
-            {'title': '第6章 向量代数与空间解析几何', 'href': '数学/高数/第6章 向量代数与空间解析几何.html'},
-            {'title': '第7章 多元函数微分学', 'href': '数学/高数/第7章 多元函数微分学.html'},
-            {'title': '第8章 二重积分', 'href': '数学/高数/第8章 二重积分.html'},
-            {'title': '第9章 三重积分', 'href': '数学/高数/第9章 三重积分.html'},
-            {'title': '第10章 无穷级数', 'href': '数学/高数/第10章 无穷级数.html'},
-            {'title': '第11章 曲线积分', 'href': '数学/高数/第11章 曲线积分.html'},
-            {'title': '第12章 曲面积分', 'href': '数学/高数/第12章 曲面积分.html'},
-            {'title': '公式总结', 'href': '数学/高数/公式总结.html'},
-        ]},
-        {'title': '线性代数', 'children': [
-            {'title': '第1章 行列式', 'href': '数学/线性代数/第1章 行列式.html'},
-            {'title': '第2章 矩阵', 'href': '数学/线性代数/第2章 矩阵.html'},
-            {'title': '第3章 向量', 'href': '数学/线性代数/第3章 向量.html'},
-            {'title': '第4章 线性方程组', 'href': '数学/线性代数/第4章 线性方程组.html'},
-            {'title': '第5章 矩阵的特征值和特征向量', 'href': '数学/线性代数/第5章 矩阵的特征值和特征向量.html'},
-        ]},
-    ]},
-    {'title': '英语', 'children': [
-        {'title': '单词', 'href': '英语/单词.html'},
-    ]},
-    {'title': '政治', 'children': []},
-]
+# ── Auto-generate nav tree from file system ────────────────────────
+def build_nav_tree(site_dir):
+    """Scan site/ for .html files and build nav tree from directory structure."""
+    tree = {}  # {top_level: {sub_level: {deeper: [leaf_hrefs]}}}
+
+    for root, dirs, files in os.walk(site_dir):
+        # Skip hidden dirs and special dirs
+        dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'assets']
+        for f in files:
+            if not f.endswith('.html') or f == 'index.html':
+                continue
+            rel = os.path.relpath(os.path.join(root, f), site_dir).replace('\\', '/')
+            parts = rel.split('/')
+            if len(parts) >= 2:
+                top = parts[0]
+                # Build nested dict
+                node = tree
+                for part in parts[:-1]:
+                    if part not in node:
+                        node[part] = {}
+                    node = node[part]
+                if '_files' not in node:
+                    node['_files'] = []
+                title = parts[-1][:-5]  # remove .html
+                node['_files'].append((title, rel))
+
+    # Convert dict to NAV_TREE format
+    def dict_to_tree(d, path=''):
+        result = []
+        # Process subdirectories first
+        subdirs = sorted([k for k in d if not k.startswith('_')])
+        for key in subdirs:
+            subpath = f'{path}/{key}' if path else key
+            entry = {'title': key, 'children': dict_to_tree(d[key], subpath)}
+            # Add index link if exists
+            idx_path = f'{subpath}/index.html'
+            if os.path.exists(os.path.join(site_dir, idx_path)):
+                entry['href'] = idx_path
+            result.append(entry)
+        # Add leaf files
+        if '_files' in d:
+            for title, href in sorted(d['_files'], key=lambda x: x[1]):
+                if title not in [e['title'] for e in result]:
+                    result.append({'title': title, 'href': href})
+        return result
+
+    return dict_to_tree(tree)
 
 # ── Layout CSS ──────────────────────────────────────────────────────
 SHELL_CSS = """
@@ -226,7 +224,8 @@ def add_nav(filepath):
     )
 
     # Left nav tree - make all hrefs relative to current page's directory
-    raw_tree = '\n'.join(make_tree(NAV_TREE, rel_path))
+    nav_tree_auto = build_nav_tree(site_root)
+    raw_tree = '\n'.join(make_tree(nav_tree_auto, rel_path))
     # Replace href="X" with page-relative path
     current_dir = os.path.dirname(rel_path)  # e.g., '数学/高数' or ''
     def make_relative(match):
@@ -316,7 +315,8 @@ def gen_section_index(dirpath, title, children, depth):
         f'<a class="tab{" active" if "政治" in title else ""}" href="{up}政治/">政治</a>'
     )
 
-    raw_tree = '\n'.join(make_tree(NAV_TREE, index_rel))
+    nav_tree_auto = build_nav_tree(site_root)
+    raw_tree = '\n'.join(make_tree(nav_tree_auto, index_rel))
     cur_dir = os.path.dirname(index_rel) if index_rel != 'index.html' else ''
     def mkrel(m):
         t = m.group(1)
@@ -386,22 +386,36 @@ for f in sorted(files):
     if add_nav(f):
         count += 1
 
-# Generate section index pages
+# Generate section index pages for directories that don't have one
 print('\nGenerating section index pages...')
-sections = [
-    ('408', '408 计算机专业基础', NAV_TREE[0]['children']),
-    ('英语', '英语', NAV_TREE[2]['children']),
-    ('政治', '政治', NAV_TREE[3]['children']),
-    ('408/操作系统', '408 > 操作系统', NAV_TREE[0]['children'][0]['children']),
-    ('408/数据结构', '408 > 数据结构', NAV_TREE[0]['children'][1]['children']),
-    ('408/计算机组成原理', '408 > 计算机组成原理', NAV_TREE[0]['children'][2]['children']),
-    ('408/计算机网络', '408 > 计算机网络', NAV_TREE[0]['children'][3]['children']),
-]
-for dirpath, title, children in sections:
-    full_dir = os.path.join(site_dir, dirpath)
-    os.makedirs(full_dir, exist_ok=True)
-    depth = dirpath.count('/')
-    gen_section_index(full_dir, title, children, depth)
-    print(f'  Created: {dirpath}/index.html')
+nav_tree_auto = build_nav_tree(site_root)
+idx_count = 0
+for section in nav_tree_auto:
+    if 'children' not in section:
+        continue
+    dirpath = section.get('href', section['title'])
+    if dirpath.endswith('/index.html'):
+        dirpath = dirpath[:-10]  # strip /index.html
+    if '/' not in dirpath and not dirpath.endswith('.html'):
+        # Top-level section (e.g., '408', '数学', '英语', '政治')
+        full_dir = os.path.join(site_dir, dirpath)
+        os.makedirs(full_dir, exist_ok=True)
+        if not os.path.exists(os.path.join(full_dir, 'index.html')):
+            depth = dirpath.count('/')
+            children = [c for c in section['children']]
+            gen_section_index(full_dir, section['title'], children, depth)
+            print(f'  Created: {dirpath}/index.html')
+            idx_count += 1
+        # Also generate sub-section index pages
+        for sub in section.get('children', []):
+            if 'children' in sub:
+                subdir = f'{dirpath}/{sub["title"]}'
+                full_sub = os.path.join(site_dir, subdir)
+                os.makedirs(full_sub, exist_ok=True)
+                if not os.path.exists(os.path.join(full_sub, 'index.html')):
+                    depth = subdir.count('/')
+                    gen_section_index(full_sub, f'{section["title"]} > {sub["title"]}', sub['children'], depth)
+                    print(f'  Created: {subdir}/index.html')
+                    idx_count += 1
 
-print(f'\nDone. Added nav shell to {count} files + {len(sections)} index pages.')
+print(f'\nDone. Added nav shell to {count} files + {idx_count} index pages.')
