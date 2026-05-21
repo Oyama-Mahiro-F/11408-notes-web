@@ -401,7 +401,7 @@ for section in nav_tree_auto:
         full_dir = os.path.join(site_dir, dirpath)
         os.makedirs(full_dir, exist_ok=True)
         if not os.path.exists(os.path.join(full_dir, 'index.html')):
-            depth = dirpath.count('/')
+            depth = len(dirpath.split('/'))
             children = [c for c in section['children']]
             gen_section_index(full_dir, section['title'], children, depth)
             print(f'  Created: {dirpath}/index.html')
@@ -413,7 +413,7 @@ for section in nav_tree_auto:
                 full_sub = os.path.join(site_dir, subdir)
                 os.makedirs(full_sub, exist_ok=True)
                 if not os.path.exists(os.path.join(full_sub, 'index.html')):
-                    depth = subdir.count('/')
+                    depth = len(subdir.split('/'))
                     gen_section_index(full_sub, f'{section["title"]} > {sub["title"]}', sub['children'], depth)
                     print(f'  Created: {subdir}/index.html')
                     idx_count += 1
