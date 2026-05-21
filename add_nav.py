@@ -386,87 +386,109 @@ for f in sorted(files):
     if add_nav(f):
         count += 1
 
-# Generate section index pages for directories that don't have one
+# Generate section index pages for directories that contain HTML files
 print('\nGenerating section index pages...')
-nav_tree_auto = build_nav_tree(site_root)
 idx_count = 0
-for section in nav_tree_auto:
-    if 'children' not in section:
-        continue
-    dirpath = section.get('href', section['title'])
-    if dirpath.endswith('/index.html'):
-        dirpath = dirpath[:-10]  # strip /index.html
-    if '/' not in dirpath and not dirpath.endswith('.html'):
-        # Top-level section (e.g., '408', '数学', '英语', '政治')
-        full_dir = os.path.join(site_dir, dirpath)
-        os.makedirs(full_dir, exist_ok=True)
-        depth = len(dirpath.split('/'))
-        children = [c for c in section['children']]
-        gen_section_index(full_dir, section['title'], children, depth)
+# Find all directories under site/ that contain .html files (excluding index.html)
+all_dirs = set()
+for root, dirs, files in os.walk(site_dir):
+    dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'assets']
+    for f in files:
+        if f.endswith('.html') and f != 'index.html':
+            all_dirs.add(os.path.relpath(root, site_dir).replace('\\', '/'))
+
+# Generate index pages for intermediate directories
+# e.g., if files are in '408/操作系统/笔记/', create index for '408/', '408/操作系统/', '408/操作系统/笔记/'
+sections_to_generate = set()
+for d in all_dirs:
+    parts = d.split('/')
+    for i in range(len(parts)):
+        prefix = '/'.join(parts[:i+1])
+        sections_to_generate.add(prefix)
+
+for dirpath in sorted(sections_to_generate):
+    full_dir = os.path.join(site_dir, dirpath)
+    os.makedirs(full_dir, exist_ok=True)
+    depth = len(dirpath.split('/'))
+    title = ' > '.join(dirpath.split('/')) if '/' in dirpath else dirpath
+
+    # Collect children (subdirectories or html files in this directory)
+    children = []
+    child_dir = os.path.join(site_dir, dirpath)
+    if os.path.isdir(child_dir):
+        # Subdirectories
+        for name in sorted(os.listdir(child_dir)):
+            sub_path = os.path.join(child_dir, name)
+            if os.path.isdir(sub_path) and not name.startswith('.') and name != 'assets':
+                # Check if this subdir has any html files (recursively)
+                has_html = False
+                for r, ds, fs in os.walk(sub_path):
+                    ds[:] = [d for d in ds if not d.startswith('.') and d != 'assets']
+                    if any(f.endswith('.html') and f != 'index.html' for f in fs):
+                        has_html = True
+                        break
+                if has_html:
+                    children.append({'title': name, 'children': []})
+            elif name.endswith('.html') and name != 'index.html':
+                children.append({'title': name[:-5], 'href': f'{dirpath}/{name}'})
+
+    if children:
+        gen_section_index(full_dir, title, children, depth)
         print(f'  Created: {dirpath}/index.html')
         idx_count += 1
-        # Also generate sub-section index pages
-        for sub in section.get('children', []):
-            if 'children' in sub:
-                subdir = f'{dirpath}/{sub["title"]}'
-                full_sub = os.path.join(site_dir, subdir)
-                os.makedirs(full_sub, exist_ok=True)
-                depth = len(subdir.split('/'))
-                gen_section_index(full_sub, f'{section["title"]} > {sub["title"]}', sub['children'], depth)
-                print(f'  Created: {subdir}/index.html')
-                idx_count += 1
 
 # Generate main index page
-def gen_main_index(nav_tree):
-    cards = []
-    for section in nav_tree:
-        title = section['title']
-        # Recursively collect all leaf HTML pages under this section
-        all_items = []
-        def collect_leaves(children):
-            for child in children:
-                if 'children' in child and child['children']:
-                    collect_leaves(child['children'])
-                elif 'href' in child and child['href'].endswith('.html'):
-                    all_items.append((child['title'], child['href']))
-        collect_leaves(section.get('children', []))
+def gen_main_index():
+    # Find the first available page for each subject
+    subjects = {'408': None, '数学': None, '英语': None, '政治': None}
+    for root, dirs, files in os.walk(site_dir):
+        dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'assets']
+        for f in files:
+            if f.endswith('.html') and f != 'index.html':
+                rel = os.path.relpath(os.path.join(root, f), site_dir).replace('\\', '/')
+                top = rel.split('/')[0]
+                if top in subjects and subjects[top] is None:
+                    subjects[top] = rel
+                if all(v is not None for v in subjects.values()):
+                    break
+        if all(v is not None for v in subjects.values()):
+            break
 
-        if not all_items:
-            continue
-
-        cards.append(f'<div class="section"><div class="section-title">{title}</div><div class="grid">')
-        for leaf_title, leaf_href in sorted(all_items, key=lambda x: x[1]):
-            cards.append(f'<a class="card" href="{leaf_href}"><div class="ch">{leaf_title}</div></a>')
-        cards.append('</div></div>')
-
-    cards_html = '\n'.join(cards)
-
-    content = f"""<!DOCTYPE html>
+    content = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026考研笔记资料库</title>
 <style>
-  :root {{ --bg: #f5f5f5; --card-bg: #fff; --text: #333; --muted: #666; --border: #e0e0e0; --accent: #3f51b5; }}
-  body {{ font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px 20px; line-height: 1.6; }}
-  .container {{ max-width: 800px; margin: 0 auto; }}
-  h1 {{ text-align: center; font-size: 2rem; margin-bottom: 8px; }}
-  .subtitle {{ text-align: center; color: var(--muted); margin-bottom: 40px; }}
-  .section {{ margin-bottom: 32px; }}
-  .section-title {{ font-size: 1.3rem; font-weight: 700; padding-bottom: 8px; border-bottom: 2px solid var(--accent); margin-bottom: 16px; }}
-  .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }}
-  .card {{ display: block; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; text-decoration: none; color: var(--text); transition: all 0.15s; }}
-  .card:hover {{ border-color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.1); transform: translateY(-1px); }}
-  .card .ch {{ font-weight: 600; }}
-  .footer {{ text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 60px; }}
+  :root { --bg: #f0f2f5; --card-bg: #fff; --text: #333; --muted: #666; --accent: #3f51b5; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .container { text-align: center; padding: 40px 20px; }
+  h1 { font-size: 2.2rem; margin-bottom: 8px; }
+  .subtitle { color: var(--muted); margin-bottom: 48px; font-size: 1.1rem; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 500px; margin: 0 auto; }
+  .subject-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--card-bg); border: 2px solid #e0e0e0; border-radius: 16px; padding: 40px 20px; text-decoration: none; color: var(--text); transition: all 0.2s; min-height: 160px; }
+  .subject-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(63,81,181,0.15); transform: translateY(-2px); }
+  .subject-card .icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .subject-card .label { font-size: 1.3rem; font-weight: 700; }
+  .subject-card .hint { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+  .footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 48px; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>2026考研笔记资料库</h1>
   <p class="subtitle">11408 及公共课复习笔记</p>
-  {cards_html}
+  <div class="grid2">
+"""
+
+    icons = {'408': '💻', '数学': '📐', '英语': '📖', '政治': '📋'}
+    for subj in ['408', '数学', '英语', '政治']:
+        href = subjects[subj] or f'{subj}/'
+        content += f'    <a class="subject-card" href="{href}"><span class="icon">{icons.get(subj, "")}</span><span class="label">{subj}</span></a>\n'
+
+    content += """  </div>
   <p class="footer">Generated with Typora &middot; Hosted on GitHub Pages</p>
 </div>
 </body>
@@ -476,6 +498,6 @@ def gen_main_index(nav_tree):
         f.write(content)
     print('  Updated: index.html')
 
-gen_main_index(nav_tree_auto)
+gen_main_index()
 
 print(f'\nDone. Added nav shell to {count} files + {idx_count} index pages.')
