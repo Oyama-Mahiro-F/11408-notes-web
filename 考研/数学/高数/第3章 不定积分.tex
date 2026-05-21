@@ -1,0 +1,434 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+第三章 不定积分
+
+\subsubsection{一、不定积分的概念和性质}\label{ux4e00ux4e0dux5b9aux79efux5206ux7684ux6982ux5ff5ux548cux6027ux8d28}
+
+\subparagraph{（一）原函数与不定积分的概念}\label{ux4e00uxff09ux539fux51fdux6570ux4e0eux4e0dux5b9aux79efux5206ux7684ux6982ux5ff5}
+
+\textbf{1. 原函数的定义}
+
+如果在区间 \(I\)上，可导函数 \(F(x)\)的导函数为 \(f(x)\)，即对任一
+\(x \in I\)，都有：
+
+\[F'(x) = f(x)或dF(x) = f(x)dx\]
+
+那么函数 \(F(x)\)就称为 \(f(x)\)在区间 \(I\)上的一个\textbf{原函数}。
+
+\textbf{2. 不定积分的定义}
+
+函数 \(f(x)\)在区间 \(I\)上的\textbf{全体原函数}，称为 \(f(x)\)在
+\(I\)上的不定积分，记作：
+
+\[\int f(x) dx = F(x) + C\]
+
+其中：
+
+\begin{itemize}
+\item
+  \(\int\)是积分号
+\item
+  \(f(x)\)是被积函数
+\item
+  \(f(x)dx\)是被积表达式
+\item
+  \(x\)是积分变量
+\item
+  \(C\)是积分常数（\textbf{考研大题中漏写
+  \(C\)是绝对的失分点，一定要养成习惯}）
+\end{itemize}
+
+\textbf{3. 原函数存在定理（易考概念辨析）}
+
+\begin{itemize}
+\item
+  \textbf{连续必有原函数}：如果函数 \(f(x)\)在区间
+  \(I\)上\textbf{连续}，那么 \(f(x)\)在区间 \(I\)上一定存在原函数。
+\item
+  \textbf{含有第一类间断点、无穷间断点的函数}在包含该间断点的区间内\textbf{没有}原函数。
+\item
+  \textbf{含有震荡间断点的函数}可能存在原函数（这是考研选择题常设的陷阱）。
+\end{itemize}
+
+\subparagraph{（二）不定积分的性质}\label{ux4e8cuxff09ux4e0dux5b9aux79efux5206ux7684ux6027ux8d28}
+
+不定积分的性质主要体现了它与微分的\textbf{互逆关系}，以及它的\textbf{线性运算规律}。
+
+\textbf{1. 互逆性质}
+
+先积分后求导（或求微分），抵消后不产生常数：
+
+\begin{itemize}
+\item
+  \$\$\\
+  \textbackslash frac\{d\}\{dx\} \textbackslash left{[}
+  \textbackslash int f(x) dx \textbackslash right{]} = f(x)
+\end{itemize}
+
+\[- $$
+d \left[ \int f(x) dx \right] = f(x)dx\]
+
+先求导（或求微分）后积分，抵消后\textbf{必须加上常数 \(C\)}：
+
+\begin{itemize}
+\item
+  \$\$\\
+  \textbackslash int F\textquotesingle(x) dx = F(x) + C
+\end{itemize}
+
+\[- $$
+\int dF(x) = F(x) + C\]
+
+\textbf{2. 线性性质}
+
+有限个函数线性组合的不定积分，等于各个函数不定积分的线性组合：
+
+\[\int [\alpha f(x) \pm \beta g(x)] dx = \alpha \int f(x) dx \pm \beta \int g(x) dx\]
+
+\emph{(注：\(\alpha\)和 \(\beta\)为不全为零的常数。)}
+
+\subparagraph{（三）基本积分公式}\label{ux4e09uxff09ux57faux672cux79efux5206ux516cux5f0f}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+\textbf{代数、指数与反三角函数积分} & \textbf{三角函数积分} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(\int k dx = kx + C\) & \(\int \sin x dx = -\cos x + C\) \\
+\(\int x^\mu dx = \frac{1}{\mu+1}x^{\mu+1} + C \ (\mu \neq -1)\) &
+\(\int \cos x dx = \sin x + C\) \\
+\(\int \frac{1}{x} dx = \ln \lvert x \rvert + C\) &
+\(\int \sec^2 x dx = \tan x + C\) \\
+\(\int e^x dx = e^x + C\) & \(\int \csc^2 x dx = -\cot x + C\) \\
+\(\int a^x dx = \frac{a^x}{\ln a} + C\) &
+\(\int \sec x \tan x dx = \sec x + C\) \\
+\(\int \frac{1}{1+x^2} dx = \arctan x + C\) &
+\(\int \csc x \cot x dx = -\csc x + C\) \\
+\(\int \frac{1}{a^2+x^2} dx = \frac{1}{a} \arctan \frac{x}{a} + C\) &
+\(\int \tan x dx = -\ln \lvert \cos x \rvert + C\) \\
+\(\int \frac{1}{\sqrt{1-x^2}} dx = \arcsin x + C\) &
+\(\int \cot x dx = \ln \lvert \sin x \rvert + C\) \\
+\(\int \frac{1}{\sqrt{a^2-x^2}} dx = \arcsin \frac{x}{a} + C\) &
+\(\int \sec x dx = \ln \lvert \sec x + \tan x \rvert + C\) \\
+\(\int \frac{1}{x^2-a^2} dx = \frac{1}{2a} \ln \lvert \frac{x-a}{x+a} \rvert + C\)
+& \(\int \csc x dx = \ln \lvert \csc x - \cot x \rvert + C\) \\
+\(\int \frac{1}{\sqrt{x^2 \pm a^2}} dx = \ln \lvert x + \sqrt{x^2 \pm a^2} \rvert + C\)
+& \\
+\end{longtable}
+}
+
+\subsubsection{二、不定积分的换元法}\label{ux4e8cux4e0dux5b9aux79efux5206ux7684ux6362ux5143ux6cd5}
+
+在面对复杂的被积函数时，换元法的本质就是\textbf{``化繁为简''}，把未知的、复杂的积分转化为我们熟知的基本积分公式。
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{（一）第一类换元法（凑微分法）}\label{ux4e00uxff09ux7b2cux4e00ux7c7bux6362ux5143ux6cd5ux51d1ux5faeux5206ux6cd5uxff09}
+
+\textbf{1. 核心思想}
+
+如果被积函数可以拆分成 \(f[g(x)] \cdot g'(x)\)的形式，那么我们可以把
+\(g'(x)dx\)``凑''进微分号里面，变成 \(d[g(x)]\)。
+
+公式表达为：
+
+\[\int f[g(x)] g'(x) dx = \int f[g(x)] d[g(x)]=\int f(u)du=F(u)+C=F(g(x))+C\]
+
+令 \(u = g(x)\)，则化为 \(\int f(u) du\)。积分完成后，\textbf{切记把
+\(u\)换回 \(g(x)\)}。
+
+\textbf{2. 冲刺必备：常见``凑微分''基本模式}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+\textbf{类别} & \textbf{凑微分公式} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{幂函数类} & \(x dx = \frac{1}{2} d(x^2)\) \\
+\textbf{幂函数类} & \(x^n dx = \frac{1}{n+1} d(x^{n+1})\) \\
+\textbf{倒数与对数类} & \(\frac{1}{x} dx = d(\ln \lvert x \rvert)\) \\
+\textbf{倒数与对数类} & \(\frac{1}{2\sqrt{x}} dx = d(\sqrt{x})\) \\
+\textbf{指数类} & \(e^x dx = d(e^x)\) \\
+\textbf{指数类} & \(e^{-x} dx = -d(e^{-x})\) \\
+\textbf{三角函数类} & \(\cos x dx = d(\sin x)\) \\
+\textbf{三角函数类} & \(\sin x dx = -d(\cos x)\) \\
+\textbf{三角函数类} & \(\sec^2 x dx = d(\tan x)\) \\
+\textbf{反三角函数类} & \(\frac{1}{1+x^2} dx = d(\arctan x)\) \\
+\textbf{反三角函数类} & \(\frac{1}{\sqrt{1-x^2}} dx = d(\arcsin x)\) \\
+\end{longtable}
+}
+
+\begin{quote}
+\textbf{💡 破题诀窍：}
+找被积函数中\textbf{``互为导数''}的两个部分。例如看到式子里同时有
+\(\ln x\)和 \(\frac{1}{x}\)，立刻想到把 \(\frac{1}{x}\)凑成
+\(d(\ln x)\)（就像你刚才做对的第三题一样）。
+\end{quote}
+
+\paragraph{（二）第二类换元法（变量代换法）}\label{ux4e8cuxff09ux7b2cux4e8cux7c7bux6362ux5143ux6cd5ux53d8ux91cfux4ee3ux6362ux6cd5uxff09}
+
+如果说第一类换元法是把外面的东西拿进微分号
+\(d\)里面，那么第二类换元法就是\textbf{无中生有，引入一个新的变量
+\(t\)}，强行把含根号或极复杂的式子变成多项式。
+
+\textbf{1. 核心思想}
+
+令 \(x = \varphi(t)\)，且
+\(\varphi'(t) \neq 0\)，设\(f[\varphi(t)]\varphi'(t)\)具有原函数\(\Phi(t)\)
+
+\[\int f(x) dx = \int f[\varphi(t)] \varphi'(t) dt=\Phi(t)+C=\Phi[\varphi^{-1}(x)]+C\]
+
+要求\(x=\varphi(t)\)是单调函数，算完之后，\textbf{必须通过反函数
+\(t = \varphi^{-1}(x)\)代回原变量 \(x\)}。
+
+\textbf{2. 三大经典代换类型}
+
+为了清晰记忆，我将最常考的第二类换元法整理为下表：
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+\textbf{代换类型} & \textbf{适用题型特征} & \textbf{核心代换公式} &
+\textbf{目的} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{根式代换} & 含有 \(\sqrt{ax+b}\)或
+\(\sqrt[n]{\frac{ax+b}{cx+d}}\) & 令 \(t = \text{整个根式}\) &
+直接消除根号，化为有理函数积分。 \\
+\textbf{三角代换} & 含有 \(\sqrt{a^2-x^2}\) & 令 \(x = a\sin t\)(或
+\(a\cos t\)) & 利用 \(1-\sin^2 t = \cos^2 t\)消除根号。 \\
+\textbf{三角代换} & 含有 \(\sqrt{a^2+x^2}\) & 令 \(x = a\tan t\) & 利用
+\(1+\tan^2 t = \sec^2 t\)消除根号。 \\
+\textbf{三角代换} & 含有 \(\sqrt{x^2-a^2}\) & 令 \(x = a\sec t\) & 利用
+\(\sec^2 t - 1 = \tan^2 t\)消除根号。 \\
+\textbf{倒代换} & 分母的次数比分子高至少两次（如
+\(\frac{1}{x^2\sqrt{1+x^2}}\)） & 令 \(x = \frac{1}{t}\) &
+把分母的高次幂降次，通常能转化为好凑微分的形式。 \\
+\end{longtable}
+}
+
+\begin{quote}
+\textbf{⚠️ 避坑指南（三角代换）：} \textgreater{} 算完
+\(t\)的积分后，要把 \(t\)换回
+\(x\)时，强烈建议\textbf{画一个直角三角形}。比如你令了
+\(x = a\sin t\)，那就画一个对边为 \(x\)，斜边为 \(a\)，邻边为
+\(\sqrt{a^2-x^2}\)的直角三角形，这样求 \(\cos t\)或
+\(\tan t\)绝对不会出错！
+\end{quote}
+
+\subsubsection{三、不定积分的分部积分法}\label{ux4e09ux4e0dux5b9aux79efux5206ux7684ux5206ux90e8ux79efux5206ux6cd5}
+
+\paragraph{（一）分部积分法}\label{ux4e00uxff09ux5206ux90e8ux79efux5206ux6cd5}
+
+\subparagraph{1.核心公式}\label{1ux6838ux5fc3ux516cux5f0f}
+
+分部积分的公式非常简单，由两个函数的乘积求导公式逆推而来：
+
+\[\int u dv = uv - \int v du\]
+
+或者 写成更直观的形式：
+
+\[\int u(x)v'(x) dx = u(x)v(x) - \int u'(x)v(x) dx\]
+
+\textbf{这个公式的核心思想是``转移矛盾''}：原本我们要积分的是
+\(u dv\)，这个很难算；通过公式，我们将求积分的重担转移到了
+\(v du\)上。如果 \(v du\)比 \(u dv\)容易积，这个方法就成功了。
+
+\subparagraph{\texorpdfstring{2.核心难点：如何选取 \(u\)和
+\(dv\)？}{2.核心难点：如何选取 u和 dv？}}\label{2ux6838ux5fc3ux96beux70b9ux5982ux4f55ux9009ux53d6-uxauuxaux548c-uxadvuxa}
+
+选错 \(u\)和 \(dv\)，积分会越变越复杂。为了保证转移后的积分
+\(\int v du\)更简单，我们选择
+\(u\)的总体原则是：\textbf{\(u\)求导后要变简单，且
+\(dv\)必须容易求出原函数 \(v\)。}
+
+在考场上，请牢记这五字真言（按选取 \(u\)的优先级排序）：
+
+\textbf{反、对、幂、指、三}
+
+即：\textbf{反}三角函数、\textbf{对}数函数、\textbf{幂}函数（多项式）、\textbf{指}数函数、\textbf{三}角函数。
+
+排在前面的函数优先选为 \(u\)，剩下的连同 \(dx\)一起作为 \(dv\)。
+
+\subparagraph{3.三大经典题型与实战策略}\label{3ux4e09ux5927ux7ecfux5178ux9898ux578bux4e0eux5b9eux6218ux7b56ux7565}
+
+根据``反对幂指三''的原则，考研中最常考的题型可以分为以下三类：
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+\textbf{题型特征} & \textbf{选取策略} & \textbf{举例} &
+\textbf{实战结果预测} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{``反对'' \(\times\)``幂''} (含对数或反三角) & \textbf{\(u\)=
+对数 / 反三角} \(dv\)= 幂函数 \(dx\) & \(\int x \ln x dx\)
+\(\int x \arctan x dx\) &
+求导后，对数或反三角函数会变成代数式，从而化简为一个纯代数积分。 \\
+\textbf{``幂'' \(\times\)``指三''} (多项式乘指数或三角) & \textbf{\(u\)=
+幂函数} \(dv\)= 指数 / 三角 \(dx\) & \(\int x^2 e^x dx\)
+\(\int x \sin x dx\) & 多项式每次求导都会降次。若是
+\(x^2\)，需要\textbf{连用两次}分部积分，直到多项式降为常数。 \\
+\textbf{``指'' \(\times\)``三''} (指数乘三角) & \textbf{谁做
+\(u\)都可以} (通常习惯令 \(u=e^x\)) & \(\int e^x \sin x dx\) &
+这是\textbf{``循环积分''}。连用两次分部积分后，等式右边会再次出现与原题目完全一样的积分式。此时只需像解方程一样把它移项合并即可求出答案。 \\
+\end{longtable}
+}
+
+\paragraph{（二）三类可积函数}\label{ux4e8cuxff09ux4e09ux7c7bux53efux79efux51fdux6570}
+
+\subparagraph{第一类：有理函数的积分}\label{ux7b2cux4e00ux7c7bux6709ux7406ux51fdux6570ux7684ux79efux5206}
+
+\textbf{特征：} 被积函数是两个多项式的商，假分式，即
+\(R(x) = \frac{P(x)}{Q(x)}\)。
+
+\textbf{核心思想：化整为零（部分分式展开法）。}
+
+\begin{itemize}
+\item
+  \textbf{步骤 1：化为真分式。} 如果分子最高次幂
+  \(\ge\)分母最高次幂（假分式），必须先做多项式长除法，分离出一个多项式和一个真分式。
+\item
+  \textbf{步骤 2：分母因式分解。} 将分母分解为一次因式
+  \((x-a)\)和二次不可约因式 \((x^2+px+q)\)的乘积。
+\item
+  \textbf{步骤 3：拆分部分分式（重点！）。} * 遇到单根 \((x-a)\)，拆出
+  \(\frac{A}{x-a}\)。
+
+  \begin{itemize}
+  \item
+    遇到重根 \((x-a)^k\)，拆出
+    \(\frac{A_1}{x-a} + \frac{A_2}{(x-a)^2} + \dots + \frac{A_k}{(x-a)^k}\)。
+  \item
+    遇到二次不可约因式 \((x^2+px+q)\)，拆出 \(\frac{Bx+C}{x^2+px+q}\)。
+  \end{itemize}
+\item
+  \textbf{技巧提速：} 对于分母都是不重复一次因式的情况（如
+  \(\frac{1}{(x-1)(x-2)}\)），强烈推荐使用\textbf{``留数法''（也叫遮盖法）}口算待定系数
+  \(A, B\)，千万别去解方程组，太浪费时间。
+\end{itemize}
+
+\subparagraph{第二类：三角函数有理式的积分}\label{ux7b2cux4e8cux7c7bux4e09ux89d2ux51fdux6570ux6709ux7406ux5f0fux7684ux79efux5206}
+
+\textbf{特征：} 被积函数由
+\(\sin x, \cos x\)及常数经过有限次四则运算构成，记作
+\(R(\sin x, \cos x)\)。
+
+\textbf{核心思想：利用代换将其转化为第一类（有理函数）积分。}
+
+\begin{itemize}
+\item
+  \textbf{终极武器：万能代换。} 令
+  \(t = \tan \frac{x}{2}\)，则有固定公式：
+
+  \(\sin x = \frac{2t}{1+t^2}\)， \(\cos x = \frac{1-t^2}{1+t^2}\)，
+  \(dx = \frac{2}{1+t^2} dt\)
+
+  \emph{⚠️
+  警告：万能代换虽然``万能''，但计算量极大，在考场上属于\textbf{走投无路时的保底手段}。}
+\item
+  \textbf{高分首选：对称性代换（凑微分的进阶版）。}
+
+  \begin{itemize}
+  \item
+    若 \(R(-\sin x, \cos x) = -R(\sin x, \cos x)\)，即对
+    \(\sin x\)是奇函数，提一个 \(\sin x\)出来凑微分：\(u = \cos x\)。
+  \item
+    若 \(R(\sin x, -\cos x) = -R(\sin x, \cos x)\)，对
+    \(\cos x\)是奇函数，提一个 \(\cos x\)出来：\(u = \sin x\)。
+  \item
+    若 \(R(-\sin x, -\cos x) = R(\sin x, \cos x)\)，对
+    \(\sin x, \cos x\)同号，令 \(u = \tan x\)。
+  \end{itemize}
+\end{itemize}
+
+\subparagraph{第三类：简单无理函数的积分}\label{ux7b2cux4e09ux7c7bux7b80ux5355ux65e0ux7406ux51fdux6570ux7684ux79efux5206}
+
+\textbf{特征：} 被积函数含有 \(\sqrt[n]{ax+b}\)或
+\(\sqrt[n]{\frac{ax+b}{cx+d}}\)这类一次分式的方根。
+
+\textbf{核心思想：令整个根式为 \(t\)，强行消除根号（根式代换）。}
+
+这就是我们之前在第二类换元法里练习过的（比如你之前做对的含有
+\(\sqrt{1-x}\)的那道题）。
+
+\begin{itemize}
+\item
+  \textbf{步骤：} 令 \(t = \sqrt[n]{\frac{ax+b}{cx+d}}\)，反解出
+  \(x = \varphi(t)\)，求出
+  \(dx = \varphi'(t)dt\)。代入原式后，根号彻底消失，问题再次转化为\textbf{第一类（有理函数）积分}。
+\end{itemize}
+
+\end{document}

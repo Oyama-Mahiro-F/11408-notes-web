@@ -1,21 +1,29 @@
 site_name: 2026考研笔记资料库
 site_description: 11408及公共课复习知识库
-site_author: Your Name
+site_author: Oyama Mahiro
 
-# 核心配置：指定你的现有文件夹为文档源目录
-docs_dir: '考研'
-site_dir: 'site_build' # 最终打包生成的网页文件会放在这里，不会污染你的笔记
+docs_dir: 考研
+site_dir: 考研-site
+
+exclude_docs: |
+  .git/
+  .claude/
+  .stfolder/
+  site/
+  mkdocs.yml
+  requirements.txt
+  **/*.pdf
+  **/【课件】/**
 
 theme:
   name: material
   language: zh
   features:
-    - navigation.tabs        # 开启顶部一级导航（如 408、数学等）
-    - navigation.expand      # 默认展开左侧目录树
-    - navigation.top         # 开启回到顶部按钮
-    - search.suggest         # 开启搜索建议
+    - navigation.tabs
+    - navigation.expand
+    - navigation.top
+    - search.suggest
   palette:
-    # 默认使用日间模式，提供切换深色模式的按钮
     - scheme: default
       primary: indigo
       toggle:
@@ -27,17 +35,16 @@ theme:
         icon: material/brightness-4
         name: 切换至浅色模式
 
-# Markdown 语法扩展
 markdown_extensions:
   - meta
   - toc:
-      permalink: true        # 标题右侧生成锚点链接
-  - md_in_html               # 允许在 Markdown 中混合编写 HTML/CSS（解决你复杂的图片排版）
-  - pymdownx.superfences     # 支持更强大的代码块语法
-  - pymdownx.details         # 支持折叠块
-  - pymdownx.arithmatex:     # 开启 LaTeX 数学公式支持 (高数必备)
+      permalink: true
+  - md_in_html
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.arithmatex:
       generic: true
+  - sane_lists
 
-# 加载数学公式渲染引擎
 extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js
