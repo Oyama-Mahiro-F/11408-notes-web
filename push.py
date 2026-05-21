@@ -17,16 +17,22 @@ def run(cmd, cwd=ROOT):
 def main():
     print('===== 考研笔记推送 =====')
 
-    # 1. Copy HTML files
+    # 1. Copy HTML files from all subjects
     print('[1/4] 复制 HTML...')
-    for sub in ['数学/高数', '数学/线性代数']:
+    subjects = [
+        '数学/高数', '数学/线性代数',
+        '408/操作系统', '408/数据结构', '408/计算机组成原理', '408/计算机网络',
+        '英语', '政治',
+    ]
+    for sub in subjects:
         src_dir = os.path.join(SOURCE, sub)
+        if not os.path.isdir(src_dir):
+            continue
         dst_dir = os.path.join(SITE, sub)
         os.makedirs(dst_dir, exist_ok=True)
-        if os.path.isdir(src_dir):
-            for f in os.listdir(src_dir):
-                if f.endswith('.html'):
-                    shutil.copy2(os.path.join(src_dir, f), os.path.join(dst_dir, f))
+        for f in os.listdir(src_dir):
+            if f.endswith('.html'):
+                shutil.copy2(os.path.join(src_dir, f), os.path.join(dst_dir, f))
     print('  完成.')
 
     # 2. Generate nav

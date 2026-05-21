@@ -298,8 +298,82 @@ def add_nav(filepath):
 
     return True
 
+def gen_section_index(dirpath, title, children, depth):
+    """Generate an index.html for a section directory."""
+    home = '../' * depth + 'index.html' if depth > 0 else 'index.html'
+    up = '../' * depth if depth > 0 else ''
+    index_rel = os.path.relpath(dirpath, site_root).replace('\\', '/') + '/index.html'
+    if index_rel == './index.html':
+        index_rel = 'index.html'
+
+    tabs = (
+        f'<a class="tab" href="{home}">首页</a>'
+        f'<a class="tab{" active" if "408" in title else ""}" href="{up}408/">408</a>'
+        f'<a class="tab{" active" if "数学" in title else ""}" href="{home}">数学</a>'
+        f'<a class="tab{" active" if "英语" in title else ""}" href="{up}英语/">英语</a>'
+        f'<a class="tab{" active" if "政治" in title else ""}" href="{up}政治/">政治</a>'
+    )
+
+    raw_tree = '\n'.join(make_tree(NAV_TREE, index_rel))
+    cur_dir = os.path.dirname(index_rel) if index_rel != 'index.html' else ''
+    def mkrel(m):
+        t = m.group(1)
+        if t == '#' or t.startswith('http'): return f'href="{t}"'
+        if cur_dir:
+            r = os.path.relpath(t, cur_dir).replace('\\', '/')
+        else:
+            r = t
+        return f'href="{r}"'
+    nav = re.sub(r'href="([^"]+)"', mkrel, raw_tree)
+
+    items = []
+    for c in children:
+        has = 'children' in c and c['children']
+        href = c.get('href', '#')
+        if href != '#' and not href.startswith('http') and cur_dir:
+            href = os.path.relpath(href, cur_dir).replace('\\', '/')
+        tg = '<span class="nav-toggle">▼</span>' if has else ''
+        items.append(f'<div class="nav-section"><a class="nav-link l2" href="{href}">{tg}{c["title"]}</a></div>')
+
+    content = f'<h1 style="font-size:1.6rem;color:#333">{title}</h1>\n<p style="color:#666">选择要查看的章节：</p>\n<div style="margin-top:16px">\n' + '\n'.join(items) + '\n</div>'
+
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{title} - 2026考研笔记</title>
+</head>
+<body>
+{SHELL_CSS}
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+{tabs}
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+{nav}
+</aside>
+<main class="nav-content">
+{content}
+</main>
+<aside class="nav-toc"></aside>
+</div>
+</div>
+{SHELL_JS}
+</body>
+</html>"""
+
+    with open(os.path.join(dirpath, 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(html)
+    return True
+
 # Process
 site_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'site')
+site_root = site_dir
 files = glob.glob(os.path.join(site_dir, '**/*.html'), recursive=True)
 files = [f for f in files if 'mkdocs' not in f and os.path.basename(f) != 'index.html']
 
@@ -310,4 +384,22 @@ for f in sorted(files):
     if add_nav(f):
         count += 1
 
-print(f'\nDone. Added nav shell to {count} files.')
+# Generate section index pages
+print('\nGenerating section index pages...')
+sections = [
+    ('408', '408 计算机专业基础', NAV_TREE[0]['children']),
+    ('英语', '英语', NAV_TREE[2]['children']),
+    ('政治', '政治', NAV_TREE[3]['children']),
+    ('408/操作系统', '408 > 操作系统', NAV_TREE[0]['children'][0]['children']),
+    ('408/数据结构', '408 > 数据结构', NAV_TREE[0]['children'][1]['children']),
+    ('408/计算机组成原理', '408 > 计算机组成原理', NAV_TREE[0]['children'][2]['children']),
+    ('408/计算机网络', '408 > 计算机网络', NAV_TREE[0]['children'][3]['children']),
+]
+for dirpath, title, children in sections:
+    full_dir = os.path.join(site_dir, dirpath)
+    os.makedirs(full_dir, exist_ok=True)
+    depth = dirpath.count('/')
+    gen_section_index(full_dir, title, children, depth)
+    print(f'  Created: {dirpath}/index.html')
+
+print(f'\nDone. Added nav shell to {count} files + {len(sections)} index pages.')
