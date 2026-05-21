@@ -406,6 +406,12 @@ for d in all_dirs:
         prefix = '/'.join(parts[:i+1])
         sections_to_generate.add(prefix)
 
+# Also ensure top-level section directories always get an index
+for d in os.listdir(site_dir):
+    full = os.path.join(site_dir, d)
+    if os.path.isdir(full) and not d.startswith('.') and d != 'assets':
+        sections_to_generate.add(d)
+
 for dirpath in sorted(sections_to_generate):
     full_dir = os.path.join(site_dir, dirpath)
     os.makedirs(full_dir, exist_ok=True)
