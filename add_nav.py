@@ -217,10 +217,10 @@ def add_nav(filepath):
     up = '../' * depth if depth > 0 else ''
     tabs = (
         f'<a class="tab" href="{home_base}">首页</a>'
-        f'<a class="tab" href="{up}408/">408</a>'
-        f'<a class="tab{" active" if active_tab == "数学" else ""}" href="{home_base}">数学</a>'
-        f'<a class="tab" href="{up}英语/">英语</a>'
-        f'<a class="tab" href="{up}政治/">政治</a>'
+        f'<a class="tab{" active" if active_tab == "408" else ""}" href="{up}408/">408</a>'
+        f'<a class="tab{" active" if active_tab == "数学" else ""}" href="{up}数学/">数学</a>'
+        f'<a class="tab{" active" if active_tab == "英语" else ""}" href="{up}英语/">英语</a>'
+        f'<a class="tab{" active" if active_tab == "政治" else ""}" href="{up}政治/">政治</a>'
     )
 
     # Left nav tree - make all hrefs relative to current page's directory
@@ -310,7 +310,7 @@ def gen_section_index(dirpath, title, children, depth):
     tabs = (
         f'<a class="tab" href="{home}">首页</a>'
         f'<a class="tab{" active" if "408" in title else ""}" href="{up}408/">408</a>'
-        f'<a class="tab{" active" if "数学" in title else ""}" href="{home}">数学</a>'
+        f'<a class="tab{" active" if "数学" in title else ""}" href="{up}数学/">数学</a>'
         f'<a class="tab{" active" if "英语" in title else ""}" href="{up}英语/">英语</a>'
         f'<a class="tab{" active" if "政治" in title else ""}" href="{up}政治/">政治</a>'
     )
@@ -400,23 +400,21 @@ for section in nav_tree_auto:
         # Top-level section (e.g., '408', '数学', '英语', '政治')
         full_dir = os.path.join(site_dir, dirpath)
         os.makedirs(full_dir, exist_ok=True)
-        if not os.path.exists(os.path.join(full_dir, 'index.html')):
-            depth = len(dirpath.split('/'))
-            children = [c for c in section['children']]
-            gen_section_index(full_dir, section['title'], children, depth)
-            print(f'  Created: {dirpath}/index.html')
-            idx_count += 1
+        depth = len(dirpath.split('/'))
+        children = [c for c in section['children']]
+        gen_section_index(full_dir, section['title'], children, depth)
+        print(f'  Created: {dirpath}/index.html')
+        idx_count += 1
         # Also generate sub-section index pages
         for sub in section.get('children', []):
             if 'children' in sub:
                 subdir = f'{dirpath}/{sub["title"]}'
                 full_sub = os.path.join(site_dir, subdir)
                 os.makedirs(full_sub, exist_ok=True)
-                if not os.path.exists(os.path.join(full_sub, 'index.html')):
-                    depth = len(subdir.split('/'))
-                    gen_section_index(full_sub, f'{section["title"]} > {sub["title"]}', sub['children'], depth)
-                    print(f'  Created: {subdir}/index.html')
-                    idx_count += 1
+                depth = len(subdir.split('/'))
+                gen_section_index(full_sub, f'{section["title"]} > {sub["title"]}', sub['children'], depth)
+                print(f'  Created: {subdir}/index.html')
+                idx_count += 1
 
 # Generate main index page
 def gen_main_index(nav_tree):
