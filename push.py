@@ -6,7 +6,8 @@ SOURCE = os.path.join(ROOT, '考研')
 
 def run(cmd, cwd=ROOT):
     print(f'  $ {cmd}')
-    r = subprocess.run(cmd, shell=True, cwd=cwd, capture_output=True, text=True)
+    r = subprocess.run(cmd, shell=True, cwd=cwd, capture_output=True,
+                       encoding='utf-8', errors='replace')
     if r.returncode != 0:
         err = (r.stderr or '').strip()
         out = (r.stdout or '').strip()
@@ -36,7 +37,8 @@ def main():
 
     # 2. Generate nav and index pages
     print('[2/4] 生成导航...')
-    r = subprocess.run([sys.executable, 'add_nav.py'], cwd=ROOT, capture_output=True, text=True)
+    r = subprocess.run([sys.executable, 'add_nav.py'], cwd=ROOT,
+                       capture_output=True, encoding='utf-8', errors='replace')
     if r.returncode != 0:
         print(f'  失败: {r.stderr}')
         input('按回车退出...')
@@ -46,9 +48,11 @@ def main():
     # 3. Git
     print('[3/4] 提交...')
     for path in ['site/', '考研/', 'add_nav.py']:
-        subprocess.run(f'git add "{path}"', shell=True, cwd=ROOT, capture_output=True)
+        subprocess.run(f'git add "{path}"', shell=True, cwd=ROOT,
+                       capture_output=True, encoding='utf-8', errors='replace')
 
-    r = subprocess.run('git diff --cached --quiet', shell=True, cwd=ROOT)
+    r = subprocess.run('git diff --cached --quiet', shell=True, cwd=ROOT,
+                       encoding='utf-8', errors='replace')
     if r.returncode == 0:
         print('  没有新变更，跳过推送。')
         input('按回车退出...')
