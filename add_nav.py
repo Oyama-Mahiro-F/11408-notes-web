@@ -41,7 +41,7 @@ def build_nav_tree(site_dir):
             result.append(entry)
         # Add leaf files
         if '_files' in d:
-            for title, href in sorted(d['_files'], key=lambda x: x[1]):
+            for title, href in sorted(d['_files'], key=lambda x: natural_sort_key(x[1])):
                 if title not in [e['title'] for e in result]:
                     result.append({'title': title, 'href': href})
         return result
@@ -130,6 +130,11 @@ document.addEventListener('DOMContentLoaded', function(){
 """
 
 # ── Helpers ─────────────────────────────────────────────────────────
+
+def natural_sort_key(name_or_href):
+    """Sort key: 第1章, 第2章, ..., 第10章 in numeric order."""
+    m = re.search(r'第(\d+)', name_or_href.split('/')[-1] if '/' in name_or_href else name_or_href)
+    return (0, int(m.group(1))) if m else (1, name_or_href)
 
 def make_tree(nodes, current_path, level=1):
     lines = []
@@ -428,7 +433,7 @@ for dirpath in sorted(sections_to_generate):
     child_dir = os.path.join(site_dir, dirpath)
     if os.path.isdir(child_dir):
         # Subdirectories
-        for name in sorted(os.listdir(child_dir)):
+        for name in sorted(os.listdir(child_dir), key=natural_sort_key):
             sub_path = os.path.join(child_dir, name)
             if os.path.isdir(sub_path) and not name.startswith('.') and name != 'assets':
                 # Check if this subdir has any html files (recursively)
