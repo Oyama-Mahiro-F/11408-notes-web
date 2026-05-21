@@ -774,9 +774,12 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -854,53 +857,90 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<a class="toc-h3" href="#一-矩阵的抽象定义">一、 矩阵的抽象定义</a>
+<div class="toc-section">
+<a class="toc-h3" href="#一-矩阵的抽象定义"><span class="toc-toggle">▼</span>一、 矩阵的抽象定义</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-一般矩阵的定义">1. 一般矩阵的定义</a>
 <a class="toc-h4" href="#2-特殊矩阵">2. 特殊矩阵</a>
-<a class="toc-h3" href="#二-矩阵的核心运算">二、 矩阵的核心运算</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#二-矩阵的核心运算"><span class="toc-toggle">▼</span>二、 矩阵的核心运算</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-矩阵的加法">1. 矩阵的加法</a>
 <a class="toc-h4" href="#2-数乘矩阵">2. 数乘矩阵</a>
 <a class="toc-h4" href="#3-矩阵的乘法核心与难点）">3. 矩阵的乘法（核心与难点）</a>
 <a class="toc-h4" href="#4-矩阵的转置">4. 矩阵的转置</a>
 <a class="toc-h4" href="#5-方阵的幂">5. 方阵的幂</a>
-<a class="toc-h3" href="#三分块矩阵">三、分块矩阵</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#三分块矩阵"><span class="toc-toggle">▼</span>三、分块矩阵</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-分块矩阵的定义与表示">1. 分块矩阵的定义与表示</a>
 <a class="toc-h4" href="#2-分块矩阵的运算规则">2. 分块矩阵的运算规则</a>
 <a class="toc-h4" href="#3-特殊分块矩阵及其幂运算">3. 特殊分块矩阵及其幂运算</a>
 <a class="toc-h4" href="#4-考点总结为什么要使用分块">4. 考点总结：为什么要使用分块？</a>
-<a class="toc-h3" href="#四伴随矩阵">四、伴随矩阵</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#四伴随矩阵"><span class="toc-toggle">▼</span>四、伴随矩阵</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-伴随矩阵的抽象定义与易错展开">1. 伴随矩阵的抽象定义与易错展开</a>
 <a class="toc-h4" href="#2-伴随矩阵的核心万能定理">2. 伴随矩阵的核心万能定理</a>
 <a class="toc-h4" href="#3-高频考试性质速查表">3. 高频考试性质速查表</a>
 <a class="toc-h4" href="#4-\na\n与-\na∗\n的秩的关系-rank-relationship">4. AA与 A∗A^*的秩的关系 (Rank Relationship)</a>
-<a class="toc-h3" href="#五可逆矩阵-invertible-matrix">五、可逆矩阵 (Invertible Matrix)</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#五可逆矩阵-invertible-matrix"><span class="toc-toggle">▼</span>五、可逆矩阵 (Invertible Matrix)</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-定义">1. 定义</a>
 <a class="toc-h4" href="#2-矩阵可逆的充要条件">2. 矩阵可逆的充要条件</a>
 <a class="toc-h4" href="#3-逆矩阵的核心运算性质与易错点">3. 逆矩阵的核心运算性质与易错点</a>
 <a class="toc-h4" href="#4-逆矩阵的常规求法">4. 逆矩阵的常规求法</a>
-<a class="toc-h3" href="#六初等变换与初等矩阵">六、初等变换与初等矩阵</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#六初等变换与初等矩阵"><span class="toc-toggle">▼</span>六、初等变换与初等矩阵</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-三大初等变换">1. 三大初等变换</a>
 <a class="toc-h4" href="#2-初等矩阵的定义与形态">2. 初等矩阵的定义与形态</a>
 <a class="toc-h4" href="#3-核心定理左行右列法则-left-row-right-column">3. 核心定理：“左行右列”法则 (Left-Row, Right-Column)</a>
 <a class="toc-h4" href="#4-初等矩阵的逆矩阵与性质速查">4. 初等矩阵的逆矩阵与性质速查</a>
 <a class="toc-h4" href="#5-矩阵等价-matrix-equivalence">5. 矩阵等价 (Matrix Equivalence)</a>
-<a class="toc-h3" href="#七矩阵的秩">七、矩阵的秩</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#七矩阵的秩"><span class="toc-toggle">▼</span>七、矩阵的秩</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1--\nk\n阶子式">1.  kk阶子式</a>
 <a class="toc-h4" href="#2-基于子式的矩阵的秩的定义">2. 基于子式的“矩阵的秩”的定义</a>
 <a class="toc-h4" href="#3-矩阵的秩的性质">3. 矩阵的秩的性质</a>
 <a class="toc-h4" href="#4-核心定理与推论">4. 核心定理与推论</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
 
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {

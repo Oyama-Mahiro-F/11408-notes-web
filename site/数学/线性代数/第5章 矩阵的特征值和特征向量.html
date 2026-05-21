@@ -774,9 +774,12 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -853,29 +856,50 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<a class="toc-h3" href="#一定义">一、定义</a>
+<div class="toc-section">
+<a class="toc-h3" href="#一定义"><span class="toc-toggle">▼</span>一、定义</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-严格代数定义">1. 严格代数定义</a>
 <a class="toc-h4" href="#2-概念解析与常见陷阱">2. 概念解析与常见陷阱</a>
 <a class="toc-h4" href="#3-概念的等价转换方程组视角）">3. 概念的等价转换（方程组视角）</a>
-<a class="toc-h3" href="#二求解方法">二、求解方法</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#二求解方法"><span class="toc-toggle">▼</span>二、求解方法</a>
+<div class="toc-children">
 <a class="toc-h4" href="#第一步求解特征方程求特征值-\nλ\n）">第一步：求解特征方程（求特征值 \lambda）</a>
 <a class="toc-h4" href="#第二步求解齐次线性方程组求特征向量-\nx\n）">第二步：求解齐次线性方程组（求特征向量 xx）</a>
-<a class="toc-h3" href="#三性质">三、性质</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#三性质"><span class="toc-toggle">▼</span>三、性质</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-特征值与矩阵元素的关系">1. 特征值与矩阵元素的关系</a>
 <a class="toc-h4" href="#2-特征向量的线性无关性">2. 特征向量的线性无关性</a>
 <a class="toc-h4" href="#3-矩阵多项式与特征值的传递">3. 矩阵多项式与特征值的传递</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
 
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {

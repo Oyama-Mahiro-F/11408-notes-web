@@ -58,9 +58,12 @@ SHELL_CSS = """
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -79,12 +82,21 @@ SHELL_CSS = """
 SHELL_JS = """
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {
@@ -148,12 +160,30 @@ def add_nav(filepath):
 
     rel_path = os.path.relpath(filepath, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'site')).replace('\\', '/')
 
-    # Extract headings for right TOC
+    # Extract headings for right TOC (build hierarchical tree)
     headings = extract_headings(html)
-    toc_items = []
+    # Build tree: h3 items contain h4 children
+    toc_tree = []
+    current_h3 = None
     for level, hid, text in headings:
-        cls = 'toc-h3' if level == 3 else 'toc-h4'
-        toc_items.append(f'<a class="{cls}" href="#{hid}">{text}</a>')
+        if level == 3:
+            current_h3 = {'hid': hid, 'text': text, 'children': []}
+            toc_tree.append(current_h3)
+        elif level == 4 and current_h3 is not None:
+            current_h3['children'].append({'hid': hid, 'text': text})
+
+    toc_items = []
+    for h3 in toc_tree:
+        has_kids = len(h3['children']) > 0
+        toggle = '<span class="toc-toggle">▼</span>' if has_kids else ''
+        toc_items.append(f'<div class="toc-section">')
+        toc_items.append(f'<a class="toc-h3" href="#{h3["hid"]}">{toggle}{h3["text"]}</a>')
+        if has_kids:
+            toc_items.append('<div class="toc-children">')
+            for h4 in h3['children']:
+                toc_items.append(f'<a class="toc-h4" href="#{h4["hid"]}">{h4["text"]}</a>')
+            toc_items.append('</div>')
+        toc_items.append('</div>')
     toc_html = '<div class="toc-label">目录</div>\n' + '\n'.join(toc_items) if toc_items else ''
 
     # Header tabs

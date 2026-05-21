@@ -774,9 +774,12 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -853,35 +856,60 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<a class="toc-h3" href="#一）向量的线性组合与线性表示向量组等价">（一）向量的线性组合与线性表示，向量组等价</a>
+<div class="toc-section">
+<a class="toc-h3" href="#一）向量的线性组合与线性表示向量组等价"><span class="toc-toggle">▼</span>（一）向量的线性组合与线性表示，向量组等价</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-线性组合-linear-combination">一、 线性组合 (Linear Combination)</a>
 <a class="toc-h4" href="#二-线性表示-linear-representation">二、 线性表示 (Linear Representation)</a>
 <a class="toc-h4" href="#三-向量组等价-equivalence-of-vector-groups">三、 向量组等价 (Equivalence of Vector Groups)</a>
-<a class="toc-h3" href="#二）线性相关和线性无关">（二）线性相关和线性无关</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#二）线性相关和线性无关"><span class="toc-toggle">▼</span>（二）线性相关和线性无关</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-核心定义从零向量的表示出发">一、 核心定义：从“零向量的表示”出发</a>
 <a class="toc-h4" href="#二-核心转化方程组与矩阵的视角">二、 核心转化：方程组与矩阵的视角</a>
 <a class="toc-h4" href="#三-几何直观降维与共面">三、 几何直观：降维与共面</a>
 <a class="toc-h4" href="#四-几个高频使用的核心结论">四、 几个高频使用的核心结论</a>
-<a class="toc-h3" href="#三）向量组的极大线性无关组与向量组的秩">（三）向量组的极大线性无关组与向量组的秩</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#三）向量组的极大线性无关组与向量组的秩"><span class="toc-toggle">▼</span>（三）向量组的极大线性无关组与向量组的秩</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-极大线性无关组-maximal-linearly-independent-group">一、 极大线性无关组 (Maximal Linearly Independent Group)</a>
 <a class="toc-h4" href="#二-向量组的秩-rank-of-a-vector-group">二、 向量组的秩 (Rank of a Vector Group)</a>
 <a class="toc-h4" href="#三如何计算秩并求极大线性无关组">三、如何计算秩并求极大线性无关组？</a>
-<a class="toc-h3" href="#四）向量空间">（四）向量空间</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#四）向量空间"><span class="toc-toggle">▼</span>（四）向量空间</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一空间基底维数与坐标">一、空间、基底、维数与坐标</a>
 <a class="toc-h4" href="#2-基变换与坐标变换--------两套语言的翻译官">2. 基变换与坐标变换 —— “两套语言的翻译官”</a>
 <a class="toc-h4" href="#3-内积与施密特-schmidt-正交化--------打造完美的直角坐标系">3. 内积与施密特 (Schmidt) 正交化 —— “打造完美的直角坐标系”</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
 
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {

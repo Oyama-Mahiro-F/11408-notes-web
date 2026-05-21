@@ -774,9 +774,12 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -853,21 +856,39 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<a class="toc-h3" href="#一）数项级数的概念和性质">（一）数项级数的概念和性质</a>
+<div class="toc-section">
+<a class="toc-h3" href="#一）数项级数的概念和性质"><span class="toc-toggle">▼</span>（一）数项级数的概念和性质</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-数项级数的核心概念">一、 数项级数的核心概念</a>
 <a class="toc-h4" href="#二-数项级数的基本性质">二、 数项级数的基本性质</a>
-<a class="toc-h3" href="#二）正项级数及其敛散性判别">（二）正项级数及其敛散性判别</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#二）正项级数及其敛散性判别"><span class="toc-toggle">▼</span>（二）正项级数及其敛散性判别</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-什么是正项级数及其基本定理">一、 什么是正项级数及其基本定理</a>
 <a class="toc-h4" href="#二-四大核心判别法与决策">二、 四大核心判别法与决策</a>
-<a class="toc-h3" href="#三）交错级数及其判别法">（三）交错级数及其判别法</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#三）交错级数及其判别法"><span class="toc-toggle">▼</span>（三）交错级数及其判别法</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一什么是交错级数">一、什么是交错级数？</a>
 <a class="toc-h4" href="#二莱布尼茨判别法-leibniz-test">二、莱布尼茨判别法 (Leibniz Test)</a>
 <a class="toc-h4" href="#三-三个致命陷阱">三、 三个致命陷阱</a>
-<a class="toc-h3" href="#四）任意项级数">（四）任意项级数</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#四）任意项级数"><span class="toc-toggle">▼</span>（四）任意项级数</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-绝对收敛-vs-条件收敛收敛也是分等级的">一、 绝对收敛 vs 条件收敛：收敛也是分等级的</a>
 <a class="toc-h4" href="#二-交错级数与莱布尼茨判别法">二、 交错级数与莱布尼茨判别法</a>
 <a class="toc-h4" href="#三-做题思路">三、 做题思路</a>
-<a class="toc-h3" href="#五）幂级数">（五）幂级数</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#五）幂级数"><span class="toc-toggle">▼</span>（五）幂级数</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-幂级数的定义">一、 幂级数的定义</a>
 <a class="toc-h4" href="#二-阿贝尔定理-abels-theorem">二、 阿贝尔定理 (Abel&#39;s Theorem)</a>
 <a class="toc-h4" href="#三-收敛半径收敛区间与收敛域">三、 收敛半径、收敛区间与收敛域</a>
@@ -875,23 +896,38 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#高频考点缺项幂级数的陷阱">高频考点：缺项幂级数的陷阱</a>
 <a class="toc-h4" href="#五将函数展开成幂级数">五、将函数展开成幂级数</a>
 <a class="toc-h4" href="#六幂级数求和函数">六、幂级数求和函数</a>
-<a class="toc-h3" href="#六）傅里叶级数">（六）傅里叶级数</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#六）傅里叶级数"><span class="toc-toggle">▼</span>（六）傅里叶级数</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-核心概念什么是傅里叶级数">一、 核心概念：什么是傅里叶级数？</a>
 <a class="toc-h4" href="#二-计算公式">二、 计算公式</a>
 <a class="toc-h4" href="#三-两个快速计算的方法">三、 两个快速计算的方法</a>
 <a class="toc-h4" href="#四-半区间展开考研常考套路）">四、 半区间展开（考研常考套路）</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
 
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {

@@ -774,9 +774,12 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -859,7 +862,9 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<a class="toc-h3" href="#第一章-函数的极限与连续">第一章 函数的极限与连续</a>
+<div class="toc-section">
+<a class="toc-h3" href="#第一章-函数的极限与连续"><span class="toc-toggle">▼</span>第一章 函数的极限与连续</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一极限定义">一、极限定义</a>
 <a class="toc-h4" href="#二极限性质">二、极限性质</a>
 <a class="toc-h4" href="#三极限运算法则">三、极限运算法则</a>
@@ -868,7 +873,11 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#六无穷小量">六、无穷小量</a>
 <a class="toc-h4" href="#七连续性与间断点">七、连续性与间断点</a>
 <a class="toc-h4" href="#八闭区间上连续函数性质">八、闭区间上连续函数性质</a>
-<a class="toc-h3" href="#第二章-一元函数微分学">第二章 一元函数微分学</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第二章-一元函数微分学"><span class="toc-toggle">▼</span>第二章 一元函数微分学</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一导数定义">一、导数定义</a>
 <a class="toc-h4" href="#二基本求导公式">二、基本求导公式</a>
 <a class="toc-h4" href="#三求导法则">三、求导法则</a>
@@ -880,27 +889,47 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#九凹凸性与拐点">九、凹凸性与拐点</a>
 <a class="toc-h4" href="#十渐近线">十、渐近线</a>
 <a class="toc-h4" href="#十一曲率">十一、曲率</a>
-<a class="toc-h3" href="#第三章-不定积分">第三章 不定积分</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第三章-不定积分"><span class="toc-toggle">▼</span>第三章 不定积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一基本概念">一、基本概念</a>
 <a class="toc-h4" href="#二基本积分公式">二、基本积分公式</a>
 <a class="toc-h4" href="#三换元法">三、换元法</a>
 <a class="toc-h4" href="#四分部积分法">四、分部积分法</a>
 <a class="toc-h4" href="#五有理函数积分">五、有理函数积分</a>
-<a class="toc-h3" href="#第四章-定积分">第四章 定积分</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第四章-定积分"><span class="toc-toggle">▼</span>第四章 定积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一定义与性质-1">一、定义与性质</a>
 <a class="toc-h4" href="#二微积分基本定理">二、微积分基本定理</a>
 <a class="toc-h4" href="#三华里士公式">三、华里士公式</a>
 <a class="toc-h4" href="#四定积分换元法">四、定积分换元法</a>
 <a class="toc-h4" href="#五反常积分">五、反常积分</a>
 <a class="toc-h4" href="#六几何应用-1">六、几何应用</a>
-<a class="toc-h3" href="#第五章-微分方程">第五章 微分方程</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第五章-微分方程"><span class="toc-toggle">▼</span>第五章 微分方程</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一一阶微分方程">一、一阶微分方程</a>
 <a class="toc-h4" href="#二可降阶方程">二、可降阶方程</a>
 <a class="toc-h4" href="#三高阶常系数线性方程">三、高阶常系数线性方程</a>
 <a class="toc-h4" href="#四线性微分方程解的结构">四、线性微分方程解的结构</a>
-<a class="toc-h3" href="#第六章-向量代数与空间解析几何">第六章 向量代数与空间解析几何</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第六章-向量代数与空间解析几何"><span class="toc-toggle">▼</span>第六章 向量代数与空间解析几何</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一向量运算">一、向量运算</a>
-<a class="toc-h3" href="#第七章-多元函数微分学">第七章 多元函数微分学</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第七章-多元函数微分学"><span class="toc-toggle">▼</span>第七章 多元函数微分学</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一偏导数">一、偏导数</a>
 <a class="toc-h4" href="#二全微分">二、全微分</a>
 <a class="toc-h4" href="#三复合函数求导">三、复合函数求导</a>
@@ -908,43 +937,74 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#五极值与最值">五、极值与最值</a>
 <a class="toc-h4" href="#六几何应用-2">六、几何应用</a>
 <a class="toc-h4" href="#七方向导数与梯度">七、方向导数与梯度</a>
-<a class="toc-h3" href="#第八章-二重积分">第八章 二重积分</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第八章-二重积分"><span class="toc-toggle">▼</span>第八章 二重积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一定义与性质-2">一、定义与性质</a>
 <a class="toc-h4" href="#二计算方法-1">二、计算方法</a>
 <a class="toc-h4" href="#三对称性-1">三、对称性</a>
-<a class="toc-h3" href="#第九章-三重积分">第九章 三重积分</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第九章-三重积分"><span class="toc-toggle">▼</span>第九章 三重积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一定义">一、定义</a>
 <a class="toc-h4" href="#二计算方法-2">二、计算方法</a>
 <a class="toc-h4" href="#三对称性-2">三、对称性</a>
-<a class="toc-h3" href="#第十章-无穷级数">第十章 无穷级数</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第十章-无穷级数"><span class="toc-toggle">▼</span>第十章 无穷级数</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一数项级数">一、数项级数</a>
 <a class="toc-h4" href="#二正项级数判别法">二、正项级数判别法</a>
 <a class="toc-h4" href="#三交错级数">三、交错级数</a>
 <a class="toc-h4" href="#四绝对收敛与条件收敛">四、绝对收敛与条件收敛</a>
 <a class="toc-h4" href="#五幂级数">五、幂级数</a>
 <a class="toc-h4" href="#六傅里叶级数">六、傅里叶级数</a>
-<a class="toc-h3" href="#第11章-曲线积分">第11章 曲线积分</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第11章-曲线积分"><span class="toc-toggle">▼</span>第11章 曲线积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一第一类曲线积分对弧长）">一、第一类曲线积分（对弧长）</a>
 <a class="toc-h4" href="#二第二类曲线积分对坐标）">二、第二类曲线积分（对坐标）</a>
 <a class="toc-h4" href="#三格林公式">三、格林公式</a>
 <a class="toc-h4" href="#四积分与路径无关">四、积分与路径无关</a>
 <a class="toc-h4" href="#五斯托克斯公式">五、斯托克斯公式</a>
-<a class="toc-h3" href="#第12章-曲面积分">第12章 曲面积分</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#第12章-曲面积分"><span class="toc-toggle">▼</span>第12章 曲面积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一第一类曲面积分对面积）">一、第一类曲面积分（对面积）</a>
 <a class="toc-h4" href="#二第二类曲面积分对坐标）">二、第二类曲面积分（对坐标）</a>
 <a class="toc-h4" href="#三高斯公式">三、高斯公式</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
 
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {

@@ -774,9 +774,12 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -853,27 +856,48 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<a class="toc-h3" href="#一）第一类曲面积分">（一）第一类曲面积分</a>
+<div class="toc-section">
+<a class="toc-h3" href="#一）第一类曲面积分"><span class="toc-toggle">▼</span>（一）第一类曲面积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一概念">一、概念</a>
+</div>
+</div>
+<div class="toc-section">
 <a class="toc-h3" href="#二性质">二、性质</a>
+</div>
+<div class="toc-section">
 <a class="toc-h3" href="#三计算方法">三、计算方法</a>
-<a class="toc-h3" href="#二）第二类曲面积分">（二）第二类曲面积分</a>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#二）第二类曲面积分"><span class="toc-toggle">▼</span>（二）第二类曲面积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-概念什么是第二类曲面积分">一、 概念：什么是第二类曲面积分？</a>
 <a class="toc-h4" href="#二-性质方向决定一切">二、 性质：方向决定一切</a>
 <a class="toc-h4" href="#三-常规计算方法">三、 常规计算方法</a>
 <a class="toc-h4" href="#四高斯公式-------降维打击">四、高斯公式—— 降维打击</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
 
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {

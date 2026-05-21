@@ -774,9 +774,12 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -869,37 +872,62 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<a class="toc-h3" href="#一）线性方程组的三种形式">（一）线性方程组的三种形式</a>
+<div class="toc-section">
+<a class="toc-h3" href="#一）线性方程组的三种形式"><span class="toc-toggle">▼</span>（一）线性方程组的三种形式</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-一般形式代数形式）">1. 一般形式（代数形式）</a>
 <a class="toc-h4" href="#2-矩阵形式">2. 矩阵形式</a>
 <a class="toc-h4" href="#3-向量形式列向量的线性组合形式）">3. 向量形式（列向量的线性组合形式）</a>
-<a class="toc-h3" href="#二）齐次线性方程组">（二）齐次线性方程组</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#二）齐次线性方程组"><span class="toc-toggle">▼</span>（二）齐次线性方程组</a>
+<div class="toc-children">
 <a class="toc-h4" href="#1-齐次线性方程组的定义">1. 齐次线性方程组的定义</a>
 <a class="toc-h4" href="#2-克拉默法则">2. 克拉默法则</a>
 <a class="toc-h4" href="#3-解的判定一般情况）">3. 解的判定（一般情况）</a>
 <a class="toc-h4" href="#4-解的结构与基础解系">4. 解的结构与基础解系</a>
 <a class="toc-h4" href="#5-求解方法">5. 求解方法</a>
-<a class="toc-h3" href="#三）非齐次线性方程组">（三）非齐次线性方程组</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#三）非齐次线性方程组"><span class="toc-toggle">▼</span>（三）非齐次线性方程组</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一解的判定">一、解的判定</a>
 <a class="toc-h4" href="#二克拉默法则">二、克拉默法则</a>
 <a class="toc-h4" href="#三解的性质">三、解的性质</a>
 <a class="toc-h4" href="#四求解方法">四、求解方法</a>
-<a class="toc-h3" href="#四）公共解和通解">（四）公共解和通解</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#四）公共解和通解"><span class="toc-toggle">▼</span>（四）公共解和通解</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一定义">一、定义</a>
 <a class="toc-h4" href="#二求解公共解">二、求解公共解</a>
 <a class="toc-h4" href="#三同解的求法">三、同解的求法</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
 
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {

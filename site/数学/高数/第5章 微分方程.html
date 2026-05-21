@@ -774,9 +774,12 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -853,42 +856,75 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<a class="toc-h3" href="#一）微分方程相关概念">（一）微分方程相关概念</a>
+<div class="toc-section">
+<a class="toc-h3" href="#一）微分方程相关概念"><span class="toc-toggle">▼</span>（一）微分方程相关概念</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-核心要素与分类">一、 核心要素与分类</a>
 <a class="toc-h4" href="#二-解的家族">二、 “解”的家族</a>
 <a class="toc-h4" href="#三-附加条件与几何意义">三、 附加条件与几何意义</a>
-<a class="toc-h3" href="#二）一阶微分方程">（二）一阶微分方程</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#二）一阶微分方程"><span class="toc-toggle">▼</span>（二）一阶微分方程</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一变量可分离微分方程">一、变量可分离微分方程</a>
 <a class="toc-h4" href="#二齐次微分方程">二、齐次微分方程</a>
 <a class="toc-h4" href="#三一阶线性微分方程">三、一阶线性微分方程</a>
-<a class="toc-h3" href="#三）可降阶微分方程">（三）可降阶微分方程</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#三）可降阶微分方程"><span class="toc-toggle">▼</span>（三）可降阶微分方程</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-\nynfx\n型缺-\ny\n及低阶导数）">一、 y(n)=f(x)y^{(n)} = f(x)型（缺 yy及低阶导数）</a>
 <a class="toc-h4" href="#二-\nyfxy\n型缺-\ny\n）">二、 y″=f(x,y′)y'' = f(x, y')型（缺 yy）</a>
 <a class="toc-h4" href="#三-\nyfyy\n型缺-\nx\n）-------最易错点">三、 y″=f(y,y′)y'' = f(y, y')型（缺 xx）—— 最易错点</a>
 <a class="toc-h4" href="#四-经典实战演示">四、 经典实战演示</a>
-<a class="toc-h3" href="#四）线性微分方程解的性质">（四）线性微分方程解的性质</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#四）线性微分方程解的性质"><span class="toc-toggle">▼</span>（四）线性微分方程解的性质</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-齐次线性方程解的性质寻找基底）">一、 齐次线性方程解的性质（寻找“基底”）</a>
 <a class="toc-h4" href="#二-非齐次线性方程解的性质平移空间）">二、 非齐次线性方程解的性质（“平移”空间）</a>
-<a class="toc-h3" href="#五）高阶常系数齐次线性微分方程">（五）高阶常系数齐次线性微分方程</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#五）高阶常系数齐次线性微分方程"><span class="toc-toggle">▼</span>（五）高阶常系数齐次线性微分方程</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-核心映射法则必背表格）">一、 核心映射法则（必背表格）</a>
 <a class="toc-h4" href="#二-经典考研实战演示">二、 经典考研实战演示</a>
 <a class="toc-h4" href="#三-避坑与易错点">三、 避坑与易错点</a>
-<a class="toc-h3" href="#六）高阶常系数非齐次线性微分方程">（六）高阶常系数非齐次线性微分方程</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#六）高阶常系数非齐次线性微分方程"><span class="toc-toggle">▼</span>（六）高阶常系数非齐次线性微分方程</a>
+<div class="toc-children">
 <a class="toc-h4" href="#第一型多项式与指数函数相乘型">第一型：多项式与指数函数相乘型</a>
 <a class="toc-h4" href="#第二型包含三角函数的震荡型">第二型：包含三角函数的震荡型</a>
 <a class="toc-h4" href="#实战演示">实战演示</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
 
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {

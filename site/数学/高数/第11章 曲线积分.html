@@ -774,9 +774,12 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 .nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
 .nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
-.nav-toc a { display: block; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
 .nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
 .content .toc, #write > .toc, .toc { display: none !important; }
@@ -853,29 +856,46 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<a class="toc-h3" href="#一）第一类曲线积分">（一）第一类曲线积分</a>
+<div class="toc-section">
+<a class="toc-h3" href="#一）第一类曲线积分"><span class="toc-toggle">▼</span>（一）第一类曲线积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-第一类曲线积分的定义">一、 第一类曲线积分的定义</a>
 <a class="toc-h4" href="#二-第一类曲线积分的基本性质">二、 第一类曲线积分的基本性质</a>
 <a class="toc-h4" href="#三-进阶性质对称性与奇偶性">三、 进阶性质：对称性与奇偶性</a>
 <a class="toc-h4" href="#四-计算化简如何将-\nds\n转化为-\ndt\n或-\ndx\n">四、 计算化简：如何将 dsds转化为 dtdt或 dxdx？</a>
-<a class="toc-h3" href="#二）第二类曲线积分">（二）第二类曲线积分</a>
+</div>
+</div>
+<div class="toc-section">
+<a class="toc-h3" href="#二）第二类曲线积分"><span class="toc-toggle">▼</span>（二）第二类曲线积分</a>
+<div class="toc-children">
 <a class="toc-h4" href="#一-第二类曲线积分的定义与物理意义">一、 第二类曲线积分的定义与物理意义</a>
 <a class="toc-h4" href="#二-核心性质有向性与第一类最本质的区别）">二、 核心性质：有向性（与第一类最本质的区别）</a>
 <a class="toc-h4" href="#三-常规计算方法参数化">三、 常规计算方法：参数化</a>
 <a class="toc-h4" href="#四-格林公式-------化线为面">四、 格林公式—— 化线为面</a>
 <a class="toc-h4" href="#五斯托克斯公式">五、斯托克斯公式</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
 
 <script id="nav-shell-js">
 document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
   document.querySelectorAll('.nav-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
   if (hb && sb) {
