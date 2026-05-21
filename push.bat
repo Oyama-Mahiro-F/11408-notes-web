@@ -1,1 +1,3 @@
-python3 push.py
+@echo off
+python push.py
+pause
