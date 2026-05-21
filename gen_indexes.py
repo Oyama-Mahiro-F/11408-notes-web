@@ -49,7 +49,13 @@ def gen_index(dirpath):
     if not entries:
         return None
 
-    title = os.path.basename(dirpath)
+    # Build hierarchical title: "笔记 > 数学 > 高数"
+    rel = os.path.relpath(dirpath, DOCS).replace('\\', '/')
+    parts = rel.split('/')
+    if parts == ['.']:
+        title = '考研笔记'
+    else:
+        title = ' > '.join(parts)
     lines = [f'# {title}', '']
     for title, link, is_dir in entries:
         lines.append(f'- [{title}]({link})')
@@ -59,9 +65,11 @@ def gen_index(dirpath):
         f.write('\n'.join(lines) + '\n')
     return index_path
 
-# Process all directories
+# Process all directories (skip root - hand-crafted)
 for root, dirs, files in os.walk(DOCS):
     dirs[:] = [d for d in dirs if not d.startswith('.')]
+    if root == DOCS:
+        continue  # skip root, manually maintained
     if 'index.md' not in files:
         path = gen_index(root)
         if path:
