@@ -175,11 +175,12 @@ def add_nav(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         html = f.read()
 
-    # Remove any old shell
+    # Remove any old nav shell
     html = re.sub(r'<style id="nav-shell-css">.*?</style>', '', html, flags=re.DOTALL)
     html = re.sub(r'<script id="nav-shell-js">.*?</script>', '', html, flags=re.DOTALL)
-    html = re.sub(r'<!-- NAV_SHELL --.*?-- NAV_SHELL_END -->', '', html, flags=re.DOTALL)
-    html = re.sub(r'<div id="app-shell">.*?</div>\s*</body>', '</body>', html, flags=re.DOTALL)
+    html = re.sub(r'<!-- NAV_SHELL_START -->.*?<!-- NAV_SHELL_END -->', '', html, flags=re.DOTALL)
+    # Remove old app-shell div (match opening to its matching close before </body>)
+    html = re.sub(r'<div id="app-shell">.*?</div>\s*(?=</body>)', '', html, flags=re.DOTALL)
 
     rel_path = os.path.relpath(filepath, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'site')).replace('\\', '/')
 
