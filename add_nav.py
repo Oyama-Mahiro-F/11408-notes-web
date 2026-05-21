@@ -473,6 +473,7 @@ def gen_main_index():
   .subject-card .icon { font-size: 2.5rem; margin-bottom: 12px; }
   .subject-card .label { font-size: 1.3rem; font-weight: 700; }
   .subject-card .hint { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+  .countdown { margin: 16px 0 32px; font-size: 1.1rem; color: #e53935; font-weight: 600; }
   .footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 48px; }
 </style>
 </head>
@@ -480,6 +481,7 @@ def gen_main_index():
 <div class="container">
   <h1>2026考研笔记资料库</h1>
   <p class="subtitle">11408 及公共课复习笔记</p>
+  <p class="countdown" id="countdown"></p>
   <div class="grid2">
 """
 
@@ -491,6 +493,24 @@ def gen_main_index():
     content += """  </div>
   <p class="footer">Generated with Typora &middot; Hosted on GitHub Pages</p>
 </div>
+<script>
+(function() {
+  var exam = new Date(2026, 11, 20, 8, 30, 0); // Dec 20, 2026 08:30
+  var el = document.getElementById('countdown');
+  function update() {
+    var now = new Date();
+    var diff = exam - now;
+    if (diff <= 0) { el.textContent = '考研加油！'; return; }
+    var days = Math.floor(diff / 86400000);
+    var hrs = Math.floor((diff % 86400000) / 3600000);
+    var mins = Math.floor((diff % 3600000) / 60000);
+    var secs = Math.floor((diff % 60000) / 1000);
+    el.textContent = '距离 2026 考研（12.20）还有 ' + days + ' 天 ' + hrs + ' 时 ' + mins + ' 分 ' + secs + ' 秒';
+  }
+  update();
+  setInterval(update, 1000);
+})();
+</script>
 </body>
 </html>"""
 
