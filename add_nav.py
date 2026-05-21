@@ -2,6 +2,24 @@ import re, os, glob
 
 # ── Site navigation tree (only HTML pages that actually exist) ──────
 NAV_TREE = [
+    {'title': '408', 'children': [
+        {'title': '操作系统', 'children': [
+            {'title': '第1章 计算机系统概述', 'href': '408/操作系统/第1章 计算机系统概述.html'},
+        ]},
+        {'title': '数据结构', 'children': [
+            {'title': '作业', 'href': '408/数据结构/作业.html'},
+            {'title': '第1章 绪论', 'href': '408/数据结构/第1章 绪论.html'},
+            {'title': '第2章 线性表', 'href': '408/数据结构/第2章 线性表.html'},
+        ]},
+        {'title': '计算机组成原理', 'children': [
+            {'title': '第1章 计算机系统概述', 'href': '408/计算机组成原理/第1章 计算机系统概述.html'},
+            {'title': '第2章 数据的表示和计算', 'href': '408/计算机组成原理/第2章 数据的表示和计算.html'},
+        ]},
+        {'title': '计算机网络', 'children': [
+            {'title': '第1章 计算机网络体系结构', 'href': '408/计算机网络/第1章 计算机网络体系结构.html'},
+            {'title': '第2章 物理层', 'href': '408/计算机网络/第2章 物理层.html'},
+        ]},
+    ]},
     {'title': '数学', 'children': [
         {'title': '高数', 'children': [
             {'title': '第1章 函数的极限与连续', 'href': '数学/高数/第1章 函数的极限与连续.html'},
@@ -25,6 +43,10 @@ NAV_TREE = [
             {'title': '第5章 矩阵的特征值和特征向量', 'href': '数学/线性代数/第5章 矩阵的特征值和特征向量.html'},
         ]},
     ]},
+    {'title': '英语', 'children': [
+        {'title': '单词', 'href': '英语/单词.html'},
+    ]},
+    {'title': '政治', 'children': []},
 ]
 
 # ── Layout CSS ──────────────────────────────────────────────────────
