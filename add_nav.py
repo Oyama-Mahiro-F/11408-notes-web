@@ -166,8 +166,20 @@ def add_nav(filepath):
         f'<a class="tab{" active" if active_tab == "数学" else ""}" href="{home_base}">数学</a>'
     )
 
-    # Left nav tree - all links are relative HTML files
-    nav_tree = '\n'.join(make_tree(NAV_TREE, rel_path))
+    # Left nav tree - make all hrefs relative to current page's directory
+    raw_tree = '\n'.join(make_tree(NAV_TREE, rel_path))
+    # Replace href="X" with page-relative path
+    current_dir = os.path.dirname(rel_path)  # e.g., '数学/高数' or ''
+    def make_relative(match):
+        target = match.group(1)
+        if target == '#' or target.startswith('http'):
+            return f'href="{target}"'
+        if current_dir:
+            rel = os.path.relpath(target, current_dir).replace('\\', '/')
+        else:
+            rel = target
+        return f'href="{rel}"'
+    nav_tree = re.sub(r'href="([^"]+)"', make_relative, raw_tree)
 
     # Build shell
     shell = f"""<!-- NAV_SHELL_START -->
