@@ -1,4 +1,4 @@
-import os, subprocess, shutil, sys
+import os, subprocess, shutil, sys, glob
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(ROOT, 'site')
@@ -8,34 +8,33 @@ def run(cmd, cwd=ROOT):
     print(f'  $ {cmd}')
     r = subprocess.run(cmd, shell=True, cwd=cwd, capture_output=True, text=True)
     if r.returncode != 0:
-        if r.stderr:
-            print(f'  Error: {r.stderr.strip()}')
-        if 'nothing to commit' not in r.stdout and 'nothing to commit' not in r.stderr:
+        err = (r.stderr or '').strip()
+        out = (r.stdout or '').strip()
+        if 'nothing to commit' not in out and 'nothing to commit' not in err:
+            if err:
+                print(f'  Error: {err}')
             return False
     return True
 
 def main():
     print('===== 考研笔记推送 =====')
 
-    # 1. Copy HTML files from all subjects
+    # 1. Recursively copy all HTML files from 考研/ to site/
     print('[1/4] 复制 HTML...')
-    subjects = [
-        '数学/高数', '数学/线性代数',
-        '408/操作系统', '408/数据结构', '408/计算机组成原理', '408/计算机网络',
-        '英语', '政治',
-    ]
-    for sub in subjects:
-        src_dir = os.path.join(SOURCE, sub)
-        if not os.path.isdir(src_dir):
-            continue
-        dst_dir = os.path.join(SITE, sub)
-        os.makedirs(dst_dir, exist_ok=True)
-        for f in os.listdir(src_dir):
-            if f.endswith('.html'):
-                shutil.copy2(os.path.join(src_dir, f), os.path.join(dst_dir, f))
+    for root, dirs, files in os.walk(SOURCE):
+        rel_dir = os.path.relpath(root, SOURCE)
+        if rel_dir == '.':
+            rel_dir = ''
+        dst_dir = os.path.join(SITE, rel_dir)
+        for f in files:
+            if f.endswith('.html') and not f.startswith('.'):
+                os.makedirs(dst_dir, exist_ok=True)
+                src = os.path.join(root, f)
+                dst = os.path.join(dst_dir, f)
+                shutil.copy2(src, dst)
     print('  完成.')
 
-    # 2. Generate nav
+    # 2. Generate nav and index pages
     print('[2/4] 生成导航...')
     r = subprocess.run([sys.executable, 'add_nav.py'], cwd=ROOT, capture_output=True, text=True)
     if r.returncode != 0:
@@ -44,14 +43,15 @@ def main():
         return
     print('  完成.')
 
-    # 3. Git commit
+    # 3. Git
     print('[3/4] 提交...')
-    for path in ['site/数学', '考研', 'add_nav.py', 'site/index.html']:
+    for path in ['site/', '考研/', 'add_nav.py']:
         subprocess.run(f'git add "{path}"', shell=True, cwd=ROOT, capture_output=True)
 
     r = subprocess.run('git diff --cached --quiet', shell=True, cwd=ROOT)
     if r.returncode == 0:
         print('  没有新变更，跳过推送。')
+        input('按回车退出...')
         return
 
     if not run('git commit -m "更新笔记"'):
