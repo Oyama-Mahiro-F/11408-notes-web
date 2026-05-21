@@ -11,7 +11,7 @@ def get_title(filepath):
     return os.path.basename(filepath)[:-3]
 
 def find_docs(dirpath):
-    """Recursively find all .md files in a directory, return (title, relpath)."""
+    """Recursively find all .md files in a directory, return (title, abspath)."""
     results = []
     for name in sorted(os.listdir(dirpath)):
         full = os.path.join(dirpath, name)
@@ -22,11 +22,8 @@ def find_docs(dirpath):
                 continue
             results.extend(find_docs(full))
         elif name.endswith('.md') and name != 'index.md':
-            # Get relative path from DOCS, without .md, for MkDocs URL
-            rel = os.path.relpath(full, DOCS).replace('\\', '/')
-            rel = rel[:-3]  # remove .md → MkDocs clean URL
             title = get_title(full)
-            results.append((title, rel, False))
+            results.append((title, full, False))
     return results
 
 def gen_index(dirpath):
@@ -42,9 +39,8 @@ def gen_index(dirpath):
             # Check if this subdir has any .md files
             sub_entries = find_docs(full)
             if sub_entries:
-                rel = os.path.relpath(full, DOCS).replace('\\', '/')
                 title = name
-                entries.append((f'📁 {title}', rel + '/', True))
+                entries.append((f'📁 {title}', full, True))  # store absolute path
 
     if not entries:
         return None
@@ -57,7 +53,13 @@ def gen_index(dirpath):
     else:
         title = ' > '.join(parts)
     lines = [f'# {title}', '']
-    for title, link, is_dir in entries:
+    for title, abs_or_rel, is_dir in entries:
+        # Compute link relative to dirpath (abs_or_rel is always absolute now)
+        link = os.path.relpath(abs_or_rel, dirpath).replace('\\', '/')
+        if is_dir:
+            link += '/'
+        else:
+            link = link[:-3]  # remove .md
         lines.append(f'- [{title}]({link})')
 
     index_path = os.path.join(dirpath, 'index.md')
