@@ -779,6 +779,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
 .nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
 .nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
 .nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
@@ -857,14 +858,14 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#一-矩阵的抽象定义"><span class="toc-toggle">▼</span>一、 矩阵的抽象定义</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-一般矩阵的定义">1. 一般矩阵的定义</a>
 <a class="toc-h4" href="#2-特殊矩阵">2. 特殊矩阵</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#二-矩阵的核心运算"><span class="toc-toggle">▼</span>二、 矩阵的核心运算</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-矩阵的加法">1. 矩阵的加法</a>
@@ -874,7 +875,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#5-方阵的幂">5. 方阵的幂</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#三分块矩阵"><span class="toc-toggle">▼</span>三、分块矩阵</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-分块矩阵的定义与表示">1. 分块矩阵的定义与表示</a>
@@ -883,7 +884,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#4-考点总结为什么要使用分块">4. 考点总结：为什么要使用分块？</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#四伴随矩阵"><span class="toc-toggle">▼</span>四、伴随矩阵</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-伴随矩阵的抽象定义与易错展开">1. 伴随矩阵的抽象定义与易错展开</a>
@@ -892,7 +893,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#4-\na\n与-\na∗\n的秩的关系-rank-relationship">4. AA与 A∗A^*的秩的关系 (Rank Relationship)</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#五可逆矩阵-invertible-matrix"><span class="toc-toggle">▼</span>五、可逆矩阵 (Invertible Matrix)</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-定义">1. 定义</a>
@@ -901,7 +902,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#4-逆矩阵的常规求法">4. 逆矩阵的常规求法</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#六初等变换与初等矩阵"><span class="toc-toggle">▼</span>六、初等变换与初等矩阵</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-三大初等变换">1. 三大初等变换</a>
@@ -911,7 +912,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#5-矩阵等价-matrix-equivalence">5. 矩阵等价 (Matrix Equivalence)</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#七矩阵的秩"><span class="toc-toggle">▼</span>七、矩阵的秩</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1--\nk\n阶子式">1.  kk阶子式</a>

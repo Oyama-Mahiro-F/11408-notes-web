@@ -63,6 +63,7 @@ SHELL_CSS = """
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
 .nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
 .nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
 .nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
@@ -176,7 +177,7 @@ def add_nav(filepath):
     for h3 in toc_tree:
         has_kids = len(h3['children']) > 0
         toggle = '<span class="toc-toggle">▼</span>' if has_kids else ''
-        toc_items.append(f'<div class="toc-section">')
+        toc_items.append(f'<div class="toc-section collapsed">')
         toc_items.append(f'<a class="toc-h3" href="#{h3["hid"]}">{toggle}{h3["text"]}</a>')
         if has_kids:
             toc_items.append('<div class="toc-children">')

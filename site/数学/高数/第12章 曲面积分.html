@@ -779,6 +779,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
 .nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
 .nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
 .nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
@@ -856,19 +857,19 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#一）第一类曲面积分"><span class="toc-toggle">▼</span>（一）第一类曲面积分</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一概念">一、概念</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#二性质">二、性质</a>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#三计算方法">三、计算方法</a>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#二）第二类曲面积分"><span class="toc-toggle">▼</span>（二）第二类曲面积分</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一-概念什么是第二类曲面积分">一、 概念：什么是第二类曲面积分？</a>

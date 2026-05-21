@@ -779,6 +779,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
 .nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
 .nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
 .nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
@@ -856,7 +857,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#一）向量的线性组合与线性表示向量组等价"><span class="toc-toggle">▼</span>（一）向量的线性组合与线性表示，向量组等价</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一-线性组合-linear-combination">一、 线性组合 (Linear Combination)</a>
@@ -864,7 +865,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#三-向量组等价-equivalence-of-vector-groups">三、 向量组等价 (Equivalence of Vector Groups)</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#二）线性相关和线性无关"><span class="toc-toggle">▼</span>（二）线性相关和线性无关</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一-核心定义从零向量的表示出发">一、 核心定义：从“零向量的表示”出发</a>
@@ -873,7 +874,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#四-几个高频使用的核心结论">四、 几个高频使用的核心结论</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#三）向量组的极大线性无关组与向量组的秩"><span class="toc-toggle">▼</span>（三）向量组的极大线性无关组与向量组的秩</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一-极大线性无关组-maximal-linearly-independent-group">一、 极大线性无关组 (Maximal Linearly Independent Group)</a>
@@ -881,7 +882,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#三如何计算秩并求极大线性无关组">三、如何计算秩并求极大线性无关组？</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#四）向量空间"><span class="toc-toggle">▼</span>（四）向量空间</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一空间基底维数与坐标">一、空间、基底、维数与坐标</a>

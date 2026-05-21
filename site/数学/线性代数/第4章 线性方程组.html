@@ -779,6 +779,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
 .nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
 .nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
 .nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
@@ -872,7 +873,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#一）线性方程组的三种形式"><span class="toc-toggle">▼</span>（一）线性方程组的三种形式</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-一般形式代数形式）">1. 一般形式（代数形式）</a>
@@ -880,7 +881,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#3-向量形式列向量的线性组合形式）">3. 向量形式（列向量的线性组合形式）</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#二）齐次线性方程组"><span class="toc-toggle">▼</span>（二）齐次线性方程组</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-齐次线性方程组的定义">1. 齐次线性方程组的定义</a>
@@ -890,7 +891,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#5-求解方法">5. 求解方法</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#三）非齐次线性方程组"><span class="toc-toggle">▼</span>（三）非齐次线性方程组</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一解的判定">一、解的判定</a>
@@ -899,7 +900,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#四求解方法">四、求解方法</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#四）公共解和通解"><span class="toc-toggle">▼</span>（四）公共解和通解</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一定义">一、定义</a>

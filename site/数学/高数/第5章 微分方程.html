@@ -779,6 +779,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
 .nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
 .nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
 .nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
@@ -856,7 +857,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#一）微分方程相关概念"><span class="toc-toggle">▼</span>（一）微分方程相关概念</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一-核心要素与分类">一、 核心要素与分类</a>
@@ -864,7 +865,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#三-附加条件与几何意义">三、 附加条件与几何意义</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#二）一阶微分方程"><span class="toc-toggle">▼</span>（二）一阶微分方程</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一变量可分离微分方程">一、变量可分离微分方程</a>
@@ -872,7 +873,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#三一阶线性微分方程">三、一阶线性微分方程</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#三）可降阶微分方程"><span class="toc-toggle">▼</span>（三）可降阶微分方程</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一-\nynfx\n型缺-\ny\n及低阶导数）">一、 y(n)=f(x)y^{(n)} = f(x)型（缺 yy及低阶导数）</a>
@@ -881,14 +882,14 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#四-经典实战演示">四、 经典实战演示</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#四）线性微分方程解的性质"><span class="toc-toggle">▼</span>（四）线性微分方程解的性质</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一-齐次线性方程解的性质寻找基底）">一、 齐次线性方程解的性质（寻找“基底”）</a>
 <a class="toc-h4" href="#二-非齐次线性方程解的性质平移空间）">二、 非齐次线性方程解的性质（“平移”空间）</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#五）高阶常系数齐次线性微分方程"><span class="toc-toggle">▼</span>（五）高阶常系数齐次线性微分方程</a>
 <div class="toc-children">
 <a class="toc-h4" href="#一-核心映射法则必背表格）">一、 核心映射法则（必背表格）</a>
@@ -896,7 +897,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#三-避坑与易错点">三、 避坑与易错点</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#六）高阶常系数非齐次线性微分方程"><span class="toc-toggle">▼</span>（六）高阶常系数非齐次线性微分方程</a>
 <div class="toc-children">
 <a class="toc-h4" href="#第一型多项式与指数函数相乘型">第一型：多项式与指数函数相乘型</a>

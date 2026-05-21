@@ -779,6 +779,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 .nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
 .nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
 .nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
 .nav-toc .toc-section.collapsed .toc-children { display: none; }
 
 /* hide old TOC */
@@ -856,7 +857,7 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </main>
 <aside class="nav-toc">
 <div class="toc-label">目录</div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#一定义"><span class="toc-toggle">▼</span>一、定义</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-严格代数定义">1. 严格代数定义</a>
@@ -864,14 +865,14 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 <a class="toc-h4" href="#3-概念的等价转换方程组视角）">3. 概念的等价转换（方程组视角）</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#二求解方法"><span class="toc-toggle">▼</span>二、求解方法</a>
 <div class="toc-children">
 <a class="toc-h4" href="#第一步求解特征方程求特征值-\nλ\n）">第一步：求解特征方程（求特征值 \lambda）</a>
 <a class="toc-h4" href="#第二步求解齐次线性方程组求特征向量-\nx\n）">第二步：求解齐次线性方程组（求特征向量 xx）</a>
 </div>
 </div>
-<div class="toc-section">
+<div class="toc-section collapsed">
 <a class="toc-h3" href="#三性质"><span class="toc-toggle">▼</span>三、性质</a>
 <div class="toc-children">
 <a class="toc-h4" href="#1-特征值与矩阵元素的关系">1. 特征值与矩阵元素的关系</a>
