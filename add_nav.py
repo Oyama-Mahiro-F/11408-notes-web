@@ -194,7 +194,10 @@ def add_nav(filepath):
 
     tabs = (
         f'<a class="tab" href="{home_base}">首页</a>'
+        f'<a class="tab" href="408/">408</a>'
         f'<a class="tab{" active" if active_tab == "数学" else ""}" href="{home_base}">数学</a>'
+        f'<a class="tab" href="英语/">英语</a>'
+        f'<a class="tab" href="政治/">政治</a>'
     )
 
     # Left nav tree - make all hrefs relative to current page's directory
