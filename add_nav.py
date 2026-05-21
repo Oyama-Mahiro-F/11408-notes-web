@@ -423,17 +423,22 @@ def gen_main_index(nav_tree):
     cards = []
     for section in nav_tree:
         title = section['title']
+        # Recursively collect all leaf HTML pages under this section
+        all_items = []
+        def collect_leaves(children):
+            for child in children:
+                if 'children' in child and child['children']:
+                    collect_leaves(child['children'])
+                elif 'href' in child and child['href'].endswith('.html'):
+                    all_items.append((child['title'], child['href']))
+        collect_leaves(section.get('children', []))
+
+        if not all_items:
+            continue
+
         cards.append(f'<div class="section"><div class="section-title">{title}</div><div class="grid">')
-        for sub in section.get('children', []):
-            sub_title = sub['title']
-            href = sub.get('href', f'{section["title"]}/{sub_title}/index.html')
-            items = []
-            if 'children' in sub:
-                for leaf in sub['children']:
-                    leaf_title = leaf['title']
-                    leaf_href = leaf.get('href', f'{sub_title}/{leaf_title}.html')
-                    items.append(f'<a class="card" href="{leaf_href}"><div class="ch">{leaf_title}</div></a>')
-            cards.append('\n'.join(items))
+        for leaf_title, leaf_href in sorted(all_items, key=lambda x: x[1]):
+            cards.append(f'<a class="card" href="{leaf_href}"><div class="ch">{leaf_title}</div></a>')
         cards.append('</div></div>')
 
     cards_html = '\n'.join(cards)
