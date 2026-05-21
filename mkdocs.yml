@@ -20,6 +20,7 @@ theme:
   language: zh
   features:
     - navigation.tabs
+    - navigation.sections
     - navigation.top
     - search.suggest
   palette:
