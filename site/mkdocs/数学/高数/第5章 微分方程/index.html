@@ -1,0 +1,3315 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="11408及公共课复习知识库">
+      
+      
+        <meta name="author" content="Oyama Mahiro">
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>第5章 微分方程 - 2026考研笔记资料库</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="2026考研笔记资料库" class="md-header__button md-logo" aria-label="2026考研笔记资料库" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            2026考研笔记资料库
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第5章 微分方程
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="2026考研笔记资料库" class="md-nav__button md-logo" aria-label="2026考研笔记资料库" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    2026考研笔记资料库
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    408
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    408
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_2" id="__nav_1_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    操作系统
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    操作系统
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/操作系统/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/操作系统/笔记/第1章 计算机系统概述" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 计算机系统概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_3" id="__nav_1_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数据结构
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    数据结构
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/数据结构/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/数据结构/作业" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    作业
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/数据结构/笔记/第1章_绪论" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章_绪论
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/数据结构/笔记/第2章 线性表" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 线性表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    计算机组成原理
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    计算机组成原理
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/计算机组成原理/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/计算机组成原理/笔记/第1章_计算机系统概述" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章_计算机系统概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/计算机组成原理/笔记/第2章 数据的表示和计算" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 数据的表示和计算
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    计算机网络
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    计算机网络
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/计算机网络/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/计算机网络/笔记/第1章 计算机网络体系结构" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 计算机网络体系结构
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../408/计算机网络/笔记/第2章 物理层" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 物理层
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    数学
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    数学
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概率与统计
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    概率与统计
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/概率与统计/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/概率与统计/第1章 随机事件和概率" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 随机事件和概率
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/概率与统计/第2章 三大概型" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 三大概型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    线性代数
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    线性代数
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/线性代数/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/线性代数/公式" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    公式
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/线性代数/第1章 行列式" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 行列式
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/线性代数/第2章 矩阵" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 矩阵
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/线性代数/第3章 向量" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 向量
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/线性代数/第4章 线性方程组" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 线性方程组
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/线性代数/第5章 矩阵的特征值和特征向量" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 矩阵的特征值和特征向量
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    高数
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    高数
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/公式总结" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    公式总结
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/微分方程总结" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    微分方程总结
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第10章 无穷级数" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第10章 无穷级数
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第11章 曲线积分" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第11章 曲线积分
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第12章 曲面积分" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第12章 曲面积分
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第1章 函数的极限与连续" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第1章 函数的极限与连续
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第2章 一元函数微分学" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第2章 一元函数微分学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第3章 不定积分" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第3章 不定积分
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第4章 定积分" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第4章 定积分
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第5章 微分方程" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第5章 微分方程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第6章 向量代数与空间解析几何" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第6章 向量代数与空间解析几何
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第7章 多元函数微分学" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第7章 多元函数微分学
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第8章 二重积分" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第8章 二重积分
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../数学/高数/第9章 三重积分" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第9章 三重积分
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    英语
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    英语
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../英语/index" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概述
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../英语/单词" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    单词
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （一）微分方程相关概念
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（一）微分方程相关概念">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 核心要素与分类
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 “解”的家族
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、 附加条件与几何意义
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （二）一阶微分方程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（二）一阶微分方程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、变量可分离微分方程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、变量可分离微分方程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 方程形式：常见的标准形式有两种：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 标准求解步骤（“分、积、定”）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 易错点（“丢根”陷阱）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、齐次微分方程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、齐次微分方程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 如何识别齐次方程？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 标准求解步骤（“换、导、代、离、积、原”）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 经典例题演示
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、一阶线性微分方程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、一阶线性微分方程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 标准形式
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 核心解法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. 核心解法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 常数变易法（推导思维）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 积分因子与通解公式（应试首选）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 实战演示
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 避坑指南
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （三）可降阶微分方程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（三）可降阶微分方程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#yn-fx-y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 \(y^{(n)} = f(x)\)型（缺 \(y\)及低阶导数）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#y-fx-y-y" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 \(y'' = f(x, y')\)型（缺 \(y\)）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#y-fy-y-x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、 \(y'' = f(y, y')\)型（缺 \(x\)）—— 最易错点
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、 经典实战演示
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （四）线性微分方程解的性质
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（四）线性微分方程解的性质">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 齐次线性方程解的性质（寻找“基底”）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、 齐次线性方程解的性质（寻找“基底”）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-superposition-principle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 叠加原理 (Superposition Principle)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-fundamental-system-of-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 线性无关与基础解系 (Fundamental System of Solutions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 非齐次线性方程解的性质（“平移”空间）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、 非齐次线性方程解的性质（“平移”空间）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#3_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 解的结构定理（最核心考点）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 特解的减法性质（消除非齐次项）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 非齐次项的叠加原理（分而治之）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （五）高阶常系数齐次线性微分方程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（五）高阶常系数齐次线性微分方程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 核心映射法则（必背表格）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 经典考研实战演示
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、 避坑与易错点
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        （六）高阶常系数非齐次线性微分方程
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="（六）高阶常系数非齐次线性微分方程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        第一型：多项式与指数函数相乘型
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        第二型：包含三角函数的震荡型
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实战演示
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>第5章 微分方程</h1>
+
+<h2 align="center">第五章 微分方程</h2>
+
+<h3 id="_1">（一）微分方程相关概念<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>微分方程是衔接导数与积分的桥梁，要熟练掌握各类方程的求解，首先需要理清以下几个核心“行话”与基本概念：</p>
+<h4 id="_2">一、 核心要素与分类<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>微分方程 (Differential Equation)</strong>：凡是含有未知函数的导数（或微分）的方程，都称为微分方程。</li>
+<li><em>注：方程中可以不显含未知函数本身，也可以不显含自变量，但</em><em>必须含有导数或微分</em>**。</li>
+<li><strong>未知函数 (Unknown Function)</strong>：通常记为 <span class="arithmatex">\(y\)</span>，它是自变量 <span class="arithmatex">\(x\)</span>的函数。求解微分方程的过程，本质上就是把这个 <span class="arithmatex">\(y\)</span>“找”出来。</li>
+<li><strong>阶数 (Order)</strong>：微分方程中出现的未知函数的<strong>最高阶导数的阶数</strong>，称为该微分方程的阶。</li>
+<li>例如：<span class="arithmatex">\(y' = 2x\)</span>是一阶微分方程；<span class="arithmatex">\(y'' + 3y' + 2y = 0\)</span>是二阶微分方程。</li>
+<li><strong>线性与非线性 (Linear vs. Non-linear)</strong>：</li>
+<li><strong>线性方程</strong>：如果方程对于未知函数 <span class="arithmatex">\(y\)</span>及其各阶导数 <span class="arithmatex">\(y', y'', \dots, y^{(n)}\)</span>都是<strong>一次</strong>的，且不存在它们之间的乘积。</li>
+<li><strong>非线性方程</strong>：凡是不满足上述条件的方程。例如伯努利方程 <span class="arithmatex">\(y' + P(x)y = Q(x)y^n \ (n \neq 0, 1)\)</span>，因为含有未知函数的高次幂 <span class="arithmatex">\(y^n\)</span>，所以是非线性方程；再比如 <span class="arithmatex">\(yy' = x\)</span>，因为有 <span class="arithmatex">\(y\)</span>和 <span class="arithmatex">\(y'\)</span>的乘积，也是非线性的。</li>
+</ul>
+<h4 id="_3">二、 “解”的家族<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>解 (Solution)</strong>：代入微分方程后，能使等式在某区间上恒成立的函数 <span class="arithmatex">\(y = \varphi(x)\)</span>。</li>
+<li><strong>通解 (General Solution)</strong>：包含了<strong>任意常数</strong>的解，且满足一个极为严苛的条件：<strong>任意常数的个数，必须等于微分方程的阶数</strong>，并且这些常数必须是<strong>相互独立</strong>的。</li>
+<li>例如：一阶方程的通解含有 1 个任意常数 <span class="arithmatex">\(C\)</span>；二阶方程的通解必须含有 2 个独立的任意常数 <span class="arithmatex">\(C_1, C_2\)</span>。</li>
+<li><em>易错点警示</em>：对于解 <span class="arithmatex">\(y = (C_1 + C_2)e^x\)</span>，虽然看起来有两个常数，但它们可以合并为一个新常数 <span class="arithmatex">\(C = C_1 + C_2\)</span>，因此它实际上只含 1 个独立常数，不能作为二阶方程的通解。</li>
+<li><strong>特解 (Particular Solution)</strong>：不含任意常数（或任意常数被确定下来）的解。在实际做题中，特解通常是把给定的条件代入通解中求出具体的常数值后得到的。</li>
+</ul>
+<h4 id="_4">三、 附加条件与几何意义<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>初始条件 (Initial Conditions)</strong>：为了确定通解中的任意常数，从而求出特定物理或几何模型下的特解而给出的条件。</li>
+<li>对于一阶方程，通常只需 1 个条件，形式为 <span class="arithmatex">\(y|_{x=x_0} = y_0\)</span>。</li>
+<li>对于二阶方程，通常需要 2 个条件，形式为 <span class="arithmatex">\(y|_{x=x_0} = y_0\)</span>且 <span class="arithmatex">\(y'|_{x=x_0} = y_1\)</span>。</li>
+<li><strong>初值问题 (Initial Value Problem, IVP)</strong>：求满足给定初始条件的特解的问题。</li>
+<li><strong>积分曲线 (Integral Curve)</strong>：微分方程的解 <span class="arithmatex">\(y = \varphi(x)\)</span>在平面直角坐标系上对应的一条曲线。</li>
+<li><strong>通解的几何意义</strong>：代表一族积分曲线（因为 <span class="arithmatex">\(C\)</span>可以取无数个值）。</li>
+<li><strong>特解的几何意义</strong>：代表这族曲线中，具体穿过某个给定点 <span class="arithmatex">\((x_0, y_0)\)</span>的那一条特定的曲线。</li>
+</ul>
+<h3 id="_5">（二）一阶微分方程<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<h4 id="_6">一、变量可分离微分方程<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<h5 id="1">1. 方程形式：常见的标准形式有两种：<a class="headerlink" href="#1" title="Permanent link">&para;</a></h5>
+<div class="arithmatex">\[
+   y' = f(x)g(y)
+\]</div>
+<div class="arithmatex">\[
+   P_1(x)P_2(y)dx + Q_1(x)Q_2(y)dy = 0
+\]</div>
+<h5 id="2">2. 标准求解步骤（“分、积、定”）<a class="headerlink" href="#2" title="Permanent link">&para;</a></h5>
+<p><strong>以 <span class="arithmatex">\(y' = f(x)g(y)\)</span>为例：</strong></p>
+<ul>
+<li>
+<p><strong>第一步（改写）</strong>：将导数 <span class="arithmatex">\(y'\)</span>写成微分商的形式 <span class="arithmatex">\(\frac{dy}{dx}\)</span>。
+$$
+\frac{dy}{dx} = f(x)g(y)
+$$</p>
+</li>
+<li>
+<p><strong>第二步（分离变量）</strong>：通过乘除法移项，让等号左边只有 <span class="arithmatex">\(y\)</span>和 <span class="arithmatex">\(dy\)</span>，右边只有 <span class="arithmatex">\(x\)</span>和 <span class="arithmatex">\(dx\)</span>。
+$$
+\frac{1}{g(y)} dy = f(x) dx
+$$</p>
+</li>
+<li>
+<p><strong>第三步（两边积分）</strong>：对等式两边同时套上积分号进行计算。
+$$
+\int \frac{1}{g(y)} dy = \int f(x) dx
+$$</p>
+</li>
+<li>
+<p><strong>第四步（写出通解）</strong>：算出积分后，通常记为 <span class="arithmatex">\(G(y) = F(x) + C\)</span>。如果能把 <span class="arithmatex">\(y\)</span>单独解出来，就写成显函数 <span class="arithmatex">\(y = \varphi(x, C)\)</span>；如果解不出来，保留隐函数形式即可。</p>
+</li>
+</ul>
+<h5 id="3">3. 易错点（“丢根”陷阱）<a class="headerlink" href="#3" title="Permanent link">&para;</a></h5>
+<p>在“第二步（分离变量）”时，我们把 <span class="arithmatex">\(g(y)\)</span>除到了分母上。这一步在数学上暗含了一个前提条件：<strong><span class="arithmatex">\(g(y) \neq 0\)</span></strong>。</p>
+<p><strong>这就是命题人最爱挖坑的地方！</strong></p>
+<p>如果存在某个常数 <span class="arithmatex">\(y = a\)</span>使得 <span class="arithmatex">\(g(a) = 0\)</span>，那么 <span class="arithmatex">\(y = a\)</span>这个常数函数其实也是原方程 <span class="arithmatex">\(y' = f(x)g(y)\)</span>的一个解（因为此时左边 <span class="arithmatex">\(y'=0\)</span>，右边 <span class="arithmatex">\(g(a)=0\)</span>，等式 <span class="arithmatex">\(0=0\)</span>成立）。</p>
+<p>在求出通解后，你需要检查这个常数解 <span class="arithmatex">\(y = a\)</span>是否能被包含在通解中（即验证是否存在某个特定的常数 <span class="arithmatex">\(C\)</span>能让通解变成 <span class="arithmatex">\(y = a\)</span>）。如果不能包含进去，这个解被称为<strong>奇解（Singular Solution）</strong>，你必须把它单独列出来补充在答案里，否则会扣分。</p>
+<h4 id="_7">二、齐次微分方程<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<h5 id="1_1">1. 如何识别齐次方程？<a class="headerlink" href="#1_1" title="Permanent link">&para;</a></h5>
+<p>齐次方程通常有两种常见的表现形式：</p>
+<ol>
+<li>
+<p><strong>导数形式</strong>：方程可以化为 <span class="arithmatex">\(y' = f(x, y)\)</span>，且等式右边能整理成关于 <span class="arithmatex">\(\frac{y}{x}\)</span>的函数，即：
+$$
+   y' = \varphi\left(\frac{y}{x}\right)
+$$</p>
+</li>
+<li>
+<p><strong>微分形式</strong>：<span class="arithmatex">\(P(x,y)dx + Q(x,y)dy = 0\)</span>，其中 <span class="arithmatex">\(P(x,y)\)</span>和 <span class="arithmatex">\(Q(x,y)\)</span>是<strong>同次齐次函数</strong>（即把 <span class="arithmatex">\(x\)</span>和 <span class="arithmatex">\(y\)</span>同时换成 <span class="arithmatex">\(tx\)</span>和 <span class="arithmatex">\(ty\)</span>后，能提取出相同次幂的 <span class="arithmatex">\(t\)</span>）。遇到这种形式，通常先同除以 <span class="arithmatex">\(dx\)</span>（或 <span class="arithmatex">\(dy\)</span>）以及最高次幂的 <span class="arithmatex">\(x\)</span>（或 <span class="arithmatex">\(y\)</span>），将其化为导数形式。</p>
+</li>
+</ol>
+<h5 id="2_1">2. 标准求解步骤（“换、导、代、离、积、原”）<a class="headerlink" href="#2_1" title="Permanent link">&para;</a></h5>
+<p>解决齐次方程有一个非常固定的套路，核心是令 <strong><span class="arithmatex">\(u = \frac{y}{x}\)</span></strong>：</p>
+<ul>
+<li>
+<p><strong>第一步（换）</strong>：令 <span class="arithmatex">\(u = \frac{y}{x}\)</span>，则 <span class="arithmatex">\(y = ux\)</span>。</p>
+</li>
+<li>
+<p><strong>第二步（导）</strong>：两边对 <span class="arithmatex">\(x\)</span>求导，得到 <span class="arithmatex">\(y' = u'x + u\)</span>。</p>
+</li>
+<li>
+<p><strong>第三步（代）</strong>：将 <span class="arithmatex">\(y\)</span>和 <span class="arithmatex">\(y'\)</span>代入原方程 <span class="arithmatex">\(y' = \varphi(\frac{y}{x})\)</span>，得到 <span class="arithmatex">\(u'x + u = \varphi(u)\)</span>。</p>
+</li>
+<li>
+<p><strong>第四步（离）</strong>：移项并分离变量，得到 <span class="arithmatex">\(x \frac{du}{dx} = \varphi(u) - u\)</span>，进而化为：
+$$
+\frac{du}{\varphi(u) - u} = \frac{dx}{x}
+$$</p>
+</li>
+<li>
+<p><strong>第五步（积）</strong>：两边同时积分：
+$$
+\int \frac{1}{\varphi(u) - u} du = \int \frac{1}{x} dx
+$$</p>
+</li>
+<li>
+<p><strong>第六步（原）</strong>：算出积分后（别忘了加常数 <span class="arithmatex">\(C\)</span>），将 <span class="arithmatex">\(u\)</span>替换回 <span class="arithmatex">\(\frac{y}{x}\)</span>，得到原方程的隐函数解或显函数解。</p>
+</li>
+</ul>
+<h5 id="3_1">3. 经典例题演示<a class="headerlink" href="#3_1" title="Permanent link">&para;</a></h5>
+<p><strong>求微分方程 <span class="arithmatex">\((x^2 + y^2)dx - 2xydy = 0\)</span>的通解。</strong></p>
+<p><strong>解：</strong></p>
+<ol>
+<li><strong>化为标准形式</strong>：</li>
+</ol>
+<p>将等式变形为 <span class="arithmatex">\(\frac{dy}{dx} = \frac{x^2 + y^2}{2xy}\)</span>。</p>
+<p>分子分母同除以 <span class="arithmatex">\(x^2\)</span>，得到 <span class="arithmatex">\(y' = \frac{1 + (\frac{y}{x})^2}{2(\frac{y}{x})}\)</span>。这显然是一个齐次方程。</p>
+<ol start="2">
+<li><strong>变量代换</strong>：</li>
+</ol>
+<p>令 <span class="arithmatex">\(u = \frac{y}{x}\)</span>，则 <span class="arithmatex">\(y = ux\)</span>，<span class="arithmatex">\(y' = u'x + u\)</span>。</p>
+<ol start="3">
+<li>
+<p><strong>代入原方程</strong>：
+$$
+   u'x + u = \frac{1 + u^2}{2u}
+$$</p>
+</li>
+<li>
+<p><strong>分离变量</strong>：</p>
+</li>
+</ol>
+<p>移项得到 <span class="arithmatex">\(x \frac{du}{dx} = \frac{1 + u^2}{2u} - u = \frac{1 - u^2}{2u}\)</span>。</p>
+<p>分离变量得：
+$$
+\frac{2u}{1 - u^2} du = \frac{1}{x} dx
+$$</p>
+<ol start="5">
+<li><strong>两边积分</strong>：
+$$
+   \int \frac{2u}{1 - u^2} du = \int \frac{1}{x} dx
+$$</li>
+</ol>
+<div class="arithmatex">\[
+- \ln|1 - u^2| = \ln|x| + C_1
+\]</div>
+<p>为了化简方便，令 <span class="arithmatex">\(C_1 = \ln|C|\)</span>，则有：
+$$
+\ln|1 - u^2|^{-1} = \ln|Cx| \implies \frac{1}{1 - u^2} = Cx \implies 1 - u^2 = \frac{C}{x}
+$$</p>
+<ol start="6">
+<li><strong>还原变量</strong>：</li>
+</ol>
+<p>将 <span class="arithmatex">\(u = \frac{y}{x}\)</span>代回：
+$$
+1 - \left(\frac{y}{x}\right)^2 = \frac{C}{x}
+$$
+   两边同乘 <span class="arithmatex">\(x^2\)</span>，整理得到最终通解：
+$$
+x^2 - y^2 = Cx
+$$</p>
+<h4 id="_8">三、一阶线性微分方程<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<h5 id="1_2">1. 标准形式<a class="headerlink" href="#1_2" title="Permanent link">&para;</a></h5>
+<p>一阶线性微分方程的标准形式为：
+$$
+y'+P(x)y=Q(x)
+$$</p>
+<p>根据等式右边的自由项 <span class="arithmatex">\(Q(x)\)</span>是否为零，分为两种情况：</p>
+<ul>
+<li><strong>一阶齐次线性微分方程</strong>：<span class="arithmatex">\(Q(x)=0\)</span>，即 <span class="arithmatex">\(y'+P(x)y=0\)</span>。（属于可分离变量方程）</li>
+<li><strong>一阶非齐次线性微分方程</strong>：<span class="arithmatex">\(Q(x)\neq0\)</span>。</li>
+</ul>
+<h5 id="2_2">2. 核心解法<a class="headerlink" href="#2_2" title="Permanent link">&para;</a></h5>
+<p>解决一阶线性微分方程，主要有两种思路：“常数变易法”是底层逻辑，“通解公式”是实战利器。</p>
+<h6 id="1_3">1. 常数变易法（推导思维）<a class="headerlink" href="#1_3" title="Permanent link">&para;</a></h6>
+<p>这是理解非齐次方程通解结构的万能方法：</p>
+<ul>
+<li><strong>第一步</strong>：先求解对应的<strong>齐次方程</strong> <span class="arithmatex">\(y'+P(x)y=0\)</span>。分离变量后积分，得到解为 <span class="arithmatex">\(y=Ce^{-\int P(x)dx}\)</span>。</li>
+<li><strong>第二步</strong>：将常数 <span class="arithmatex">\(C\)</span><strong>变易</strong>为关于 <span class="arithmatex">\(x\)</span>的未知函数 <span class="arithmatex">\(C(x)\)</span>，设原非齐次方程的通解为 <span class="arithmatex">\(y=C(x)e^{-\int P(x)dx}\)</span>。</li>
+<li><strong>第三步</strong>：将上式求导并代入原方程 <span class="arithmatex">\(y'+P(x)y=Q(x)\)</span>中。代入后必然能消去含 <span class="arithmatex">\(C(x)\)</span>的项，化简得到 <span class="arithmatex">\(C'(x)=Q(x)e^{\int P(x)dx}\)</span>。</li>
+<li><strong>第四步</strong>：两边积分求出 <span class="arithmatex">\(C(x)\)</span>，再代回第二步的设法中，即得通解。</li>
+</ul>
+<h6 id="2_3">2. 积分因子与通解公式（应试首选）<a class="headerlink" href="#2_3" title="Permanent link">&para;</a></h6>
+<p>为了做题快速，我们通常直接使用由上述方法推导出来的<strong>通解公式</strong>。</p>
+<p>如果在原方程两边同时乘以一个<strong>积分因子</strong> <span class="arithmatex">\(\mu(x)=e^{\int P(x)dx}\)</span>，方程左边恰好可以凑成两个函数乘积的导数形式：
+$$
+e^{\int P(x)dx} \left [y'+P(x)y \right ] =Q(x)e^{\int P(x)dx}
+$$</p>
+<div class="arithmatex">\[
+\left [y\cdot e^{\int P(x)dx}\right]'=Q(x)e^{\int P(x)dx}
+\]</div>
+<p>对两边直接积分，再将 <span class="arithmatex">\(e^{\int P(x)dx}\)</span>除过去，就得到了必须熟记的通解公式：
+$$
+y \cdot e^{\int P(x)dx}=\int Q(x)e^{\int P(x)dx}dx+C
+$$</p>
+<div class="arithmatex">\[
+y=e^{-\int P(x)dx}\left[\int Q(x)e^{\int P(x)dx}dx+C\right]
+\]</div>
+<h5 id="3_2">3. 实战演示<a class="headerlink" href="#3_2" title="Permanent link">&para;</a></h5>
+<p><strong>求微分方程 <span class="arithmatex">\(y'-\frac{1}{x}y=x^2\)</span>的通解（假设 <span class="arithmatex">\(x&gt;0\)</span>）。</strong></p>
+<p><strong>解题步骤：</strong></p>
+<ol>
+<li><strong>匹配标准形式</strong>：</li>
+</ol>
+<p>对比 <span class="arithmatex">\(y'+P(x)y=Q(x)\)</span>，可以提取出：</p>
+<div class="arithmatex">\[
+P(x)=-\frac{1}{x}, \quad Q(x)=x^2
+\]</div>
+<ol start="2">
+<li><strong>计算积分中的指数部分</strong>：</li>
+</ol>
+<p>先算 <span class="arithmatex">\(\int P(x)dx\)</span>（这一步无需加常数 <span class="arithmatex">\(C\)</span>）：</p>
+<div class="arithmatex">\[
+\int P(x)dx=\int\left(-\frac{1}{x}\right)dx=-\ln x
+\]</div>
+<ol start="3">
+<li><strong>套用通解公式</strong>：</li>
+</ol>
+<div class="arithmatex">\[
+   y=e^{-(-\ln x)}\left[\int x^2\cdot e^{-\ln x}dx+C\right]
+\]</div>
+<ol start="4">
+<li><strong>化简并计算积分</strong>：</li>
+</ol>
+<ul>
+<li>方程外侧：<span class="arithmatex">\(e^{\ln x}=x\)</span></li>
+<li>积分号内：<span class="arithmatex">\(e^{-\ln x}=e^{\ln(x^{-1})}=\frac{1}{x}\)</span></li>
+</ul>
+<p>代入上式继续化简：</p>
+<div class="arithmatex">\[
+y=x\left[\int x^2\cdot\frac{1}{x}dx+C\right]
+\]</div>
+<div class="arithmatex">\[
+y=x\left[\int xdx+C\right]
+\]</div>
+<div class="arithmatex">\[
+y=x\left(\frac{1}{2}x^2+C\right)=\frac{1}{2}x^3+Cx
+\]</div>
+<p>这就是该方程的通解。</p>
+<h5 id="4">4. 避坑指南<a class="headerlink" href="#4" title="Permanent link">&para;</a></h5>
+<ul>
+<li><strong>必须先化标准型</strong>：如果遇到的方程是 <span class="arithmatex">\(xy'+y=e^x\)</span>这种形式，<strong>千万不要直接去提取 <span class="arithmatex">\(P(x)\)</span></strong>。必须先在等式两边同除以 <span class="arithmatex">\(x\)</span>，将 <span class="arithmatex">\(y'\)</span>的系数严格化为 <strong>1</strong>，变成 <span class="arithmatex">\(y'+\frac{1}{x}y=\frac{e^x}{x}\)</span>后，再去确定 <span class="arithmatex">\(P(x)\)</span>和 <span class="arithmatex">\(Q(x)\)</span>。</li>
+<li><strong>警惕 <span class="arithmatex">\(P(x)\)</span>的正负号</strong>：<span class="arithmatex">\(P(x)\)</span>是包含 <span class="arithmatex">\(y\)</span>前面<strong>所有符号</strong>的。在上述例题中，<span class="arithmatex">\(P(x)\)</span>是 <span class="arithmatex">\(-\frac{1}{x}\)</span>而不是 <span class="arithmatex">\(\frac{1}{x}\)</span>，漏掉负号会导致积分因子完全错误。</li>
+</ul>
+<h3 id="_9">（三）可降阶微分方程<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>可降阶的高阶微分方程是考研数学中非常经典且计算量容易“爆炸”的一个题型。这类方程的阶数通常为二阶（或更高），核心思想是<strong>“通过变量代换，把高阶降为一阶”</strong>。</p>
+<h4 id="yn-fx-y">一、 <span class="arithmatex">\(y^{(n)} = f(x)\)</span>型（缺 <span class="arithmatex">\(y\)</span>及低阶导数）<a class="headerlink" href="#yn-fx-y" title="Permanent link">&para;</a></h4>
+<p>这是最简单的一种形式，方程右边只含有 <span class="arithmatex">\(x\)</span>的函数。</p>
+<ul>
+<li><strong>特征</strong>：只含有未知函数的最高阶导数和自变量 <span class="arithmatex">\(x\)</span>。</li>
+<li><strong>解法</strong>：<strong>“连续积分法”</strong>。对方程两边连续积分 <span class="arithmatex">\(n\)</span>次，每次积分都会产生一个任意常数，最终得到通解。</li>
+</ul>
+<p><strong>示例</strong>：求 <span class="arithmatex">\(y''' = e^x\)</span>的通解。</p>
+<ol>
+<li>
+<p>积分一次：<span class="arithmatex">\(y'' = e^x + C_1\)</span></p>
+</li>
+<li>
+<p>再积分一次：<span class="arithmatex">\(y' = e^x + C_1 x + C_2\)</span></p>
+</li>
+<li>
+<p>第三次积分：</p>
+</li>
+</ol>
+<div class="arithmatex">\[
+   y = e^x + \frac{1}{2} C_1 x^2 + C_2 x + C_3
+\]</div>
+<h4 id="y-fx-y-y">二、 <span class="arithmatex">\(y'' = f(x, y')\)</span>型（缺 <span class="arithmatex">\(y\)</span>）<a class="headerlink" href="#y-fx-y-y" title="Permanent link">&para;</a></h4>
+<p>这类方程中不显含未知函数 <span class="arithmatex">\(y\)</span>，只有自变量 <span class="arithmatex">\(x\)</span>、一阶导数 <span class="arithmatex">\(y'\)</span>和二阶导数 <span class="arithmatex">\(y''\)</span>。</p>
+<ul>
+<li>
+<p><strong>特征</strong>：方程里找不到 <span class="arithmatex">\(y\)</span>的影子。</p>
+</li>
+<li>
+<p><strong>解法</strong>：<strong>“令导数为新变量”</strong>。</p>
+</li>
+</ul>
+<ol>
+<li>
+<p>令 <span class="arithmatex">\(y' = p\)</span>，则 <span class="arithmatex">\(y'' = p'\)</span>（即 <span class="arithmatex">\(\frac{dp}{dx}\)</span>）。</p>
+</li>
+<li>
+<p>代入原方程，得到一个关于 <span class="arithmatex">\(p\)</span>和 <span class="arithmatex">\(x\)</span>的一阶微分方程：</p>
+</li>
+</ol>
+<div class="arithmatex">\[
+     p' = f(x, p)
+\]</div>
+<ol start="3">
+<li>
+<p>解出这个一阶方程，得到 <span class="arithmatex">\(p = \varphi(x, C_1)\)</span>。</p>
+</li>
+<li>
+<p>因为 <span class="arithmatex">\(p = y'\)</span>，所以再对 <span class="arithmatex">\(x\)</span>积分一次即可求出 <span class="arithmatex">\(y\)</span>：</p>
+</li>
+</ol>
+<div class="arithmatex">\[
+     y = \int \varphi(x, C_1) dx + C_2
+\]</div>
+<h4 id="y-fy-y-x">三、 <span class="arithmatex">\(y'' = f(y, y')\)</span>型（缺 <span class="arithmatex">\(x\)</span>）—— <strong>最易错点</strong><a class="headerlink" href="#y-fy-y-x" title="Permanent link">&para;</a></h4>
+<p>这类方程中不显含自变量 <span class="arithmatex">\(x\)</span>，只有未知函数 <span class="arithmatex">\(y\)</span>、一阶导数 <span class="arithmatex">\(y'\)</span>和二阶导数 <span class="arithmatex">\(y''\)</span>。</p>
+<ul>
+<li>
+<p><strong>特征</strong>：方程里找不到 <span class="arithmatex">\(x\)</span>的影子。</p>
+</li>
+<li>
+<p><strong>解法</strong>：<strong>“复合函数求导法”</strong>。</p>
+</li>
+</ul>
+<ol>
+<li>
+<p>令 <span class="arithmatex">\(y' = p\)</span>。</p>
+</li>
+<li>
+<p><strong>核心易错步</strong>：因为方程里没有 <span class="arithmatex">\(x\)</span>，我们需要把 <span class="arithmatex">\(y''\)</span>转换成关于 <span class="arithmatex">\(y\)</span>的导数。利用链式法则：</p>
+</li>
+</ol>
+<div class="arithmatex">\[
+     y'' = \frac{dp}{dx} = \frac{dp}{dy} \cdot \frac{dy}{dx} = p \frac{dp}{dy}
+\]</div>
+<ol start="3">
+<li>代入原方程，得到一个关于 <span class="arithmatex">\(p\)</span>和 <span class="arithmatex">\(y\)</span>的一阶微分方程：</li>
+</ol>
+<div class="arithmatex">\[
+     p \frac{dp}{dy} = f(y, p)
+\]</div>
+<ol start="4">
+<li>
+<p>解出 <span class="arithmatex">\(p\)</span>关于 <span class="arithmatex">\(y\)</span>的函数 <span class="arithmatex">\(p = \psi(y, C_1)\)</span>。</p>
+</li>
+<li>
+<p>因为 <span class="arithmatex">\(p = \frac{dy}{dx}\)</span>，即 <span class="arithmatex">\(\frac{dy}{dx} = \psi(y, C_1)\)</span>，分离变量并积分：</p>
+</li>
+</ol>
+<div class="arithmatex">\[
+     \int \frac{dy}{\psi(y, C_1)} = \int dx = x + C_2
+\]</div>
+<h4 id="_10">四、 经典实战演示<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<p><strong>求微分方程 <span class="arithmatex">\(y y'' - (y')^2 = 0\)</span>的通解。</strong></p>
+<p><strong>解题步骤：</strong></p>
+<ol>
+<li>
+<p><strong>识别类型</strong>：方程中含有 <span class="arithmatex">\(y\)</span>、<span class="arithmatex">\(y'\)</span>、<span class="arithmatex">\(y''\)</span>，唯独没有 <span class="arithmatex">\(x\)</span>，属于<strong>缺 <span class="arithmatex">\(x\)</span>型</strong>。</p>
+</li>
+<li>
+<p><strong>变量代换</strong>：</p>
+</li>
+</ol>
+<p>令 <span class="arithmatex">\(y' = p\)</span>，则 <span class="arithmatex">\(y'' = p \frac{dp}{dy}\)</span>。</p>
+<ol start="3">
+<li><strong>代入原方程</strong>：</li>
+</ol>
+<div class="arithmatex">\[
+   y \left( p \frac{dp}{dy} \right) - p^2 = 0
+\]</div>
+<ol start="4">
+<li><strong>求解一阶方程</strong>：</li>
+</ol>
+<p>提取公因式得 <span class="arithmatex">\(p \left( y \frac{dp}{dy} - p \right) = 0\)</span>。</p>
+<ul>
+<li>
+<p>若 <span class="arithmatex">\(p = 0\)</span>，即 <span class="arithmatex">\(y' = 0\)</span>，则 <span class="arithmatex">\(y = C\)</span>（常数）。</p>
+</li>
+<li>
+<p>若 <span class="arithmatex">\(p \neq 0\)</span>，则 <span class="arithmatex">\(y \frac{dp}{dy} = p\)</span>。分离变量得：</p>
+</li>
+</ul>
+<p>$$
+\frac{dp}{p} = \frac{dy}{y}
+$$
+     两边积分：</p>
+<div class="arithmatex">\[
+\ln|p| = \ln|y| + \ln|C_1| \implies p = C_1 y
+\]</div>
+<ol start="5">
+<li><strong>还原并二次积分</strong>：</li>
+</ol>
+<p>将 <span class="arithmatex">\(p = y'\)</span>代回：</p>
+<p>$$
+\frac{dy}{dx} = C_1 y
+$$
+   分离变量并积分：</p>
+<p>$$
+\frac{dy}{y} = C_1 dx \implies \ln|y| = C_1 x + C_2
+$$
+   化简得通解：</p>
+<p>$$
+y = C e^{C_1 x}
+$$
+   （注意：当 <span class="arithmatex">\(C=0\)</span>时，包含了解 <span class="arithmatex">\(y=0\)</span>，这与前面 <span class="arithmatex">\(p=0\)</span>得到的常数解 <span class="arithmatex">\(y=C\)</span>相容，故最终通解形式为 <span class="arithmatex">\(y = C e^{C_1 x}\)</span>，其中 <span class="arithmatex">\(C, C_1\)</span>为任意常数）。</p>
+<p><strong>避坑要点：</strong></p>
+<p>在解“缺 <span class="arithmatex">\(x\)</span>”型方程时，千万不要把 <span class="arithmatex">\(y''\)</span>写成了 <span class="arithmatex">\(p'\)</span>。一定要牢记 <strong><span class="arithmatex">\(y'' = p \frac{dp}{dy}\)</span></strong> 这一复合求导的核心替换公式。</p>
+<h3 id="_11">（四）线性微分方程解的性质<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p>我们以<strong>二阶线性微分方程</strong>为例（高阶情况完全同理）：</p>
+<ul>
+<li><strong>齐次方程</strong>：<span class="arithmatex">\(y'' + P(x)y' + Q(x)y = 0\)</span></li>
+<li><strong>非齐次方程</strong>：<span class="arithmatex">\(y'' + P(x)y' + Q(x)y = f(x)\)</span></li>
+</ul>
+<h4 id="_12">一、 齐次线性方程解的性质（寻找“基底”）<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<p>齐次方程的右端为 <span class="arithmatex">\(0\)</span>，它的解体现了极其完美的<strong>线性空间</strong>特性。</p>
+<h5 id="1-superposition-principle">1. 叠加原理 (Superposition Principle)<a class="headerlink" href="#1-superposition-principle" title="Permanent link">&para;</a></h5>
+<p>如果 <span class="arithmatex">\(y_1(x)\)</span>和 <span class="arithmatex">\(y_2(x)\)</span>是齐次方程的两个解，那么它们的<strong>任意线性组合</strong> <span class="arithmatex">\(y = C_1 y_1(x) + C_2 y_2(x)\)</span>仍然是该齐次方程的解（其中 <span class="arithmatex">\(C_1, C_2\)</span>是任意常数）。</p>
+<ul>
+<li><em>通俗理解</em>：齐次方程就像一个黑盒，丢进去 <span class="arithmatex">\(y_1\)</span>吐出 <span class="arithmatex">\(0\)</span>，丢进去 <span class="arithmatex">\(y_2\)</span>也吐出 <span class="arithmatex">\(0\)</span>。那你把它们按比例混在一起丢进去，吐出来的肯定还是 <span class="arithmatex">\(0\)</span>。</li>
+</ul>
+<h5 id="2-fundamental-system-of-solutions">2. 线性无关与基础解系 (Fundamental System of Solutions)<a class="headerlink" href="#2-fundamental-system-of-solutions" title="Permanent link">&para;</a></h5>
+<p>并非任意两个解凑在一起就能叫“通解”。要构成二阶方程的通解，这两个解必须是<strong>线性无关</strong>的。</p>
+<ul>
+<li>
+<p><strong>判断标准</strong>：如果两个解的比例不是常数（即 <span class="arithmatex">\(\frac{y_1}{y_2} \neq C\)</span>），它们就是线性无关的。更严谨的说法是它们的朗斯基行列式 (Wronskian) 不为零：<span class="arithmatex">\(W(y_1, y_2) = y_1 y_2' - y_2 y_1' \neq 0\)</span>。</p>
+</li>
+<li>
+<p><strong>通解结构</strong>：如果 <span class="arithmatex">\(y_1, y_2\)</span>线性无关，我们称它们构成了方程的<strong>基础解系</strong>。此时，齐次方程的通解就可以表示为：</p>
+</li>
+</ul>
+<div class="arithmatex">\[
+Y = C_1 y_1 + C_2 y_2
+\]</div>
+<h4 id="_13">二、 非齐次线性方程解的性质（“平移”空间）<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h4>
+<p>当方程右端有了一个非零的自由项 <span class="arithmatex">\(f(x)\)</span>时，解的结构就发生了微妙的变化。</p>
+<h5 id="3_3">3. 解的结构定理（最核心考点）<a class="headerlink" href="#3_3" title="Permanent link">&para;</a></h5>
+<p>设 <span class="arithmatex">\(y^*\)</span>是非齐次方程 <span class="arithmatex">\(y'' + P(x)y' + Q(x)y = f(x)\)</span>的<strong>任意一个特解</strong>，而 <span class="arithmatex">\(Y\)</span>是对应齐次方程的通解。</p>
+<p>那么，非齐次方程的通解就是：
+$$
+y = Y + y^<em> = C_1 y_1 + C_2 y_2 + y^</em>
+$$</p>
+<ul>
+<li><em>考点剖析</em>：这揭示了非齐次通解的本质——<strong>“齐次通解负责包容所有可能的变化（游离态），特解负责满足那个特殊的右端项（基准态）”</strong>。在几何上，特解相当于把齐次解的积分曲线族进行了一个整体“平移”。</li>
+</ul>
+<h5 id="4_1">4. 特解的减法性质（消除非齐次项）<a class="headerlink" href="#4_1" title="Permanent link">&para;</a></h5>
+<p>如果 <span class="arithmatex">\(y_1^*\)</span>和 <span class="arithmatex">\(y_2^*\)</span>都是<strong>同一个</strong>非齐次方程的两个特解，那么它们的差 <span class="arithmatex">\(y_1^* - y_2^*\)</span>会发生什么？</p>
+<p>代入方程你会发现，右端的 <span class="arithmatex">\(f(x)\)</span>刚好被减没了！</p>
+<ul>
+<li><strong>结论</strong>：<strong>非齐次方程的两个特解之差，必然是对应齐次方程的解</strong>。</li>
+<li><em>做题秒杀技巧</em>：如果在选择题里已知非齐次方程的三个特解 <span class="arithmatex">\(y_1, y_2, y_3\)</span>，那么对应的齐次方程通解就可以直接写出类似 <span class="arithmatex">\(Y = C_1(y_1 - y_2) + C_2(y_2 - y_3)\)</span>的形式（前提是这两组差线性无关）。</li>
+</ul>
+<h5 id="5">5. 非齐次项的叠加原理（分而治之）<a class="headerlink" href="#5" title="Permanent link">&para;</a></h5>
+<p>如果非齐次方程的右端项比较复杂，是由两部分相加而成的：<span class="arithmatex">\(f(x) = f_1(x) + f_2(x)\)</span>。</p>
+<ul>
+<li>假设 <span class="arithmatex">\(y_1^*\)</span>是方程对应 <span class="arithmatex">\(f_1(x)\)</span>的特解；</li>
+<li>假设 <span class="arithmatex">\(y_2^*\)</span>是方程对应 <span class="arithmatex">\(f_2(x)\)</span>的特解；</li>
+<li><strong>结论</strong>：那么 <span class="arithmatex">\(y_1^* + y_2^*\)</span>就是原方程对应 <span class="arithmatex">\(f_1(x) + f_2(x)\)</span>的特解。</li>
+<li><em>实战意义</em>：当遇到右边是 <span class="arithmatex">\(e^x + \sin x\)</span>这种混合项时，直接把它拆成两道题分别求特解，最后加起来即可。</li>
+</ul>
+<h3 id="_14">（五）高阶常系数齐次线性微分方程<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<p>它的核心思想可以用四个字概括：<strong>“化微为代”</strong>。它将复杂的微积分求解，降维打击成了解一元高次多项式代数方程的问题。</p>
+<p>对于 <span class="arithmatex">\(n\)</span>阶常系数齐次线性方程：
+$$
+y^{(n)} + p_{n-1}y^{(n-1)} + \dots + p_1y' + p_0y = 0
+$$
+解题永远只有固定的三步：<strong>写特征方程 <span class="arithmatex">\(\rightarrow\)</span>解出所有的特征根 <span class="arithmatex">\(\rightarrow\)</span>照表写出通解。</strong></p>
+<hr />
+<h4 id="_15">一、 核心映射法则（必背表格）<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h4>
+<p>写出特征方程 <span class="arithmatex">\(r^n + p_{n-1}r^{n-1} + \dots + p_1r + p_0 = 0\)</span>后，根据代数基本定理，它在复数域内一定有 <span class="arithmatex">\(n\)</span>个根。</p>
+<p>由于它是 <span class="arithmatex">\(n\)</span>阶方程，我们需要找 <span class="arithmatex">\(n\)</span>个线性无关的基础解来拼装通解。<strong>特征根长什么样，基础解就长什么样</strong>。请把下面这张表刻在脑子里：</p>
+<table>
+<thead>
+<tr>
+<th><strong>特征根 r 的情况</strong></th>
+<th><strong>对应提供给通解的“基础解”项</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>单实根</strong> <span class="arithmatex">\(r = a\)</span></td>
+<td><span class="arithmatex">\(C e^{ax}\)</span></td>
+</tr>
+<tr>
+<td><strong><span class="arithmatex">\(k\)</span>重实根</strong> <span class="arithmatex">\(r = a\)</span>(出现 <span class="arithmatex">\(k\)</span>次)</td>
+<td><span class="arithmatex">\((C_1 + C_2 x + C_3 x^2 + \dots + C_k x^{k-1}) e^{ax}\)</span></td>
+</tr>
+<tr>
+<td><strong>单对共轭复根</strong> <span class="arithmatex">\(r = \alpha \pm i\beta\)</span></td>
+<td><span class="arithmatex">\(e^{\alpha x} (C_1 \cos \beta x + C_2 \sin \beta x)\)</span></td>
+</tr>
+<tr>
+<td><strong><span class="arithmatex">\(k\)</span>重共轭复根</strong> <span class="arithmatex">\(r = \alpha \pm i\beta\)</span>(极少考)</td>
+<td>照葫芦画瓢，给 <span class="arithmatex">\(\cos\)</span>和 <span class="arithmatex">\(\sin\)</span>前面都乘上 <span class="arithmatex">\((C_1 + C_2 x + \dots + C_k x^{k-1})\)</span></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="_16">二、 经典考研实战演示<a class="headerlink" href="#_16" title="Permanent link">&para;</a></h4>
+<p><strong>求微分方程 <span class="arithmatex">\(y^{(4)} - y = 0\)</span>的通解。</strong></p>
+<p><strong>解题步骤：</strong></p>
+<ol>
+<li><strong>写出特征方程：</strong></li>
+</ol>
+<div class="arithmatex">\[
+   r^4 - 1 = 0
+\]</div>
+<ol start="2">
+<li><strong>因式分解求根（难点往往在这里）：</strong></li>
+</ol>
+<p>利用平方差公式：</p>
+<div class="arithmatex">\[
+(r^2 - 1)(r^2 + 1) = 0
+\]</div>
+<div class="arithmatex">\[
+(r - 1)(r + 1)(r^2 + 1) = 0
+\]</div>
+<p>解得 4 个特征根：</p>
+<ul>
+<li>两个单实根：<span class="arithmatex">\(r_1 = 1\)</span>, <span class="arithmatex">\(r_2 = -1\)</span></li>
+<li>一对共轭复根：<span class="arithmatex">\(r_{3,4} = \pm i\)</span>（即 <span class="arithmatex">\(\alpha = 0, \beta = 1\)</span>）</li>
+</ul>
+<ol start="3">
+<li><strong>对照表格写通解：</strong></li>
+</ol>
+<ul>
+<li><span class="arithmatex">\(r_1 = 1 \implies C_1 e^x\)</span></li>
+<li><span class="arithmatex">\(r_2 = -1 \implies C_2 e^{-x}\)</span></li>
+<li><span class="arithmatex">\(r_{3,4} = 0 \pm 1i \implies e^{0x}(C_3 \cos 1x + C_4 \sin 1x) = C_3 \cos x + C_4 \sin x\)</span></li>
+</ul>
+<p>把它们加起来，得到最终通解：</p>
+<div class="arithmatex">\[
+y = C_1 e^x + C_2 e^{-x} + C_3 \cos x + C_4 \sin x
+\]</div>
+<p><em>(检查：4阶方程，通解里有4个独立的任意常数，完美！)</em></p>
+<hr />
+<h4 id="_17">三、 避坑与易错点<a class="headerlink" href="#_17" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>缺项不要漏：</strong> 比如 <span class="arithmatex">\(y^{(4)} - y'' = 0\)</span>，特征方程是 <span class="arithmatex">\(r^4 - r^2 = 0\)</span>，即 <span class="arithmatex">\(r^2(r-1)(r+1) = 0\)</span>。这里的 <span class="arithmatex">\(r=0\)</span>是一个<strong>二重实根</strong>！所以它对应的解是 <span class="arithmatex">\((C_1 + C_2 x)e^{0x} = C_1 + C_2 x\)</span>。千万别把 <span class="arithmatex">\(r=0\)</span>漏掉。</li>
+<li><strong>高次方程的分解技巧：</strong> 考研中最高一般考到 3 阶或 4 阶。常用的分解技巧包括：</li>
+</ol>
+<ul>
+<li><strong>提公因式 / 分组分解</strong></li>
+<li><strong>试根法</strong>（找常数项的因子代入试凑，比如试 <span class="arithmatex">\(r=\pm1, \pm2\)</span>，如果 <span class="arithmatex">\(r=1\)</span>是根，就说明含有 <span class="arithmatex">\((r-1)\)</span>这个因式，然后用多项式长除法降次）。</li>
+</ul>
+<h3 id="_18">（六）高阶常系数非齐次线性微分方程<a class="headerlink" href="#_18" title="Permanent link">&para;</a></h3>
+<p>回想一下我们之前总结的解的结构定理：<strong>非齐次通解 = 齐次通解 <span class="arithmatex">\(Y\)</span>+ 非齐次特解 <span class="arithmatex">\(y^\*\)</span></strong>。</p>
+<ul>
+<li>齐次通解 <span class="arithmatex">\(Y\)</span>：写特征方程，求根，照表写。（这部分你已经完全掌握了）</li>
+<li>非齐次特解 <span class="arithmatex">\(y^*\)</span>：就是我们现在的核心任务，使用<strong>“待定系数法”</strong>。</li>
+</ul>
+<p>待定系数法的精髓在于<strong>“照猫画虎”</strong>。等号右边的自由项 <span class="arithmatex">\(f(x)\)</span>长什么样，我们就猜特解 <span class="arithmatex">\(y^*\)</span>长什么样，只是系数暂且保留为未知数（比如 <span class="arithmatex">\(A, B, C\)</span>），然后代入原方程把这些系数算出来。</p>
+<p>考试中最常考的 <span class="arithmatex">\(f(x)\)</span>有两种标准类型。</p>
+<hr />
+<h4 id="_19">第一型：多项式与指数函数相乘型<a class="headerlink" href="#_19" title="Permanent link">&para;</a></h4>
+<p><strong>标准形式：</strong> <span class="arithmatex">\(f(x) = P_m(x) e^{\lambda x}\)</span></p>
+<p>（其中 <span class="arithmatex">\(P_m(x)\)</span>是一个 <span class="arithmatex">\(m\)</span>次多项式，<span class="arithmatex">\(\lambda\)</span>是已知常数。注意：如果只有多项式，说明 <span class="arithmatex">\(\lambda=0\)</span>；如果只有 <span class="arithmatex">\(e^{\lambda x}\)</span>，说明 <span class="arithmatex">\(P_m(x)\)</span>是 0 次多项式，即常数）。</p>
+<p><strong>设特解的结构：</strong>
+$$
+y^* = x^k \cdot Q_m(x) \cdot e^{\lambda x}
+$$
+这里有三个部分，我们需要逐一攻破：</p>
+<ol>
+<li>
+<p><strong>照抄指数部分</strong>：<span class="arithmatex">\(e^{\lambda x}\)</span>直接抄下来。</p>
+</li>
+<li>
+<p><strong>设一般多项式 <span class="arithmatex">\(Q_m(x)\)</span></strong>：<span class="arithmatex">\(f(x)\)</span>里的多项式是几次，我们就设一个包含所有低次项的同次一般多项式。</p>
+</li>
+</ol>
+<ul>
+<li>如果 <span class="arithmatex">\(f(x) = 2x\)</span>(一次)，就设 <span class="arithmatex">\(Q_1(x) = Ax + B\)</span>。</li>
+<li>如果 <span class="arithmatex">\(f(x) = x^2\)</span>(二次)，就设 <span class="arithmatex">\(Q_2(x) = Ax^2 + Bx + C\)</span>。</li>
+</ul>
+<ol start="3">
+<li><strong>确定“乘 <span class="arithmatex">\(x\)</span>的次数” <span class="arithmatex">\(k\)</span>（最核心考点）</strong>：</li>
+</ol>
+<p>比较 <span class="arithmatex">\(f(x)\)</span>中的指数系数 <span class="arithmatex">\(\lambda\)</span>与齐次方程的<strong>特征根 <span class="arithmatex">\(r\)</span></strong>：</p>
+<ul>
+<li>若 <span class="arithmatex">\(\lambda\)</span><strong>不是</strong>特征根，则 <span class="arithmatex">\(k = 0\)</span>（不乘 <span class="arithmatex">\(x\)</span>）。</li>
+<li>若 <span class="arithmatex">\(\lambda\)</span>是<strong>单根</strong>，则 <span class="arithmatex">\(k = 1\)</span>（乘 <span class="arithmatex">\(x\)</span>）。</li>
+<li>若 <span class="arithmatex">\(\lambda\)</span>是 <strong><span class="arithmatex">\(n\)</span>重根</strong>，则 <span class="arithmatex">\(k = n\)</span>（乘 <span class="arithmatex">\(x^n\)</span>）。</li>
+</ul>
+<blockquote>
+<p><strong>💡 为什么要乘 <span class="arithmatex">\(x^k\)</span>？</strong></p>
+<p>这是为了“避嫌”。如果 <span class="arithmatex">\(\lambda\)</span>刚好是特征根，你猜的特解形式就会和齐次通解“撞车”。撞车的结果是，你把猜的特解代入方程左边，直接就等于 0 了，根本算不出系数！乘上 <span class="arithmatex">\(x^k\)</span>就是为了打破这种线性相关。</p>
+</blockquote>
+<h4 id="_20">第二型：包含三角函数的震荡型<a class="headerlink" href="#_20" title="Permanent link">&para;</a></h4>
+<p><strong>标准形式：</strong> <span class="arithmatex">\(f(x) = e^{\lambda x} \left[ P_l(x) \cos(\omega x) + P_n(x) \sin(\omega x) \right]\)</span></p>
+<p><strong>设特解的结构：</strong>
+$$
+y^* = x^k \cdot e^{\lambda x} \left[ R_m^{(1)}(x) \cos(\omega x) + R_m^{(2)}(x) \sin(\omega x) \right]
+$$</p>
+<p>同样分步搞定：</p>
+<ol>
+<li>
+<p><strong>照抄指数和三角部分</strong>：<span class="arithmatex">\(e^{\lambda x}, \cos(\omega x), \sin(\omega x)\)</span>照抄。<strong>注意：即使原题只有 <span class="arithmatex">\(\cos\)</span>，没有 <span class="arithmatex">\(\sin\)</span>，设特解时也必须把 <span class="arithmatex">\(\cos\)</span>和 <span class="arithmatex">\(\sin\)</span>都写上！</strong></p>
+</li>
+<li>
+<p><strong>设一般多项式</strong>：取 <span class="arithmatex">\(l\)</span>和 <span class="arithmatex">\(n\)</span>中的最大值 <span class="arithmatex">\(m = \max(l, n)\)</span>，设出两个独立的一般多项式 <span class="arithmatex">\(R_m^{(1)}(x)\)</span>和 <span class="arithmatex">\(R_m^{(2)}(x)\)</span>。</p>
+</li>
+</ol>
+<ul>
+<li>如果原题是 <span class="arithmatex">\(x\cos x\)</span>，那么多项式最高是一次，所以要设 <span class="arithmatex">\((Ax+B)\cos x + (Cx+D)\sin x\)</span>。</li>
+</ul>
+<ol start="3">
+<li><strong>确定 <span class="arithmatex">\(k\)</span>值</strong>：</li>
+</ol>
+<p>提取复数 <span class="arithmatex">\(\lambda \pm \omega i\)</span>（注意这里的 <span class="arithmatex">\(\omega\)</span>就是三角函数里的角频率），去和齐次方程的<strong>特征根 <span class="arithmatex">\(r\)</span></strong> 比较：</p>
+<ul>
+<li>
+<p>若 <span class="arithmatex">\(\lambda \pm \omega i\)</span><strong>不是</strong>特征根，则 <span class="arithmatex">\(k = 0\)</span>。</p>
+</li>
+<li>
+<p>若 <span class="arithmatex">\(\lambda \pm \omega i\)</span>是<strong>单复根</strong>，则 <span class="arithmatex">\(k = 1\)</span>。</p>
+<p>（考研中极少出现复数重根，所以 <span class="arithmatex">\(k\)</span>基本只有 0 或 1 两种情况）。</p>
+</li>
+</ul>
+<h4 id="_21">实战演示<a class="headerlink" href="#_21" title="Permanent link">&para;</a></h4>
+<p><strong>求 <span class="arithmatex">\(y'' - 3y' + 2y = xe^x\)</span>的特解形式。</strong></p>
+<ol>
+<li><strong>求特征根</strong>：写出特征方程 <span class="arithmatex">\(r^2 - 3r + 2 = 0 \implies (r-1)(r-2)=0\)</span>，根为 <span class="arithmatex">\(r_1=1, r_2=2\)</span>。</li>
+<li><strong>分析 <span class="arithmatex">\(f(x)\)</span></strong>：<span class="arithmatex">\(f(x) = x e^{1 \cdot x}\)</span>。可见多项式是1次的，指数系数 <span class="arithmatex">\(\lambda = 1\)</span>。</li>
+<li><strong>比较确定 <span class="arithmatex">\(k\)</span></strong>：因为 <span class="arithmatex">\(\lambda = 1\)</span>刚好是特征方程的<strong>单根</strong>，所以必须乘一次 <span class="arithmatex">\(x\)</span>，即 <span class="arithmatex">\(k = 1\)</span>。</li>
+<li><strong>写出设法</strong>：<span class="arithmatex">\(y^* = x^1 \cdot (Ax + B) \cdot e^x = x(Ax+B)e^x\)</span>。</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.indexes", "navigation.top", "search.suggest"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+      
+    
+  </body>
+</html>
