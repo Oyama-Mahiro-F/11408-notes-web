@@ -5,138 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026考研笔记资料库</title>
 <style>
-  :root {
-    --bg: #f5f5f5;
-    --card-bg: #ffffff;
-    --text: #333333;
-    --muted: #666666;
-    --border: #e0e0e0;
-    --accent: #3f51b5;
-    --accent-hover: #303f9f;
-  }
-  body {
-    font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    margin: 0;
-    padding: 40px 20px;
-    line-height: 1.6;
-  }
+  :root { --bg: #f5f5f5; --card-bg: #fff; --text: #333; --muted: #666; --border: #e0e0e0; --accent: #3f51b5; }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px 20px; line-height: 1.6; }
   .container { max-width: 800px; margin: 0 auto; }
   h1 { text-align: center; font-size: 2rem; margin-bottom: 8px; }
   .subtitle { text-align: center; color: var(--muted); margin-bottom: 40px; }
   .section { margin-bottom: 32px; }
-  .section-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--accent);
-    margin-bottom: 16px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 10px;
-  }
-  .card {
-    display: block;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 16px;
-    text-decoration: none;
-    color: var(--text);
-    transition: all 0.15s;
-  }
-  .card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transform: translateY(-1px);
-  }
+  .section-title { font-size: 1.3rem; font-weight: 700; padding-bottom: 8px; border-bottom: 2px solid var(--accent); margin-bottom: 16px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .card { display: block; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; text-decoration: none; color: var(--text); transition: all 0.15s; }
+  .card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.1); transform: translateY(-1px); }
   .card .ch { font-weight: 600; }
-  .card .en { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
-  .mkdocs-link {
-    display: inline-block;
-    background: var(--accent);
-    color: #fff;
-    padding: 10px 24px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: background 0.15s;
-  }
-  .mkdocs-link:hover { background: var(--accent-hover); }
   .footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 60px; }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>2026考研笔记资料库</h1>
-  <p class="subtitle">11408 数学笔记 — 高等数学 &amp; 线性代数（Typora 导出）</p>
-
-  <div class="section">
-    <div class="section-title">高等数学</div>
-    <div class="grid">
-      <a class="card" href="数学/高数/第1章 函数的极限与连续.html">
-        <div class="ch">第1章 函数的极限与连续</div>
-      </a>
-      <a class="card" href="数学/高数/第2章 一元函数微分学.html">
-        <div class="ch">第2章 一元函数微分学</div>
-      </a>
-      <a class="card" href="数学/高数/第4章 定积分.html">
-        <div class="ch">第4章 定积分</div>
-      </a>
-      <a class="card" href="数学/高数/第5章 微分方程.html">
-        <div class="ch">第5章 微分方程</div>
-      </a>
-      <a class="card" href="数学/高数/第6章 向量代数与空间解析几何.html">
-        <div class="ch">第6章 向量代数与空间解析几何</div>
-      </a>
-      <a class="card" href="数学/高数/第7章 多元函数微分学.html">
-        <div class="ch">第7章 多元函数微分学</div>
-      </a>
-      <a class="card" href="数学/高数/第8章 二重积分.html">
-        <div class="ch">第8章 二重积分</div>
-      </a>
-      <a class="card" href="数学/高数/第9章 三重积分.html">
-        <div class="ch">第9章 三重积分</div>
-      </a>
-      <a class="card" href="数学/高数/第10章 无穷级数.html">
-        <div class="ch">第10章 无穷级数</div>
-      </a>
-      <a class="card" href="数学/高数/第11章 曲线积分.html">
-        <div class="ch">第11章 曲线积分</div>
-      </a>
-      <a class="card" href="数学/高数/第12章 曲面积分.html">
-        <div class="ch">第12章 曲面积分</div>
-      </a>
-      <a class="card" href="数学/高数/公式总结.html">
-        <div class="ch">公式总结</div>
-      </a>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">线性代数</div>
-    <div class="grid">
-      <a class="card" href="数学/线性代数/第1章 行列式.html">
-        <div class="ch">第1章 行列式</div>
-      </a>
-      <a class="card" href="数学/线性代数/第2章 矩阵.html">
-        <div class="ch">第2章 矩阵</div>
-      </a>
-      <a class="card" href="数学/线性代数/第3章 向量.html">
-        <div class="ch">第3章 向量</div>
-      </a>
-      <a class="card" href="数学/线性代数/第4章 线性方程组.html">
-        <div class="ch">第4章 线性方程组</div>
-      </a>
-      <a class="card" href="数学/线性代数/第5章 矩阵的特征值和特征向量.html">
-        <div class="ch">第5章 矩阵的特征值和特征向量</div>
-      </a>
-    </div>
-  </div>
-
+  <p class="subtitle">11408 及公共课复习笔记</p>
+  <div class="section"><div class="section-title">408</div><div class="grid">
+<a class="card" href="操作系统/笔记.html"><div class="ch">笔记</div></a>
+</div></div>
+<div class="section"><div class="section-title">数学</div><div class="grid">
+<a class="card" href="数学/概率与统计/第2章 三大概型.html"><div class="ch">第2章 三大概型</div></a>
+<a class="card" href="数学/线性代数/第1章 行列式.html"><div class="ch">第1章 行列式</div></a>
+<a class="card" href="数学/线性代数/第2章 矩阵.html"><div class="ch">第2章 矩阵</div></a>
+<a class="card" href="数学/线性代数/第3章 向量.html"><div class="ch">第3章 向量</div></a>
+<a class="card" href="数学/线性代数/第4章 线性方程组.html"><div class="ch">第4章 线性方程组</div></a>
+<a class="card" href="数学/线性代数/第5章 矩阵的特征值和特征向量.html"><div class="ch">第5章 矩阵的特征值和特征向量</div></a>
+<a class="card" href="数学/高数/公式总结.html"><div class="ch">公式总结</div></a>
+<a class="card" href="数学/高数/第10章 无穷级数.html"><div class="ch">第10章 无穷级数</div></a>
+<a class="card" href="数学/高数/第11章 曲线积分.html"><div class="ch">第11章 曲线积分</div></a>
+<a class="card" href="数学/高数/第12章 曲面积分.html"><div class="ch">第12章 曲面积分</div></a>
+<a class="card" href="数学/高数/第1章 函数的极限与连续.html"><div class="ch">第1章 函数的极限与连续</div></a>
+<a class="card" href="数学/高数/第2章 一元函数微分学.html"><div class="ch">第2章 一元函数微分学</div></a>
+<a class="card" href="数学/高数/第3章 不定积分.html"><div class="ch">第3章 不定积分</div></a>
+<a class="card" href="数学/高数/第4章 定积分.html"><div class="ch">第4章 定积分</div></a>
+<a class="card" href="数学/高数/第5章 微分方程.html"><div class="ch">第5章 微分方程</div></a>
+<a class="card" href="数学/高数/第6章 向量代数与空间解析几何.html"><div class="ch">第6章 向量代数与空间解析几何</div></a>
+<a class="card" href="数学/高数/第7章 多元函数微分学.html"><div class="ch">第7章 多元函数微分学</div></a>
+<a class="card" href="数学/高数/第8章 二重积分.html"><div class="ch">第8章 二重积分</div></a>
+<a class="card" href="数学/高数/第9章 三重积分.html"><div class="ch">第9章 三重积分</div></a>
+</div></div>
   <p class="footer">Generated with Typora &middot; Hosted on GitHub Pages</p>
 </div>
 </body>

@@ -418,4 +418,61 @@ for section in nav_tree_auto:
                     print(f'  Created: {subdir}/index.html')
                     idx_count += 1
 
+# Generate main index page
+def gen_main_index(nav_tree):
+    cards = []
+    for section in nav_tree:
+        title = section['title']
+        cards.append(f'<div class="section"><div class="section-title">{title}</div><div class="grid">')
+        for sub in section.get('children', []):
+            sub_title = sub['title']
+            href = sub.get('href', f'{section["title"]}/{sub_title}/index.html')
+            items = []
+            if 'children' in sub:
+                for leaf in sub['children']:
+                    leaf_title = leaf['title']
+                    leaf_href = leaf.get('href', f'{sub_title}/{leaf_title}.html')
+                    items.append(f'<a class="card" href="{leaf_href}"><div class="ch">{leaf_title}</div></a>')
+            cards.append('\n'.join(items))
+        cards.append('</div></div>')
+
+    cards_html = '\n'.join(cards)
+
+    content = f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026考研笔记资料库</title>
+<style>
+  :root {{ --bg: #f5f5f5; --card-bg: #fff; --text: #333; --muted: #666; --border: #e0e0e0; --accent: #3f51b5; }}
+  body {{ font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px 20px; line-height: 1.6; }}
+  .container {{ max-width: 800px; margin: 0 auto; }}
+  h1 {{ text-align: center; font-size: 2rem; margin-bottom: 8px; }}
+  .subtitle {{ text-align: center; color: var(--muted); margin-bottom: 40px; }}
+  .section {{ margin-bottom: 32px; }}
+  .section-title {{ font-size: 1.3rem; font-weight: 700; padding-bottom: 8px; border-bottom: 2px solid var(--accent); margin-bottom: 16px; }}
+  .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }}
+  .card {{ display: block; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; text-decoration: none; color: var(--text); transition: all 0.15s; }}
+  .card:hover {{ border-color: var(--accent); box-shadow: 0 2px 8px rgba(0,0,0,0.1); transform: translateY(-1px); }}
+  .card .ch {{ font-weight: 600; }}
+  .footer {{ text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 60px; }}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>2026考研笔记资料库</h1>
+  <p class="subtitle">11408 及公共课复习笔记</p>
+  {cards_html}
+  <p class="footer">Generated with Typora &middot; Hosted on GitHub Pages</p>
+</div>
+</body>
+</html>"""
+
+    with open(os.path.join(site_dir, 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(content)
+    print('  Updated: index.html')
+
+gen_main_index(nav_tree_auto)
+
 print(f'\nDone. Added nav shell to {count} files + {idx_count} index pages.')
