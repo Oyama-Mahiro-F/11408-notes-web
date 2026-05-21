@@ -159,15 +159,11 @@ def add_nav(filepath):
     # Header tabs
     active_tab = get_active_tab(rel_path)
     depth = rel_path.count('/')
-    mkdocs_base = '../' * depth + 'mkdocs/' if depth > 0 else 'mkdocs/'
     home_base = '../' * depth + 'index.html' if depth > 0 else 'index.html'
 
     tabs = (
         f'<a class="tab" href="{home_base}">首页</a>'
-        f'<a class="tab" href="{mkdocs_base}408/">408</a>'
         f'<a class="tab{" active" if active_tab == "数学" else ""}" href="{home_base}">数学</a>'
-        f'<a class="tab" href="{mkdocs_base}英语/">英语</a>'
-        f'<a class="tab" href="{mkdocs_base}">政治</a>'
     )
 
     # Left nav tree - all links are relative HTML files
