@@ -20,15 +20,20 @@ def run(cmd, cwd=ROOT):
 def main():
     print('===== 考研笔记推送 =====')
 
-    # 1. Recursively copy all HTML files from 考研/ to site/
-    print('[1/4] 复制 HTML...')
+    # 1. Recursively copy HTML and assets from 考研/ to site/
+    print('[1/4] 复制文件...')
     for root, dirs, files in os.walk(SOURCE):
+        # Skip hidden dirs
+        dirs[:] = [d for d in dirs if not d.startswith('.')]
         rel_dir = os.path.relpath(root, SOURCE)
         if rel_dir == '.':
             rel_dir = ''
         dst_dir = os.path.join(SITE, rel_dir)
         for f in files:
-            if f.endswith('.html') and not f.startswith('.'):
+            if f.startswith('.'):
+                continue
+            ext = os.path.splitext(f)[1].lower()
+            if ext in ('.html', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.css', '.js'):
                 os.makedirs(dst_dir, exist_ok=True)
                 src = os.path.join(root, f)
                 dst = os.path.join(dst_dir, f)

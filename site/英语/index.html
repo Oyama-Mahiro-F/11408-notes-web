@@ -56,6 +56,30 @@
 }
 </style>
 
+
+<style id="idx-card-css">
+.idx-container { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
+.idx-breadcrumb { font-size: 0.85rem; color: #999; margin-bottom: 8px; }
+.idx-breadcrumb a { color: var(--accent); text-decoration: none; }
+.idx-breadcrumb a:hover { text-decoration: underline; }
+.idx-title { font-size: 1.8rem; color: #222; margin-bottom: 6px; font-weight: 700; }
+.idx-subtitle { color: #888; margin-bottom: 36px; font-size: 0.95rem; }
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.idx-card { background: #fff; border: 2px solid #e8e8e8; border-radius: 14px; padding: 28px 22px; text-decoration: none; color: #333; transition: all 0.22s ease; display: flex; align-items: flex-start; gap: 16px; }
+.idx-card:hover { border-color: var(--accent); box-shadow: 0 6px 20px rgba(63,81,181,0.13); transform: translateY(-2px); }
+.idx-card .card-icon { font-size: 2.2rem; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+.idx-card .card-body { flex: 1; min-width: 0; }
+.idx-card .card-title { font-size: 1.05rem; font-weight: 600; color: #222; line-height: 1.4; }
+.idx-card .card-desc { font-size: 0.82rem; color: #999; margin-top: 6px; }
+.idx-card .card-badge { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 0.72rem; padding: 2px 10px; border-radius: 10px; margin-top: 8px; font-weight: 500; }
+
+@media (max-width: 600px) {
+  .idx-grid { grid-template-columns: 1fr; }
+  .idx-title { font-size: 1.4rem; }
+  .idx-card { padding: 20px 16px; }
+}
+</style>
+
 <div id="app-shell">
 <div class="nav-header">
 <button class="nav-hamburger">&#9776;</button>
@@ -137,10 +161,11 @@
 </div>
 </aside>
 <main class="nav-content">
-<h1 style="font-size:1.6rem;color:#333">英语</h1>
-<p style="color:#666">选择要查看的章节：</p>
-<div style="margin-top:16px">
 
+<h1 class="idx-title">英语</h1>
+<p class="idx-subtitle">选择要查看的章节：</p>
+<div class="idx-grid">
+<p style="color:#aaa;font-size:0.95rem;">暂无笔记，请先在 Typora 中导出 HTML 文件。</p>
 </div>
 </main>
 <aside class="nav-toc"></aside>

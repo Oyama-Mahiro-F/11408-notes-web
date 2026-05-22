@@ -129,6 +129,62 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 """
 
+# ── Index page card CSS ──────────────────────────────────────────────
+INDEX_CARD_CSS = """
+<style id="idx-card-css">
+.idx-container { max-width: 860px; margin: 0 auto; padding: 40px 24px; }
+.idx-breadcrumb { font-size: 0.85rem; color: #999; margin-bottom: 8px; }
+.idx-breadcrumb a { color: var(--accent); text-decoration: none; }
+.idx-breadcrumb a:hover { text-decoration: underline; }
+.idx-title { font-size: 1.8rem; color: #222; margin-bottom: 6px; font-weight: 700; }
+.idx-subtitle { color: #888; margin-bottom: 36px; font-size: 0.95rem; }
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.idx-card { background: #fff; border: 2px solid #e8e8e8; border-radius: 14px; padding: 28px 22px; text-decoration: none; color: #333; transition: all 0.22s ease; display: flex; align-items: flex-start; gap: 16px; }
+.idx-card:hover { border-color: var(--accent); box-shadow: 0 6px 20px rgba(63,81,181,0.13); transform: translateY(-2px); }
+.idx-card .card-icon { font-size: 2.2rem; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+.idx-card .card-body { flex: 1; min-width: 0; }
+.idx-card .card-title { font-size: 1.05rem; font-weight: 600; color: #222; line-height: 1.4; }
+.idx-card .card-desc { font-size: 0.82rem; color: #999; margin-top: 6px; }
+.idx-card .card-badge { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 0.72rem; padding: 2px 10px; border-radius: 10px; margin-top: 8px; font-weight: 500; }
+
+@media (max-width: 600px) {
+  .idx-grid { grid-template-columns: 1fr; }
+  .idx-title { font-size: 1.4rem; }
+  .idx-card { padding: 20px 16px; }
+}
+</style>
+"""
+
+# ── Section icon mapping ─────────────────────────────────────────────
+SECTION_ICONS = {
+    '操作系统': '💿', '数据结构': '🌲', '计算机组成原理': '⚙️', '计算机网络': '🌐',
+    '高数': '📐', '线性代数': '📊', '概率与统计': '🎲', '英语': '📖', '政治': '📋',
+    '408': '💻', '数学': '🔢', '笔记': '📝',
+}
+
+def get_icon(name, parent_title=''):
+    if name in SECTION_ICONS:
+        return SECTION_ICONS[name]
+    if parent_title in ('高数', '线性代数', '概率与统计') or parent_title == '数学':
+        return '📐'
+    if parent_title in ('操作系统', '数据结构', '计算机组成原理', '计算机网络') or parent_title == '408':
+        return '💻'
+    if '第' in name and '章' in name:
+        return '📖'
+    return '📄'
+
+def count_html_in_dir(dirpath):
+    """Count HTML files (excluding index.html) recursively in a directory."""
+    count = 0
+    if not os.path.isdir(dirpath):
+        return 0
+    for root, dirs, files in os.walk(dirpath):
+        dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'assets']
+        for f in files:
+            if f.endswith('.html') and f != 'index.html':
+                count += 1
+    return count
+
 # ── Helpers ─────────────────────────────────────────────────────────
 
 def natural_sort_key(name_or_href):
@@ -310,7 +366,7 @@ def add_nav(filepath):
     return True
 
 def gen_section_index(dirpath, title, children, depth):
-    """Generate an index.html for a section directory."""
+    """Generate an index.html for a section directory with card-based layout."""
     home = '../' * depth + 'index.html' if depth > 0 else 'index.html'
     up = '../' * depth if depth > 0 else ''
     index_rel = os.path.relpath(dirpath, site_root).replace('\\', '/') + '/index.html'
@@ -338,16 +394,62 @@ def gen_section_index(dirpath, title, children, depth):
         return f'href="{r}"'
     nav = re.sub(r'href="([^"]+)"', mkrel, raw_tree)
 
-    items = []
+    # Build breadcrumb parts
+    parts = title.split(' > ')
+    bc_parts = []
+    for i, p in enumerate(parts):
+        href = '../' * (len(parts) - 1 - i) + 'index.html' if i < len(parts) - 1 else None
+        bc_parts.append((p, href))
+
+    breadcrumb = ''
+    if len(parts) > 1:
+        crumbs = []
+        for p, href in bc_parts:
+            if href:
+                crumbs.append(f'<a href="{href}">{p}</a>')
+            else:
+                crumbs.append(p)
+        breadcrumb = '<div class="idx-breadcrumb">' + ' &rsaquo; '.join(crumbs) + '</div>'
+
+    # Build cards
+    cards = []
     for c in children:
-        has = 'children' in c and c['children']
+        is_dir = 'children' in c
         href = c.get('href', '#')
+        # For subdirectories without explicit href, link to their index.html
+        if href == '#' and is_dir:
+            rel_dir = os.path.relpath(dirpath, site_root).replace('\\', '/')
+            if rel_dir == '.':
+                rel_dir = ''
+            href = (rel_dir + '/' if rel_dir else '') + c['title'] + '/index.html'
+        # Make href relative to current directory
         if href != '#' and not href.startswith('http') and cur_dir:
             href = os.path.relpath(href, cur_dir).replace('\\', '/')
-        tg = '<span class="nav-toggle">▼</span>' if has else ''
-        items.append(f'<div class="nav-section"><a class="nav-link l2" href="{href}">{tg}{c["title"]}</a></div>')
+        icon = get_icon(c['title'], parts[-1])
+        desc = ''
+        if is_dir:
+            sub_path = os.path.join(site_root, dirpath, c['title'])
+            cnt = count_html_in_dir(sub_path)
+            if cnt > 0:
+                desc = f'{cnt} 个章节'
+        if not desc:
+            desc = '点击查看'
+        cards.append(f'''<a class="idx-card" href="{href}">
+<span class="card-icon">{icon}</span>
+<div class="card-body">
+<div class="card-title">{c["title"]}</div>
+<div class="card-desc">{desc}</div>
+</div>
+</a>''')
 
-    content = f'<h1 style="font-size:1.6rem;color:#333">{title}</h1>\n<p style="color:#666">选择要查看的章节：</p>\n<div style="margin-top:16px">\n' + '\n'.join(items) + '\n</div>'
+    cards_html = '\n'.join(cards) if cards else '<p style="color:#aaa;font-size:0.95rem;">暂无笔记，请先在 Typora 中导出 HTML 文件。</p>'
+
+    content = f'''{breadcrumb}
+<h1 class="idx-title">{parts[-1]}</h1>
+<p class="idx-subtitle">选择要查看的章节：</p>
+<div class="idx-grid">
+{cards_html}
+</div>'''
 
     html = f"""<!DOCTYPE html>
 <html>
@@ -358,6 +460,7 @@ def gen_section_index(dirpath, title, children, depth):
 </head>
 <body>
 {SHELL_CSS}
+{INDEX_CARD_CSS}
 <div id="app-shell">
 <div class="nav-header">
 <button class="nav-hamburger">&#9776;</button>
