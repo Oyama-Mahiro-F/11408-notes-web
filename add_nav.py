@@ -613,7 +613,7 @@ def gen_main_index():
 
     icons = {'408': '💻', '数学': '📐', '英语': '📖', '政治': '📋'}
     for subj in ['408', '数学', '英语', '政治']:
-        href = subjects[subj] or f'{subj}/'
+        href = f'{subj}/'
         content += f'    <a class="subject-card" href="{href}"><span class="icon">{icons.get(subj, "")}</span><span class="label">{subj}</span></a>\n'
 
     content += """  </div>
