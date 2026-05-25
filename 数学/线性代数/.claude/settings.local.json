@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"from PIL import Image; print\\('PIL available'\\)\")",
+      "Bash(python -c \"from PIL import Image; print\\('PIL available'\\)\")",
+      "Bash(python *)",
+      "Bash(where tesseract *)",
+      "Bash(python3 -c \"import fitz; print\\('PyMuPDF available'\\)\")",
+      "Bash(python3 -c \"from pdf2image import convert_from_path; print\\('pdf2image available'\\)\")",
+      "Read(//d/university_learning/考研/**)",
+      "Read(//d/university_learning/**)"
+    ]
+  }
+}
