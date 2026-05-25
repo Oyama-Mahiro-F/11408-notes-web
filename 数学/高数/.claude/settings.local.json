@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(python -c ' *)",
-      "Bash(python \"D:\\\\university_learning\\\\考研\\\\docs\\\\数学\\\\高数\\\\fix_math.py\")",
-      "Bash(python \"D:\\\\university_learning\\\\考研\\\\docs\\\\数学\\\\高数\\\\fix_headings.py\")"
-    ]
-  }
-}

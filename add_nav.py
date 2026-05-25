@@ -242,7 +242,7 @@ def add_nav(filepath):
     # Remove old app-shell div (match opening to its matching close before </body>)
     html = re.sub(r'<div id="app-shell">.*?</div>\s*(?=</body>)', '', html, flags=re.DOTALL)
 
-    rel_path = os.path.relpath(filepath, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'site')).replace('\\', '/')
+    rel_path = os.path.relpath(filepath, os.path.dirname(os.path.abspath(__file__))).replace('\\', '/')
 
     # Extract headings for right TOC (build hierarchical tree)
     headings = extract_headings(html)
@@ -487,7 +487,7 @@ def gen_section_index(dirpath, title, children, depth):
     return True
 
 # Process
-site_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'site')
+site_dir = os.path.dirname(os.path.abspath(__file__))
 site_root = site_dir
 files = glob.glob(os.path.join(site_dir, '**/*.html'), recursive=True)
 files = [f for f in files if 'mkdocs' not in f and os.path.basename(f) != 'index.html']
