@@ -1,8 +1,8 @@
 import os, subprocess, shutil, sys, glob
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-SITE = os.path.join(ROOT, 'site')
-SOURCE = os.path.join(ROOT, '考研')
+SITE = ROOT
+SOURCE = os.path.join(os.path.dirname(ROOT), '考研')
 
 def run(cmd, cwd=ROOT):
     print(f'  $ {cmd}')
@@ -23,8 +23,8 @@ def main():
     # 1. Recursively copy HTML and assets from 考研/ to site/
     print('[1/4] 复制文件...')
     for root, dirs, files in os.walk(SOURCE):
-        # Skip hidden dirs
-        dirs[:] = [d for d in dirs if not d.startswith('.')]
+        # Skip hidden dirs and non-note dirs
+        dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ('site', '__pycache__')]
         rel_dir = os.path.relpath(root, SOURCE)
         if rel_dir == '.':
             rel_dir = ''
@@ -52,7 +52,7 @@ def main():
 
     # 3. Git
     print('[3/4] 提交...')
-    for path in ['site/', '考研/', 'add_nav.py']:
+    for path in ['408/', '数学/', '英语/', '政治/', 'index.html', 'add_nav.py']:
         subprocess.run(f'git add "{path}"', shell=True, cwd=ROOT,
                        capture_output=True, encoding='utf-8', errors='replace')
 
