@@ -8,6 +8,7 @@ import os, subprocess, shutil, sys, glob
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = ROOT
 SOURCE = os.path.join(os.path.dirname(ROOT), '考研')
+REPO_URL_SSH = 'git@github.com:Oyama-Mahiro-F/11408-notes-web.git'
 REPO_URL_HTTPS = 'https://github.com/Oyama-Mahiro-F/11408-notes-web.git'
 SITE_URL = 'https://oyama-mahiro-f.github.io/11408-notes-web/'
 
@@ -91,11 +92,11 @@ def check_git_remote():
     current_url = out.strip()
     print(f'  远程地址: {current_url}')
 
-    # 重装系统后 SSH 密钥丢失 → 自动切到 HTTPS
-    if 'git@' in current_url or 'ssh:' in current_url:
-        print('  检测到 SSH 地址，切换为 HTTPS（重装系统后无需配置密钥）...')
-        run(f'git remote set-url origin {REPO_URL_HTTPS}', check=False)
-        current_url = REPO_URL_HTTPS
+    # HTTPS 在国内容易被墙 → 自动切到 SSH
+    if 'https://' in current_url:
+        print('  检测到 HTTPS 地址，切换为 SSH（国内更稳定）...')
+        run(f'git remote set-url origin {REPO_URL_SSH}', check=False)
+        current_url = REPO_URL_SSH
         print(f'  已切换: {current_url}')
 
     # Test connection (with timeout — GitHub 国内有时慢)
@@ -117,6 +118,54 @@ def check_git_remote():
     return True  # 不阻塞，push 时还会再试
 
 
+def cleanup_stale_files():
+    """删除 site/ 内容目录中考研/已不存在的文件（处理重命名产生的残留）
+
+    只扫描内容子目录（408/ 数学/ 英语/ 政治/），不触碰 site 根目录的脚本和生成的导航页。
+    """
+    print('[清理] 扫描残留文件...')
+    CONTENT_DIRS = ['408', '数学', '英语', '政治']
+    deleted = 0
+
+    for content_dir in CONTENT_DIRS:
+        site_dir = os.path.join(SITE, content_dir)
+        source_dir = os.path.join(SOURCE, content_dir)
+        if not os.path.isdir(site_dir):
+            continue
+
+        # 遍历内容目录，找 考研/ 中已不存在的文件
+        for root, dirs, files in os.walk(site_dir):
+            dirs[:] = [d for d in dirs if not d.startswith('.')]
+            for f in files:
+                if f.startswith('.'):
+                    continue
+                site_path = os.path.join(root, f)
+                rel = os.path.relpath(site_path, site_dir)
+                source_path = os.path.join(source_dir, rel)
+
+                if not os.path.exists(source_path):
+                    print(f'  ✗ {content_dir}/{rel}')
+                    os.remove(site_path)
+                    deleted += 1
+
+        # 清理空目录（自底向上）
+        for root, dirs, files in os.walk(site_dir, topdown=False):
+            dirs[:] = [d for d in dirs if not d.startswith('.')]
+            if not files and not dirs:
+                rel = os.path.relpath(root, site_dir)
+                if rel != '.':
+                    try:
+                        os.rmdir(root)
+                    except OSError:
+                        pass
+
+    if deleted == 0:
+        print('  没有残留。')
+    else:
+        print(f'  清理完成：{deleted} 个残留文件。')
+    print()
+
+
 def main():
     print('=' * 50)
     print('  考研笔记 → GitHub Pages 推送工具')
@@ -135,7 +184,7 @@ def main():
     print()
 
     # ---- 1. 复制 HTML 和资源文件 ----
-    print('[1/4] 从 考研/ 复制 HTML 和图片到 site/ ...')
+    print('[1/5] 从 考研/ 复制 HTML 和图片到 site/ ...')
     copied = 0
     for root, dirs, files in os.walk(SOURCE):
         dirs[:] = [d for d in dirs if not d.startswith('.') and d not in ('site', '__pycache__')]
@@ -156,8 +205,11 @@ def main():
     print(f'  完成，共复制 {copied} 个文件。')
     print()
 
-    # ---- 2. 生成导航和索引页 ----
-    print('[2/4] 生成导航和索引页...')
+    # ---- 2. 清理残留文件 ----
+    cleanup_stale_files()
+
+    # ---- 3. 生成导航和索引页 ----
+    print('[3/5] 生成导航和索引页...')
     r = subprocess.run([sys.executable, 'add_nav.py'], cwd=ROOT,
                        capture_output=True, encoding='utf-8', errors='replace')
     if r.returncode != 0:
@@ -167,8 +219,8 @@ def main():
     print('  完成。')
     print()
 
-    # ---- 3. Git add & commit ----
-    print('[3/4] Git 提交...')
+    # ---- 4. Git add & commit ----
+    print('[4/5] Git 提交...')
 
     # Add all changed files (more robust than hardcoded paths)
     ok, _ = run('git add -A', check=False)
@@ -192,8 +244,8 @@ def main():
     print('  完成。')
     print()
 
-    # ---- 4. Push ----
-    print('[4/4] 推送到 GitHub（如需登录请在弹出的窗口中授权）...')
+    # ---- 5. Push ----
+    print('[5/5] 推送到 GitHub（如需登录请在弹出的窗口中授权）...')
     if not run_interactive('git push origin main'):
         print()
         print('  [推送失败] 常见原因:')
