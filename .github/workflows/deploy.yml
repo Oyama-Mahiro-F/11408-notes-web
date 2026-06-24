@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -23,11 +23,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Prepare site files
+        run: |
+          mkdir -p _site
+          # 只复制网页相关的目录和文件
+          for dir in 408 数学 英语 政治; do
+            if [ -d "$dir" ]; then cp -r "$dir" _site/; fi
+          done
+          cp index.html _site/ 2>/dev/null || true
+          # 删除 Typora 原生的 .html 里不需要的东西不会影响展示
+          echo "Site files prepared."
+
       - uses: actions/configure-pages@v4
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - id: deployment
         uses: actions/deploy-pages@v4
