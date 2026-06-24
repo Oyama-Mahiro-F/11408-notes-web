@@ -29,6 +29,13 @@ def run(cmd, cwd=ROOT, check=True):
     return True, out
 
 
+def run_interactive(cmd, cwd=ROOT):
+    """执行需要用户交互的命令（如 git push 需要登录弹窗）"""
+    print(f'  $ {cmd}')
+    r = subprocess.run(cmd, shell=True, cwd=cwd)
+    return r.returncode == 0
+
+
 def fix_safe_directory():
     """修复换电脑后 git dubious ownership 问题"""
     r = subprocess.run('git status', shell=True, cwd=ROOT,
@@ -91,20 +98,23 @@ def check_git_remote():
         current_url = REPO_URL_HTTPS
         print(f'  已切换: {current_url}')
 
-    # Test connection
-    ok, out = run('git ls-remote --exit-code origin HEAD', check=False)
-    if ok:
-        print('  [OK] GitHub 连接正常')
-        return True
+    # Test connection (with timeout — GitHub 国内有时慢)
+    print('  正在检测连接（最多等待 10 秒）...')
+    try:
+        r = subprocess.run('git ls-remote --exit-code origin HEAD', shell=True, cwd=ROOT,
+                           capture_output=True, encoding='utf-8', errors='replace', timeout=10)
+        if r.returncode == 0:
+            print('  [OK] GitHub 连接正常')
+            return True
+        err = (r.stderr or '').strip()
+    except subprocess.TimeoutExpired:
+        err = '连接超时'
+    except Exception as e:
+        err = str(e)
 
-    print('  [错误] 无法连接到 GitHub！')
-    print()
-    print('  修复方法：')
-    print('  1. 打开浏览器，访问 https://github.com 确认网络通畅')
-    print('  2. Git 首次推送时会弹出 GitHub 登录窗口（Git Credential Manager）')
-    print('     选择 "Sign in with your browser" 授权即可')
-    print(f'  3. 或手动: git remote set-url origin {REPO_URL_HTTPS}')
-    return False
+    print(f'  [警告] 预检未通过 ({err})，跳过检测，推送时重试。')
+    print(f'  如果推送也失败，浏览器打开 https://github.com 检查网络。')
+    return True  # 不阻塞，push 时还会再试
 
 
 def main():
@@ -183,9 +193,8 @@ def main():
     print()
 
     # ---- 4. Push ----
-    print('[4/4] 推送到 GitHub...')
-    ok, _ = run('git push origin main')
-    if not ok:
+    print('[4/4] 推送到 GitHub（如需登录请在弹出的窗口中授权）...')
+    if not run_interactive('git push origin main'):
         print()
         print('  [推送失败] 常见原因:')
         print('    1. 网络问题 — 浏览器访问 github.com 试试')
