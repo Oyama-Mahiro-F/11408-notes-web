@@ -166,6 +166,67 @@ def cleanup_stale_files():
     print()
 
 
+def fix_image_paths():
+    """修正 HTML 中的图片路径：绝对路径 → 相对 .assets/ 路径，并复制图片到 assets 文件夹"""
+    import re
+
+    print('[修复] 处理 HTML 中的图片路径...')
+    fixed = 0
+    img_pattern = re.compile(r'<img[^>]*\bsrc\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)
+
+    for root, dirs, files in os.walk(SITE):
+        dirs[:] = [d for d in dirs if not d.startswith('.')]
+        for f in files:
+            if not f.endswith('.html'):
+                continue
+            html_path = os.path.join(root, f)
+            html_dir = os.path.dirname(html_path)
+            assets_dir = os.path.join(html_dir, f[:-5] + '.assets')
+
+            with open(html_path, 'r', encoding='utf-8', errors='replace') as fh:
+                content = fh.read()
+
+            modified = False
+            for m in img_pattern.finditer(content):
+                old_src = m.group(1)
+                # Skip already-relative paths
+                if not ('\\' in old_src or old_src.startswith('/')):
+                    continue
+                # Skip URLs
+                if old_src.startswith('http://') or old_src.startswith('https://'):
+                    continue
+
+                img_name = os.path.basename(old_src)
+                if not img_name:
+                    continue
+
+                # Check if image exists in assets folder already
+                assets_img = os.path.join(assets_dir, img_name)
+                if not os.path.exists(assets_img):
+                    # Try to copy from original path
+                    if os.path.exists(old_src):
+                        os.makedirs(assets_dir, exist_ok=True)
+                        shutil.copy2(old_src, assets_img)
+
+                # Replace with relative assets path
+                if os.path.exists(assets_img):
+                    new_rel = os.path.join(f[:-5] + '.assets', img_name)
+                    new_src = m.group(0).replace(old_src, new_rel)
+                    content = content.replace(m.group(0), new_src)
+                    modified = True
+                    fixed += 1
+
+            if modified:
+                with open(html_path, 'w', encoding='utf-8') as fh:
+                    fh.write(content)
+
+    if fixed == 0:
+        print('  无需修复。')
+    else:
+        print(f'  修复了 {fixed} 个图片路径。')
+    print()
+
+
 def main():
     print('=' * 50)
     print('  考研笔记 → GitHub Pages 推送工具')
@@ -205,11 +266,14 @@ def main():
     print(f'  完成，共复制 {copied} 个文件。')
     print()
 
-    # ---- 2. 清理残留文件 ----
+    # ---- 2. 修复图片路径 ----
+    fix_image_paths()
+
+    # ---- 3. 清理残留文件 ----
     cleanup_stale_files()
 
-    # ---- 3. 生成导航和索引页 ----
-    print('[3/5] 生成导航和索引页...')
+    # ---- 4. 生成导航和索引页 ----
+    print('[4/6] 生成导航和索引页...')
     r = subprocess.run([sys.executable, 'add_nav.py'], cwd=ROOT,
                        capture_output=True, encoding='utf-8', errors='replace')
     if r.returncode != 0:
@@ -219,8 +283,8 @@ def main():
     print('  完成。')
     print()
 
-    # ---- 4. Git add & commit ----
-    print('[4/5] Git 提交...')
+    # ---- 5. Git add & commit ----
+    print('[5/6] Git 提交...')
 
     # Add all changed files (more robust than hardcoded paths)
     ok, _ = run('git add -A', check=False)
@@ -244,8 +308,8 @@ def main():
     print('  完成。')
     print()
 
-    # ---- 5. Push ----
-    print('[5/5] 推送到 GitHub（如需登录请在弹出的窗口中授权）...')
+    # ---- 6. Push ----
+    print('[6/6] 推送到 GitHub（如需登录请在弹出的窗口中授权）...')
     if not run_interactive('git push origin main'):
         print()
         print('  [推送失败] 常见原因:')
