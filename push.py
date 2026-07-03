@@ -92,12 +92,20 @@ def check_git_remote():
     current_url = out.strip()
     print(f'  远程地址: {current_url}')
 
-    # HTTPS 在国内容易被墙 → 自动切到 SSH
-    if 'https://' in current_url:
-        print('  检测到 HTTPS 地址，切换为 SSH（国内更稳定）...')
-        run(f'git remote set-url origin {REPO_URL_SSH}', check=False)
-        current_url = REPO_URL_SSH
-        print(f'  已切换: {current_url}')
+    # 不再自动切换到 SSH — hosts 文件可能把 github.com 指向 127.0.0.1（代理工具）
+    # 如果当前是 SSH 但连不上，尝试切回 HTTPS
+    if 'git@' in current_url:
+        print('  检测到 SSH 地址，测试连接...')
+        try:
+            r = subprocess.run('git ls-remote --exit-code origin HEAD', shell=True, cwd=ROOT,
+                               capture_output=True, encoding='utf-8', errors='replace', timeout=10)
+            if r.returncode != 0:
+                raise Exception('SSH 连接失败')
+        except Exception:
+            print('  SSH 不可用，切换为 HTTPS...')
+            run(f'git remote set-url origin {REPO_URL_HTTPS}', check=False)
+            current_url = REPO_URL_HTTPS
+            print(f'  已切换: {current_url}')
 
     # Test connection (with timeout — GitHub 国内有时慢)
     print('  正在检测连接（最多等待 10 秒）...')
