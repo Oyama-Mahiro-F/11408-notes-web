@@ -31,7 +31,7 @@ jobs:
             if [ -d "$dir" ]; then cp -r "$dir" _site/; fi
           done
           cp index.html _site/ 2>/dev/null || true
-          # 删除 Typora 原生的 .html 里不需要的东西不会影响展示
+          touch _site/.nojekyll
           echo "Site files prepared."
 
       - uses: actions/configure-pages@v4
