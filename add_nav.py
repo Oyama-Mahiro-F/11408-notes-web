@@ -522,7 +522,7 @@ for d in all_dirs:
 # Also ensure top-level section directories always get an index
 for d in os.listdir(site_dir):
     full = os.path.join(site_dir, d)
-    if os.path.isdir(full) and not d.startswith('.') and d != 'assets':
+    if os.path.isdir(full) and not d.startswith('.') and not d.endswith('.assets') and d != 'assets':
         sections_to_generate.add(d)
 
 for dirpath in sorted(sections_to_generate):
@@ -542,7 +542,7 @@ for dirpath in sorted(sections_to_generate):
                 # Check if this subdir has any html files (recursively)
                 has_html = False
                 for r, ds, fs in os.walk(sub_path):
-                    ds[:] = [d for d in ds if not d.startswith('.') and d != 'assets']
+                    ds[:] = [d for d in ds if not d.startswith('.') and not d.endswith('.assets') and d != 'assets']
                     if any(f.endswith('.html') and f != 'index.html' for f in fs):
                         has_html = True
                         break
