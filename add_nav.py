@@ -7,7 +7,7 @@ def build_nav_tree(site_dir):
 
     for root, dirs, files in os.walk(site_dir):
         # Skip hidden dirs and special dirs
-        dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'assets']
+        dirs[:] = [d for d in dirs if not d.startswith('.') and not d.endswith('.assets') and d != 'assets']
         for f in files:
             if not f.endswith('.html') or f == 'index.html':
                 continue
@@ -179,7 +179,7 @@ def count_html_in_dir(dirpath):
     if not os.path.isdir(dirpath):
         return 0
     for root, dirs, files in os.walk(dirpath):
-        dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'assets']
+        dirs[:] = [d for d in dirs if not d.startswith('.') and not d.endswith('.assets') and d != 'assets']
         for f in files:
             if f.endswith('.html') and f != 'index.html':
                 count += 1
@@ -505,7 +505,7 @@ idx_count = 0
 # Find all directories under site/ that contain .html files (excluding index.html)
 all_dirs = set()
 for root, dirs, files in os.walk(site_dir):
-    dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'assets']
+    dirs[:] = [d for d in dirs if not d.startswith('.') and not d.endswith('.assets') and d != 'assets']
     for f in files:
         if f.endswith('.html') and f != 'index.html':
             all_dirs.add(os.path.relpath(root, site_dir).replace('\\', '/'))
@@ -560,7 +560,7 @@ def gen_main_index():
     # Find the first available page for each subject
     subjects = {'408': None, '数学': None, '英语': None, '政治': None}
     for root, dirs, files in os.walk(site_dir):
-        dirs[:] = [d for d in dirs if not d.startswith('.') and d != 'assets']
+        dirs[:] = [d for d in dirs if not d.startswith('.') and not d.endswith('.assets') and d != 'assets']
         for f in files:
             if f.endswith('.html') and f != 'index.html':
                 rel = os.path.relpath(os.path.join(root, f), site_dir).replace('\\', '/')
