@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>败者树 (Loser Tree) 动态模拟器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tree-line {
+            position: absolute;
+            z-index: 0;
+            border-left: 2px solid #cbd5e1;
+            border-top: 2px solid #cbd5e1;
+        }
+        .node-active {
+            box-shadow: 0 0 0 4px #fbbf24;
+            transform: scale(1.1);
+            z-index: 10;
+        }
+    </style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>第10章 串.assets</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第10章 串.assets/kmp.html">kmp</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>第8章 排序.assets</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3 active" href="Loser_Tree.html">Loser_Tree</a>
+</div>
+<div class="nav-item"><a class="l3" href="Replacement_Selection.html">Replacement_Selection</a>
+</div>
+<div class="nav-item"><a class="l3" href="external-sort-simulator.html">external-sort-simulator</a>
+</div>
+</div>
+</div>
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+    <div class="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-indigo-900 text-white p-5 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold flex items-center">
+                    <span class="mr-2">🏆</span> 败者树 (Loser Tree) - 4路归并演示
+                </h1>
+                <p class="text-indigo-200 text-sm mt-1">每次向上调整只需严格对比 1 次 (相比于堆的 2 次)，极致压榨 CPU 性能</p>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="reset()" class="px-4 py-2 bg-indigo-800 hover:bg-indigo-700 rounded-lg text-sm font-semibold transition">
+                    重置数据
+                </button>
+                <button id="btn-action" onclick="handleAction()" class="px-6 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-sm font-bold shadow-lg transition">
+                    构建初始败者树
+                </button>
+            </div>
+        </div>
+
+        <!-- Message Log -->
+        <div class="bg-indigo-50 border-b border-indigo-100 p-4 min-h-[60px] flex items-center justify-center">
+            <p id="log-msg" class="text-indigo-900 text-lg font-bold text-center">
+                点击“构建初始败者树”开始演示。
+            </p>
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="p-6 flex-1 flex flex-col gap-6 bg-gray-50 relative">
+            
+            <!-- Final Output -->
+            <div class="w-full bg-green-50 border-2 border-green-300 rounded-lg p-3 flex flex-col items-center shadow-sm">
+                <span class="text-xs text-green-700 font-bold mb-2">最终有序输出 (Output Buffer)</span>
+                <div id="output-container" class="flex flex-wrap gap-2 min-h-[40px] items-center justify-center">
+                    <span class="text-green-300 italic text-sm">等待输出...</span>
+                </div>
+            </div>
+
+            <!-- The Loser Tree Visualization -->
+            <div class="relative w-full h-[320px] bg-white border border-gray-200 rounded-xl shadow-inner mt-4">
+                <div class="absolute top-2 left-2 text-xs text-gray-400 font-bold">败者树结构 (内部节点仅记录败者的段号)</div>
+                
+                <!-- Tree Connections (SVG for cleaner lines) -->
+                <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" style="z-index: 0;">
+                    <!-- ls[1] to ls[2], ls[3] -->
+                    <line x1="50%" y1="120" x2="25%" y2="200" stroke="#cbd5e1" stroke-width="2" />
+                    <line x1="50%" y1="120" x2="75%" y2="200" stroke="#cbd5e1" stroke-width="2" />
+                    <!-- ls[2] to b[0], b[1] -->
+                    <line x1="25%" y1="200" x2="12.5%" y2="280" stroke="#cbd5e1" stroke-width="2" />
+                    <line x1="25%" y1="200" x2="37.5%" y2="280" stroke="#cbd5e1" stroke-width="2" />
+                    <!-- ls[3] to b[2], b[3] -->
+                    <line x1="75%" y1="200" x2="62.5%" y2="280" stroke="#cbd5e1" stroke-width="2" />
+                    <line x1="75%" y1="200" x2="87.5%" y2="280" stroke="#cbd5e1" stroke-width="2" />
+                    <!-- ls[0] to ls[1] -->
+                    <line x1="50%" y1="40" x2="50%" y2="120" stroke="#93c5fd" stroke-width="2" stroke-dasharray="4" />
+                </svg>
+
+                <!-- Nodes -->
+                <!-- ls[0] : 冠军 -->
+                <div id="node-ls0" class="absolute top-[20px] left-1/2 -translate-x-1/2 w-20 h-20 bg-amber-100 border-2 border-amber-400 rounded-full flex flex-col items-center justify-center shadow-lg z-10 transition-all duration-300">
+                    <span class="text-[10px] text-amber-700 font-bold mb-1">总冠军 ls[0]</span>
+                    <span id="val-ls0" class="text-xl font-black text-amber-600">--</span>
+                </div>
+
+                <!-- ls[1] -->
+                <div id="node-ls1" class="absolute top-[100px] left-1/2 -translate-x-1/2 w-16 h-16 bg-white border-2 border-slate-300 rounded-lg flex flex-col items-center justify-center shadow z-10 transition-all duration-300">
+                    <span class="text-[10px] text-slate-500 font-bold">败者 ls[1]</span>
+                    <span id="val-ls1" class="text-lg font-bold text-slate-700">--</span>
+                </div>
+
+                <!-- ls[2] -->
+                <div id="node-ls2" class="absolute top-[180px] left-1/4 -translate-x-1/2 w-16 h-16 bg-white border-2 border-slate-300 rounded-lg flex flex-col items-center justify-center shadow z-10 transition-all duration-300">
+                    <span class="text-[10px] text-slate-500 font-bold">败者 ls[2]</span>
+                    <span id="val-ls2" class="text-lg font-bold text-slate-700">--</span>
+                </div>
+
+                <!-- ls[3] -->
+                <div id="node-ls3" class="absolute top-[180px] left-[75%] -translate-x-1/2 w-16 h-16 bg-white border-2 border-slate-300 rounded-lg flex flex-col items-center justify-center shadow z-10 transition-all duration-300">
+                    <span class="text-[10px] text-slate-500 font-bold">败者 ls[3]</span>
+                    <span id="val-ls3" class="text-lg font-bold text-slate-700">--</span>
+                </div>
+
+                <!-- b[0] to b[3] : 叶子节点 (当前比较的值) -->
+                <div id="node-b0" class="absolute top-[260px] left-[12.5%] -translate-x-1/2 w-14 h-14 bg-blue-100 border-2 border-blue-400 rounded-full flex flex-col items-center justify-center shadow z-10 transition-all duration-300">
+                    <span class="text-[9px] text-blue-700 font-bold">段0 队首</span>
+                    <span id="val-b0" class="text-base font-bold text-blue-900">--</span>
+                </div>
+                <div id="node-b1" class="absolute top-[260px] left-[37.5%] -translate-x-1/2 w-14 h-14 bg-blue-100 border-2 border-blue-400 rounded-full flex flex-col items-center justify-center shadow z-10 transition-all duration-300">
+                    <span class="text-[9px] text-blue-700 font-bold">段1 队首</span>
+                    <span id="val-b1" class="text-base font-bold text-blue-900">--</span>
+                </div>
+                <div id="node-b2" class="absolute top-[260px] left-[62.5%] -translate-x-1/2 w-14 h-14 bg-blue-100 border-2 border-blue-400 rounded-full flex flex-col items-center justify-center shadow z-10 transition-all duration-300">
+                    <span class="text-[9px] text-blue-700 font-bold">段2 队首</span>
+                    <span id="val-b2" class="text-base font-bold text-blue-900">--</span>
+                </div>
+                <div id="node-b3" class="absolute top-[260px] left-[87.5%] -translate-x-1/2 w-14 h-14 bg-blue-100 border-2 border-blue-400 rounded-full flex flex-col items-center justify-center shadow z-10 transition-all duration-300">
+                    <span class="text-[9px] text-blue-700 font-bold">段3 队首</span>
+                    <span id="val-b3" class="text-base font-bold text-blue-900">--</span>
+                </div>
+            </div>
+
+            <!-- Input Runs -->
+            <div class="grid grid-cols-4 gap-4 mt-2">
+                <!-- Run 0 -->
+                <div class="bg-gray-100 border border-gray-300 rounded p-2 shadow-sm">
+                    <div class="text-xs font-bold text-gray-600 mb-1 border-b border-gray-300 pb-1">归并段 0 (R0)</div>
+                    <div id="run0" class="flex gap-1 overflow-x-auto text-sm font-medium text-gray-700 min-h-[24px]"></div>
+                </div>
+                <!-- Run 1 -->
+                <div class="bg-gray-100 border border-gray-300 rounded p-2 shadow-sm">
+                    <div class="text-xs font-bold text-gray-600 mb-1 border-b border-gray-300 pb-1">归并段 1 (R1)</div>
+                    <div id="run1" class="flex gap-1 overflow-x-auto text-sm font-medium text-gray-700 min-h-[24px]"></div>
+                </div>
+                <!-- Run 2 -->
+                <div class="bg-gray-100 border border-gray-300 rounded p-2 shadow-sm">
+                    <div class="text-xs font-bold text-gray-600 mb-1 border-b border-gray-300 pb-1">归并段 2 (R2)</div>
+                    <div id="run2" class="flex gap-1 overflow-x-auto text-sm font-medium text-gray-700 min-h-[24px]"></div>
+                </div>
+                <!-- Run 3 -->
+                <div class="bg-gray-100 border border-gray-300 rounded p-2 shadow-sm">
+                    <div class="text-xs font-bold text-gray-600 mb-1 border-b border-gray-300 pb-1">归并段 3 (R3)</div>
+                    <div id="run3" class="flex gap-1 overflow-x-auto text-sm font-medium text-gray-700 min-h-[24px]"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 核心数据结构与状态
+        const K = 4;
+        let INITIAL_RUNS = [
+            [10, 15, 20],
+            [9, 18, 25],
+            [20, 22, 30],
+            [6, 12, 14]
+        ];
+        
+        let runs = [];
+        let b = new Array(K + 1).fill(0); // b[0..3]存段首元素，b[4]存最小虚拟值
+        let ls = new Array(K).fill(0);    // ls[0]存冠军段号，ls[1..3]存内部节点败者段号
+        let outputArr = [];
+        
+        const MIN_VAL = -Infinity;
+        const MAX_VAL = Infinity;
+
+        // 状态机变量
+        let phase = 'INIT'; // INIT, READY, COMPARING, DONE
+        let currentWinnerId = -1; // 当前正拿着身份牌向上挑战的段号
+        let currentT = -1;        // 当前挑战到的树节点位置 (1, 2, 3)
+
+        // DOM Elements
+        const elLog = document.getElementById('log-msg');
+        const elBtn = document.getElementById('btn-action');
+        const elOutput = document.getElementById('output-container');
+        
+        function formatVal(val) {
+            if (val === MAX_VAL) return '∞';
+            if (val === MIN_VAL) return '-∞';
+            return val;
+        }
+
+        // 获取显示败者树节点的HTML
+        function getLsDisplay(runIndex) {
+            if (runIndex === K) return '-'; // 虚拟节点
+            return `段${runIndex}`;
+        }
+
+        function updateUI() {
+            // 渲染 runs
+            for (let i = 0; i < K; i++) {
+                document.getElementById(`run${i}`).innerHTML = runs[i].length > 0 
+                    ? runs[i].map(v => `<span class="bg-white px-1.5 py-0.5 rounded border border-gray-300 shadow-sm">${v}</span>`).join('') 
+                    : '<span class="text-gray-400 text-xs italic">空</span>';
+            }
+
+            // 渲染 b (叶子节点)
+            for (let i = 0; i < K; i++) {
+                document.getElementById(`val-b${i}`).innerText = formatVal(b[i]);
+            }
+
+            // 渲染 ls (内部节点)
+            for (let i = 1; i < K; i++) {
+                let displayStr = getLsDisplay(ls[i]);
+                if (ls[i] !== K && b[ls[i]] !== undefined) {
+                    displayStr += ` (${formatVal(b[ls[i]])})`;
+                }
+                document.getElementById(`val-ls${i}`).innerText = displayStr;
+            }
+
+            // 渲染 ls[0] (冠军)
+            if (ls[0] !== K && b[ls[0]] !== undefined) {
+                document.getElementById(`val-ls0`).innerText = `段${ls[0]} (${formatVal(b[ls[0]])})`;
+            } else {
+                document.getElementById(`val-ls0`).innerText = '--';
+            }
+
+            // 渲染 Output
+            if (outputArr.length === 0) {
+                elOutput.innerHTML = '<span class="text-green-300 italic text-sm">等待输出...</span>';
+            } else {
+                elOutput.innerHTML = outputArr.map(v => `<div class="w-8 h-8 flex items-center justify-center bg-green-500 text-white font-bold rounded shadow text-sm">${v}</div>`).join('');
+            }
+
+            // 清理高亮
+            document.querySelectorAll('.node-active').forEach(el => el.classList.remove('node-active'));
+
+            // 根据状态机高亮并更新按钮
+            if (phase === 'READY') {
+                elBtn.innerText = '🏆 决出总冠军，将其输出并补充新元素';
+                elBtn.className = "px-6 py-2 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-lg text-sm font-bold shadow-lg transition";
+                elBtn.disabled = false;
+                document.getElementById('node-ls0').classList.add('node-active');
+            } else if (phase === 'COMPARING') {
+                elBtn.innerText = '⚔️ 执行对比 (向上挑战)';
+                elBtn.className = "px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold shadow-lg transition";
+                elBtn.disabled = false;
+                
+                // 高亮正在对比的叶子和内部节点
+                if (currentWinnerId !== -1) document.getElementById(`node-b${currentWinnerId}`).classList.add('node-active');
+                if (currentT > 0 && currentT < K) document.getElementById(`node-ls${currentT}`).classList.add('node-active');
+            } else if (phase === 'DONE') {
+                elBtn.innerText = '✅ 排序完成';
+                elBtn.className = "px-6 py-2 bg-gray-400 text-white rounded-lg text-sm font-bold shadow-lg transition";
+                elBtn.disabled = true;
+            } else if (phase === 'INIT') {
+                elBtn.innerText = '构建初始败者树';
+                elBtn.className = "px-6 py-2 bg-blue-500 hover:bg-blue-400 text-white rounded-lg text-sm font-bold shadow-lg transition";
+                elBtn.disabled = false;
+            }
+        }
+
+        // 初始化数据
+        function reset() {
+            runs = JSON.parse(JSON.stringify(INITIAL_RUNS));
+            b = new Array(K + 1).fill(0);
+            ls = new Array(K).fill(0);
+            outputArr = [];
+            
+            // 读取每个段的第一个元素到 b
+            for(let i=0; i<K; i++) {
+                b[i] = runs[i].length > 0 ? runs[i].shift() : MAX_VAL;
+            }
+            b[K] = MIN_VAL; // 虚拟最小元素
+            
+            for(let i=0; i<K; i++) ls[i] = K; // 初始化所有内部节点指向虚拟节点
+            
+            phase = 'INIT';
+            elLog.innerText = "已加载数据到输入缓冲区。点击按钮开始构建。";
+            updateUI();
+        }
+
+        // 标准的调整函数 (完全按教材算法，这里为了动画效果做拆解)
+        // t = Math.floor((s + K) / 2)
+        
+        function handleAction() {
+            if (phase === 'INIT') {
+                // 瞬间完成初始树的构建 (实际上是循环调用 adjust，这里为了聚焦后续动作直接计算)
+                for(let i = K-1; i >= 0; i--) {
+                    fastAdjust(i);
+                }
+                phase = 'READY';
+                elLog.innerText = `初始败者树构建完成！当前总冠军是【段${ls[0]}】，值为 ${b[ls[0]]}。`;
+                updateUI();
+            } else if (phase === 'READY') {
+                // 1. 输出总冠军
+                let winnerIdx = ls[0];
+                let outVal = b[winnerIdx];
+                if (outVal === MAX_VAL) {
+                    phase = 'DONE';
+                    elLog.innerText = "所有归并段均已空，外部多路归并排序完美结束！";
+                    updateUI();
+                    return;
+                }
+                
+                outputArr.push(outVal);
+                
+                // 2. 补充新元素
+                if (runs[winnerIdx].length > 0) {
+                    b[winnerIdx] = runs[winnerIdx].shift();
+                    elLog.innerText = `冠军 ${outVal} 已输出。从【段${winnerIdx}】补充新元素 ${b[winnerIdx]}。新元素准备向上挑战！`;
+                } else {
+                    b[winnerIdx] = MAX_VAL;
+                    elLog.innerText = `冠军 ${outVal} 已输出。【段${winnerIdx}】已空，补充 ∞。准备向上挑战！`;
+                }
+                
+                // 3. 准备开始向上调整
+                currentWinnerId = winnerIdx;
+                currentT = Math.floor((currentWinnerId + K) / 2);
+                phase = 'COMPARING';
+                updateUI();
+                
+            } else if (phase === 'COMPARING') {
+                // 执行一步向上对比
+                let loserId = ls[currentT];
+                let valChallenger = b[currentWinnerId];
+                let valLoser = b[loserId];
+                
+                let msg = `对比：新挑战者【段${currentWinnerId}】(值${formatVal(valChallenger)}) vs 守擂败者【段${loserId}】(值${formatVal(valLoser)})。`;
+                
+                if (valChallenger > valLoser) {
+                    // 挑战者失败，留在该节点，之前的败者晋级
+                    msg += `挑战者较大，失败！留在 ls[${currentT}]，原败者【段${loserId}】晋级向上走。`;
+                    let temp = currentWinnerId;
+                    currentWinnerId = ls[currentT];
+                    ls[currentT] = temp;
+                } else {
+                    msg += `挑战者较小，获胜！【段${currentWinnerId}】继续晋级向上走。`;
+                }
+                
+                currentT = Math.floor(currentT / 2);
+                
+                if (currentT === 0) {
+                    // 已经比到树顶
+                    ls[0] = currentWinnerId; // 新的总冠军
+                    msg += `挑战结束！新冠军诞生：【段${ls[0]}】。`;
+                    
+                    if (b[ls[0]] === MAX_VAL) {
+                        phase = 'DONE';
+                        msg = "所有数据已排序完成！";
+                    } else {
+                        phase = 'READY';
+                    }
+                }
+                
+                elLog.innerText = msg;
+                updateUI();
+            }
+        }
+
+        // 不带动画的快速调整 (用于初始建树)
+        function fastAdjust(s) {
+            let t = Math.floor((s + K) / 2);
+            let winner = s;
+            while (t > 0) {
+                if (b[winner] > b[ls[t]]) {
+                    let temp = winner;
+                    winner = ls[t];
+                    ls[t] = temp;
+                }
+                t = Math.floor(t / 2);
+            }
+            ls[0] = winner;
+        }
+
+        // 初始化运行
+        reset();
+
+    </script>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>
