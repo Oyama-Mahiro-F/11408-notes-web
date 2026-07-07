@@ -490,7 +490,7 @@ def gen_section_index(dirpath, title, children, depth):
 site_dir = os.path.dirname(os.path.abspath(__file__))
 site_root = site_dir
 files = glob.glob(os.path.join(site_dir, '**/*.html'), recursive=True)
-files = [f for f in files if 'mkdocs' not in f and os.path.basename(f) != 'index.html']
+files = [f for f in files if 'mkdocs' not in f and os.path.basename(f) != 'index.html' and '演示' not in f]
 
 count = 0
 for f in sorted(files):

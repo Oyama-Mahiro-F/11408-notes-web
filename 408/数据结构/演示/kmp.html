@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMP 算法交互式可视化器 (408标准)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .char-box {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-radius: 0.375rem;
+            border: 2px solid #e5e7eb;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        .char-box.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+            transform: scale(1.05);
+        }
+        .char-box.match {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+        }
+        .char-box.mismatch {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+        .string-row {
+            display: flex;
+            gap: 4px;
+            padding: 20px 0;
+            position: relative;
+        }
+        /* 每个字符盒子占据 44px + 4px gap = 48px */
+        .pattern-container {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col">
+
+    <!-- 顶部控制栏 -->
+    <div class="bg-white shadow-sm border-b p-4 flex flex-wrap gap-4 items-center justify-between z-10">
+        <div class="flex gap-4 items-center">
+            <h1 class="text-xl font-bold text-blue-600 mr-4">KMP 算法演示</h1>
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2">
+                    <label class="text-sm font-medium w-16">主串 (S):</label>
+                    <input type="text" id="input-s" value="BBC ABCDAB ABCDABCDABDE" class="border rounded px-2 py-1 w-64 focus:outline-none focus:border-blue-500 font-mono">
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-sm font-medium w-16">模式串 (T):</label>
+                    <input type="text" id="input-t" value="ABCDABD" class="border rounded px-2 py-1 w-64 focus:outline-none focus:border-blue-500 font-mono">
+                </div>
+            </div>
+            <button onclick="initApp()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">初始化 / 重置</button>
+        </div>
+        
+        <div class="flex gap-2">
+            <button id="btn-step" onclick="step()" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition flex items-center gap-2 disabled:opacity-50">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                单步执行
+            </button>
+            <button id="btn-play" onclick="togglePlay()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2 disabled:opacity-50">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span id="play-text">自动播放</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex-1 flex overflow-hidden">
+        <!-- 左侧：可视化区域 -->
+        <div class="flex-1 p-6 overflow-auto bg-gray-50 flex flex-col gap-8">
+            
+            <!-- Next 数组展示 -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <h2 class="text-lg font-bold mb-3">Next 数组 (408标准：1 起始下标)</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-center border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100" id="next-table-headers"></tr>
+                        </thead>
+                        <tbody>
+                            <tr id="next-table-chars" class="font-mono font-bold"></tr>
+                            <tr id="next-table-values" class="font-mono text-blue-600 font-bold"></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 字符串对比展示 -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border overflow-x-auto min-h-[300px]">
+                <div class="flex justify-between items-center mb-6 text-sm font-medium text-gray-500">
+                    <div id="pointer-info">当前状态: 等待初始化</div>
+                    <div class="flex gap-4">
+                        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-blue-100 border border-blue-500 rounded"></div>当前比较</div>
+                        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-green-100 border border-green-500 rounded"></div>匹配成功</div>
+                        <div class="flex items-center gap-1"><div class="w-3 h-3 bg-red-100 border border-red-500 rounded"></div>失配跳跃</div>
+                    </div>
+                </div>
+
+                <div class="relative pt-8 pb-4">
+                    <!-- 主串 -->
+                    <div class="flex items-end mb-2">
+                        <div class="w-20 shrink-0 text-right pr-4 font-bold text-gray-600">主串 S</div>
+                        <div id="main-string-row" class="string-row"></div>
+                    </div>
+                    
+                    <!-- 模式串 (使用 translateX 实现滑动效果) -->
+                    <div class="flex items-start">
+                        <div class="w-20 shrink-0 text-right pr-4 font-bold text-gray-600">模式串 T</div>
+                        <div class="pattern-container string-row" id="pattern-string-row"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧：日志与说明 -->
+        <div class="w-80 bg-white border-l flex flex-col shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
+            <div class="p-4 border-b bg-gray-50 font-bold flex justify-between items-center">
+                <span>执行日志</span>
+                <span id="status-badge" class="px-2 py-1 rounded text-xs bg-gray-200 text-gray-700">未开始</span>
+            </div>
+            <div id="log-container" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 font-mono text-sm">
+                <!-- 日志动态插入于此 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let S = "", T = "";
+        let nextArr = [];
+        let i = 1, j = 1;
+        let status = 0; // 0: init, 1: running, 2: success, 3: fail
+        let isPlaying = false;
+        let playInterval = null;
+
+        // 核心：计算 408 标准的 next 数组 (下标从 1 开始)
+        function getNextArray(pattern) {
+            let next = new Array(pattern.length).fill(0);
+            let p_i = 1, p_j = 0;
+            next[1] = 0;
+            
+            while (p_i < pattern.length - 1) {
+                if (p_j === 0 || pattern[p_i] === pattern[p_j]) {
+                    p_i++;
+                    p_j++;
+                    next[p_i] = p_j;
+                } else {
+                    p_j = next[p_j];
+                }
+            }
+            return next;
+        }
+
+        function initApp() {
+            const valS = document.getElementById('input-s').value;
+            const valT = document.getElementById('input-t').value;
+            
+            if (!valS || !valT) return alert("主串和模式串不能为空");
+            
+            stopAutoPlay();
+            
+            // 为了实现 1 起始下标，在字符串开头加一个空格占位
+            S = " " + valS;
+            T = " " + valT;
+            
+            nextArr = getNextArray(T);
+            
+            i = 1;
+            j = 1;
+            status = 1;
+            
+            document.getElementById('log-container').innerHTML = '';
+            addLog("系统", `算法初始化完成。<br>主串长度: ${valS.length}<br>模式串长度: ${valT.length}`);
+            updateStatusBadge("运行中", "bg-blue-100 text-blue-700");
+            
+            renderNextTable();
+            renderStrings();
+            updatePointers();
+        }
+
+        function step() {
+            if (status !== 1) return;
+
+            // KMP 核心逻辑比较
+            let match = false;
+            let currentI = i, currentJ = j;
+
+            if (j === 0 || S[i] === T[j]) {
+                match = true;
+                if (j === 0) {
+                    addLog("前进", `j = 0 触发特例：主串指针 i 前进 (i=${i} -> ${i+1}), j 回到起点 (j=0 -> 1)`, "text-gray-600");
+                } else {
+                    addLog("匹配", `S[${i}]('${S[i]}') == T[${j}]('${T[j]}')，匹配成功，指针同时前进。`, "text-green-600 font-bold");
+                }
+                
+                // 暂时高亮绿色
+                highlightComparison(true);
+                
+                i++;
+                j++;
+                
+                // 检查是否结束
+                if (j >= T.length) {
+                    status = 2; // Success
+                    setTimeout(() => {
+                        addLog("成功", `🎉 匹配成功！起始下标为: ${i - T.length + 1} (408标准)`, "text-blue-600 font-bold text-base");
+                        updateStatusBadge("匹配成功", "bg-green-100 text-green-700");
+                        stopAutoPlay();
+                        renderStrings();
+                    }, 500);
+                } else if (i >= S.length) {
+                    status = 3; // Fail
+                    setTimeout(() => {
+                        addLog("失败", `❌ 主串遍历完毕，匹配失败。`, "text-red-600 font-bold text-base");
+                        updateStatusBadge("匹配失败", "bg-red-100 text-red-700");
+                        stopAutoPlay();
+                        renderStrings();
+                    }, 500);
+                }
+                
+            } else {
+                // 失配逻辑
+                addLog("失配", `S[${i}]('${S[i]}') != T[${j}]('${T[j]}')，发生失配！`, "text-red-500 font-bold");
+                
+                // 暂时高亮红色
+                highlightComparison(false);
+                
+                let old_j = j;
+                j = nextArr[j]; // 核心：指针回退
+                
+                addLog("滑动", `👉 主串指针 i(${i}) 不回溯。模式串根据 next 数组滑动：j = next[${old_j}] = ${j}`, "text-orange-600");
+            }
+
+            // 延迟渲染下一步状态，以便观察当前比对颜色的变化
+            setTimeout(() => {
+                if(status === 1) {
+                    renderStrings();
+                    updatePointers();
+                }
+            }, match ? 400 : 800);
+        }
+
+        function highlightComparison(isMatch) {
+            const sBox = document.getElementById(`s-box-${i}`);
+            const tBox = document.getElementById(`t-box-${j}`);
+            if(sBox) {
+                sBox.classList.remove('active');
+                sBox.classList.add(isMatch ? 'match' : 'mismatch');
+            }
+            if(tBox) {
+                tBox.classList.remove('active');
+                tBox.classList.add(isMatch ? 'match' : 'mismatch');
+            }
+        }
+
+        function renderNextTable() {
+            let headers = '<th class="border px-2 py-1 w-12 text-gray-500 font-normal">下标 j</th>';
+            let chars = '<td class="border px-2 py-1 font-normal text-gray-500">T[j]</td>';
+            let values = '<td class="border px-2 py-1 font-normal text-gray-500">next[j]</td>';
+            
+            for (let k = 1; k < T.length; k++) {
+                headers += `<th class="border px-3 py-2">${k}</th>`;
+                chars += `<td class="border px-3 py-2">${T[k] === ' ' ? '&nbsp;' : T[k]}</td>`;
+                values += `<td class="border px-3 py-2">${nextArr[k]}</td>`;
+            }
+            
+            document.getElementById('next-table-headers').innerHTML = headers;
+            document.getElementById('next-table-chars').innerHTML = chars;
+            document.getElementById('next-table-values').innerHTML = values;
+        }
+
+        function renderStrings() {
+            const mainContainer = document.getElementById('main-string-row');
+            const patContainer = document.getElementById('pattern-string-row');
+            
+            mainContainer.innerHTML = '';
+            patContainer.innerHTML = '';
+            
+            // 渲染主串
+            for(let k = 1; k < S.length; k++) {
+                let div = document.createElement('div');
+                div.id = `s-box-${k}`;
+                div.className = 'char-box relative';
+                div.innerHTML = S[k] === ' ' ? '&nbsp;' : S[k];
+                // 顶部添加索引
+                let indexDiv = document.createElement('div');
+                indexDiv.className = 'absolute -top-6 text-xs text-gray-400 font-mono';
+                indexDiv.innerText = k;
+                div.appendChild(indexDiv);
+                mainContainer.appendChild(div);
+            }
+            
+            // 渲染模式串
+            for(let k = 1; k < T.length; k++) {
+                let div = document.createElement('div');
+                div.id = `t-box-${k}`;
+                div.className = 'char-box relative';
+                div.innerHTML = T[k] === ' ' ? '&nbsp;' : T[k];
+                // 底部添加索引
+                let indexDiv = document.createElement('div');
+                indexDiv.className = 'absolute -bottom-6 text-xs text-blue-400 font-mono';
+                indexDiv.innerText = k;
+                div.appendChild(indexDiv);
+                patContainer.appendChild(div);
+            }
+
+            // 核心视觉魔法：根据 (i - j) 计算滑动偏移量
+            // 每个 block 44px 宽 + 4px gap = 48px
+            const offset = (i - j); 
+            patContainer.style.transform = `translateX(${offset * 48}px)`;
+            
+            // 高亮当前指针位置
+            if (status === 1) {
+                const sBox = document.getElementById(`s-box-${i}`);
+                if(sBox) sBox.classList.add('active');
+                
+                const tBox = document.getElementById(`t-box-${j}`);
+                if(tBox && j > 0) tBox.classList.add('active');
+            }
+        }
+
+        function updatePointers() {
+            document.getElementById('pointer-info').innerHTML = `
+                <span class="font-mono bg-gray-100 px-2 py-1 rounded">i = ${i}</span>
+                <span class="font-mono bg-blue-50 px-2 py-1 rounded ml-2 text-blue-700">j = ${j}</span>
+            `;
+            
+            // 自动滚动主串视图使其保持在可视范围内
+            const activeBox = document.getElementById(`s-box-${i}`);
+            if (activeBox) {
+                activeBox.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+
+        function addLog(type, message, colorClass = "text-gray-800") {
+            const container = document.getElementById('log-container');
+            const logEntry = document.createElement('div');
+            logEntry.className = `p-3 bg-white rounded border border-gray-100 shadow-sm ${colorClass} leading-relaxed transition-all animate-fade-in`;
+            logEntry.innerHTML = `<span class="inline-block px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-500 mb-1 mr-2 border">${type}</span><br>${message}`;
+            container.appendChild(logEntry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateStatusBadge(text, classes) {
+            const badge = document.getElementById('status-badge');
+            badge.innerText = text;
+            badge.className = `px-2 py-1 rounded text-xs font-bold ${classes}`;
+        }
+
+        function togglePlay() {
+            const playText = document.getElementById('play-text');
+            if (isPlaying) {
+                stopAutoPlay();
+            } else {
+                if (status === 0 || status > 1) initApp();
+                isPlaying = true;
+                playText.innerText = "暂停播放";
+                document.getElementById('btn-step').disabled = true;
+                playInterval = setInterval(() => {
+                    if (status === 1) {
+                        step();
+                    } else {
+                        stopAutoPlay();
+                    }
+                }, 1500); // 每 1.5 秒执行一步
+            }
+        }
+
+        function stopAutoPlay() {
+            isPlaying = false;
+            document.getElementById('play-text').innerText = "自动播放";
+            document.getElementById('btn-step').disabled = false;
+            if (playInterval) clearInterval(playInterval);
+        }
+
+        // 初始化加载
+        window.onload = initApp;
+    </script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+</body>
+</html>
