@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>外部排序过程解剖</title>
+  <!-- 官方 Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse-once {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+    .animate-pulse-once { animation: pulse-once 0.4s ease-in-out; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React 18 UMD -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel standalone：浏览器内编译 JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const INITIAL_DATA = [89, 34, 23, 78, 12, 45, 67, 90, 11, 56, 33, 21];
+    const RAM_CAPACITY = 4;
+
+    function ExternalSortSimulator() {
+      const [step, setStep] = useState(0);
+      const [phase, setPhase] = useState('IDLE');
+      const [message, setMessage] = useState("点击「开始」演示外部排序过程。原始数据过大，无法一次性放入内存。");
+
+      const [diskInput, setDiskInput] = useState(INITIAL_DATA);
+      const [ram, setRam] = useState([]);
+      const [diskRuns, setDiskRuns] = useState([]);
+      const [mergeBuffer, setMergeBuffer] = useState([]);
+      const [diskOutput, setDiskOutput] = useState([]);
+
+      const reset = () => {
+        setStep(0);
+        setPhase('IDLE');
+        setDiskInput(INITIAL_DATA);
+        setRam([]);
+        setDiskRuns([]);
+        setMergeBuffer([]);
+        setDiskOutput([]);
+        setMessage("点击「开始」演示外部排序过程。");
+      };
+
+      const nextStep = () => {
+        if (phase === 'IDLE') {
+          setPhase('RUN_GEN');
+          setMessage("阶段 1：生成初始归并段。将数据分批读入内存。");
+        } else if (phase === 'RUN_GEN') {
+          handleRunGeneration();
+        } else if (phase === 'MERGE_PREP') {
+          handleMergePrep();
+        } else if (phase === 'MERGING') {
+          handleMerging();
+        }
+      };
+
+      const handleRunGeneration = () => {
+        if (diskInput.length > 0 && ram.length === 0) {
+          const chunk = diskInput.slice(0, RAM_CAPACITY);
+          setDiskInput(diskInput.slice(RAM_CAPACITY));
+          setRam(chunk);
+          setMessage(`从磁盘读入 ${chunk.length} 个元素到内存。`);
+        } else if (ram.length > 0) {
+          const isSorted = ram.every((val, i, arr) => !i || val >= arr[i - 1]);
+          if (!isSorted) {
+            const sortedRam = [...ram].sort((a, b) => a - b);
+            setRam(sortedRam);
+            setMessage("在内存中使用内部排序算法（如快速排序/堆排序）进行排序。");
+          } else {
+            setDiskRuns([...diskRuns, [...ram]]);
+            setRam([]);
+            setMessage("将排序好的块写回磁盘，形成一个「归并段 (Run)」。");
+
+            if (diskInput.length === 0) {
+              setPhase('MERGE_PREP');
+            }
+          }
+        }
+      };
+
+      const handleMergePrep = () => {
+        const initialBuffer = diskRuns.map((run, idx) => ({ val: run[0], runIdx: idx })).filter(item => item.val !== undefined);
+        const newRuns = diskRuns.map(run => run.slice(1));
+        setDiskRuns(newRuns);
+        setMergeBuffer(initialBuffer);
+        setPhase('MERGING');
+        setMessage("阶段 2：多路归并。从每个归并段读取队首元素进入内存缓冲（可用小顶堆管理这些元素）。");
+      };
+
+      const handleMerging = () => {
+        if (mergeBuffer.length === 0) {
+          setPhase('DONE');
+          setMessage("外部排序完成！所有数据已完全有序。");
+          return;
+        }
+
+        let minItem = mergeBuffer[0];
+        let minIdx = 0;
+        for (let i = 1; i < mergeBuffer.length; i++) {
+          if (mergeBuffer[i].val < minItem.val) {
+            minItem = mergeBuffer[i];
+            minIdx = i;
+          }
+        }
+
+        const newOutput = [...diskOutput, minItem.val];
+        setDiskOutput(newOutput);
+
+        const targetRunIdx = minItem.runIdx;
+        const newBuffer = [...mergeBuffer];
+        const newRuns = [...diskRuns];
+
+        if (newRuns[targetRunIdx].length > 0) {
+          const nextVal = newRuns[targetRunIdx][0];
+          newRuns[targetRunIdx] = newRuns[targetRunIdx].slice(1);
+          newBuffer[minIdx] = { val: nextVal, runIdx: targetRunIdx };
+          setMessage(`全局最小值 ${minItem.val} 输出。从归并段 ${targetRunIdx + 1} 补充新元素 ${nextVal} 进入内存。`);
+        } else {
+          newBuffer.splice(minIdx, 1);
+          setMessage(`全局最小值 ${minItem.val} 输出。归并段 ${targetRunIdx + 1} 已空。`);
+        }
+
+        setMergeBuffer(newBuffer);
+        setDiskRuns(newRuns);
+
+        if (newBuffer.length === 0) {
+          setPhase('DONE');
+        }
+      };
+
+      return (
+        <div className="p-6 bg-gray-50 min-h-screen font-sans text-gray-800">
+          <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+
+            {/* Header & Controls */}
+            <div className="p-4 bg-slate-800 text-white flex justify-between items-center">
+              <h2 className="text-xl font-bold flex items-center">
+                <span className="mr-2">🗄️</span> 外部排序过程解剖
+              </h2>
+              <div className="space-x-3">
+                <button
+                  onClick={reset}
+                  className="px-4 py-2 bg-slate-600 hover:bg-slate-500 rounded text-sm font-medium transition-colors"
+                >
+                  重置
+                </button>
+                <button
+                  onClick={nextStep}
+                  disabled={phase === 'DONE'}
+                  className={`px-4 py-2 rounded text-sm font-medium transition-colors ${phase === 'DONE' ? 'bg-green-600 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 shadow-md'}`}
+                >
+                  {phase === 'IDLE' ? '开始演示' : (phase === 'DONE' ? '排序完成' : '下一步')}
+                </button>
+              </div>
+            </div>
+
+            {/* Info Panel */}
+            <div className="p-4 bg-blue-50 border-b border-blue-100 min-h-[80px] flex items-center">
+              <p className="text-blue-800 font-medium text-lg">{message}</p>
+            </div>
+
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              {/* Left Column: DISK */}
+              <div className="space-y-6">
+                <div className="bg-gray-100 p-4 rounded-lg border-2 border-dashed border-gray-300">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-bold text-gray-600 flex items-center"><span className="mr-1">💾</span> 磁盘：原始大文件</h3>
+                    <span className="text-xs text-gray-400">未排序</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 min-h-[40px]">
+                    {diskInput.map((val, idx) => (
+                      <div key={idx} className="w-10 h-10 flex items-center justify-center bg-white border border-gray-300 rounded shadow-sm text-gray-700 font-bold">
+                        {val}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200 shadow-inner">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-bold text-green-700 flex items-center"><span className="mr-1">✅</span> 磁盘：最终有序文件</h3>
+                    <span className="text-xs text-green-600">已完全排序</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 min-h-[40px]">
+                    {diskOutput.map((val, idx) => (
+                      <div key={idx} className="w-10 h-10 flex items-center justify-center bg-green-500 text-white rounded shadow text-sm font-bold animate-pulse-once">
+                        {val}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: RAM & Intermediate Runs */}
+              <div className="space-y-6">
+                <div className="bg-amber-50 p-4 rounded-lg border-2 border-amber-300 shadow-md relative">
+                  <div className="absolute -top-3 -left-3 bg-amber-400 text-amber-900 text-xs font-bold px-2 py-1 rounded shadow">容量有限</div>
+                  <div className="flex items-center justify-between mb-3 mt-1">
+                    <h3 className="font-bold text-amber-800 flex items-center"><span className="mr-1">🧠</span> 内存 (RAM) 工作区</h3>
+                    <span className="text-xs font-mono bg-amber-200 text-amber-800 px-2 py-0.5 rounded">Max: {RAM_CAPACITY} 元素</span>
+                  </div>
+
+                  {phase === 'MERGING' || phase === 'MERGE_PREP' ? (
+                    <div>
+                      <p className="text-xs text-amber-700 mb-2 font-semibold">归并缓冲区 (在此比较寻找最小值)</p>
+                      <div className="flex gap-3 min-h-[48px]">
+                        {mergeBuffer.map((item, idx) => (
+                          <div key={idx} className="flex flex-col items-center">
+                            <div className="w-10 h-10 flex items-center justify-center bg-amber-200 border-2 border-amber-400 rounded-full font-bold text-amber-900">
+                              {item.val}
+                            </div>
+                            <span className="text-[10px] text-amber-600 mt-1">段 {item.runIdx + 1}</span>
+                          </div>
+                        ))}
+                        {mergeBuffer.length === 0 && <span className="text-sm text-amber-400 italic">缓冲区空</span>}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 min-h-[40px]">
+                      {ram.map((val, idx) => (
+                        <div key={idx} className="w-10 h-10 flex items-center justify-center bg-amber-100 border border-amber-400 rounded font-bold text-amber-800">
+                          {val}
+                        </div>
+                      ))}
+                      {ram.length === 0 && <span className="text-sm text-amber-400 italic pt-2">内存空闲中...</span>}
+                    </div>
+                  )}
+                </div>
+
+                <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200 relative">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-bold text-blue-800 flex items-center"><span className="mr-1">💽</span> 磁盘：初始归并段 (Runs)</h3>
+                    <span className="text-xs text-blue-600">局部有序</span>
+                  </div>
+
+                  <div className="space-y-3 min-h-[150px]">
+                    {diskRuns.length === 0 && phase !== 'DONE' && <span className="text-sm text-blue-400 italic">尚未生成归并段...</span>}
+                    {diskRuns.map((run, runIdx) => (
+                      <div key={runIdx} className="flex items-center bg-white p-2 rounded border border-blue-100 shadow-sm">
+                        <span className="text-xs font-bold text-blue-400 w-12 shrink-0">段 {runIdx + 1}</span>
+                        <div className="flex gap-1 overflow-x-auto">
+                          {run.map((val, valIdx) => (
+                            <div key={valIdx} className="w-8 h-8 flex items-center justify-center bg-blue-100 text-blue-800 rounded text-xs font-semibold">
+                              {val}
+                            </div>
+                          ))}
+                          {run.length === 0 && <span className="text-xs text-gray-300 italic py-1">已空</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<ExternalSortSimulator />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>置换-选择排序动态解剖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 简单的自定义动画 */
+        @keyframes pulse-once {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .animate-pulse-once {
+            animation: pulse-once 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-100 p-6 font-sans text-gray-800 flex justify-center">
+
+    <div class="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-indigo-900 text-white p-5 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold flex items-center">
+                    <span class="mr-2">🔄</span> 置换-选择排序 (Replacement Selection) 动态解剖
+                </h1>
+                <p class="text-indigo-200 text-sm mt-1">突破内存限制的魔术：容量 5 的内存如何生成长度 &gt; 5 的归并段 (原生 JS 版)</p>
+            </div>
+            <div class="flex gap-3" id="controls">
+                <button onclick="handleReset()" class="px-4 py-2 bg-indigo-800 hover:bg-indigo-700 rounded-lg text-sm font-semibold transition">
+                    重置
+                </button>
+                <button id="btn-start" onclick="handleStart()" class="px-6 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-sm font-bold shadow-lg transition">
+                    🚀 开始
+                </button>
+                <button id="btn-auto" onclick="toggleAutoPlay()" class="hidden px-4 py-2 rounded-lg text-sm font-bold transition bg-slate-200 hover:bg-slate-300 text-slate-800">
+                    ▶️ 自动播放
+                </button>
+                <button id="btn-next" onclick="handleNext()" class="hidden px-6 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-lg text-sm font-bold shadow-lg transition">
+                    下一步 ⏭
+                </button>
+            </div>
+        </div>
+
+        <!-- Message Log -->
+        <div class="bg-indigo-50 border-b border-indigo-100 p-4 min-h-[80px] flex items-center justify-center">
+            <p id="log-msg" class="text-indigo-900 text-lg font-medium text-center">
+                点击“开始”加载前 5 个记录到内存工作区。
+            </p>
+        </div>
+
+        <!-- Main Workspace -->
+        <div class="p-6 flex-1 flex flex-col gap-8 bg-gray-50">
+            
+            <!-- Top: Disk Input -->
+            <div class="flex flex-col gap-2">
+                <h3 class="font-bold text-gray-600 flex items-center text-sm">
+                    <span class="mr-1">💽</span> 待读取的磁盘输入流
+                </h3>
+                <div id="disk-input-container" class="flex flex-wrap gap-1.5 min-h-[44px] p-3 bg-gray-200 rounded-lg border border-gray-300 inset-shadow">
+                    <!-- Disk inputs will be rendered here -->
+                </div>
+            </div>
+
+            <!-- Middle: Memory & R_min Tracker -->
+            <div class="flex gap-6 items-stretch">
+                
+                <!-- Memory Workspace -->
+                <div class="flex-1 bg-amber-50 border-2 border-amber-300 rounded-xl p-5 shadow-md relative">
+                    <div class="absolute -top-3 -left-3 bg-amber-400 text-amber-950 text-xs font-bold px-3 py-1 rounded shadow-sm">内存工作区 (容量 5)</div>
+                    
+                    <div class="flex justify-between items-end mb-4">
+                        <span class="text-xs text-amber-700 font-medium">寻找当前活跃状态中的<strong class="text-red-600">最小值</strong></span>
+                    </div>
+                    
+                    <div id="memory-container" class="flex gap-4 min-h-[80px] justify-center items-center">
+                        <span class="text-amber-400 italic">空闲</span>
+                        <!-- Memory slots will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Last Output Tracker -->
+                <div class="w-48 bg-slate-800 rounded-xl p-4 flex flex-col items-center justify-center shadow-md relative overflow-hidden">
+                    <div class="text-slate-400 text-xs font-bold mb-2 z-10">上次输出值 (R_min)</div>
+                    <div id="last-output" class="text-4xl font-black text-amber-400 z-10">
+                        --
+                    </div>
+                    <div class="text-[10px] text-slate-400 mt-3 text-center z-10">
+                        新读入的数字必须<br> <strong class="text-white">&ge; 该值</strong> 才可活跃
+                    </div>
+                    <div class="absolute opacity-10 text-9xl -right-4 -bottom-4 text-white">⚙️</div>
+                </div>
+            </div>
+
+            <!-- Bottom: Output Runs -->
+            <div class="flex flex-col gap-3">
+                <h3 class="font-bold text-gray-600 flex items-center text-sm">
+                    <span class="mr-1">✅</span> 生成的初始归并段 (输出至磁盘)
+                </h3>
+                
+                <!-- Current Run Building -->
+                <div class="bg-green-50 border-2 border-green-300 border-dashed rounded-lg p-4 min-h-[80px]">
+                    <div class="text-xs text-green-700 font-bold mb-2">当前正在生成的归并段 (已包含 <span id="current-run-count" class="text-red-500 text-sm">0</span> 个记录)</div>
+                    <div id="current-run-container" class="flex flex-wrap gap-1.5">
+                        <span class="text-green-300 italic text-sm">等待输出...</span>
+                        <!-- Current run items will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Completed Runs -->
+                <div id="completed-runs-container" class="space-y-2 mt-2">
+                    <!-- Completed runs will be rendered here -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 常量定义
+        const RAW_DATA = [15, 4, 97, 64, 17, 32, 108, 44, 76, 9, 39, 82, 56, 31, 80, 73, 255, 68];
+        const MEM_SIZE = 5;
+
+        // 状态变量
+        let diskInput = [...RAW_DATA];
+        let memory = []; // 存储对象 { val: number, status: 'active' | 'frozen' }
+        let lastOutput = null;
+        let currentRun = [];
+        let completedRuns = [];
+        let phase = 'IDLE'; // 'IDLE', 'PROCESSING', 'DONE'
+        let logMsg = "点击“开始”加载前 5 个记录到内存工作区。";
+        let autoPlay = false;
+        let autoPlayTimer = null;
+
+        // 获取 DOM 元素
+        const elBtnStart = document.getElementById('btn-start');
+        const elBtnNext = document.getElementById('btn-next');
+        const elBtnAuto = document.getElementById('btn-auto');
+        const elLogMsg = document.getElementById('log-msg');
+        const elDiskInput = document.getElementById('disk-input-container');
+        const elMemory = document.getElementById('memory-container');
+        const elLastOutput = document.getElementById('last-output');
+        const elCurrentRun = document.getElementById('current-run-container');
+        const elCurrentRunCount = document.getElementById('current-run-count');
+        const elCompletedRuns = document.getElementById('completed-runs-container');
+
+        // 渲染函数：根据当前状态更新界面
+        function render() {
+            // 1. 更新按钮和消息
+            elLogMsg.innerHTML = logMsg;
+            
+            if (phase === 'IDLE') {
+                elBtnStart.style.display = 'block';
+                elBtnNext.style.display = 'none';
+                elBtnAuto.style.display = 'none';
+            } else {
+                elBtnStart.style.display = 'none';
+                elBtnNext.style.display = 'block';
+                elBtnAuto.style.display = 'block';
+                
+                elBtnNext.disabled = phase === 'DONE' || autoPlay;
+                elBtnNext.className = elBtnNext.disabled 
+                    ? "px-6 py-2 bg-gray-400 cursor-not-allowed rounded-lg text-sm font-bold shadow-lg transition text-white" 
+                    : "px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-bold shadow-lg transition text-white";
+
+                if (autoPlay) {
+                    elBtnAuto.className = "px-4 py-2 rounded-lg text-sm font-bold transition bg-amber-500 hover:bg-amber-400 text-amber-950";
+                    elBtnAuto.innerHTML = "⏸ 暂停自动";
+                } else {
+                    elBtnAuto.className = "px-4 py-2 rounded-lg text-sm font-bold transition bg-slate-200 hover:bg-slate-300 text-slate-800";
+                    elBtnAuto.innerHTML = "▶️ 自动播放";
+                }
+                if (phase === 'DONE') elBtnAuto.disabled = true;
+            }
+
+            // 2. 渲染磁盘输入
+            if (diskInput.length === 0 && phase !== 'IDLE') {
+                elDiskInput.innerHTML = '<span class="text-gray-400 italic text-sm py-1">磁盘已读取完毕</span>';
+            } else {
+                elDiskInput.innerHTML = diskInput.map(val => 
+                    `<div class="w-10 h-10 flex items-center justify-center bg-white border-b-2 border-gray-300 text-gray-700 font-semibold rounded shadow-sm text-sm">${val}</div>`
+                ).join('');
+            }
+
+            // 3. 渲染内存工作区
+            if (memory.length === 0 && phase === 'IDLE') {
+                elMemory.innerHTML = '<span class="text-amber-400 italic">空闲</span>';
+            } else {
+                let memHtml = memory.map(item => {
+                    if (item.status === 'frozen') {
+                        return `
+                        <div class="w-16 h-16 rounded-xl flex flex-col items-center justify-center shadow font-bold text-xl relative transition-all duration-300 bg-blue-100 border-2 border-blue-300 text-blue-400 scale-95 opacity-80">
+                            ${item.val}
+                            <div class="absolute -bottom-2 -right-2 bg-blue-500 text-white text-[10px] px-1.5 py-0.5 rounded-full border border-white">❄️ 冻结</div>
+                        </div>`;
+                    } else {
+                        return `
+                        <div class="w-16 h-16 rounded-xl flex flex-col items-center justify-center font-bold text-xl relative transition-all duration-300 bg-white border-2 border-green-500 text-green-700 shadow-md transform hover:-translate-y-1">
+                            ${item.val}
+                        </div>`;
+                    }
+                }).join('');
+                
+                // 补充空位
+                for (let i = 0; i < MEM_SIZE - memory.length; i++) {
+                    memHtml += `<div class="w-16 h-16 rounded-xl border-2 border-dashed border-amber-200 bg-amber-50/50"></div>`;
+                }
+                elMemory.innerHTML = memHtml;
+            }
+
+            // 4. 渲染 R_min
+            elLastOutput.innerHTML = lastOutput !== null ? lastOutput : '--';
+
+            // 5. 渲染当前归并段
+            elCurrentRunCount.innerHTML = currentRun.length;
+            if (currentRun.length === 0) {
+                elCurrentRun.innerHTML = '<span class="text-green-300 italic text-sm">等待输出...</span>';
+            } else {
+                elCurrentRun.innerHTML = currentRun.map(val => 
+                    `<div class="w-10 h-10 flex items-center justify-center bg-green-500 text-white font-bold rounded shadow-sm text-sm animate-pulse-once">${val}</div>`
+                ).join('');
+            }
+
+            // 6. 渲染已完成的归并段
+            elCompletedRuns.innerHTML = completedRuns.map((run, idx) => `
+                <div class="bg-white border border-gray-300 rounded p-3 flex items-center shadow-sm">
+                    <div class="bg-gray-700 text-white text-xs font-bold px-2 py-1 rounded mr-3 shrink-0">归并段 ${idx + 1}</div>
+                    <div class="text-xs text-gray-500 mr-2 shrink-0">长度: <span class="font-bold text-gray-800">${run.length}</span></div>
+                    <div class="flex gap-1 overflow-x-auto flex-1 border-l border-gray-200 pl-3">
+                        ${run.map(val => `<div class="w-7 h-7 flex items-center justify-center bg-gray-100 text-gray-700 font-medium rounded text-xs">${val}</div>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 核心逻辑：开始
+        function handleStart() {
+            const initialMemVals = diskInput.slice(0, MEM_SIZE);
+            memory = initialMemVals.map(val => ({ val, status: 'active' }));
+            diskInput = diskInput.slice(MEM_SIZE);
+            phase = 'PROCESSING';
+            logMsg = `读入初始数据：${initialMemVals.join(', ')}。所有记录当前均为活跃状态。`;
+            render();
+        }
+
+        // 核心逻辑：下一步 (置换选择排序核心算法)
+        function handleNext() {
+            if (phase !== 'PROCESSING') return;
+
+            const activeItems = memory.filter(m => m.status === 'active');
+
+            // 检查是否需要截断当前归并段
+            if (activeItems.length === 0) {
+                if (memory.length === 0) {
+                    // 彻底结束
+                    if (currentRun.length > 0) {
+                        completedRuns.push([...currentRun]);
+                        currentRun = [];
+                    }
+                    phase = 'DONE';
+                    logMsg = "所有数据处理完毕！外部排序的初始归并段生成结束。";
+                    autoPlay = false;
+                    render();
+                    return;
+                }
+
+                // 开始新的归并段
+                completedRuns.push([...currentRun]);
+                currentRun = [];
+                lastOutput = null;
+                // 解冻所有元素
+                memory = memory.map(m => ({ ...m, status: 'active' }));
+                logMsg = "⚠️ 内存中所有元素均被冻结（都小于上次输出值）。当前归并段结束！已全部解冻，开始生成下一个归并段。";
+                render();
+                return; 
+            }
+
+            // 1. 寻找最小的活跃元素
+            let minItem = activeItems[0];
+            for (let item of activeItems) {
+                if (item.val < minItem.val) {
+                    minItem = item;
+                }
+            }
+
+            // 2. 输出该最小元素
+            lastOutput = minItem.val;
+            currentRun.push(minItem.val);
+            
+            // 3. 从内存中移除它
+            memory = memory.filter(m => m.val !== minItem.val);
+            let msg = `选出当前活跃最小值：【${minItem.val}】输出。`;
+
+            // 4. 从磁盘读取新元素
+            if (diskInput.length > 0) {
+                const newVal = diskInput.shift();
+                // 核心判断：如果新来的比刚刚输出的小，则冻结它
+                if (newVal < lastOutput) {
+                    memory.push({ val: newVal, status: 'frozen' });
+                    msg += ` 读入新记录 ${newVal}。因为 ${newVal} &lt; ${lastOutput} (上次输出)，将其 ❄️冻结。`;
+                } else {
+                    memory.push({ val: newVal, status: 'active' });
+                    msg += ` 读入新记录 ${newVal}。其 &ge; ${lastOutput}，正常进入活跃区。`;
+                }
+            } else {
+                msg += " 磁盘已空，不再读入新数据，继续清空内存。";
+            }
+
+            logMsg = msg;
+            render();
+        }
+
+        // 重置逻辑
+        function handleReset() {
+            diskInput = [...RAW_DATA];
+            memory = [];
+            lastOutput = null;
+            currentRun = [];
+            completedRuns = [];
+            phase = 'IDLE';
+            logMsg = "点击“开始”加载前 5 个记录到内存工作区。";
+            autoPlay = false;
+            clearTimeout(autoPlayTimer);
+            elBtnAuto.disabled = false;
+            render();
+        }
+
+        // 自动播放控制
+        function toggleAutoPlay() {
+            autoPlay = !autoPlay;
+            render();
+            
+            if (autoPlay && phase === 'PROCESSING') {
+                runAutoPlay();
+            } else {
+                clearTimeout(autoPlayTimer);
+            }
+        }
+
+        function runAutoPlay() {
+            if (!autoPlay || phase !== 'PROCESSING') return;
+            handleNext();
+            
+            if (phase === 'PROCESSING') {
+                autoPlayTimer = setTimeout(runAutoPlay, 1500);
+            }
+        }
+
+        // 初始化渲染
+        render();
+
+    </script>
+</body>
+</html>
