@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分块查找算法演示 (408标准)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .block-container {
+            border: 2px solid #e5e7eb; border-radius: 0.75rem; padding: 12px;
+            background: white; transition: all 0.4s ease; min-width: 120px;
+        }
+        .block-container.active-block {
+            border-color: #f59e0b; background: #fffbeb;
+            box-shadow: 0 0 0 5px rgba(245,158,11,0.25); transform: scale(1.03);
+        }
+        .block-container.searched-block {
+            border-color: #3b82f6; background: #eff6ff;
+        }
+        .item-box {
+            width: 44px; height: 44px; display: inline-flex;
+            align-items: center; justify-content: center;
+            font-size: 1rem; font-weight: bold; border-radius: 0.375rem;
+            border: 1.5px solid #d1d5db; background: #f9fafb;
+            margin: 2px; transition: all 0.3s ease;
+        }
+        .item-box.highlight-item {
+            border-color: #22c55e; background: #f0fdf4;
+            box-shadow: 0 0 0 4px rgba(34,197,94,0.2); transform: scale(1.1);
+        }
+        .item-box.comparing-item {
+            border-color: #f59e0b; background: #fef3c7;
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
+        }
+        .index-entry {
+            padding: 6px 12px; border: 1.5px solid #d1d5db; border-radius: 0.375rem;
+            background: #f9fafb; text-align: center; font-size: 0.85rem; transition: all 0.3s ease;
+        }
+        .index-entry.active-index {
+            border-color: #3b82f6; background: #eff6ff; font-weight: bold;
+        }
+    </style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+    <!-- 顶部控制栏 -->
+    <div class="bg-white shadow-sm border-b p-4 flex flex-wrap gap-4 items-center justify-between z-10">
+        <div class="flex gap-4 items-center flex-wrap">
+            <h1 class="text-xl font-bold text-blue-600 mr-2">分块查找算法演示</h1>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">数组:</label>
+                <input type="text" id="input-array" value="8,14,6,9,22,34,18,27,45,56,39,42,50,78,63" class="border rounded px-2 py-1 w-80 focus:outline-none focus:border-blue-500 font-mono text-sm">
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">关键字:</label>
+                <input type="text" id="input-key" value="27" class="border rounded px-2 py-1 w-20 focus:outline-none focus:border-blue-500 font-mono text-sm">
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">块大小:</label>
+                <input type="number" id="input-block-size" value="5" min="2" max="20" class="border rounded px-2 py-1 w-16 focus:outline-none focus:border-blue-500 text-sm">
+            </div>
+            <button onclick="initSearch()" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">初始化 / 重置</button>
+        </div>
+        <div class="flex gap-2">
+            <button id="btn-step" onclick="step()" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition flex items-center gap-1 text-sm disabled:opacity-50">单步执行</button>
+            <button id="btn-play" onclick="togglePlay()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-1 text-sm disabled:opacity-50"><span id="play-text">自动播放</span></button>
+        </div>
+    </div>
+
+    <div class="flex-1 flex overflow-hidden">
+        <!-- 左：可视化区域 -->
+        <div class="flex-1 p-6 overflow-auto bg-gray-50 flex flex-col gap-6">
+            <!-- 索引表 -->
+            <div class="bg-white p-5 rounded-lg shadow-sm border">
+                <h2 class="text-lg font-bold mb-3">索引表 (有序)</h2>
+                <div class="flex gap-4 flex-wrap justify-center" id="index-table"></div>
+            </div>
+
+            <!-- 数据块 -->
+            <div class="bg-white p-5 rounded-lg shadow-sm border flex-1">
+                <h2 class="text-lg font-bold mb-3">数据块 (块内无序，块间有序)</h2>
+                <div class="flex gap-4 flex-wrap justify-center" id="data-blocks"></div>
+                <div class="text-center mt-4 text-sm text-gray-500" id="stage-info">等待初始化…</div>
+            </div>
+
+            <!-- 统计 -->
+            <div class="bg-white p-5 rounded-lg shadow-sm border">
+                <div class="grid grid-cols-4 gap-4 text-sm">
+                    <div class="bg-blue-50 p-3 rounded-lg text-center"><div class="text-gray-500">总比较次数</div><div class="text-2xl font-bold text-blue-600 font-mono" id="stat-total">0</div></div>
+                    <div class="bg-purple-50 p-3 rounded-lg text-center"><div class="text-gray-500">索引表比较</div><div class="text-2xl font-bold text-purple-600 font-mono" id="stat-index">0</div></div>
+                    <div class="bg-orange-50 p-3 rounded-lg text-center"><div class="text-gray-500">块内比较</div><div class="text-2xl font-bold text-orange-600 font-mono" id="stat-block">0</div></div>
+                    <div class="bg-green-50 p-3 rounded-lg text-center"><div class="text-gray-500">当前阶段</div><div class="text-lg font-bold text-green-600 font-mono" id="stat-stage">初始化</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧日志 -->
+        <div class="w-80 bg-white border-l flex flex-col shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
+            <div class="p-4 border-b bg-gray-50 font-bold flex justify-between items-center">
+                <span>执行日志</span>
+                <span id="status-badge" class="px-2 py-1 rounded text-xs bg-gray-200 text-gray-700">未开始</span>
+            </div>
+            <div id="log-container" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 font-mono text-sm"></div>
+        </div>
+    </div>
+
+    <script>
+        let data = [];          // 原始数组
+        let blocks = [];        // [{startIdx, endIdx, maxKey, items[]}]
+        let key = null;
+        let blockSize = 5;
+        let stage = 0;          // 0=索引搜索, 1=块内搜索
+        let currentBlockIdx = 0;
+        let currentItemIdx = 0;
+        let comparisonsTotal = 0, comparisonsIndex = 0, comparisonsBlock = 0;
+        let status = 0;         // 0=init, 1=索引阶段, 2=块内阶段, 3=found, 4=notFound
+        let isPlaying = false;
+        let playInterval = null;
+
+        function initSearch() {
+            stopAutoPlay();
+            const arrStr = document.getElementById('input-array').value.trim();
+            const keyStr = document.getElementById('input-key').value.trim();
+            blockSize = parseInt(document.getElementById('input-block-size').value) || 5;
+
+            if (!arrStr || !keyStr) return alert("请输入数组和关键字");
+            data = arrStr.split(',').map(s => s.trim()).filter(s => s !== '').map(Number);
+            if (data.length === 0) return alert("数组不能为空");
+            key = keyStr;
+
+            // 构建分块: 每blockSize个元素一块
+            blocks = [];
+            for (let i = 0; i < data.length; i += blockSize) {
+                const chunk = data.slice(i, i + blockSize);
+                blocks.push({
+                    startIdx: i,
+                    endIdx: Math.min(i + blockSize - 1, data.length - 1),
+                    maxKey: Math.max(...chunk),
+                    items: chunk
+                });
+            }
+
+            stage = 0; currentBlockIdx = 0; currentItemIdx = 0;
+            comparisonsTotal = 0; comparisonsIndex = 0; comparisonsBlock = 0;
+            status = 1; // 索引阶段
+
+            document.getElementById('log-container').innerHTML = '';
+            updateStats();
+            addLog('系统', `初始化完成。数据量: ${data.length}，分 ${blocks.length} 块，每块约 ${blockSize} 个元素。查找关键字: ${key}`);
+            updateStatusBadge('索引表搜索', 'bg-blue-100 text-blue-700');
+            document.getElementById('stage-info').textContent = '阶段1: 搜索索引表，确定目标所在块';
+            document.getElementById('stat-stage').textContent = '索引表搜索';
+            renderAll();
+        }
+
+        function step() {
+            if (status === 0 || status === 3 || status === 4) return;
+
+            if (status === 1) {
+                // 索引表阶段: 顺序查找索引表，找第一个 maxKey >= key 的块
+                if (currentBlockIdx >= blocks.length) {
+                    // 所有块都检查过，key比所有最大关键字都大
+                    status = 4;
+                    addLog('失败', `所有索引表已遍历完毕，key(${key}) 大于所有块的最大关键字。查找失败！`, 'text-red-600 font-bold text-base');
+                    updateStatusBadge('查找失败', 'bg-red-100 text-red-700');
+                    document.getElementById('stage-info').textContent = '查找失败: 关键字超出所有块范围';
+                    document.getElementById('stat-stage').textContent = '失败';
+                    stopAutoPlay();
+                    renderAll();
+                    return;
+                }
+
+                comparisonsIndex++;
+                comparisonsTotal++;
+                updateStats();
+                const blk = blocks[currentBlockIdx];
+                addLog('索引比较', `检查索引表第${currentBlockIdx + 1}块: maxKey=${blk.maxKey}，与 key(${key}) 比较 (第${comparisonsIndex}次索引比较)`, 'text-blue-600');
+
+                if (Number(blk.maxKey) >= Number(key)) {
+                    // 找到目标块，进入块内搜索
+                    status = 2;
+                    currentItemIdx = blk.startIdx;
+                    document.getElementById('stage-info').textContent = `阶段2: 在块 ${currentBlockIdx + 1} (下标 ${blk.startIdx}~${blk.endIdx}) 内顺序查找`;
+                    document.getElementById('stat-stage').textContent = '块内搜索';
+                    addLog('定位块', `maxKey=${blk.maxKey} >= key(${key})，确定目标在第 ${currentBlockIdx + 1} 块！进入块内顺序查找。`, 'text-green-600 font-bold');
+                    updateStatusBadge('块内搜索', 'bg-yellow-100 text-yellow-700');
+                } else {
+                    addLog('跳过块', `maxKey=${blk.maxKey} < key(${key})，跳过第 ${currentBlockIdx + 1} 块。`, 'text-gray-500');
+                    currentBlockIdx++;
+                }
+                renderAll();
+            } else if (status === 2) {
+                // 块内搜索阶段
+                if (currentItemIdx > blocks[currentBlockIdx].endIdx) {
+                    status = 4;
+                    addLog('失败', `块内已全部遍历完毕，未找到关键字 ${key}。查找失败！`, 'text-red-600 font-bold text-base');
+                    updateStatusBadge('查找失败', 'bg-red-100 text-red-700');
+                    document.getElementById('stage-info').textContent = '查找失败: 块内未找到';
+                    document.getElementById('stat-stage').textContent = '失败';
+                    stopAutoPlay();
+                    renderAll();
+                    return;
+                }
+
+                comparisonsBlock++;
+                comparisonsTotal++;
+                updateStats();
+                const val = data[currentItemIdx];
+                addLog('块内比较', `ST[${currentItemIdx}] = ${val} 与 key(${key}) 比较 (块内第${comparisonsBlock}次比较)`, 'text-orange-600');
+
+                if (String(val) === String(key)) {
+                    status = 3;
+                    setTimeout(() => {
+                        addLog('成功', `找到！在位置 ST[${currentItemIdx}] 找到关键字 ${key}。<br>总比较次数: ${comparisonsTotal} (索引 ${comparisonsIndex} 次 + 块内 ${comparisonsBlock} 次)`, 'text-green-600 font-bold text-base');
+                        updateStatusBadge('查找成功', 'bg-green-100 text-green-700');
+                        document.getElementById('stage-info').textContent = `查找成功！位置: ST[${currentItemIdx}]`;
+                        document.getElementById('stat-stage').textContent = '成功';
+                        stopAutoPlay();
+                        renderAll();
+                    }, 400);
+                } else {
+                    currentItemIdx++;
+                    renderAll();
+                }
+            }
+        }
+
+        function renderAll() {
+            renderIndexTable();
+            renderDataBlocks();
+        }
+
+        function renderIndexTable() {
+            const container = document.getElementById('index-table');
+            container.innerHTML = '';
+            blocks.forEach((blk, bidx) => {
+                const div = document.createElement('div');
+                div.className = 'index-entry flex flex-col gap-1';
+                div.innerHTML = `<span class="text-[0.7rem] text-gray-400">块${bidx + 1}</span>
+                    <span class="font-bold">max=${blk.maxKey}</span>
+                    <span class="text-[0.7rem] text-gray-400">[${blk.startIdx}~${blk.endIdx}]</span>`;
+                if ((status === 1 || status === 2) && bidx === currentBlockIdx) div.classList.add('active-index');
+                container.appendChild(div);
+            });
+        }
+
+        function renderDataBlocks() {
+            const container = document.getElementById('data-blocks');
+            container.innerHTML = '';
+            blocks.forEach((blk, bidx) => {
+                const div = document.createElement('div');
+                div.id = `block-${bidx}`;
+                div.className = 'block-container flex flex-wrap gap-1 items-center justify-center';
+                if ((status === 1 || status === 2) && bidx === currentBlockIdx) div.classList.add('active-block');
+                if (status === 3 && bidx === currentBlockIdx) div.classList.add('active-block');
+
+                // 块标签
+                const label = document.createElement('div');
+                label.className = 'w-full text-center text-[0.7rem] text-gray-400 mb-1';
+                label.textContent = `块${bidx + 1} [${blk.startIdx}~${blk.endIdx}] max=${blk.maxKey}`;
+                div.appendChild(label);
+
+                blk.items.forEach((val, iidx) => {
+                    const item = document.createElement('div');
+                    item.className = 'item-box';
+                    item.id = `item-${blk.startIdx + iidx}`;
+                    item.textContent = val;
+                    // 高亮逻辑
+                    if (status === 3 && (blk.startIdx + iidx) === currentItemIdx) item.classList.add('highlight-item');
+                    if ((status === 2 || status === 3) && bidx === currentBlockIdx && (blk.startIdx + iidx) === currentItemIdx) item.classList.add('comparing-item');
+                    div.appendChild(item);
+                });
+                container.appendChild(div);
+            });
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = comparisonsTotal;
+            document.getElementById('stat-index').textContent = comparisonsIndex;
+            document.getElementById('stat-block').textContent = comparisonsBlock;
+        }
+
+        function addLog(type, message, colorClass = 'text-gray-800') {
+            const container = document.getElementById('log-container');
+            const entry = document.createElement('div');
+            entry.className = `p-3 bg-white rounded border border-gray-100 shadow-sm ${colorClass} leading-relaxed animate-fade-in`;
+            entry.innerHTML = `<span class="inline-block px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-500 mb-1 border">${type}</span><br>${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateStatusBadge(text, classes) {
+            const badge = document.getElementById('status-badge');
+            badge.textContent = text; badge.className = `px-2 py-1 rounded text-xs font-bold ${classes}`;
+        }
+
+        function togglePlay() {
+            if (isPlaying) { stopAutoPlay(); return; }
+            if (status === 0 || status > 2) initSearch();
+            isPlaying = true;
+            document.getElementById('play-text').textContent = '暂停播放';
+            document.getElementById('btn-step').disabled = true;
+            playInterval = setInterval(() => {
+                if (status === 1 || status === 2) step(); else stopAutoPlay();
+            }, 1200);
+        }
+
+        function stopAutoPlay() {
+            isPlaying = false;
+            document.getElementById('play-text').textContent = '自动播放';
+            document.getElementById('btn-step').disabled = false;
+            if (playInterval) clearInterval(playInterval);
+        }
+
+        window.onload = initSearch;
+    </script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

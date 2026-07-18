@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>直接插入排序演示 - 408 考研数据结构</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ===== 自定义 CSS 动画 ===== */
+
+    /* 元素淡入动画 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+      animation: fadeIn 0.35s ease-out forwards;
+    }
+
+    /* 脉冲动画 —— 用于高亮当前操作的元素 */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.08); }
+    }
+    .pulse {
+      animation: pulse 0.6s ease-in-out infinite;
+    }
+
+    /* 哨兵闪烁 —— 值写入哨兵时 */
+    @keyframes sentinelFlash {
+      0%   { box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.5); }
+      50%  { box-shadow: 0 0 0 8px rgba(147, 51, 234, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(147, 51, 234, 0); }
+    }
+    .sentinel-flash {
+      animation: sentinelFlash 0.7s ease-out;
+    }
+
+    /* 移动元素闪烁 —— 元素被右移时 */
+    @keyframes shiftGlow {
+      0%   { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.6); }
+      50%  { box-shadow: 0 0 0 6px rgba(234, 179, 8, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); }
+    }
+    .shift-glow {
+      animation: shiftGlow 0.5s ease-out;
+    }
+
+    /* 插入成功闪烁 */
+    @keyframes insertGlow {
+      0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+      50%  { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+    .insert-glow {
+      animation: insertGlow 0.6s ease-out;
+    }
+
+    /* 数组盒子基础过渡 */
+    .array-box {
+      transition: background-color 0.25s ease, border-color 0.25s ease,
+                  transform 0.2s ease, box-shadow 0.25s ease;
+      width: 52px;
+      height: 52px;
+    }
+
+    /* 日志条目滚动条美化 */
+    #logContainer::-webkit-scrollbar {
+      width: 5px;
+    }
+    #logContainer::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    #logContainer::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    /* 索引标签 */
+    .index-label {
+      width: 52px;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #64748b;
+      user-select: none;
+    }
+
+    /* 指针指示器（小三角） */
+    .pointer-triangle {
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid #ef4444;
+      margin: 0 auto;
+    }
+  </style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+  <!-- ==================== 顶部控制栏 ==================== -->
+  <div class="bg-white shadow-md border-b border-gray-200 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center gap-4">
+
+      <!-- 标题 -->
+      <h1 class="text-xl font-bold text-gray-800 whitespace-nowrap mr-2">
+        <span class="text-blue-600">&#x2460;</span> 直接插入排序演示
+        <span class="text-xs font-normal text-gray-400 ml-1">Straight Insertion Sort</span>
+      </h1>
+
+      <!-- 输入框 -->
+      <div class="flex items-center gap-1">
+        <label class="text-sm text-gray-500 whitespace-nowrap">数据:</label>
+        <input id="dataInput" type="text" value="49,38,65,97,76,13,27,49"
+               class="border border-gray-300 rounded px-3 py-1.5 text-sm w-56
+                      focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400
+                      transition-colors"
+               placeholder="逗号分隔数字, 如 49,38,65,97" />
+      </div>
+
+      <!-- 按钮组 -->
+      <div class="flex gap-2 flex-wrap">
+        <button id="btnInit"
+                class="px-4 py-1.5 bg-blue-600 text-white text-sm rounded
+                       hover:bg-blue-700 active:bg-blue-800 transition-colors
+                       font-medium shadow-sm"
+                onclick="initApp()">
+          &#x21BB; 初始化/重置
+        </button>
+        <button id="btnStep"
+                class="px-4 py-1.5 bg-emerald-600 text-white text-sm rounded
+                       hover:bg-emerald-700 active:bg-emerald-800 transition-colors
+                       font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                onclick="step()">
+          &#x25B6; 单步执行
+        </button>
+        <button id="btnAuto"
+                class="px-4 py-1.5 bg-orange-500 text-white text-sm rounded
+                       hover:bg-orange-600 active:bg-orange-700 transition-colors
+                       font-medium shadow-sm"
+                onclick="toggleAutoPlay()">
+          &#x25B6;&#x25B6; 自动播放
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 主体内容区 ==================== -->
+  <div class="max-w-7xl mx-auto flex gap-0 p-6">
+
+    <!-- 左侧：可视化区域 -->
+    <div class="flex-1 pr-6 min-w-0">
+
+      <!-- ===== 数组可视化容器 ===== -->
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-6">
+        <h2 class="text-base font-semibold text-gray-700 mb-4">
+          &#x1F4CA; 数组存储结构（1-based 索引, R[0] 为哨兵）
+        </h2>
+
+        <!-- 哨兵 + 数组盒子 -->
+        <div id="arrayContainer" class="flex items-end justify-center gap-1.5 flex-wrap">
+          <!-- JS 动态渲染 -->
+        </div>
+      </div>
+
+      <!-- ===== 状态信息面板 ===== -->
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-6">
+        <h2 class="text-base font-semibold text-gray-700 mb-3">&#x1F4CB; 当前状态</h2>
+        <div id="stateInfo" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+          <!-- JS 动态渲染 -->
+        </div>
+      </div>
+
+      <!-- ===== 图例 ===== -->
+      <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+        <h2 class="text-base font-semibold text-gray-700 mb-3">&#x1F3A8; 颜色图例</h2>
+        <div class="flex flex-wrap gap-4 text-xs">
+          <div class="flex items-center gap-1.5">
+            <span class="w-5 h-5 rounded border-2 border-purple-400 bg-purple-50 inline-block"></span>
+            <span class="text-gray-600">哨兵 R[0]</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-5 h-5 rounded border-2 border-green-400 bg-green-100 inline-block"></span>
+            <span class="text-gray-600">已排序区</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-5 h-5 rounded border-2 border-gray-300 bg-gray-100 inline-block"></span>
+            <span class="text-gray-600">未排序区</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-5 h-5 rounded border-2 border-blue-500 bg-blue-100 inline-block"></span>
+            <span class="text-gray-600">当前待插入</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-5 h-5 rounded border-2 border-yellow-500 bg-yellow-100 inline-block"></span>
+            <span class="text-gray-600">正在比较/移动</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-5 h-5 rounded border-2 border-dashed border-gray-300 bg-white inline-block"></span>
+            <span class="text-gray-600">空位（被覆盖前）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧：执行日志侧边栏 (w-80 ≈ 320px) -->
+    <div class="w-80 flex-shrink-0 flex flex-col bg-white rounded-xl shadow-md border border-gray-200"
+         style="max-height: calc(100vh - 150px);">
+
+      <!-- 日志标题 + 状态徽章 -->
+      <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-gray-700">&#x1F4DC; 执行日志</h3>
+        <span id="statusBadge"
+              class="text-xs px-2.5 py-0.5 rounded-full font-medium bg-gray-200 text-gray-600">
+          空闲
+        </span>
+      </div>
+
+      <!-- 日志条目列表（可滚动） -->
+      <div id="logContainer" class="flex-1 overflow-y-auto px-4 py-3 space-y-2 text-xs">
+        <div class="text-gray-400 text-center py-6">点击「单步执行」或「自动播放」开始排序</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JavaScript: 排序引擎 & 状态机 ==================== -->
+  <script>
+  (function() {
+    'use strict';
+
+    // ======================== 全局状态 ========================
+
+    /** 排序状态机: IDLE | RUNNING | DONE */
+    let appState = 'IDLE';
+
+    /**
+     * 子步骤枚举 —— 一趟插入排序的 4 个原子步骤
+     *   COPY_TO_SENTINEL: R[0] ← R[i], 哨兵暂存待插入元素
+     *   COMPARE         : 比较 R[j] 与 R[0], 决定移动还是插入
+     *   SHIFT           : R[j+1] ← R[j], 元素右移一位, j--
+     *   INSERT          : R[j+1] ← R[0], 哨兵值放入最终位置
+     */
+    const PHASE = {
+      COPY_TO_SENTINEL: 'COPY_TO_SENTINEL',
+      COMPARE:          'COMPARE',
+      SHIFT:            'SHIFT',
+      INSERT:           'INSERT'
+    };
+
+    /** 当前子步骤 */
+    let phase = PHASE.COPY_TO_SENTINEL;
+
+    /**
+     * arr —— 完整的 1-based 数组
+     * arr[0] = 哨兵 R[0] (初始为 null / undefined)
+     * arr[1..n] = 待排序元素
+     */
+    let arr = [];
+
+    /** 数组长度 n (R[1] ~ R[n]) */
+    let n = 0;
+
+    /** 当前趟的 i 指针: R[i] 为待插入元素 (i = 2, 3, ..., n) */
+    let i = 2;
+
+    /** 比较/移动指针 j: 初始为 i-1, 逐步递减至 0 */
+    let j = 1;
+
+    /** 已排序区右边界: R[1..sortedUpTo] 已排好序 */
+    let sortedUpTo = 1;
+
+    /** 日志条目列表 [{type, message, timestamp}] */
+    let logs = [];
+
+    /** 自动播放定时器 ID */
+    let autoTimer = null;
+
+    /** 当前正在被突出显示的动作 (用于渲染闪烁效果) */
+    let flashTarget = { type: null, index: -1 };
+
+    // ======================== DOM 引用缓存 ========================
+
+    const $dataInput   = document.getElementById('dataInput');
+    const $btnStep     = document.getElementById('btnStep');
+    const $btnAuto     = document.getElementById('btnAuto');
+    const $btnInit     = document.getElementById('btnInit');
+    const $statusBadge = document.getElementById('statusBadge');
+    const $logContainer = document.getElementById('logContainer');
+    const $arrayContainer = document.getElementById('arrayContainer');
+    const $stateInfo   = document.getElementById('stateInfo');
+
+    // ======================== 工具函数 ========================
+
+    /** 格式化时间戳 (HH:MM:SS) */
+    function timeStamp() {
+      const d = new Date();
+      return [
+        String(d.getHours()).padStart(2, '0'),
+        String(d.getMinutes()).padStart(2, '0'),
+        String(d.getSeconds()).padStart(2, '0')
+      ].join(':');
+    }
+
+    /** 添加日志条目 */
+    function addLog(type, message) {
+      logs.push({ type, message, time: timeStamp() });
+      renderLogs();
+    }
+
+    /** 清除闪烁标记 (在渲染后自动清除) */
+    function clearFlash() {
+      flashTarget = { type: null, index: -1 };
+    }
+
+    /**
+     * 获取日志类型对应的 CSS 标签样式
+     * 408 教材风格标签: 哨兵(紫) 比较(蓝) 移动(橙) 插入(绿) 趟(灰)
+     */
+    function getLogTagStyle(type) {
+      const map = {
+        '哨兵': 'bg-purple-100 text-purple-700 border-purple-300',
+        '比较': 'bg-blue-100   text-blue-700   border-blue-300',
+        '移动': 'bg-yellow-100 text-yellow-700 border-yellow-300',
+        '插入': 'bg-green-100  text-green-700  border-green-300',
+        '趟':   'bg-gray-200   text-gray-600   border-gray-400'
+      };
+      return map[type] || 'bg-gray-100 text-gray-600 border-gray-300';
+    }
+
+    // ======================== 渲染函数 ========================
+
+    /** 渲染数组可视化 */
+    function renderArray() {
+      $arrayContainer.innerHTML = '';
+
+      // ---- 哨兵盒子 R[0] ----
+      const sentinelWrapper = document.createElement('div');
+      sentinelWrapper.className = 'flex flex-col items-center';
+
+      // 索引标签
+      const sentinelLabel = document.createElement('div');
+      sentinelLabel.className = 'index-label text-purple-600 font-semibold text-xs';
+      sentinelLabel.textContent = 'R[0] 哨兵';
+      sentinelWrapper.appendChild(sentinelLabel);
+
+      // 指针指示器 (当关注哨兵时显示)
+      if (flashTarget.type === 'sentinel') {
+        const tri = document.createElement('div');
+        tri.className = 'pointer-triangle';
+        sentinelWrapper.appendChild(tri);
+      } else {
+        const spacer = document.createElement('div');
+        spacer.style.height = '6px';
+        sentinelWrapper.appendChild(spacer);
+      }
+
+      // 哨兵盒子本体
+      const sentinelBox = document.createElement('div');
+      sentinelBox.className = 'array-box rounded-lg border-2 flex items-center justify-center '
+                            + 'text-sm font-bold bg-purple-50 border-purple-400 text-purple-700 '
+                            + 'relative';
+      sentinelBox.textContent = (arr[0] != null) ? arr[0] : '∅';
+      if (!arr[0] && arr[0] !== 0) {
+        sentinelBox.classList.add('border-dashed', 'text-purple-300');
+      }
+      if (flashTarget.type === 'sentinel') {
+        sentinelBox.classList.add('sentinel-flash');
+      }
+      sentinelWrapper.appendChild(sentinelBox);
+
+      // 哨兵值说明
+      const sentinelValLabel = document.createElement('div');
+      sentinelValLabel.className = 'text-xs text-purple-400 mt-0.5';
+      sentinelValLabel.textContent = (arr[0] != null) ? `值=${arr[0]}` : '空';
+      sentinelWrapper.appendChild(sentinelValLabel);
+
+      $arrayContainer.appendChild(sentinelWrapper);
+
+      // 分隔箭头
+      const arrow = document.createElement('div');
+      arrow.className = 'flex items-center text-gray-300 text-lg mx-1';
+      arrow.innerHTML = '&#x279E;';
+      $arrayContainer.appendChild(arrow);
+
+      // ---- 数组盒子 R[1] ~ R[n] ----
+      for (let idx = 1; idx <= n; idx++) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-col items-center fade-in';
+        wrapper.style.animationDelay = (idx * 30) + 'ms';
+
+        // 索引标签
+        const label = document.createElement('div');
+        label.className = 'index-label';
+        label.textContent = 'R[' + idx + ']';
+        wrapper.appendChild(label);
+
+        // 指针指示器
+        const showPointer =
+          (flashTarget.type === 'compare' && flashTarget.index === idx) ||
+          (flashTarget.type === 'shift'  && flashTarget.index === idx) ||
+          (flashTarget.type === 'insert' && flashTarget.index === idx) ||
+          (flashTarget.type === 'select' && flashTarget.index === idx);
+        if (showPointer) {
+          const tri = document.createElement('div');
+          tri.className = 'pointer-triangle';
+          wrapper.appendChild(tri);
+        } else {
+          const spacer = document.createElement('div');
+          spacer.style.height = '6px';
+          wrapper.appendChild(spacer);
+        }
+
+        // 盒子本体
+        const box = document.createElement('div');
+        box.className = 'array-box rounded-lg border-2 flex items-center justify-center '
+                      + 'text-sm font-mono font-bold relative';
+
+        // ---- 确定颜色样式 ----
+        if (idx <= sortedUpTo && appState !== 'IDLE') {
+          // 已排序区: 绿色
+          box.classList.add('bg-green-100', 'border-green-400', 'text-green-800');
+        } else if (idx === i && phase === PHASE.COPY_TO_SENTINEL && appState === 'RUNNING') {
+          // 当前待插入元素 (蓝色)
+          box.classList.add('bg-blue-100', 'border-blue-500', 'text-blue-800', 'pulse');
+        } else if (appState === 'RUNNING') {
+          // 未排序区: 灰色
+          box.classList.add('bg-gray-100', 'border-gray-300', 'text-gray-600');
+        } else {
+          // IDLE / DONE 状态默认灰色
+          box.classList.add('bg-gray-100', 'border-gray-300', 'text-gray-600');
+        }
+
+        // 闪烁动画叠加
+        if (flashTarget.type === 'shift' && flashTarget.index === idx) {
+          box.classList.add('shift-glow', 'bg-yellow-100', 'border-yellow-500', 'text-yellow-800');
+        }
+        if (flashTarget.type === 'insert' && flashTarget.index === idx) {
+          box.classList.add('insert-glow', 'bg-green-100', 'border-green-400', 'text-green-800');
+        }
+        if (flashTarget.type === 'select' && flashTarget.index === idx) {
+          box.classList.add('bg-blue-100', 'border-blue-500', 'text-blue-800', 'pulse');
+        }
+        if (flashTarget.type === 'compare' && flashTarget.index === idx) {
+          box.classList.add('bg-yellow-100', 'border-yellow-500', 'text-yellow-800', 'shift-glow');
+        }
+
+        box.textContent = (arr[idx] != null) ? arr[idx] : '∅';
+        wrapper.appendChild(box);
+
+        // 指针变量标签 (j / i)
+        const varLabel = document.createElement('div');
+        varLabel.className = 'text-xs mt-0.5 h-4';
+        if (idx === i && appState === 'RUNNING') {
+          varLabel.textContent = 'i';
+          varLabel.className += ' text-blue-600 font-bold';
+        } else if (idx === j && appState === 'RUNNING' &&
+                   (phase === PHASE.COMPARE || phase === PHASE.SHIFT)) {
+          varLabel.textContent = 'j';
+          varLabel.className += ' text-red-500 font-bold';
+        } else if (idx === j + 1 && appState === 'RUNNING' && phase === PHASE.INSERT) {
+          varLabel.textContent = 'j+1';
+          varLabel.className += ' text-green-600 font-bold';
+        }
+        wrapper.appendChild(varLabel);
+
+        $arrayContainer.appendChild(wrapper);
+      }
+    }
+
+    /** 渲染状态信息面板 */
+    function renderStateInfo() {
+      let passNum = (appState === 'IDLE') ? 0 :
+                    (appState === 'DONE') ? n - 1 :
+                    i - 1;
+      let elementVal = (appState === 'RUNNING' && i <= n) ? arr[i] : '—';
+      let sentinelVal = (arr[0] != null) ? arr[0] : '—';
+      let jVal = (appState === 'RUNNING') ? j : '—';
+      let phaseDesc = '';
+      switch (phase) {
+        case PHASE.COPY_TO_SENTINEL: phaseDesc = '复制到哨兵'; break;
+        case PHASE.COMPARE:          phaseDesc = '比较中';     break;
+        case PHASE.SHIFT:            phaseDesc = '右移元素';   break;
+        case PHASE.INSERT:           phaseDesc = '插入到位';   break;
+        default:                     phaseDesc = '—';
+      }
+
+      $stateInfo.innerHTML = `
+        <div class="bg-blue-50 rounded-lg p-3 border border-blue-100">
+          <div class="text-xs text-blue-400 mb-0.5">当前趟数</div>
+          <div class="text-lg font-bold text-blue-700">第 <span class="text-2xl">${passNum}</span> 趟</div>
+        </div>
+        <div class="bg-purple-50 rounded-lg p-3 border border-purple-100">
+          <div class="text-xs text-purple-400 mb-0.5">当前子步骤</div>
+          <div class="text-lg font-bold text-purple-700">${phaseDesc}</div>
+        </div>
+        <div class="bg-orange-50 rounded-lg p-3 border border-orange-100">
+          <div class="text-xs text-orange-400 mb-0.5">待插入元素</div>
+          <div class="text-lg font-bold text-orange-700">R[${appState === 'RUNNING' ? i : '—'}] = ${elementVal}</div>
+        </div>
+        <div class="bg-teal-50 rounded-lg p-3 border border-teal-100">
+          <div class="text-xs text-teal-400 mb-0.5">指针</div>
+          <div class="text-lg font-bold text-teal-700">
+            i=${appState === 'RUNNING' ? i : '—'} &nbsp; j=${jVal}
+          </div>
+        </div>
+        <div class="bg-rose-50 rounded-lg p-3 border border-rose-100">
+          <div class="text-xs text-rose-400 mb-0.5">哨兵 R[0]</div>
+          <div class="text-lg font-bold text-rose-700">${sentinelVal}</div>
+        </div>
+        <div class="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+          <div class="text-xs text-emerald-400 mb-0.5">已排序长度</div>
+          <div class="text-lg font-bold text-emerald-700">${sortedUpTo} / ${n}</div>
+        </div>
+      `;
+    }
+
+    /** 渲染日志侧边栏 */
+    function renderLogs() {
+      if (logs.length === 0) {
+        $logContainer.innerHTML = '<div class="text-gray-400 text-center py-6">点击「单步执行」或「自动播放」开始排序</div>';
+        return;
+      }
+      // 反序渲染: 最新日志在上
+      let html = '';
+      const reversed = logs.slice().reverse();
+      for (const entry of reversed) {
+        const tagClass = getLogTagStyle(entry.type);
+        html += `
+          <div class="fade-in flex items-start gap-2 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+            <span class="text-xs px-1.5 py-0.5 rounded border ${tagClass} font-medium flex-shrink-0">
+              ${entry.type}
+            </span>
+            <span class="text-gray-700 flex-1 leading-relaxed">${entry.message}</span>
+            <span class="text-gray-400 text-xs flex-shrink-0">${entry.time}</span>
+          </div>`;
+      }
+      $logContainer.innerHTML = html;
+      // 自动滚动到底部(最新日志)
+      $logContainer.scrollTop = 0;
+    }
+
+    /** 更新按钮状态 */
+    function updateButtons() {
+      if (appState === 'IDLE') {
+        $btnStep.disabled = false;
+        $btnAuto.textContent = '▶▶ 自动播放';
+        $btnAuto.classList.remove('bg-red-500', 'hover:bg-red-600');
+        $btnAuto.classList.add('bg-orange-500', 'hover:bg-orange-600');
+      } else if (appState === 'RUNNING') {
+        $btnStep.disabled = false;
+      } else if (appState === 'DONE') {
+        $btnStep.disabled = true;
+        $btnAuto.textContent = '▶▶ 自动播放';
+        $btnAuto.classList.remove('bg-red-500', 'hover:bg-red-600');
+        $btnAuto.classList.add('bg-orange-500', 'hover:bg-orange-600');
+      }
+      // 自动播放中的按钮样式
+      if (autoTimer !== null) {
+        $btnAuto.textContent = '⏹ 停止播放';
+        $btnAuto.classList.remove('bg-orange-500', 'hover:bg-orange-600');
+        $btnAuto.classList.add('bg-red-500', 'hover:bg-red-600');
+      }
+    }
+
+    /** 更新状态徽章 */
+    function updateBadge() {
+      switch (appState) {
+        case 'IDLE':
+          $statusBadge.textContent = '空闲';
+          $statusBadge.className = 'text-xs px-2.5 py-0.5 rounded-full font-medium bg-gray-200 text-gray-600';
+          break;
+        case 'RUNNING':
+          $statusBadge.textContent = '执行中';
+          $statusBadge.className = 'text-xs px-2.5 py-0.5 rounded-full font-medium bg-blue-100 text-blue-700';
+          break;
+        case 'DONE':
+          $statusBadge.textContent = '已完成';
+          $statusBadge.className = 'text-xs px-2.5 py-0.5 rounded-full font-medium bg-green-100 text-green-700';
+          break;
+      }
+    }
+
+    /** 完整渲染: 数组 + 状态 + 日志 + 按钮 + 徽章 */
+    function renderAll() {
+      renderArray();
+      renderStateInfo();
+      updateButtons();
+      updateBadge();
+      // 渲染完成后清除闪烁标记
+      setTimeout(() => clearFlash(), 100);
+    }
+
+    // ======================== 核心排序步骤 ========================
+
+    /**
+     * step() —— 执行一个原子子步骤
+     *
+     * 一趟插入排序 (for i = 2..n) 的流程:
+     *
+     *   [COPY_TO_SENTINEL]
+     *      ↓
+     *   [COMPARE] ←──────────────────┐
+     *      ↓                          │
+     *      ├── R[j] > R[0] ──→ [SHIFT] ──→ j-- ──┘
+     *      │
+     *      └── R[j] ≤ R[0] ──→ [INSERT]
+     *                              ↓
+     *                           i++ (下一趟 或 DONE)
+     */
+    function step() {
+      // 仅在 RUNNING 状态下允许步进; IDLE 下首次调用由 initApp 设置
+      if (appState === 'DONE') {
+        addLog('趟', '排序已完成，所有元素已按升序排列。');
+        renderAll();
+        return;
+      }
+
+      // 若尚未开始 (IDLE), 自动启动
+      if (appState === 'IDLE') {
+        if (!initApp()) return; // 解析输入失败
+        appState = 'RUNNING';
+        phase = PHASE.COPY_TO_SENTINEL;
+        i = 2;
+        j = 1;
+        sortedUpTo = 1;
+        addLog('趟', '=== 第 1 趟排序开始 === (待插入: R[2]=' + arr[2] + ')');
+        renderAll();
+        return;
+      }
+
+      // === RUNNING 状态下的子步骤分发 ===
+      switch (phase) {
+
+        // -----------------------------------------------------------
+        // 子步骤 1: COPY_TO_SENTINEL —— 将 R[i] 复制到哨兵 R[0]
+        // -----------------------------------------------------------
+        case PHASE.COPY_TO_SENTINEL:
+          arr[0] = arr[i];
+          flashTarget = { type: 'sentinel', index: 0 };
+          addLog('哨兵', '将 R[' + i + ']=' + arr[i] + ' 复制到哨兵 R[0]，'
+                       + '哨兵暂存值 = ' + arr[0]);
+          phase = PHASE.COMPARE;
+          j = i - 1;
+          flashTarget = { type: 'compare', index: j };
+          addLog('比较', 'j = ' + j + '，准备比较 R[' + j + ']=' + arr[j]
+                       + ' 与 R[0]=' + arr[0]);
+          break;
+
+        // -----------------------------------------------------------
+        // 子步骤 2: COMPARE —— 比较 R[j] 与 R[0]
+        // -----------------------------------------------------------
+        case PHASE.COMPARE:
+          if (j >= 1 && arr[j] > arr[0]) {
+            // R[j] > R[0]: 需要将 R[j] 右移一位
+            flashTarget = { type: 'compare', index: j };
+            addLog('比较', 'R[' + j + ']=' + arr[j] + ' > R[0]=' + arr[0]
+                         + '，需要将 R[' + j + '] 右移');
+            phase = PHASE.SHIFT;
+          } else {
+            // R[j] <= R[0] 或 j == 0: 找到插入位置
+            flashTarget = { type: 'compare', index: j > 0 ? j : 0 };
+            if (j === 0) {
+              addLog('比较', 'j = 0，已到达哨兵位置，循环终止。'
+                           + 'R[0]=' + arr[0] + '应插入到 R[1]');
+            } else {
+              addLog('比较', 'R[' + j + ']=' + arr[j] + ' ≤ R[0]=' + arr[0]
+                           + '，找到插入位置 R[' + (j + 1) + ']');
+            }
+            phase = PHASE.INSERT;
+            flashTarget = { type: 'insert', index: j + 1 };
+          }
+          break;
+
+        // -----------------------------------------------------------
+        // 子步骤 3: SHIFT —— 将 R[j] 移动到 R[j+1], 然后 j--
+        // -----------------------------------------------------------
+        case PHASE.SHIFT:
+          flashTarget = { type: 'shift', index: j };
+          arr[j + 1] = arr[j];
+          addLog('移动', '将 R[' + j + ']=' + arr[j] + ' 移动到 R[' + (j + 1) + ']');
+          arr[j] = null; // 标记原位置为"空" (视觉上显示为空位)
+          j--;
+          flashTarget = { type: 'compare', index: j >= 1 ? j : 0 };
+          if (j >= 1) {
+            addLog('比较', 'j = ' + j + '，继续比较 R[' + j + ']=' + arr[j]
+                         + ' 与 R[0]=' + arr[0]);
+          }
+          phase = PHASE.COMPARE;
+          break;
+
+        // -----------------------------------------------------------
+        // 子步骤 4: INSERT —— 将哨兵值 R[0] 放入 R[j+1]
+        // -----------------------------------------------------------
+        case PHASE.INSERT:
+          flashTarget = { type: 'insert', index: j + 1 };
+          arr[j + 1] = arr[0];
+          arr[0] = null; // 清空哨兵
+          addLog('插入', '将哨兵 R[0]=' + arr[j + 1] + ' 插入到 R[' + (j + 1) + ']，'
+                       + '第 ' + (i - 1) + ' 趟完成');
+          sortedUpTo = i;
+
+          // 进入下一趟
+          i++;
+          if (i > n) {
+            // 全部完成
+            appState = 'DONE';
+            addLog('趟', '=== 排序完成! 共 ' + (n - 1) + ' 趟 ===');
+            addLog('插入', '最终有序序列: [' + arr.slice(1, n + 1).join(', ') + ']');
+            stopAutoPlay();
+            flashTarget = { type: null, index: -1 };
+          } else {
+            // 开始下一趟
+            addLog('趟', '=== 第 ' + (i - 1) + ' 趟排序开始 === '
+                       + '(待插入: R[' + i + ']=' + arr[i] + ')');
+            phase = PHASE.COPY_TO_SENTINEL;
+            flashTarget = { type: 'select', index: i };
+          }
+          break;
+
+      } // end switch(phase)
+
+      renderAll();
+
+      // 如果排序完成, 清除所有特殊标记并重新渲染
+      if (appState === 'DONE') {
+        flashTarget = { type: null, index: -1 };
+        // 最终渲染: 全部显示为绿色
+        setTimeout(() => {
+          // 全部标记为已排序
+          renderAll();
+        }, 50);
+      }
+    }
+
+    // ======================== 自动播放 ========================
+
+    function toggleAutoPlay() {
+      if (autoTimer !== null) {
+        stopAutoPlay();
+        return;
+      }
+      if (appState === 'DONE') {
+        initApp();
+      }
+      if (appState === 'IDLE') {
+        step(); // 先执行第一步
+      }
+      startAutoPlay();
+    }
+
+    function startAutoPlay() {
+      if (autoTimer !== null) return;
+      updateButtons();
+      updateBadge();
+      autoTimer = setInterval(() => {
+        if (appState === 'DONE') {
+          stopAutoPlay();
+          return;
+        }
+        step();
+        if (appState === 'DONE') {
+          stopAutoPlay();
+        }
+      }, 800);
+      updateButtons();
+    }
+
+    function stopAutoPlay() {
+      if (autoTimer !== null) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+      updateButtons();
+    }
+
+    // ======================== 初始化 ========================
+
+    /**
+     * initApp() —— 从输入框读取数据并初始化/重置排序
+     * @returns {boolean} 是否成功
+     */
+    function initApp() {
+      stopAutoPlay();
+
+      // 解析输入
+      const raw = $dataInput.value.trim();
+      if (!raw) {
+        alert('请输入逗号分隔的数字序列!');
+        return false;
+      }
+      const parts = raw.split(/[,，\s]+/).filter(s => s.length > 0);
+      const values = [];
+      for (const p of parts) {
+        const num = Number(p);
+        if (isNaN(num)) {
+          alert('输入包含非法数字: "' + p + '"');
+          return false;
+        }
+        values.push(num);
+      }
+      if (values.length < 2) {
+        alert('至少需要 2 个元素进行排序!');
+        return false;
+      }
+
+      // 构建 1-based 数组
+      n = values.length;
+      arr = new Array(n + 1);
+      arr[0] = null; // 哨兵初始为空
+      for (let k = 0; k < n; k++) {
+        arr[k + 1] = values[k];
+      }
+
+      // 重置状态
+      appState = 'IDLE';   // 等待用户点击「单步执行」开始
+      phase = PHASE.COPY_TO_SENTINEL;
+      i = 2;
+      j = 1;
+      sortedUpTo = 1;       // R[1] 自身已有序
+      logs = [];
+      flashTarget = { type: null, index: -1 };
+
+      addLog('趟', '初始化完成。数组: [' + arr.slice(1, n + 1).join(', ') + ']');
+      addLog('趟', 'R[1]=' + arr[1] + ' 自身已有序，从第 1 趟开始 (i=2)');
+
+      renderAll();
+      return true;
+    }
+
+    // ======================== 页面加载 & 事件绑定 ========================
+
+    // 键盘快捷键
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        step();
+      } else if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        initApp();
+      } else if (e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        toggleAutoPlay();
+      }
+    });
+
+    // 输入框回车键初始化
+    $dataInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        initApp();
+      }
+    });
+
+    // 页面首次加载: 自动初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      initApp();
+    });
+
+    // 暴露函数到全局作用域 (供 onclick 属性调用)
+    window.initApp = initApp;
+    window.step = step;
+    window.toggleAutoPlay = toggleAutoPlay;
+
+  })();
+  </script>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

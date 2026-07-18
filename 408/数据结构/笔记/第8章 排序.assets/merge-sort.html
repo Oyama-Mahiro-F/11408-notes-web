@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>归并排序演示 - Merge Sort</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* ===== Custom CSS Animations ===== */
+@keyframes pulse-highlight {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.6); }
+    50% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(234, 179, 8, 0); }
+}
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 4px rgba(59, 130, 246, 0.4); }
+    50% { box-shadow: 0 0 16px rgba(59, 130, 246, 0.9); }
+}
+@keyframes mergeExpand {
+    from { transform: scaleX(0.9); opacity: 0.6; }
+    to { transform: scaleX(1); opacity: 1; }
+}
+@keyframes pointerBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+.anim-pulse-highlight { animation: pulse-highlight 0.6s ease-in-out; }
+.anim-slide-in { animation: slideInRight 0.35s ease-out; }
+.anim-fade-up { animation: fadeInUp 0.3s ease-out; }
+.anim-glow { animation: glowPulse 1.2s ease-in-out infinite; }
+.anim-merge { animation: mergeExpand 0.4s ease-out; }
+.anim-pointer { animation: pointerBounce 0.5s ease-in-out infinite; }
+
+/* Array box base */
+.array-box {
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px;
+    border-radius: 8px;
+    border: 2px solid #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+    transition: all 0.3s ease;
+    position: relative;
+}
+.array-box-left   { background: #dbeafe; border-color: #3b82f6; color: #1d4ed8; }
+.array-box-right  { background: #d1fae5; border-color: #10b981; color: #065f46; }
+.array-box-merged { background: #e2e8f0; border-color: #64748b; color: #334155; }
+.array-box-aux    { background: #ede9fe; border-color: #8b5cf6; color: #5b21b6; }
+.array-box-comparing { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+.array-box-written  { background: #c7d2fe; border-color: #6366f1; color: #3730a3; }
+
+/* Pointer label */
+.pointer-label {
+    position: absolute; bottom: -28px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; font-weight: 700; white-space: nowrap;
+}
+.pointer-i { color: #dc2626; }
+.pointer-j { color: #2563eb; }
+.pointer-k { color: #7c3aed; }
+
+/* Tree node */
+.tree-node {
+    display: inline-block; padding: 2px 10px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; font-family: 'Courier New', monospace;
+    border: 2px solid transparent; transition: all 0.3s ease;
+}
+.tree-node-pending   { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; }
+.tree-node-active    { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+.tree-node-completed { background: #dcfce7; border-color: #22c55e; color: #166534; }
+
+/* Tree line */
+.tree-line { color: #94a3b8; font-family: 'Courier New', monospace; font-size: 13px; }
+
+/* Pass group */
+.pass-group {
+    padding: 6px 12px; border-radius: 6px; margin-bottom: 6px;
+    font-size: 13px; transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+.pass-group-active { background: #fef3c7; border-color: #f59e0b; }
+.pass-group-done   { background: #dcfce7; border-color: #22c55e; }
+.pass-group-pending { background: #f8fafc; border-color: #e2e8f0; }
+
+/* Log entry */
+.log-entry {
+    padding: 5px 10px; font-size: 12px; border-left: 3px solid #cbd5e1;
+    color: #475569; transition: all 0.2s;
+}
+.log-entry:last-child { border-left-color: #3b82f6; background: #eff6ff; }
+
+/* Scrollbar */
+.log-scroll::-webkit-scrollbar { width: 5px; }
+.log-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+.log-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+/* Merge arrays layout */
+.merge-row-label {
+    font-size: 11px; font-weight: 700; white-space: nowrap;
+    min-width: 80px; text-align: right; padding-right: 8px;
+}
+
+/* Arrow below pointer */
+.pointer-arrow {
+    font-size: 18px; line-height: 1; text-align: center;
+    font-weight: 700;
+}
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+<!-- ===== TOP CONTROL BAR ===== -->
+<div class="bg-white shadow-sm border-b border-gray-200 px-5 py-3">
+    <div class="flex items-center gap-4 flex-wrap">
+        <h1 class="text-xl font-bold text-indigo-700 whitespace-nowrap">归并排序演示</h1>
+        <span class="text-gray-300">|</span>
+        <label class="text-sm text-gray-600 whitespace-nowrap">数据：</label>
+        <input id="dataInput" type="text" value="49,38,65,97,76,13,27"
+               class="border border-gray-300 rounded px-3 py-1.5 text-sm w-52 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-mono">
+        <button id="btnInit" class="px-4 py-1.5 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition font-semibold">初始化 / 重置</button>
+        <button id="btnStep"  class="px-4 py-1.5 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition font-semibold">单步执行</button>
+        <button id="btnPlay"  class="px-4 py-1.5 bg-amber-500 text-white text-sm rounded-lg hover:bg-amber-600 transition font-semibold">自动播放</button>
+        <button id="btnPause" class="px-4 py-1.5 bg-rose-500 text-white text-sm rounded-lg hover:bg-rose-600 transition font-semibold hidden">暂停</button>
+        <span class="text-gray-300">|</span>
+        <span class="text-sm text-gray-600">视图：</span>
+        <button id="btnToggleView" class="px-4 py-1.5 bg-violet-500 text-white text-sm rounded-lg hover:bg-violet-600 transition font-semibold">递归视图</button>
+        <span id="speedLabel" class="text-xs text-gray-500 ml-auto">速度: 800ms</span>
+        <input id="speedSlider" type="range" min="200" max="2000" value="800" step="100"
+               class="w-24 h-1 accent-indigo-500">
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="flex" style="min-height: calc(100vh - 64px);">
+    <!-- LEFT: Visualization -->
+    <div class="flex-1 p-5 overflow-auto">
+
+        <!-- Status Info Bar -->
+        <div id="statusBar" class="flex gap-4 flex-wrap mb-4 text-sm">
+            <div class="bg-white rounded-lg border border-gray-200 px-3 py-1.5 shadow-sm">
+                <span class="text-gray-500">当前归并段长度：</span>
+                <span id="statusMergeLen" class="font-bold text-indigo-700">-</span>
+            </div>
+            <div class="bg-white rounded-lg border border-gray-200 px-3 py-1.5 shadow-sm">
+                <span class="text-gray-500">递归深度：</span>
+                <span id="statusDepth" class="font-bold text-indigo-700">-</span>
+            </div>
+            <div class="bg-white rounded-lg border border-gray-200 px-3 py-1.5 shadow-sm">
+                <span class="text-gray-500">步骤：</span>
+                <span id="statusStep" class="font-bold text-indigo-700">0 / 0</span>
+            </div>
+            <div class="bg-white rounded-lg border border-gray-200 px-3 py-1.5 shadow-sm">
+                <span class="text-gray-500">趟数：</span>
+                <span id="statusPass" class="font-bold text-indigo-700">-</span>
+            </div>
+        </div>
+
+        <!-- Current Array R -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4">
+            <div class="flex items-center gap-3 mb-3">
+                <h3 class="text-sm font-bold text-gray-700">当前数组 <span class="text-indigo-600 font-mono">R</span></h3>
+                <span id="mergeRangeLabel" class="text-xs text-gray-400 hidden"></span>
+            </div>
+            <div id="arrayR" class="flex gap-2 items-end flex-wrap min-h-[76px]"></div>
+        </div>
+
+        <!-- Auxiliary Array B -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4">
+            <div class="flex items-center gap-3 mb-3">
+                <h3 class="text-sm font-bold text-gray-700">辅助数组 <span class="text-purple-600 font-mono">B</span></h3>
+                <span id="auxRangeLabel" class="text-xs text-gray-400 hidden"></span>
+            </div>
+            <div id="arrayB" class="flex gap-2 items-end flex-wrap min-h-[76px]"></div>
+            <div id="noMergeHint" class="text-xs text-gray-400 mt-1">当前未处于归并阶段</div>
+        </div>
+
+        <!-- Pointer State -->
+        <div id="pointerInfo" class="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-4 hidden">
+            <h3 class="text-sm font-bold text-gray-700 mb-2">指针状态</h3>
+            <div class="flex gap-6 flex-wrap text-sm">
+                <div><span class="font-bold" style="color:#dc2626;">i</span> = <span id="ptrI" class="font-mono">-</span> <span class="text-xs text-gray-500">（左子表指针，在 B 中）</span></div>
+                <div><span class="font-bold" style="color:#2563eb;">j</span> = <span id="ptrJ" class="font-mono">-</span> <span class="text-xs text-gray-500">（右子表指针，在 B 中）</span></div>
+                <div><span class="font-bold" style="color:#7c3aed;">k</span> = <span id="ptrK" class="font-mono">-</span> <span class="text-xs text-gray-500">（写入指针，在 R 中）</span></div>
+            </div>
+        </div>
+
+        <!-- Merge / Split Tree -->
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+            <h3 id="treeTitle" class="text-sm font-bold text-gray-700 mb-3">递归分解树</h3>
+            <div id="treeContainer" class="font-mono text-sm leading-relaxed overflow-auto" style="max-height:340px;"></div>
+        </div>
+    </div>
+
+    <!-- RIGHT: Log Sidebar -->
+    <div class="w-80 bg-white border-l border-gray-200 flex flex-col shadow-sm" style="min-width:320px;">
+        <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+            <h3 class="text-sm font-bold text-gray-700">执行日志</h3>
+            <span id="logBadge" class="text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600 font-semibold">就绪</span>
+        </div>
+        <div id="logContainer" class="flex-1 overflow-y-auto log-scroll p-2 space-y-1"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // ==================== DOM REFS ====================
+    const $ = id => document.getElementById(id);
+    const dataInput   = $('dataInput');
+    const btnInit     = $('btnInit');
+    const btnStep     = $('btnStep');
+    const btnPlay     = $('btnPlay');
+    const btnPause    = $('btnPause');
+    const btnToggle   = $('btnToggleView');
+    const speedSlider = $('speedSlider');
+    const speedLabel  = $('speedLabel');
+    const arrayR      = $('arrayR');
+    const arrayB      = $('arrayB');
+    const treeContainer = $('treeContainer');
+    const logContainer  = $('logContainer');
+    const pointerInfo   = $('pointerInfo');
+    const noMergeHint   = $('noMergeHint');
+    const mergeRangeLabel = $('mergeRangeLabel');
+    const auxRangeLabel   = $('auxRangeLabel');
+    const treeTitle     = $('treeTitle');
+    const logBadge      = $('logBadge');
+    const statusMergeLen = $('statusMergeLen');
+    const statusDepth    = $('statusDepth');
+    const statusStep     = $('statusStep');
+    const statusPass     = $('statusPass');
+    const ptrI = $('ptrI');
+    const ptrJ = $('ptrJ');
+    const ptrK = $('ptrK');
+
+    // ==================== STATE ====================
+    let originalData   = [49, 38, 65, 97, 76, 13, 27];
+    let recursiveSteps = [];
+    let iterativeSteps = [];
+    let currentSteps   = [];
+    let stepIdx        = 0;
+    let viewMode       = 'recursive'; // 'recursive' | 'iterative'
+    let playing        = false;
+    let playTimer      = null;
+    let speed          = 800;
+
+    // ==================== UTILITY ====================
+    function cloneArray(arr) { return arr.slice(); }
+
+    function parseData(str) {
+        const parts = str.split(/[,，\s]+/).filter(s => s.trim() !== '');
+        const nums = parts.map(s => { const n = parseInt(s.trim(), 10); return isNaN(n) ? null : n; });
+        if (nums.some(n => n === null)) return null;
+        if (nums.length < 2) return null;
+        return nums;
+    }
+
+    // ==================== PRE-COMPUTE MERGE TREE ====================
+    function buildMergeTree(low, high, parentId, nodes, idCounter) {
+        const myId = idCounter.value++;
+        const node = {
+            id: myId, low: low, high: high,
+            parentId: parentId, leftChildId: null, rightChildId: null,
+            status: 'pending' // pending | active | completed
+        };
+        const idx = nodes.length;
+        nodes.push(node);
+        if (parentId !== null) {
+            const parent = nodes.find(n => n.id === parentId);
+            if (parent.leftChildId === null) parent.leftChildId = myId;
+            else parent.rightChildId = myId;
+        }
+        if (low < high) {
+            const mid = Math.floor((low + high) / 2);
+            buildMergeTree(low, mid, myId, nodes, idCounter);
+            buildMergeTree(mid + 1, high, myId, nodes, idCounter);
+        }
+        return myId;
+    }
+
+    // ==================== PRE-COMPUTE RECURSIVE STEPS ====================
+    function computeRecursiveSteps(data) {
+        const steps = [];
+        const nodes = [];
+        const idCtr = { value: 0 };
+
+        // Build tree first
+        buildMergeTree(0, data.length - 1, null, nodes, idCtr);
+
+        // Working array (will be mutated as we simulate)
+        const R = cloneArray(data);
+        const B = new Array(data.length).fill(null);
+
+        // Helper to add a step
+        function addStep(opt) {
+            steps.push({
+                type: opt.type || 'info',
+                R: cloneArray(R),
+                B: cloneArray(B),
+                mergeLow: opt.mergeLow ?? null,
+                mergeMid: opt.mergeMid ?? null,
+                mergeHigh: opt.mergeHigh ?? null,
+                i: opt.i ?? null,
+                j: opt.j ?? null,
+                k: opt.k ?? null,
+                activeNodeIds: opt.activeNodeIds ? cloneArray(opt.activeNodeIds) : [],
+                completedNodeIds: cloneArray(opt.completedNodeIds || []),
+                log: opt.log || '',
+                depth: opt.depth ?? 0,
+                mergeLen: opt.mergeLen ?? 0,
+                comparingLeft: opt.comparingLeft ?? null,
+                comparingRight: opt.comparingRight ?? null,
+                justWritten: opt.justWritten ?? null,
+                isMerging: opt.isMerging ?? false,
+                iterativePass: 0
+            });
+        }
+
+        const completedNodes = [];
+
+        function mergeSort(low, high, depth) {
+            // Find the tree node
+            const treeNode = nodes.find(n => n.low === low && n.high === high);
+            if (treeNode) treeNode.status = 'active';
+            const activeIds = nodes.filter(n => n.status === 'active').map(n => n.id);
+
+            if (low >= high) {
+                // Base case
+                addStep({
+                    type: 'base_case', log: `到达递归基：区间 [${low}]，单个元素无需排序`,
+                    depth: depth, mergeLow: low, mergeMid: low, mergeHigh: low,
+                    activeNodeIds: activeIds, completedNodeIds: completedNodes
+                });
+                if (treeNode) treeNode.status = 'completed';
+                completedNodes.push(treeNode ? treeNode.id : -1);
+                return;
+            }
+
+            const mid = Math.floor((low + high) / 2);
+            addStep({
+                type: 'split', log: `递归分解：MergeSort([${low}..${high}]) → 拆分为 [${low}..${mid}] 和 [${mid + 1}..${high}]`,
+                depth: depth, mergeLow: low, mergeMid: mid, mergeHigh: high,
+                activeNodeIds: activeIds, completedNodeIds: completedNodes
+            });
+
+            // Left recursive call
+            mergeSort(low, mid, depth + 1);
+
+            // Right recursive call
+            mergeSort(mid + 1, high, depth + 1);
+
+            // Reactivate current node for merge
+            if (treeNode) treeNode.status = 'active';
+            const activeIds2 = nodes.filter(n => n.status === 'active').map(n => n.id);
+
+            // Merge
+            addStep({
+                type: 'merge_start', log: `开始归并：合并 [${low}..${mid}] 和 [${mid + 1}..${high}]，复制到辅助数组 B`,
+                depth: depth, mergeLow: low, mergeMid: mid, mergeHigh: high,
+                activeNodeIds: activeIds2, completedNodeIds: completedNodes,
+                mergeLen: high - low + 1, isMerging: true
+            });
+
+            // Copy R[low..high] to B[low..high]
+            for (let kk = low; kk <= high; kk++) B[kk] = R[kk];
+            addStep({
+                type: 'copy_to_b', log: `将 R[${low}..${high}] 复制到 B[${low}..${high}]`,
+                depth: depth, mergeLow: low, mergeMid: mid, mergeHigh: high,
+                activeNodeIds: activeIds2, completedNodeIds: completedNodes,
+                mergeLen: high - low + 1, isMerging: true,
+                i: low, j: mid + 1, k: low
+            });
+
+            let i = low, j = mid + 1, k = low;
+            while (i <= mid && j <= high) {
+                addStep({
+                    type: 'compare', log: `比较 B[${i}]=${B[i]} 和 B[${j}]=${B[j]}`,
+                    depth: depth, mergeLow: low, mergeMid: mid, mergeHigh: high,
+                    i: i, j: j, k: k,
+                    activeNodeIds: activeIds2, completedNodeIds: completedNodes,
+                    mergeLen: high - low + 1, isMerging: true,
+                    comparingLeft: i, comparingRight: j
+                });
+
+                if (B[i] <= B[j]) {
+                    const oldK = k;
+                    R[k] = B[i];
+                    k++; i++;
+                    addStep({
+                        type: 'copy_left', log: `${B[oldK]} ≤ ${B[j]}，将 B[${i - 1}]=${R[oldK]} 复制到 R[${oldK}]，i++ k++`,
+                        depth: depth, mergeLow: low, mergeMid: mid, mergeHigh: high,
+                        i: i, j: j, k: k,
+                        activeNodeIds: activeIds2, completedNodeIds: completedNodes,
+                        mergeLen: high - low + 1, isMerging: true,
+                        justWritten: oldK
+                    });
+                } else {
+                    const oldK = k;
+                    R[k] = B[j];
+                    k++; j++;
+                    addStep({
+                        type: 'copy_right', log: `${B[oldK]}>${B[j-1]}，将 B[${j - 1}]=${R[oldK]} 复制到 R[${oldK}]，j++ k++`,
+                        depth: depth, mergeLow: low, mergeMid: mid, mergeHigh: high,
+                        i: i, j: j, k: k,
+                        activeNodeIds: activeIds2, completedNodeIds: completedNodes,
+                        mergeLen: high - low + 1, isMerging: true,
+                        justWritten: oldK
+                    });
+                }
+            }
+
+            // Copy remaining from left
+            while (i <= mid) {
+                const oldK = k;
+                R[k] = B[i];
+                k++; i++;
+                addStep({
+                    type: 'copy_remaining_left', log: `左子表剩余：将 B[${i - 1}]=${R[oldK]} 复制到 R[${oldK}]`,
+                    depth: depth, mergeLow: low, mergeMid: mid, mergeHigh: high,
+                    i: i, j: j, k: k,
+                    activeNodeIds: activeIds2, completedNodeIds: completedNodes,
+                    mergeLen: high - low + 1, isMerging: true,
+                    justWritten: oldK
+                });
+            }
+
+            // Copy remaining from right
+            while (j <= high) {
+                const oldK = k;
+                R[k] = B[j];
+                k++; j++;
+                addStep({
+                    type: 'copy_remaining_right', log: `右子表剩余：将 B[${j - 1}]=${R[oldK]} 复制到 R[${oldK}]`,
+                    depth: depth, mergeLow: low, mergeMid: mid, mergeHigh: high,
+                    i: i, j: j, k: k,
+                    activeNodeIds: activeIds2, completedNodeIds: completedNodes,
+                    mergeLen: high - low + 1, isMerging: true,
+                    justWritten: oldK
+                });
+            }
+
+            // Merge complete
+            addStep({
+                type: 'merge_end', log: `归并完成：R[${low}..${high}] = [${R.slice(low, high + 1).join(', ')}]`,
+                depth: depth, mergeLow: low, mergeMid: mid, mergeHigh: high,
+                activeNodeIds: activeIds2, completedNodeIds: completedNodes,
+                mergeLen: high - low + 1, isMerging: false
+            });
+
+            if (treeNode) treeNode.status = 'completed';
+            completedNodes.push(treeNode ? treeNode.id : -1);
+        }
+
+        // Initial split step
+        const rootNode = nodes.find(n => n.low === 0 && n.high === data.length - 1);
+        if (rootNode) rootNode.status = 'active';
+        addStep({
+            type: 'init', log: `递归入口：MergeSort([0..${data.length - 1}])`,
+            depth: 0, activeNodeIds: [rootNode ? rootNode.id : 0],
+            completedNodeIds: []
+        });
+
+        mergeSort(0, data.length - 1, 0);
+
+        // Final step
+        addStep({
+            type: 'done', log: '排序完成！数组已按升序排列。', depth: 0,
+            activeNodeIds: [], completedNodeIds: nodes.map(n => n.id),
+            mergeLen: data.length, isMerging: false
+        });
+
+        // Reset tree node statuses for display
+        nodes.forEach(n => n.status = 'pending');
+
+        return { steps, nodes };
+    }
+
+    // ==================== PRE-COMPUTE ITERATIVE STEPS ====================
+    function computeIterativeSteps(data) {
+        const steps = [];
+        const R = cloneArray(data);
+        const B = new Array(data.length).fill(null);
+        const n = data.length;
+
+        function addStep(opt) {
+            steps.push({
+                type: opt.type || 'info',
+                R: cloneArray(R),
+                B: cloneArray(B),
+                mergeLow: opt.mergeLow ?? null,
+                mergeMid: opt.mergeMid ?? null,
+                mergeHigh: opt.mergeHigh ?? null,
+                i: opt.i ?? null,
+                j: opt.j ?? null,
+                k: opt.k ?? null,
+                activeNodeIds: [],
+                completedNodeIds: [],
+                log: opt.log || '',
+                depth: 0,
+                mergeLen: opt.mergeLen ?? 0,
+                comparingLeft: opt.comparingLeft ?? null,
+                comparingRight: opt.comparingRight ?? null,
+                justWritten: opt.justWritten ?? null,
+                isMerging: opt.isMerging ?? false,
+                iterativePass: opt.iterativePass ?? 0
+            });
+        }
+
+        let pass = 0;
+        addStep({
+            type: 'init', log: `迭代归并排序开始，共 ${n} 个元素`,
+            mergeLen: 1, iterativePass: 0
+        });
+
+        for (let len = 1; len < n; len *= 2) {
+            pass++;
+            addStep({
+                type: 'pass_start', log: `第 ${pass} 趟：归并段长度 len = ${len}`,
+                mergeLen: len, iterativePass: pass
+            });
+
+            let i = 0;
+            const mergeTasks = [];
+            for (; i + 2 * len - 1 < n; i += 2 * len) {
+                mergeTasks.push({ low: i, mid: i + len - 1, high: i + 2 * len - 1 });
+            }
+            if (i + len - 1 < n - 1) {
+                mergeTasks.push({ low: i, mid: i + len - 1, high: n - 1 });
+            }
+
+            for (const task of mergeTasks) {
+                const { low, mid, high } = task;
+                addStep({
+                    type: 'merge_start', log: `归并段：R[${low}..${mid}] 与 R[${mid + 1}..${high}]`,
+                    mergeLow: low, mergeMid: mid, mergeHigh: high,
+                    mergeLen: len, iterativePass: pass, isMerging: true
+                });
+
+                // Copy to B
+                for (let kk = low; kk <= high; kk++) B[kk] = R[kk];
+                addStep({
+                    type: 'copy_to_b', log: `将 R[${low}..${high}] 复制到 B`,
+                    mergeLow: low, mergeMid: mid, mergeHigh: high,
+                    mergeLen: len, iterativePass: pass, isMerging: true,
+                    i: low, j: mid + 1, k: low
+                });
+
+                let ii = low, jj = mid + 1, kk = low;
+                while (ii <= mid && jj <= high) {
+                    addStep({
+                        type: 'compare', log: `比较 B[${ii}]=${B[ii]} 和 B[${jj}]=${B[jj]}`,
+                        mergeLow: low, mergeMid: mid, mergeHigh: high,
+                        i: ii, j: jj, k: kk,
+                        mergeLen: len, iterativePass: pass, isMerging: true,
+                        comparingLeft: ii, comparingRight: jj
+                    });
+                    if (B[ii] <= B[jj]) {
+                        const old = kk;
+                        R[kk] = B[ii]; kk++; ii++;
+                        addStep({
+                            type: 'copy_left', log: `将 ${R[old]} 复制到 R[${old}]，i++ k++`,
+                            mergeLow: low, mergeMid: mid, mergeHigh: high,
+                            i: ii, j: jj, k: kk,
+                            mergeLen: len, iterativePass: pass, isMerging: true,
+                            justWritten: old
+                        });
+                    } else {
+                        const old = kk;
+                        R[kk] = B[jj]; kk++; jj++;
+                        addStep({
+                            type: 'copy_right', log: `将 ${R[old]} 复制到 R[${old}]，j++ k++`,
+                            mergeLow: low, mergeMid: mid, mergeHigh: high,
+                            i: ii, j: jj, k: kk,
+                            mergeLen: len, iterativePass: pass, isMerging: true,
+                            justWritten: old
+                        });
+                    }
+                }
+                while (ii <= mid) {
+                    const old = kk;
+                    R[kk] = B[ii]; kk++; ii++;
+                    addStep({
+                        type: 'copy_remaining_left', log: `左子表剩余：R[${old}] = ${R[old]}`,
+                        mergeLow: low, mergeMid: mid, mergeHigh: high,
+                        i: ii, j: jj, k: kk,
+                        mergeLen: len, iterativePass: pass, isMerging: true,
+                        justWritten: old
+                    });
+                }
+                while (jj <= high) {
+                    const old = kk;
+                    R[kk] = B[jj]; kk++; jj++;
+                    addStep({
+                        type: 'copy_remaining_right', log: `右子表剩余：R[${old}] = ${R[old]}`,
+                        mergeLow: low, mergeMid: mid, mergeHigh: high,
+                        i: ii, j: jj, k: kk,
+                        mergeLen: len, iterativePass: pass, isMerging: true,
+                        justWritten: old
+                    });
+                }
+                addStep({
+                    type: 'merge_end', log: `归并段完成：R[${low}..${high}] = [${R.slice(low, high + 1).join(', ')}]`,
+                    mergeLow: low, mergeMid: mid, mergeHigh: high,
+                    mergeLen: len, iterativePass: pass, isMerging: false
+                });
+            }
+            addStep({
+                type: 'pass_end', log: `第 ${pass} 趟完成：R = [${R.join(', ')}]`,
+                mergeLen: len, iterativePass: pass
+            });
+        }
+
+        addStep({
+            type: 'done', log: '排序完成！数组已按升序排列。', depth: 0,
+            mergeLen: data.length, isMerging: false, iterativePass: pass
+        });
+
+        return steps;
+    }
+
+    // ==================== RENDER HELPERS ====================
+    function elementClassForStep(step, index) {
+        // Determine visual class for element at position index in R
+        if (step.type === 'done' || step.type === 'init' && step.R.every((v, i, a) => i === 0 || a[i] >= a[i - 1])) {
+            // All sorted: check if it's the final state
+            const sorted = step.R.every((v, i, a) => i === 0 || a[i] >= a[i - 1]);
+            if (sorted && step.type === 'done') return 'array-box-merged';
+            return '';
+        }
+
+        const ml = step.mergeLow;
+        const mm = step.mergeMid;
+        const mh = step.mergeHigh;
+
+        if (ml === null || mh === null) return '';
+
+        if (index === step.justWritten) return 'array-box-written anim-fade-up';
+        if (index === step.comparingLeft || index === step.comparingRight) return 'array-box-comparing anim-pulse-highlight';
+
+        if (!step.isMerging) {
+            // Not merging: show merged range
+            if (index >= ml && index <= mh && step.completedNodeIds && step.completedNodeIds.length > 0) {
+                // Elements that were just merged (in the range that just completed)
+                if (step.type === 'merge_end' || step.type === 'split' || step.type === 'base_case') {
+                    return 'array-box-merged';
+                }
+            }
+            return '';
+        }
+
+        // During merge
+        if (step.k !== null && index >= ml && index < step.k) {
+            return 'array-box-merged'; // Already written during this merge
+        }
+        if (index >= ml && index <= mm) return 'array-box-left';
+        if (index > mm && index <= mh) return 'array-box-right';
+        return '';
+    }
+
+    function auxElementClassForStep(step, index) {
+        if (!step.isMerging || step.B === null) return '';
+        const ml = step.mergeLow;
+        const mm = step.mergeMid;
+        const mh = step.mergeHigh;
+        if (ml === null || mh === null) return '';
+        if (index < ml || index > mh) return '';
+        if (step.i !== null && index < step.i && index >= ml) return ''; // already processed in left
+        if (step.j !== null && index < step.j && index > mm) return ''; // already processed in right
+        if (step.i !== null && index === step.i && index <= mm) return 'array-box-comparing anim-pulse-highlight';
+        if (step.j !== null && index === step.j && index > mm && index <= mh) return 'array-box-comparing anim-pulse-highlight';
+        if (step.i !== null && index < step.i && index >= ml) return '';
+        if (step.j !== null && index < step.j && index > mm) return '';
+        if (index <= mm) return 'array-box-left';
+        if (index > mm) return 'array-box-right';
+        return 'array-box-aux';
+    }
+
+    function renderArrayR(step) {
+        let html = '';
+        for (let i = 0; i < step.R.length; i++) {
+            const cls = elementClassForStep(step, i);
+            const isPointer = (step.k !== null && i === step.k && step.isMerging);
+            html += `<div class="relative flex flex-col items-center">
+                <div class="array-box ${cls}">${step.R[i]}</div>`;
+            if (isPointer) {
+                html += `<div style="margin-top:2px;font-size:11px;font-weight:700;color:#7c3aed;" class="anim-pointer">k</div>`;
+            }
+            html += `</div>`;
+        }
+        arrayR.innerHTML = html || '<span class="text-gray-400 text-sm">无数据</span>';
+
+        if (step.mergeLow !== null && step.mergeHigh !== null && step.isMerging) {
+            mergeRangeLabel.textContent = `归并区间 [${step.mergeLow}..${step.mergeHigh}]`;
+            mergeRangeLabel.classList.remove('hidden');
+        } else if (step.type === 'merge_end' && step.mergeLow !== null) {
+            mergeRangeLabel.textContent = `刚完成归并 [${step.mergeLow}..${step.mergeHigh}]`;
+            mergeRangeLabel.classList.remove('hidden');
+        } else {
+            mergeRangeLabel.classList.add('hidden');
+        }
+    }
+
+    function renderArrayB(step) {
+        if (!step.isMerging || step.B === null || step.B.every(v => v === null)) {
+            arrayB.innerHTML = '<span class="text-gray-400 text-sm">-</span>';
+            noMergeHint.classList.remove('hidden');
+            auxRangeLabel.classList.add('hidden');
+            return;
+        }
+        noMergeHint.classList.add('hidden');
+        const ml = step.mergeLow;
+        const mh = step.mergeHigh;
+        if (ml !== null && mh !== null) {
+            auxRangeLabel.textContent = `B[${ml}..${mh}]`;
+            auxRangeLabel.classList.remove('hidden');
+        }
+
+        let html = '';
+        for (let i = 0; i < step.B.length; i++) {
+            if (step.B[i] === null) {
+                html += `<div class="array-box opacity-30">-</div>`;
+                continue;
+            }
+            const cls = auxElementClassForStep(step, i);
+            const showIPtr = (step.i !== null && i === step.i && i <= (step.mergeMid ?? 0));
+            const showJPtr = (step.j !== null && i === step.j && i > (step.mergeMid ?? 0));
+            html += `<div class="relative flex flex-col items-center">
+                <div class="array-box ${cls}">${step.B[i]}</div>`;
+            if (showIPtr) {
+                html += `<div style="margin-top:2px;font-size:11px;font-weight:700;color:#dc2626;" class="anim-pointer">i</div>`;
+            }
+            if (showJPtr) {
+                html += `<div style="margin-top:2px;font-size:11px;font-weight:700;color:#2563eb;" class="anim-pointer">j</div>`;
+            }
+            html += `</div>`;
+        }
+        arrayB.innerHTML = html;
+    }
+
+    function buildTreeText(nodes) {
+        // Build a map from id to node
+        const nodeMap = {};
+        nodes.forEach(n => { nodeMap[n.id] = n; });
+
+        const rootNode = nodes.find(n => n.parentId === null);
+        if (!rootNode) return '';
+
+        function renderNode(node, prefix, isLast) {
+            const connector = isLast ? '└── ' : '├── ';
+            let statusCls = 'tree-node-pending';
+            if (node.status === 'active') statusCls = 'tree-node-active anim-glow';
+            else if (node.status === 'completed') statusCls = 'tree-node-completed';
+
+            const rangeStr = node.low === node.high ? `[${node.low}]` : `[${node.low}..${node.high}]`;
+            let line = `<span class="tree-line">${prefix}${connector}</span>`;
+            line += `<span class="tree-node ${statusCls}">${rangeStr}</span>`;
+            let html = `<div style="white-space:nowrap;">${line}</div>`;
+
+            const childPrefix = prefix + (isLast ? '    ' : '│   ');
+            const children = [];
+            if (node.leftChildId !== null && nodeMap[node.leftChildId]) {
+                children.push(nodeMap[node.leftChildId]);
+            }
+            if (node.rightChildId !== null && nodeMap[node.rightChildId]) {
+                children.push(nodeMap[node.rightChildId]);
+            }
+            for (let i = 0; i < children.length; i++) {
+                html += renderNode(children[i], childPrefix, i === children.length - 1);
+            }
+            return html;
+        }
+
+        return renderNode(rootNode, '', true);
+    }
+
+    function buildPassesHtml(passes) {
+        // For iterative view: show merge passes
+        // passes = array of { passNum, len, status: 'pending'|'active'|'done' }
+        let html = '';
+        for (const p of passes) {
+            let cls = 'pass-group-pending';
+            if (p.status === 'active') cls = 'pass-group-active anim-glow';
+            else if (p.status === 'done') cls = 'pass-group-done';
+            html += `<div class="pass-group ${cls}">
+                <span class="font-bold">第${p.passNum}趟</span>
+                <span class="text-gray-500 ml-2">归并段长度 len = ${p.len}</span>
+                ${p.desc ? `<span class="text-xs text-gray-400 ml-2">${p.desc}</span>` : ''}
+            </div>`;
+        }
+        return html || '<span class="text-gray-400 text-sm">-</span>';
+    }
+
+    // ==================== RENDER FULL STATE ====================
+    function renderStep(step, treeData) {
+        renderArrayR(step);
+        renderArrayB(step);
+
+        // Pointer info
+        if (step.isMerging && step.i !== null && step.j !== null && step.k !== null) {
+            pointerInfo.classList.remove('hidden');
+            ptrI.textContent = step.i;
+            ptrJ.textContent = step.j;
+            ptrK.textContent = step.k;
+        } else {
+            pointerInfo.classList.add('hidden');
+        }
+
+        // Status
+        statusMergeLen.textContent = step.mergeLen > 0 ? step.mergeLen : '-';
+        statusDepth.textContent = step.depth > 0 || step.type === 'init' ? step.depth : '-';
+        statusPass.textContent = step.iterativePass > 0 ? `第${step.iterativePass}趟` : '-';
+
+        // Tree
+        if (viewMode === 'recursive' && treeData) {
+            treeTitle.textContent = '递归分解树';
+            // Update node statuses
+            treeData.nodes.forEach(n => {
+                n.status = 'pending';
+                if (step.completedNodeIds && step.completedNodeIds.includes(n.id)) n.status = 'completed';
+            });
+            if (step.activeNodeIds && step.activeNodeIds.length > 0) {
+                step.activeNodeIds.forEach(id => {
+                    const node = treeData.nodes.find(n => n.id === id);
+                    if (node) node.status = 'active';
+                });
+            }
+            treeContainer.innerHTML = buildTreeText(treeData.nodes);
+        } else if (viewMode === 'iterative') {
+            treeTitle.textContent = '归并趟数';
+            // Build pass info
+            const n = step.R.length;
+            const passes = [];
+            let maxPass = 0;
+            for (let len = 1; len < n; len *= 2) maxPass++;
+            // Determine current pass
+            const curPass = step.iterativePass || 0;
+            let passNum = 0;
+            for (let len = 1; len < n; len *= 2) {
+                passNum++;
+                let status = 'pending';
+                if (passNum < curPass) status = 'done';
+                else if (passNum === curPass && step.type !== 'done') status = 'active';
+                else if (passNum === curPass && step.type === 'done') status = 'done';
+                const e = step.R;
+                passes.push({
+                    passNum: passNum, len: len,
+                    status: status,
+                    desc: status === 'done' ? '已完成' : (status === 'active' ? '进行中' : '')
+                });
+            }
+            if (step.type === 'done') {
+                passes.forEach(p => p.status = 'done');
+            }
+            treeContainer.innerHTML = buildPassesHtml(passes);
+        }
+    }
+
+    function addLogEntry(msg) {
+        const div = document.createElement('div');
+        div.className = 'log-entry anim-slide-in';
+        div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        logContainer.appendChild(div);
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    function clearLog() {
+        logContainer.innerHTML = '';
+    }
+
+    // ==================== NAVIGATION ====================
+    function goToStep(idx, treeData) {
+        if (idx < 0) idx = 0;
+        if (idx >= currentSteps.length) idx = currentSteps.length - 1;
+        stepIdx = idx;
+        const step = currentSteps[idx];
+        renderStep(step, viewMode === 'recursive' ? treeData : null);
+        statusStep.textContent = `${idx + 1} / ${currentSteps.length}`;
+
+        // Update badge
+        if (idx === currentSteps.length - 1 && step.type === 'done') {
+            logBadge.textContent = '完成';
+            logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-green-200 text-green-700 font-semibold';
+        } else if (step.isMerging) {
+            logBadge.textContent = '归并中';
+            logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-purple-200 text-purple-700 font-semibold';
+        } else if (step.type === 'split' || step.type === 'base_case' || step.type === 'init') {
+            logBadge.textContent = '分解';
+            logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-blue-200 text-blue-700 font-semibold';
+        } else {
+            logBadge.textContent = '就绪';
+            logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600 font-semibold';
+        }
+    }
+
+    function stepForward(treeData) {
+        if (stepIdx < currentSteps.length - 1) {
+            stepIdx++;
+            const step = currentSteps[stepIdx];
+            renderStep(step, viewMode === 'recursive' ? treeData : null);
+            addLogEntry(step.log);
+            statusStep.textContent = `${stepIdx + 1} / ${currentSteps.length}`;
+            // Update badge
+            if (stepIdx === currentSteps.length - 1 && step.type === 'done') {
+                logBadge.textContent = '完成';
+                logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-green-200 text-green-700 font-semibold';
+                if (playing) pause();
+            } else if (step.isMerging) {
+                logBadge.textContent = '归并中';
+                logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-purple-200 text-purple-700 font-semibold';
+            } else if (step.type === 'split' || step.type === 'base_case' || step.type === 'init') {
+                logBadge.textContent = '分解';
+                logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-blue-200 text-blue-700 font-semibold';
+            }
+        } else {
+            if (playing) pause();
+        }
+    }
+
+    function play(treeData) {
+        if (playing) return;
+        if (stepIdx >= currentSteps.length - 1) {
+            // Reset to beginning
+            reset(treeData);
+        }
+        playing = true;
+        btnPlay.classList.add('hidden');
+        btnPause.classList.remove('hidden');
+        function tick() {
+            if (!playing) return;
+            if (stepIdx >= currentSteps.length - 1) {
+                pause();
+                return;
+            }
+            stepForward(treeData);
+            playTimer = setTimeout(tick, speed);
+        }
+        playTimer = setTimeout(tick, speed);
+    }
+
+    function pause() {
+        playing = false;
+        if (playTimer) { clearTimeout(playTimer); playTimer = null; }
+        btnPlay.classList.remove('hidden');
+        btnPause.classList.add('hidden');
+    }
+
+    function reset(treeData) {
+        pause();
+        stepIdx = -1; // Before first step
+        clearLog();
+        goToStep(0, treeData);
+        stepIdx = 0;
+        statusStep.textContent = `1 / ${currentSteps.length}`;
+        logBadge.textContent = '就绪';
+        logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600 font-semibold';
+        pointerInfo.classList.add('hidden');
+        noMergeHint.classList.remove('hidden');
+    }
+
+    // ==================== INIT ====================
+    let recursiveTreeData = null;
+    let iterativeTreeData = null;
+
+    function initialize() {
+        pause();
+
+        const parsed = parseData(dataInput.value);
+        if (!parsed) {
+            alert('请输逗号分隔的整数（至少2个），例如：49,38,65,97,76,13,27');
+            return;
+        }
+        if (parsed.length > 30) {
+            alert('数据量太大，请控制在30个元素以内以保证显示效果');
+            return;
+        }
+        originalData = parsed;
+
+        // Pre-compute
+        const recResult = computeRecursiveSteps(originalData);
+        recursiveSteps = recResult.steps;
+        recursiveTreeData = { nodes: recResult.nodes };
+
+        iterativeSteps = computeIterativeSteps(originalData);
+        iterativeTreeData = null; // Iterative doesn't use tree nodes
+
+        // Reset state
+        if (viewMode === 'recursive') {
+            currentSteps = recursiveSteps;
+        } else {
+            currentSteps = iterativeSteps;
+        }
+
+        clearLog();
+        stepIdx = 0;
+        goToStep(0, recursiveTreeData);
+        statusStep.textContent = `1 / ${currentSteps.length}`;
+        logBadge.textContent = '就绪';
+        logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600 font-semibold';
+        addLogEntry(currentSteps[0]?.log || '初始化完成');
+        pointerInfo.classList.add('hidden');
+        noMergeHint.classList.remove('hidden');
+        btnPlay.classList.remove('hidden');
+        btnPause.classList.add('hidden');
+    }
+
+    function toggleView() {
+        pause();
+        viewMode = viewMode === 'recursive' ? 'iterative' : 'recursive';
+        btnToggle.textContent = viewMode === 'recursive' ? '递归视图' : '迭代视图';
+
+        if (viewMode === 'recursive') {
+            currentSteps = recursiveSteps;
+        } else {
+            currentSteps = iterativeSteps;
+        }
+
+        clearLog();
+        stepIdx = 0;
+        goToStep(0, viewMode === 'recursive' ? recursiveTreeData : null);
+        statusStep.textContent = `1 / ${currentSteps.length}`;
+        logBadge.textContent = '就绪';
+        logBadge.className = 'text-xs px-2 py-0.5 rounded-full bg-gray-200 text-gray-600 font-semibold';
+        addLogEntry(viewMode === 'recursive' ? '切换到递归视图' : '切换到迭代视图');
+        pointerInfo.classList.add('hidden');
+        noMergeHint.classList.remove('hidden');
+    }
+
+    // ==================== EVENT BINDINGS ====================
+    btnInit.addEventListener('click', initialize);
+    btnStep.addEventListener('click', () => {
+        if (currentSteps.length === 0) { initialize(); return; }
+        stepForward(viewMode === 'recursive' ? recursiveTreeData : null);
+    });
+    btnPlay.addEventListener('click', () => {
+        if (currentSteps.length === 0) { initialize(); }
+        play(viewMode === 'recursive' ? recursiveTreeData : null);
+    });
+    btnPause.addEventListener('click', pause);
+    btnToggle.addEventListener('click', toggleView);
+    speedSlider.addEventListener('input', () => {
+        speed = parseInt(speedSlider.value, 10);
+        speedLabel.textContent = `速度: ${speed}ms`;
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+            e.preventDefault();
+            if (currentSteps.length === 0) { initialize(); return; }
+            stepForward(viewMode === 'recursive' ? recursiveTreeData : null);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (playing) pause();
+            else {
+                if (currentSteps.length === 0) initialize();
+                play(viewMode === 'recursive' ? recursiveTreeData : null);
+            }
+        }
+    });
+
+    // ==================== INITIAL LOAD ====================
+    initialize();
+})();
+</script>
+
+</main>
+<aside class="nav-toc">
+<div class="toc-label">目录</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#treeTitle">递归分解树</a>
+</div>
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

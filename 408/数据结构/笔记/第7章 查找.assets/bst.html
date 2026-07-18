@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二叉排序树 BST 演示 (408标准)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tree-area { position: relative; min-height: 450px; overflow: auto; }
+        .tnode {
+            position: absolute; width: 48px; height: 48px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; font-weight: bold; border: 2.5px solid #93c5fd;
+            background: #eff6ff; transition: all 0.4s ease; z-index: 2;
+            cursor: default; flex-direction: column;
+        }
+        .tnode.root-node { border-color: #3b82f6; border-width: 3px; }
+        .tnode.search-path { border-color: #f59e0b; background: #fef3c7; box-shadow: 0 0 0 5px rgba(245,158,11,0.3); }
+        .tnode.found-node { border-color: #22c55e; background: #f0fdf4; box-shadow: 0 0 0 6px rgba(34,197,94,0.3); transform: scale(1.15); }
+        .tnode.delete-target { border-color: #ef4444; background: #fef2f2; box-shadow: 0 0 0 5px rgba(239,68,68,0.3); }
+        .tnode.insert-highlight { border-color: #8b5cf6; background: #f5f3ff; box-shadow: 0 0 0 5px rgba(139,92,246,0.3); }
+        .tnode.bf-label { font-size: 0.6rem; position: absolute; top: -16px; color: #f59e0b; font-weight: bold; }
+        .tree-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    </style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+    <!-- 顶部控制栏 -->
+    <div class="bg-white shadow-sm border-b p-4 flex flex-wrap gap-4 items-center justify-between z-10">
+        <div class="flex gap-4 items-center flex-wrap">
+            <h1 class="text-xl font-bold text-blue-600 mr-2">二叉排序树 BST 演示</h1>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">插入值:</label>
+                <input type="number" id="input-insert" value="" placeholder="数字" class="border rounded px-2 py-1 w-24 focus:outline-none focus:border-blue-500 text-sm">
+                <button onclick="doInsert()" class="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition text-sm">插入</button>
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">查找/删除:</label>
+                <input type="number" id="input-search" value="" placeholder="数字" class="border rounded px-2 py-1 w-24 focus:outline-none focus:border-blue-500 text-sm">
+                <button onclick="doSearch()" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">查找</button>
+                <button onclick="doDelete()" class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm">删除</button>
+            </div>
+            <button onclick="resetTree()" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition text-sm">重置</button>
+        </div>
+        <div class="flex gap-2 items-center">
+            <span id="status-badge" class="px-2 py-1 rounded text-xs bg-gray-200 text-gray-700">就绪</span>
+        </div>
+    </div>
+
+    <div class="flex-1 flex overflow-hidden">
+        <!-- 左：树可视化 -->
+        <div class="flex-1 p-6 overflow-auto bg-gray-50 flex flex-col gap-4">
+            <div class="bg-white p-4 rounded-lg shadow-sm border flex-1">
+                <h2 class="text-lg font-bold mb-3">BST 二叉排序树</h2>
+                <div class="tree-area" id="tree-area"></div>
+            </div>
+            <!-- 结点信息 -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <div class="grid grid-cols-3 gap-4 text-sm">
+                    <div class="bg-blue-50 p-3 rounded-lg text-center"><div class="text-gray-500">结点总数</div><div class="text-xl font-bold text-blue-600 font-mono" id="stat-count">0</div></div>
+                    <div class="bg-purple-50 p-3 rounded-lg text-center"><div class="text-gray-500">树高度</div><div class="text-xl font-bold text-purple-600 font-mono" id="stat-height">0</div></div>
+                    <div class="bg-green-50 p-3 rounded-lg text-center"><div class="text-gray-500">中序遍历</div><div class="text-sm font-bold text-green-600 font-mono" id="stat-inorder">-</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧日志 -->
+        <div class="w-80 bg-white border-l flex flex-col shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
+            <div class="p-4 border-b bg-gray-50 font-bold">执行日志</div>
+            <div id="log-container" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 font-mono text-sm"></div>
+        </div>
+    </div>
+
+    <!-- 删除操作选单（间接前驱/后继选择） -->
+    <div id="delete-modal" class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-xl shadow-2xl">
+            <p class="font-bold mb-4">该结点有两个孩子，请选择替代方式：</p>
+            <div class="flex gap-3">
+                <button onclick="deleteWith('predecessor')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">用直接前驱替代</button>
+                <button onclick="deleteWith('successor')" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">用直接后继替代</button>
+                <button onclick="hideDeleteModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ---- BST 数据结构 ----
+        class TreeNode {
+            constructor(val) { this.val = val; this.left = null; this.right = null; this.x = 0; this.y = 0; }
+        }
+        let root = null;
+        let searchPathNodes = [];   // 搜索路径上的结点值
+        let specialNode = null;     // 特殊高亮结点值
+        let highlightType = '';     // 'search','found','delete','insert'
+        let pendingDeleteVal = null;
+
+        function resetTree() {
+            root = null; searchPathNodes = []; specialNode = null; highlightType = '';
+            document.getElementById('log-container').innerHTML = '';
+            updateStats();
+            renderTree();
+            addLog('系统', 'BST 已重置为空树。');
+            updateStatusBadge('就绪', 'bg-gray-200 text-gray-700');
+        }
+
+        // ---- 插入 ----
+        function doInsert() {
+            const val = document.getElementById('input-insert').value;
+            if (!val && val !== 0) return alert('请输入插入值');
+            const num = Number(val);
+            if (isNaN(num)) return alert('请输入有效数字');
+            searchPathNodes = [];
+            specialNode = null; highlightType = 'insert';
+            root = bstInsert(root, num);
+            document.getElementById('input-insert').value = '';
+            specialNode = num;
+            addLog('插入', `插入结点 ${num}。搜索路径: ${searchPathNodes.join(' → ')}`, 'text-purple-600 font-bold');
+            updateStatusBadge('已插入 ' + num, 'bg-purple-100 text-purple-700');
+            updateStats();
+            renderTree();
+            // 2秒后清除高亮
+            setTimeout(() => { specialNode = null; highlightType = ''; renderTree(); }, 2000);
+        }
+
+        function bstInsert(node, val) {
+            if (!node) { searchPathNodes.push('NULL→新建'); return new TreeNode(val); }
+            searchPathNodes.push(String(node.val));
+            if (val < node.val) node.left = bstInsert(node.left, val);
+            else if (val > node.val) node.right = bstInsert(node.right, val);
+            // 相等不插入
+            return node;
+        }
+
+        // ---- 查找 ----
+        function doSearch() {
+            const val = document.getElementById('input-search').value;
+            if (!val && val !== 0) return alert('请输入查找值');
+            const num = Number(val);
+            if (isNaN(num)) return alert('请输入有效数字');
+            searchPathNodes = [];
+            specialNode = null; highlightType = 'search';
+            const found = bstSearch(root, num);
+            if (found) {
+                specialNode = num;
+                highlightType = 'found';
+                addLog('查找成功', `找到结点 ${num}！搜索路径: ${searchPathNodes.join(' → ')}`, 'text-green-600 font-bold text-base');
+                updateStatusBadge('查找成功', 'bg-green-100 text-green-700');
+            } else {
+                addLog('查找失败', `未找到结点 ${num}。搜索路径: ${searchPathNodes.join(' → ')} → NULL`, 'text-red-600 font-bold');
+                updateStatusBadge('查找失败', 'bg-red-100 text-red-700');
+            }
+            renderTree();
+            setTimeout(() => { specialNode = null; highlightType = ''; renderTree(); updateStatusBadge('就绪', 'bg-gray-200 text-gray-700'); }, 2500);
+        }
+
+        function bstSearch(node, val) {
+            if (!node) { searchPathNodes.push('NULL'); return false; }
+            searchPathNodes.push(String(node.val));
+            if (val === node.val) return true;
+            if (val < node.val) return bstSearch(node.left, val);
+            return bstSearch(node.right, val);
+        }
+
+        // ---- 删除 ----
+        function doDelete() {
+            const val = document.getElementById('input-delete')?.value || document.getElementById('input-search').value;
+            if (!val && val !== 0) return alert('请输入删除值');
+            const num = Number(val);
+            if (isNaN(num)) return alert('请输入有效数字');
+
+            // 先检查是否有两个孩子
+            const node = findNode(root, num);
+            if (!node) { addLog('删除失败', `结点 ${num} 不存在于树中。`, 'text-red-600 font-bold'); return; }
+
+            searchPathNodes = []; specialNode = num; highlightType = 'delete';
+            if (node.left && node.right) {
+                pendingDeleteVal = num;
+                showDeleteModal();
+                return;
+            }
+            executeDelete(num, 'direct');
+        }
+
+        function findNode(node, val) {
+            if (!node) return null;
+            if (val === node.val) return node;
+            if (val < node.val) return findNode(node.left, val);
+            return findNode(node.right, val);
+        }
+
+        function showDeleteModal() {
+            document.getElementById('delete-modal').classList.remove('hidden');
+        }
+
+        function hideDeleteModal() {
+            document.getElementById('delete-modal').classList.add('hidden');
+            pendingDeleteVal = null;
+            specialNode = null; highlightType = '';
+            renderTree();
+        }
+
+        function deleteWith(method) {
+            hideDeleteModal();
+            executeDelete(pendingDeleteVal, method);
+        }
+
+        function executeDelete(val, method) {
+            searchPathNodes = []; specialNode = val; highlightType = 'delete';
+            const deleted = { caseType: '' };
+            root = bstDelete(root, val, method, deleted);
+            addLog('删除', `删除结点 ${val} (${deleted.caseType})。搜索路径: ${searchPathNodes.join(' → ')}`, 'text-red-600 font-bold text-base');
+            updateStatusBadge('已删除 ' + val, 'bg-red-100 text-red-700');
+            updateStats();
+            renderTree();
+            setTimeout(() => { specialNode = null; highlightType = ''; renderTree(); updateStatusBadge('就绪', 'bg-gray-200 text-gray-700'); }, 2500);
+        }
+
+        function bstDelete(node, val, method, deleted) {
+            if (!node) { searchPathNodes.push('NULL'); return null; }
+            searchPathNodes.push(String(node.val));
+            if (val < node.val) { node.left = bstDelete(node.left, val, method, deleted); return node; }
+            if (val > node.val) { node.right = bstDelete(node.right, val, method, deleted); return node; }
+            // 找到目标
+            if (!node.left && !node.right) {
+                deleted.caseType = '情况1: 叶子结点，直接删除';
+                return null;
+            }
+            if (!node.left) {
+                deleted.caseType = '情况2: 只有右孩子，用右孩子替代';
+                return node.right;
+            }
+            if (!node.right) {
+                deleted.caseType = '情况2: 只有左孩子，用左孩子替代';
+                return node.left;
+            }
+            // 两个孩子
+            if (method === 'predecessor') {
+                deleted.caseType = '情况3: 两个孩子，用直接前驱替代';
+                let pred = node.left, predParent = node;
+                while (pred.right) { predParent = pred; pred = pred.right; }
+                node.val = pred.val;
+                // 递归删除前驱(前驱不可能有两个孩子)
+                const subDel = { caseType: '' };
+                node.left = bstDelete(node.left, pred.val, 'direct', subDel);
+            } else {
+                deleted.caseType = '情况3: 两个孩子，用直接后继替代';
+                let succ = node.right, succParent = node;
+                while (succ.left) { succParent = succ; succ = succ.left; }
+                node.val = succ.val;
+                const subDel = { caseType: '' };
+                node.right = bstDelete(node.right, succ.val, 'direct', subDel);
+            }
+            return node;
+        }
+
+        // ---- 树绘制 ----
+        function getHeight(node) { if (!node) return 0; return 1 + Math.max(getHeight(node.left), getHeight(node.right)); }
+        function countNodes(node) { if (!node) return 0; return 1 + countNodes(node.left) + countNodes(node.right); }
+        function inorder(node) { if (!node) return []; return [...inorder(node.left), node.val, ...inorder(node.right)]; }
+
+        function updateStats() {
+            document.getElementById('stat-count').textContent = countNodes(root);
+            document.getElementById('stat-height').textContent = getHeight(root);
+            document.getElementById('stat-inorder').textContent = inorder(root).join(', ') || '-';
+        }
+
+        function renderTree() {
+            const area = document.getElementById('tree-area');
+            area.innerHTML = '';
+            if (!root) { area.innerHTML = '<div class="text-gray-400 text-center py-16">空树，请插入结点</div>'; return; }
+
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.classList.add('tree-svg');
+            svg.style.width = '100%';
+            svg.style.height = '100%';
+            area.appendChild(svg);
+
+            const h = getHeight(root);
+            const areaW = area.clientWidth || 800;
+            const totalW = Math.pow(2, h) * 60;
+            const w = Math.max(areaW, totalW);
+            const nodeSize = 48;
+            const levelH = 85;
+
+            // 先布局
+            function layout(node, depth, left, right) {
+                if (!node) return;
+                const x = (left + right) / 2;
+                const y = depth * levelH + 40;
+                node.x = x; node.y = y;
+                layout(node.left, depth + 1, left, x);
+                layout(node.right, depth + 1, x, right);
+            }
+            layout(root, 0, 0, w);
+
+            // 绘制边
+            function drawEdges(node) {
+                if (!node) return;
+                if (node.left) {
+                    drawLine(node.x + nodeSize / 2, node.y + nodeSize / 2, node.left.x + nodeSize / 2, node.left.y + nodeSize / 2, svg);
+                    drawEdges(node.left);
+                }
+                if (node.right) {
+                    drawLine(node.x + nodeSize / 2, node.y + nodeSize / 2, node.right.x + nodeSize / 2, node.right.y + nodeSize / 2, svg);
+                    drawEdges(node.right);
+                }
+            }
+            drawEdges(root);
+
+            // 绘制结点
+            function drawNodes(node, isRoot) {
+                if (!node) return;
+                const div = document.createElement('div');
+                div.className = 'tnode';
+                div.style.left = (node.x) + 'px';
+                div.style.top = (node.y) + 'px';
+                if (isRoot) div.classList.add('root-node');
+                div.textContent = node.val;
+
+                if (highlightType === 'search' && searchPathNodes.includes(String(node.val))) div.classList.add('search-path');
+                if ((highlightType === 'found' || highlightType === 'insert') && specialNode === node.val) {
+                    div.classList.add(highlightType === 'found' ? 'found-node' : 'insert-highlight');
+                }
+                if (highlightType === 'delete' && specialNode === node.val) div.classList.add('delete-target');
+
+                area.appendChild(div);
+                drawNodes(node.left, false);
+                drawNodes(node.right, false);
+            }
+            drawNodes(root, true);
+
+            area.style.width = w + 'px';
+            area.style.height = (h * levelH + 80) + 'px';
+        }
+
+        function drawLine(x1, y1, x2, y2, svg) {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            line.setAttribute('stroke', '#cbd5e1');
+            line.setAttribute('stroke-width', '2');
+            line.setAttribute('stroke-linecap', 'round');
+            svg.appendChild(line);
+        }
+
+        function addLog(type, message, colorClass = 'text-gray-800') {
+            const container = document.getElementById('log-container');
+            const entry = document.createElement('div');
+            entry.className = `p-3 bg-white rounded border border-gray-100 shadow-sm ${colorClass} leading-relaxed animate-fade-in`;
+            entry.innerHTML = `<span class="inline-block px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-500 mb-1 border">${type}</span><br>${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateStatusBadge(text, classes) {
+            const badge = document.getElementById('status-badge');
+            badge.textContent = text; badge.className = `px-2 py-1 rounded text-xs font-bold ${classes}`;
+        }
+
+        // ---- 预设示例 ----
+        window.onload = function () {
+            resetTree();
+            // 构建示例树: 50,30,80,20,40,70,90,35,45
+            [50, 30, 80, 20, 40, 70, 90, 35, 45].forEach(v => {
+                root = bstInsert(root, v);
+            });
+            searchPathNodes = [];
+            updateStats();
+            renderTree();
+            addLog('系统', '初始化示例 BST：50,30,80,20,40,70,90,35,45。相邻输入框可插入/查找/删除结点。');
+            addLog('提示', '删除有两个孩子的结点时会弹出选择框。注意观察三种删除情况。');
+        };
+    </script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速排序 交互式演示 (408标准)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 数组元素盒子 */
+        .elem-box {
+            width: 52px; height: 52px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; font-weight: bold;
+            border-radius: 0.375rem; border: 2px solid #e5e7eb;
+            background: #fff; transition: all 0.4s ease; position: relative;
+        }
+        /* 枢轴 - 红色 */
+        .elem-box.pivot { border-color: #ef4444; background: #fef2f2; box-shadow: 0 0 0 4px rgba(239,68,68,0.25); transform: scale(1.08); z-index: 5; }
+        /* low指针 - 蓝色 */
+        .elem-box.low-ptr { border-color: #3b82f6; background: #eff6ff; box-shadow: 0 0 0 4px rgba(59,130,246,0.25); }
+        /* high指针 - 橙色 */
+        .elem-box.high-ptr { border-color: #f97316; background: #fff7ed; box-shadow: 0 0 0 4px rgba(249,115,22,0.25); }
+        /* 交换中 - 黄色 */
+        .elem-box.swapping { border-color: #eab308; background: #fefce8; animation: swapFlash 0.5s ease-in-out; }
+        /* 已归位(枢轴最终位置) - 绿色 */
+        .elem-box.finalized { border-color: #22c55e; background: #f0fdf4; }
+        /* 当前子数组范围 - 紫色虚线 */
+        .elem-box.in-range { border-color: #a78bfa; background: #f5f3ff; border-style: dashed; }
+        /* 灰色(不在当前范围) */
+        .elem-box.out-range { opacity: 0.4; }
+        /* 指针标签 */
+        .ptr-label {
+            position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
+            font-size: 11px; font-weight: bold; font-family: monospace;
+            white-space: nowrap; z-index: 10;
+        }
+        .ptr-label.low-lbl { color: #3b82f6; }
+        .ptr-label.high-lbl { color: #f97316; }
+        .ptr-label.pivot-lbl { color: #ef4444; }
+        /* 数组行 */
+        .array-row { display: flex; gap: 4px; padding: 40px 8px 8px 8px; flex-wrap: wrap; align-items: flex-end; }
+        /* 递归树节点 */
+        .tree-node {
+            display: inline-block; border: 2px solid #d1d5db; border-radius: 8px;
+            padding: 6px 12px; margin: 4px; font-family: monospace; font-size: 12px;
+            background: #fff; text-align: center; transition: all 0.3s;
+        }
+        .tree-node.active-node { border-color: #3b82f6; background: #eff6ff; box-shadow: 0 0 8px rgba(59,130,246,0.3); }
+        .tree-node.done-node { border-color: #22c55e; background: #f0fdf4; }
+        .tree-node.leaf-node { border-color: #d1d5db; background: #f9fafb; font-size: 11px; }
+        /* 动画 */
+        @keyframes swapFlash {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); background: #fef08a; }
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pivotPulse {
+            0%, 100% { box-shadow: 0 0 0 4px rgba(239,68,68,0.25); }
+            50% { box-shadow: 0 0 0 8px rgba(239,68,68,0.1); }
+        }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        .pivot-pulse { animation: pivotPulse 1.5s ease-in-out infinite; }
+        /* 递归树连线 */
+        .tree-container { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .tree-level { display: flex; align-items: flex-start; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .tree-branch { display: flex; flex-direction: column; align-items: center; }
+    </style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+    <!-- ========== 顶部控制栏 ========== -->
+    <div class="bg-white shadow-sm border-b p-4 flex flex-wrap gap-4 items-center justify-between z-10">
+        <div class="flex gap-4 items-center">
+            <h1 class="text-xl font-bold text-red-600 mr-2">快速排序 演示</h1>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">数据:</label>
+                <input type="text" id="input-data" value="49,38,65,97,76,13,27,49"
+                    class="border rounded px-2 py-1 w-72 focus:outline-none focus:border-red-500 font-mono text-sm">
+            </div>
+            <button onclick="initApp()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition font-bold">
+                初始化 / 重置
+            </button>
+        </div>
+        <div class="flex gap-2 items-center">
+            <span id="step-counter" class="text-xs text-gray-500 font-mono mr-2">步数: 0</span>
+            <button id="btn-step" onclick="step()"
+                class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition flex items-center gap-2 disabled:opacity-50">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                单步执行
+            </button>
+            <button id="btn-play" onclick="togglePlay()"
+                class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition flex items-center gap-2 disabled:opacity-50">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span id="play-text">自动播放</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== 主体 ========== -->
+    <div class="flex-1 flex overflow-hidden">
+        <!-- 左侧可视化区域 -->
+        <div class="flex-1 p-6 overflow-auto bg-gray-50 flex flex-col gap-4">
+
+            <!-- 状态信息栏 -->
+            <div class="bg-white p-3 rounded-lg shadow-sm border flex flex-wrap gap-4 text-sm">
+                <div><span class="text-gray-500">当前处理区间:</span> <span id="info-range" class="font-bold font-mono text-red-600">-</span></div>
+                <div><span class="text-gray-500">枢轴 pivot:</span> <span id="info-pivot" class="font-bold font-mono text-red-600">-</span></div>
+                <div><span class="text-gray-500">low =</span> <span id="info-low" class="font-bold font-mono text-blue-600">-</span></div>
+                <div><span class="text-gray-500">high =</span> <span id="info-high" class="font-bold font-mono text-orange-600">-</span></div>
+                <div><span class="text-gray-500">递归深度:</span> <span id="info-depth" class="font-bold font-mono text-purple-600">0</span></div>
+                <div><span class="text-gray-500">已归位:</span> <span id="info-finalized" class="font-bold font-mono text-green-600">0</span></div>
+            </div>
+
+            <!-- 数组可视化 + 划分过程 -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-bold">划分过程 (Partition)</h2>
+                    <div class="flex gap-3 text-xs">
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-red-100 border border-red-400 rounded"></span>枢轴</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-blue-100 border border-blue-400 rounded"></span>low</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-orange-100 border border-orange-400 rounded"></span>high</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-purple-100 border border-purple-400 rounded"></span>当前区间</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-green-100 border border-green-400 rounded"></span>已归位</span>
+                    </div>
+                </div>
+                <div id="array-container" class="array-row"></div>
+                <!-- 指针指示行 -->
+                <div id="pointer-indicators" class="flex gap-4 text-xs font-mono mt-2 px-2"></div>
+            </div>
+
+            <!-- 递归调用树 -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <h2 class="text-lg font-bold mb-3">递归调用树 (与BST同构)</h2>
+                <div id="tree-display" class="overflow-x-auto p-2 min-h-[80px] text-sm font-mono"></div>
+            </div>
+
+            <!-- 递归调用栈 -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <h2 class="text-lg font-bold mb-1">递归调用栈 (栈顶在右)</h2>
+                <div id="stack-display" class="font-mono text-xs flex gap-2 flex-wrap p-2"></div>
+            </div>
+        </div>
+
+        <!-- 右侧日志栏 -->
+        <div class="w-80 bg-white border-l flex flex-col shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
+            <div class="p-4 border-b bg-gray-50 font-bold flex justify-between items-center">
+                <span>执行日志</span>
+                <span id="status-badge" class="px-2 py-1 rounded text-xs bg-gray-200 text-gray-700">未开始</span>
+            </div>
+            <div id="log-container" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 font-mono text-sm"></div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 全局状态 ==========
+        var arr = [], orig = [], n = 0;
+        var stack = [];           // 显式栈: [{low, high}]
+        var partition = null;     // 当前划分状态
+        // partition 结构: {low, high, pivotVal, pivotIdx, i(low), j(high), phase}
+        // phase: 0=准备, 1=high左移, 2=low右移, 3=交换low和high, 4=枢轴归位
+        var finalized = {};       // 已归位的索引集合 (key = index, value = true)
+        var status = 0;          // 0=idle, 1=running, 2=done
+        var isPlaying = false, playInterval = null;
+        var stepCount = 0;
+        var treeNodes = [];       // 树节点列表: [{pivotVal, range, finalizedIdx, children(2)}]
+
+        // ========== 初始化 ==========
+        function initApp() {
+            var val = document.getElementById('input-data').value;
+            orig = val.split(',').map(function(s) { return parseInt(s.trim()); }).filter(function(x) { return !isNaN(x); });
+            n = orig.length;
+            if (n === 0) return alert("请输入有效数据");
+            stopAutoPlay();
+            arr = orig.slice();
+            finalized = {};
+            stack = [];
+            partition = null;
+            treeNodes = [];
+            status = 1;
+            stepCount = 0;
+            document.getElementById('log-container').innerHTML = '';
+            document.getElementById('status-badge').innerText = '运行中';
+            document.getElementById('status-badge').className = 'px-2 py-1 rounded text-xs font-bold bg-blue-100 text-blue-700';
+            document.getElementById('step-counter').textContent = '步数: 0';
+
+            // 根调用入栈
+            stack.push({ low: 0, high: n - 1 });
+            addLog("系统", "快速排序初始化完毕。数据: [" + arr.join(', ') + "]，枢轴取区间首元素。", "text-gray-700");
+            updateInfo();
+            renderArray();
+            renderTree();
+            renderStack();
+        }
+
+        // ========== 核心单步 ==========
+        function step() {
+            if (status !== 1) return;
+
+            // 有正在进行的划分，继续划分步骤
+            if (partition !== null) {
+                stepPartition();
+                stepCount++;
+                document.getElementById('step-counter').textContent = '步数: ' + stepCount;
+                return;
+            }
+
+            // 栈空则完成
+            if (stack.length === 0) {
+                finish();
+                return;
+            }
+
+            // 弹出栈顶区间，开始新的划分
+            var frame = stack.pop();
+            if (frame.low >= frame.high) {
+                // 单元素或空区间，自然有序
+                if (frame.low === frame.high) {
+                    finalized[frame.low] = true;
+                    addLog("归位", "单元素区间 arr[" + frame.low + "]=" + arr[frame.low] + " 自然有序", "text-green-600");
+                    treeNodes.push({ pivotVal: arr[frame.low], range: "[" + frame.low + "]", finalizedIdx: frame.low, left: null, right: null });
+                }
+                stepCount++;
+                document.getElementById('step-counter').textContent = '步数: ' + stepCount;
+                updateInfo();
+                renderArray();
+                renderTree();
+                renderStack();
+                return;
+            }
+
+            // 开始划分: 取首元素为枢轴 (408标准)
+            var pivotVal = arr[frame.low];
+            addLog("新划分", "区间 [" + frame.low + ".." + frame.high + "]，枢轴 pivot=arr[" + frame.low + "]=" + pivotVal,
+                "text-red-600 font-bold");
+            partition = {
+                low: frame.low,
+                high: frame.high,
+                pivotVal: pivotVal,
+                pivotIdx: frame.low,
+                i: frame.low,        // low 指针
+                j: frame.high,       // high 指针
+                phase: 0              // 准备阶段
+            };
+
+            stepCount++;
+            document.getElementById('step-counter').textContent = '步数: ' + stepCount;
+            updateInfo();
+            renderArray();
+            renderStack();
+        }
+
+        // ========== 划分子步骤 (408标准算法) ==========
+        function stepPartition() {
+            var ps = partition;
+            var low = ps.low, high = ps.high, pivotVal = ps.pivotVal;
+
+            // Phase 0: 开始 — high 指针先向左移动
+            if (ps.phase === 0) {
+                ps.phase = 1;
+                addLog("划分开始", "high 指针从 arr[" + ps.j + "]=" + arr[ps.j] + " 开始向左扫描，寻找 &lt; pivot(" + pivotVal + ") 的元素",
+                    "text-blue-600");
+                updateInfo();
+                renderArray();
+                return;
+            }
+
+            // Phase 1: high 指针向左移动 (408标准: high先移动)
+            if (ps.phase === 1) {
+                if (ps.j > low && arr[ps.j] >= pivotVal) {
+                    // 当前arr[j] >= pivot，继续左移
+                    var oldJ = ps.j;
+                    ps.j--;
+                    addLog("high左移", "arr[" + oldJ + "]=" + arr[oldJ] + " &ge; pivot(" + pivotVal + ")，high: " + oldJ + " → " + ps.j,
+                        "text-orange-500");
+                } else if (ps.j <= low) {
+                    // high 与 low 相遇
+                    addLog("high停止", "high 与 low 在位置 " + ps.j + " 相遇，停止扫描", "text-orange-600 font-bold");
+                    // 直接进入枢轴归位
+                    ps.phase = 4;
+                    updateInfo();
+                    renderArray();
+                    return;
+                } else {
+                    // 找到 arr[j] < pivot
+                    addLog("high找到", "arr[" + ps.j + "]=" + arr[ps.j] + " &lt; pivot(" + pivotVal + ")，high 停止在 " + ps.j,
+                        "text-orange-600 font-bold");
+                    ps.phase = 2; // 进入 low 右移阶段
+                    updateInfo();
+                    renderArray();
+                    return;
+                }
+                updateInfo();
+                renderArray();
+                return;
+            }
+
+            // Phase 2: low 指针向右移动
+            if (ps.phase === 2) {
+                if (ps.i < high && arr[ps.i] <= pivotVal) {
+                    var oldI = ps.i;
+                    ps.i++;
+                    addLog("low右移", "arr[" + oldI + "]=" + arr[oldI] + " &le; pivot(" + pivotVal + ")，low: " + oldI + " → " + ps.i,
+                        "text-blue-500");
+                } else if (ps.i >= ps.j) {
+                    addLog("low停止", "low 与 high 相遇或越过，停止扫描", "text-blue-600 font-bold");
+                    // 进入交换或归位
+                    ps.phase = 3;
+                    stepPartition(); // 立即处理交换
+                    return;
+                } else {
+                    addLog("low找到", "arr[" + ps.i + "]=" + arr[ps.i] + " &ge; pivot(" + pivotVal + ")，low 停止在 " + ps.i,
+                        "text-blue-600 font-bold");
+                    ps.phase = 3; // 进入交换阶段
+                }
+                updateInfo();
+                renderArray();
+                return;
+            }
+
+            // Phase 3: 交换 low 和 high
+            if (ps.phase === 3) {
+                if (ps.i < ps.j) {
+                    // 交换 R[i] 和 R[j]
+                    addLog("交换", "交换 arr[" + ps.i + "]=" + arr[ps.i] + " &harr; arr[" + ps.j + "]=" + arr[ps.j],
+                        "text-yellow-600 font-bold");
+                    var tmp = arr[ps.i];
+                    arr[ps.i] = arr[ps.j];
+                    arr[ps.j] = tmp;
+                    // 交换后，指针各自移动一步
+                    ps.i++;
+                    ps.j--;
+                    ps.phase = 1; // 回到 high 左移阶段
+                    addLog("指针移动", "交换后指针移动: low=" + ps.i + ", high=" + ps.j, "text-gray-600");
+                } else {
+                    // 指针相遇或交叉，枢轴归位
+                    addLog("指针相遇", "low(" + ps.i + ") &ge; high(" + ps.j + ")，划分结束，枢轴归位", "text-gray-700 font-bold");
+                    ps.phase = 4;
+                }
+                updateInfo();
+                renderArray();
+                return;
+            }
+
+            // Phase 4: 枢轴归位 (将枢轴放到正确位置)
+            if (ps.phase === 4) {
+                var finalPos = ps.j < low ? low : ps.j;
+                if (arr[finalPos] !== pivotVal) {
+                    // 枢轴仍在low位置，交换到high位置
+                    addLog("枢轴归位", "枢轴 " + pivotVal + " 归位到 arr[" + finalPos + "]，此位置即为最终位置",
+                        "text-green-600 font-bold text-base");
+                    arr[ps.pivotIdx] = arr[finalPos];
+                    arr[finalPos] = pivotVal;
+                } else {
+                    addLog("枢轴归位", "枢轴 " + pivotVal + " 已在最终位置 arr[" + finalPos + "]",
+                        "text-green-600 font-bold text-base");
+                }
+                finalized[finalPos] = true;
+
+                // 记录树节点
+                var node = { pivotVal: pivotVal, range: "[" + low + ".." + high + "]", finalizedIdx: finalPos, left: null, right: null };
+                treeNodes.push(node);
+
+                // 右子区间入栈 (后入先出，所以左区间先处理)
+                if (finalPos + 1 <= high) {
+                    stack.push({ low: finalPos + 1, high: high });
+                    addLog("递归入栈", "右子区间 [" + (finalPos + 1) + ".." + high + "] 入栈", "text-purple-600");
+                }
+                if (low <= finalPos - 1) {
+                    stack.push({ low: low, high: finalPos - 1 });
+                    addLog("递归入栈", "左子区间 [" + low + ".." + (finalPos - 1) + "] 入栈", "text-indigo-600");
+                }
+
+                partition = null;
+                updateInfo();
+                renderArray();
+                renderTree();
+                renderStack();
+                return;
+            }
+        }
+
+        // ========== 排序完成 ==========
+        function finish() {
+            status = 2;
+            document.getElementById('status-badge').innerText = '排序完成';
+            document.getElementById('status-badge').className = 'px-2 py-1 rounded text-xs font-bold bg-green-100 text-green-700';
+            for (var k = 0; k < n; k++) finalized[k] = true;
+            addLog("完成", "快速排序结束。最终结果: [" + arr.join(', ') + "]", "text-green-600 font-bold text-base");
+            document.getElementById('info-range').textContent = '-';
+            document.getElementById('info-pivot').textContent = '-';
+            document.getElementById('info-low').textContent = '-';
+            document.getElementById('info-high').textContent = '-';
+            stopAutoPlay();
+            renderArray();
+            renderTree();
+            renderStack();
+        }
+
+        // ========== 渲染数组 ==========
+        function renderArray() {
+            var container = document.getElementById('array-container');
+            container.innerHTML = '';
+            var ps = partition;
+
+            for (var k = 0; k < n; k++) {
+                var div = document.createElement('div');
+                div.className = 'elem-box relative';
+                div.textContent = arr[k];
+
+                // 索引标签 (上方)
+                var idxLabel = document.createElement('div');
+                idxLabel.className = 'absolute -top-5 text-xs text-gray-400 font-mono';
+                idxLabel.style.left = '50%'; idxLabel.style.transform = 'translateX(-50%)';
+                idxLabel.textContent = k;
+                div.appendChild(idxLabel);
+
+                // 颜色状态判断
+                if (finalized[k]) {
+                    div.classList.add('finalized');
+                } else if (ps) {
+                    var inRange = (k >= ps.low && k <= ps.high);
+                    if (!inRange) {
+                        div.classList.add('out-range');
+                    } else {
+                        if (k === ps.pivotIdx && ps.phase < 4) {
+                            div.classList.add('pivot', 'pivot-pulse');
+                            // 添加枢轴标签
+                            var pl = document.createElement('div');
+                            pl.className = 'ptr-label pivot-lbl';
+                            pl.style.top = '-30px';
+                            pl.textContent = '枢轴';
+                            div.appendChild(pl);
+                        }
+                        if (k === ps.i && ps.phase !== 4) {
+                            div.classList.add('low-ptr');
+                            var ll = document.createElement('div');
+                            ll.className = 'ptr-label low-lbl';
+                            ll.textContent = 'low=' + ps.i;
+                            div.appendChild(ll);
+                        }
+                        if (k === ps.j && ps.phase !== 4) {
+                            div.classList.add('high-ptr');
+                            var hl = document.createElement('div');
+                            hl.className = 'ptr-label high-lbl';
+                            hl.textContent = 'high=' + ps.j;
+                            div.appendChild(hl);
+                        }
+                        if (k !== ps.pivotIdx && k !== ps.i && k !== ps.j) {
+                            div.classList.add('in-range');
+                        }
+                    }
+                }
+                container.appendChild(div);
+            }
+        }
+
+        // ========== 渲染递归树 ==========
+        function renderTree() {
+            var disp = document.getElementById('tree-display');
+            if (treeNodes.length === 0) {
+                disp.innerHTML = '<span class="text-gray-400 italic">等待开始划分...</span>';
+                return;
+            }
+            var html = '<div class="flex flex-wrap gap-2">';
+            for (var i = 0; i < treeNodes.length; i++) {
+                var node = treeNodes[i];
+                var cls = 'tree-node';
+                if (node.finalizedIdx !== undefined && finalized[node.finalizedIdx]) {
+                    cls += ' done-node';
+                }
+                html += '<div class="' + cls + '">';
+                html += '<div class="text-gray-500">' + node.range + '</div>';
+                html += '<div class="font-bold text-red-600">枢轴=' + node.pivotVal + '</div>';
+                html += '<div class="text-green-600">位置=' + node.finalizedIdx + '</div>';
+                html += '</div>';
+            }
+            html += '</div>';
+            if (partition) {
+                html += '<div class="mt-2"><span class="tree-node active-node">正在处理: [' + partition.low + '..' + partition.high + '] 枢轴=' + partition.pivotVal + '</span></div>';
+            }
+            disp.innerHTML = html;
+        }
+
+        // ========== 渲染调用栈 ==========
+        function renderStack() {
+            var disp = document.getElementById('stack-display');
+            if (stack.length === 0 && !partition) {
+                disp.innerHTML = '<span class="text-gray-400 italic">(栈空)</span>';
+                return;
+            }
+            var html = '';
+            // 显示当前处理的区间
+            if (partition) {
+                html += '<span class="px-2 py-1 bg-red-100 border border-red-300 rounded font-bold">';
+                html += '处理中: [' + partition.low + '..' + partition.high + '] p=' + partition.pivotVal;
+                html += '</span>';
+            }
+            // 栈从底到顶 (左侧=栈底, 右侧=栈顶)
+            for (var i = 0; i < stack.length; i++) {
+                var f = stack[i];
+                html += '<span class="px-2 py-1 bg-purple-50 border border-purple-200 rounded">';
+                html += '[' + f.low + '..' + f.high + ']';
+                html += '</span>';
+                if (i < stack.length - 1) html += '<span class="text-gray-300 mx-1">&rarr;</span>';
+            }
+            if (stack.length > 0) {
+                html += '<span class="text-xs text-gray-400 ml-1">(栈顶)</span>';
+            }
+            disp.innerHTML = html;
+            document.getElementById('info-depth').textContent = stack.length + (partition ? 1 : 0);
+            document.getElementById('info-finalized').textContent = Object.keys(finalized).length;
+        }
+
+        // ========== 更新信息栏 ==========
+        function updateInfo() {
+            if (partition) {
+                document.getElementById('info-range').textContent = '[' + partition.low + '..' + partition.high + ']';
+                document.getElementById('info-pivot').textContent = partition.pivotVal;
+                document.getElementById('info-low').textContent = partition.i + ' (arr[' + partition.i + ']=' + arr[partition.i] + ')';
+                document.getElementById('info-high').textContent = partition.j + ' (arr[' + partition.j + ']=' + arr[partition.j] + ')';
+            } else {
+                document.getElementById('info-range').textContent = '-';
+                document.getElementById('info-pivot').textContent = '-';
+                document.getElementById('info-low').textContent = '-';
+                document.getElementById('info-high').textContent = '-';
+            }
+        }
+
+        // ========== 日志 ==========
+        function addLog(type, message, colorClass) {
+            colorClass = colorClass || "text-gray-800";
+            var container = document.getElementById('log-container');
+            var entry = document.createElement('div');
+            entry.className = 'p-3 bg-white rounded border border-gray-100 shadow-sm ' + colorClass + ' leading-relaxed animate-fade-in';
+            entry.innerHTML = '<span class="inline-block px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-500 mb-1 mr-2 border">' + type + '</span><br>' + message;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ========== 自动播放 ==========
+        function togglePlay() {
+            if (isPlaying) { stopAutoPlay(); return; }
+            if (status === 0 || status === 2) initApp();
+            isPlaying = true;
+            document.getElementById('play-text').innerText = "暂停播放";
+            document.getElementById('btn-step').disabled = true;
+            playInterval = setInterval(function() {
+                if (status === 1) step();
+                else stopAutoPlay();
+            }, 800);
+        }
+
+        function stopAutoPlay() {
+            isPlaying = false;
+            document.getElementById('play-text').innerText = "自动播放";
+            document.getElementById('btn-step').disabled = false;
+            if (playInterval) clearInterval(playInterval);
+        }
+
+        // ========== 键盘快捷键 ==========
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT') return;
+            if (e.key === ' ' || e.key === 'ArrowRight') { e.preventDefault(); step(); }
+            if (e.key === 'Enter') { e.preventDefault(); togglePlay(); }
+            if (e.key === 'r' || e.key === 'R') { e.preventDefault(); initApp(); }
+        });
+
+        // ========== 页面加载 ==========
+        window.onload = initApp;
+    </script>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

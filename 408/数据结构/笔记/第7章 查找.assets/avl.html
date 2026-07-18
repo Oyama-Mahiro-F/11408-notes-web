@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>平衡二叉树 AVL 演示 (408标准)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tree-area { position: relative; min-height: 450px; overflow: auto; }
+        .anode {
+            position: absolute; width: 52px; height: 52px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: bold; border: 2.5px solid #93c5fd;
+            background: white; transition: all 0.5s ease; z-index: 2; flex-direction: column;
+        }
+        .anode .bf-tag {
+            font-size: 0.55rem; font-weight: bold; position: absolute; top: -18px;
+            background: white; border: 1px solid #f59e0b; border-radius: 10px;
+            padding: 0 4px; color: #f59e0b; white-space: nowrap;
+        }
+        .anode.unbalanced { border-color: #ef4444; background: #fef2f2; box-shadow: 0 0 0 6px rgba(239,68,68,0.25); }
+        .anode.unbalanced .bf-tag { color: #ef4444; border-color: #ef4444; background: #fef2f2; }
+        .anode.inserted { border-color: #8b5cf6; background: #f5f3ff; box-shadow: 0 0 0 6px rgba(139,92,246,0.25); transform: scale(1.12); }
+        .anode.rotation-node { border-color: #f59e0b; background: #fef3c7; box-shadow: 0 0 0 5px rgba(245,158,11,0.25); }
+        .tree-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    </style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+    <!-- 顶部控制栏 -->
+    <div class="bg-white shadow-sm border-b p-4 flex flex-wrap gap-4 items-center justify-between z-10">
+        <div class="flex gap-4 items-center flex-wrap">
+            <h1 class="text-xl font-bold text-blue-600 mr-2">平衡二叉树 AVL 演示</h1>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">插入值:</label>
+                <input type="number" id="input-val" value="" placeholder="数字" class="border rounded px-2 py-1 w-24 focus:outline-none focus:border-blue-500 text-sm">
+                <button onclick="doInsert()" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition text-sm">插入</button>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-500">示例序列:</span>
+                <button onclick="loadExample([10,20,30])" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-xs">RR旋转</button>
+                <button onclick="loadExample([30,20,10])" class="px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 text-xs">LL旋转</button>
+                <button onclick="loadExample([30,10,20])" class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 text-xs">LR旋转</button>
+                <button onclick="loadExample([10,30,20])" class="px-3 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 text-xs">RL旋转</button>
+                <button onclick="loadExample([50,30,80,20,40,70,90,15,25,35])" class="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 text-xs">综合示例</button>
+            </div>
+            <button onclick="resetTree()" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition text-sm">重置</button>
+        </div>
+        <div class="flex gap-2">
+            <button id="btn-play" onclick="replayInsertions()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition text-sm disabled:opacity-50">回放</button>
+            <span id="status-badge" class="px-2 py-1 rounded text-xs bg-gray-200 text-gray-700">就绪</span>
+        </div>
+    </div>
+
+    <div class="flex-1 flex overflow-hidden">
+        <!-- 左：树可视化 -->
+        <div class="flex-1 p-6 overflow-auto bg-gray-50 flex flex-col gap-4">
+            <div class="bg-white p-4 rounded-lg shadow-sm border flex-1">
+                <h2 class="text-lg font-bold mb-3">AVL 树 (每个结点标注平衡因子)</h2>
+                <div class="tree-area" id="tree-area"></div>
+            </div>
+            <!-- 说明 -->
+            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <div class="grid grid-cols-4 gap-3 text-xs">
+                    <div class="bg-red-50 p-2 rounded text-center border border-red-200"><b>LL 旋转</b><br>在 A 的左孩子的左子树插入</div>
+                    <div class="bg-orange-50 p-2 rounded text-center border border-orange-200"><b>RR 旋转</b><br>在 A 的右孩子的右子树插入</div>
+                    <div class="bg-yellow-50 p-2 rounded text-center border border-yellow-200"><b>LR 旋转</b><br>在 A 的左孩子的右子树插入</div>
+                    <div class="bg-purple-50 p-2 rounded text-center border border-purple-200"><b>RL 旋转</b><br>在 A 的右孩子的左子树插入</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧日志 -->
+        <div class="w-80 bg-white border-l flex flex-col shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
+            <div class="p-4 border-b bg-gray-50 font-bold">执行日志</div>
+            <div id="log-container" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 font-mono text-sm"></div>
+        </div>
+    </div>
+
+    <script>
+        // ---- AVL 结点 ----
+        class AVLNode {
+            constructor(val) { this.val = val; this.left = null; this.right = null; this.height = 1; this.x = 0; this.y = 0; }
+        }
+        let root = null;
+        let lastInserted = null;     // 最近插入的结点值
+        let unbalancedNode = null;   // 最小不平衡子树根结点值
+        let rotationInfo = '';       // 旋转类型说明
+        let recentRotations = [];    // 旋转涉及的结点值（用于高亮）
+        let insertionHistory = [];   // 回放用
+
+        function resetTree() {
+            root = null; lastInserted = null; unbalancedNode = null;
+            rotationInfo = ''; recentRotations = [];
+            insertionHistory = [];
+            document.getElementById('log-container').innerHTML = '';
+            renderTree();
+            addLog('系统', 'AVL 树已重置为空树。');
+            updateStatusBadge('就绪', 'bg-gray-200 text-gray-700');
+        }
+
+        function loadExample(arr) {
+            resetTree();
+            insertionHistory = [...arr];
+            // 逐个静默插入，记录旋转信息
+            insertionHistory.forEach((v, i) => {
+                const result = { val: v, rotation: '' };
+                root = avlInsert(root, v, result);
+                if (result.rotation) {
+                    addLog('旋转', `插入 ${v} 触发 <b>${result.rotation}</b>`, 'text-orange-600 font-bold');
+                } else {
+                    addLog('插入', `插入结点 ${v}，未触发旋转`, 'text-gray-600');
+                }
+            });
+            lastInserted = null; unbalancedNode = null; recentRotations = [];
+            renderTree();
+            updateStatusBadge(`${insertionHistory.length}个结点`, 'bg-blue-100 text-blue-700');
+        }
+
+        function getHeight(node) { return node ? node.height : 0; }
+        function getBalance(node) { return node ? getHeight(node.left) - getHeight(node.right) : 0; }
+
+        function updateHeight(node) {
+            node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
+        }
+
+        function rotateRight(y) {
+            const x = y.left;
+            const T2 = x.right;
+            x.right = y;
+            y.left = T2;
+            updateHeight(y);
+            updateHeight(x);
+            recentRotations.push(y.val, x.val);
+            return x;
+        }
+
+        function rotateLeft(x) {
+            const y = x.right;
+            const T2 = y.left;
+            y.left = x;
+            x.right = T2;
+            updateHeight(x);
+            updateHeight(y);
+            recentRotations.push(x.val, y.val);
+            return y;
+        }
+
+        function avlInsert(node, val, result) {
+            if (!node) { result.rotation = ''; return new AVLNode(val); }
+
+            if (val < node.val) node.left = avlInsert(node.left, val, result);
+            else if (val > node.val) node.right = avlInsert(node.right, val, result);
+            else return node; // 不允许重复
+
+            updateHeight(node);
+            const bf = getBalance(node);
+
+            // LL: 在左子树的左子树插入
+            if (bf > 1 && val < node.left.val) {
+                result.rotation = 'LL 旋转 (右单旋): 对结点 ' + node.val + ' 进行右旋';
+                unbalancedNode = node.val;
+                return rotateRight(node);
+            }
+            // RR: 在右子树的右子树插入
+            if (bf < -1 && val > node.right.val) {
+                result.rotation = 'RR 旋转 (左单旋): 对结点 ' + node.val + ' 进行左旋';
+                unbalancedNode = node.val;
+                return rotateLeft(node);
+            }
+            // LR: 在左子树的右子树插入
+            if (bf > 1 && val > node.left.val) {
+                result.rotation = 'LR 旋转 (先左后右双旋): 先对 ' + node.left.val + ' 左旋，再对 ' + node.val + ' 右旋';
+                unbalancedNode = node.val;
+                node.left = rotateLeft(node.left);
+                return rotateRight(node);
+            }
+            // RL: 在右子树的左子树插入
+            if (bf < -1 && val < node.right.val) {
+                result.rotation = 'RL 旋转 (先右后左双旋): 先对 ' + node.right.val + ' 右旋，再对 ' + node.val + ' 左旋';
+                unbalancedNode = node.val;
+                node.right = rotateRight(node.right);
+                return rotateLeft(node);
+            }
+            return node;
+        }
+
+        function doInsert() {
+            const val = document.getElementById('input-val').value;
+            if (!val && val !== 0) return alert('请输入插入值');
+            const num = Number(val);
+            if (isNaN(num)) return alert('请输入有效数字');
+
+            recentRotations = []; unbalancedNode = null;
+            const result = { val: num, rotation: '' };
+            root = avlInsert(root, num, result);
+            lastInserted = num;
+            insertionHistory.push(num);
+            document.getElementById('input-val').value = '';
+
+            if (result.rotation) {
+                rotationInfo = result.rotation;
+                addLog('旋转', `插入 ${num} 触发 <b>${result.rotation}</b>` + '<br>平衡因子绝对值超过1，需要进行旋转调整。', 'text-orange-600 font-bold');
+                updateStatusBadge('旋转: ' + (result.rotation.split(' ')[0]), 'bg-orange-100 text-orange-700');
+            } else {
+                addLog('插入', `插入结点 ${num}，树仍然平衡，无需旋转。`, 'text-gray-600');
+                updateStatusBadge('已插入 ' + num, 'bg-purple-100 text-purple-700');
+            }
+            renderTree();
+            // 3秒后清除高亮
+            setTimeout(() => {
+                lastInserted = null; unbalancedNode = null;
+                recentRotations = []; rotationInfo = '';
+                updateStatusBadge('就绪', 'bg-gray-200 text-gray-700');
+                renderTree();
+            }, 3000);
+        }
+
+        function replayInsertions() {
+            if (insertionHistory.length === 0) return;
+            resetTree();
+            const arr = [...insertionHistory];
+            insertionHistory = [];
+            let idx = 0;
+            function next() {
+                if (idx >= arr.length) return;
+                const v = arr[idx];
+                recentRotations = []; unbalancedNode = null;
+                const result = { val: v, rotation: '' };
+                root = avlInsert(root, v, result);
+                lastInserted = v;
+                insertionHistory.push(v);
+                if (result.rotation) {
+                    rotationInfo = result.rotation;
+                    addLog('旋转', `插入 ${v} 触发 <b>${result.rotation}</b>`, 'text-orange-600 font-bold');
+                } else {
+                    addLog('插入', `插入结点 ${v}，无需旋转。`, 'text-gray-600');
+                }
+                renderTree();
+                idx++;
+                if (idx < arr.length) setTimeout(next, 1200);
+                else {
+                    setTimeout(() => {
+                        lastInserted = null; unbalancedNode = null;
+                        recentRotations = []; rotationInfo = '';
+                        updateStatusBadge('回放完成', 'bg-green-100 text-green-700');
+                        renderTree();
+                    }, 1500);
+                }
+            }
+            next();
+        }
+
+        // ---- 树绘制 ----
+        function getMaxHeight(node) { if (!node) return 0; return 1 + Math.max(getMaxHeight(node.left), getMaxHeight(node.right)); }
+
+        function renderTree() {
+            const area = document.getElementById('tree-area');
+            area.innerHTML = '';
+            if (!root) { area.innerHTML = '<div class="text-gray-400 text-center py-16">空树，请插入结点或选择示例</div>'; return; }
+
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.classList.add('tree-svg');
+            area.appendChild(svg);
+
+            const h = getMaxHeight(root);
+            const areaW = area.clientWidth || 800;
+            const totalW = Math.pow(2, h) * 60;
+            const w = Math.max(areaW, totalW);
+            const nodeSize = 52;
+            const levelH = 90;
+
+            function layout(node, depth, left, right) {
+                if (!node) return;
+                const x = (left + right) / 2;
+                const y = depth * levelH + 50;
+                node.x = x; node.y = y;
+                layout(node.left, depth + 1, left, x);
+                layout(node.right, depth + 1, x, right);
+            }
+            layout(root, 0, 0, w);
+
+            function drawEdges(node) {
+                if (!node) return;
+                if (node.left) {
+                    const x1 = node.x + nodeSize / 2, y1 = node.y + nodeSize / 2;
+                    const x2 = node.left.x + nodeSize / 2, y2 = node.left.y + nodeSize / 2;
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+                    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+                    line.setAttribute('stroke', '#cbd5e1'); line.setAttribute('stroke-width', '2');
+                    svg.appendChild(line);
+                    drawEdges(node.left);
+                }
+                if (node.right) {
+                    const x1 = node.x + nodeSize / 2, y1 = node.y + nodeSize / 2;
+                    const x2 = node.right.x + nodeSize / 2, y2 = node.right.y + nodeSize / 2;
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+                    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+                    line.setAttribute('stroke', '#cbd5e1'); line.setAttribute('stroke-width', '2');
+                    svg.appendChild(line);
+                    drawEdges(node.right);
+                }
+            }
+            drawEdges(root);
+
+            function drawNodes(node) {
+                if (!node) return;
+                const div = document.createElement('div');
+                div.className = 'anode';
+                div.style.left = node.x + 'px';
+                div.style.top = node.y + 'px';
+                div.textContent = node.val;
+
+                // 平衡因子标签
+                const bf = getBalance(node);
+                const bfTag = document.createElement('span');
+                bfTag.className = 'bf-tag';
+                bfTag.textContent = 'BF=' + (bf >= 0 ? '+' + bf : bf);
+                div.appendChild(bfTag);
+
+                // 高亮逻辑
+                if (unbalancedNode && node.val === unbalancedNode) div.classList.add('unbalanced');
+                if (lastInserted && node.val === lastInserted) div.classList.add('inserted');
+                if (recentRotations.includes(node.val)) div.classList.add('rotation-node');
+
+                area.appendChild(div);
+                drawNodes(node.left);
+                drawNodes(node.right);
+            }
+            drawNodes(root);
+
+            area.style.minWidth = w + 'px';
+            area.style.minHeight = (h * levelH + 80) + 'px';
+        }
+
+        function addLog(type, message, colorClass = 'text-gray-800') {
+            const container = document.getElementById('log-container');
+            const entry = document.createElement('div');
+            entry.className = `p-3 bg-white rounded border border-gray-100 shadow-sm ${colorClass} leading-relaxed animate-fade-in`;
+            entry.innerHTML = `<span class="inline-block px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-500 mb-1 border">${type}</span><br>${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateStatusBadge(text, classes) {
+            const badge = document.getElementById('status-badge');
+            badge.textContent = text; badge.className = `px-2 py-1 rounded text-xs font-bold ${classes}`;
+        }
+
+        // 初始加载示例
+        window.onload = function () {
+            loadExample([50, 30, 80, 20, 40, 70, 90, 15, 25]);
+        };
+    </script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

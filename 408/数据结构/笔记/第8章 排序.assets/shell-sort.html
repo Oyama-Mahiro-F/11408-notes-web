@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>希尔排序演示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* ============================================================
+           自定义 CSS 动画
+           希尔排序交互式演示 - 408 考研标准实现
+           ============================================================ */
+
+        /* 元素渐入 - 数组元素出现时的过渡 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.35s ease-out; }
+
+        /* 脉动 - 用于元素插入定位时 */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.10); }
+        }
+        .animate-pulse-custom { animation: pulse 0.5s ease-in-out; }
+
+        /* 日志条目滑入 */
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(14px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slide-in { animation: slideInRight 0.3s ease-out; }
+
+        /* 比较操作发光 (红色) */
+        @keyframes compareGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55); }
+            50%      { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+        }
+        .animate-compare-glow { animation: compareGlow 0.7s ease-out; }
+
+        /* 后移操作发光 (琥珀色) */
+        @keyframes shiftGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.55); }
+            50%      { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0); }
+        }
+        .animate-shift-glow { animation: shiftGlow 0.7s ease-out; }
+
+        /* ============================================================
+           数组元素过渡
+           ============================================================ */
+        .arr-cell {
+            transition: transform 0.25s ease, background-color 0.3s ease,
+                        box-shadow 0.25s ease, border-color 0.3s ease, opacity 0.25s ease;
+        }
+        .arr-cell.active-compare {
+            transform: translateY(-14px);
+            z-index: 10;
+        }
+        .arr-cell.active-shift {
+            transform: translateY(-6px);
+            z-index: 5;
+        }
+
+        /* 增量徽章渐变背景 */
+        .increment-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* 日志区域滚动条美化 */
+        .log-area::-webkit-scrollbar { width: 5px; }
+        .log-area::-webkit-scrollbar-track { background: #f8fafc; border-radius: 4px; }
+        .log-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .log-area::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+    <!-- ============================================================
+         主容器
+         ============================================================ -->
+    <div class="max-w-7xl mx-auto px-4 py-6">
+
+        <!-- ============================================================
+             顶部控制栏
+             ============================================================ -->
+        <div class="bg-white rounded-2xl shadow-md p-5 mb-5 border border-gray-200">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">希尔排序演示</h1>
+            <div class="flex flex-wrap gap-3 items-end">
+
+                <!-- 待排序数据输入 -->
+                <div class="flex-1 min-w-[220px]">
+                    <label class="block text-xs text-gray-500 mb-1 font-medium">
+                        待排序数据 (逗号分隔)
+                    </label>
+                    <input id="data-input" type="text"
+                           value="49,38,65,97,76,13,27,49,55,04"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm
+                                  focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400
+                                  outline-none transition font-mono">
+                </div>
+
+                <!-- 增量序列输入 -->
+                <div class="w-52">
+                    <label class="block text-xs text-gray-500 mb-1 font-medium">
+                        增量序列
+                    </label>
+                    <div class="flex gap-1">
+                        <input id="increment-input" type="text" value="5,3,1"
+                               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm
+                                      focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400
+                                      outline-none transition font-mono">
+                        <button id="btn-auto-inc" onclick="autoCalcIncrements()"
+                                class="px-2 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg
+                                       text-xs text-gray-600 transition font-medium"
+                                title="根据数组长度自动计算 408 标准增量序列 (n/2, n/4, ..., 1)">
+                            自动
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 操作按钮组 -->
+                <div class="flex gap-2">
+                    <button id="btn-reset" onclick="init()"
+                            class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600
+                                   active:bg-indigo-700 text-white rounded-lg text-sm
+                                   font-medium transition shadow-sm">
+                        初始化/重置
+                    </button>
+                    <button id="btn-step" onclick="step()"
+                            class="px-4 py-2 bg-blue-500 hover:bg-blue-600
+                                   active:bg-blue-700 text-white rounded-lg text-sm
+                                   font-medium transition shadow-sm
+                                   disabled:opacity-50 disabled:cursor-not-allowed">
+                        单步执行
+                    </button>
+                    <button id="btn-auto" onclick="toggleAutoPlay()"
+                            class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600
+                                   active:bg-emerald-700 text-white rounded-lg text-sm
+                                   font-medium transition shadow-sm
+                                   disabled:opacity-50 disabled:cursor-not-allowed">
+                        自动播放
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             主内容区：左侧可视化 + 右侧日志
+             ============================================================ -->
+        <div class="flex gap-5 flex-col lg:flex-row">
+
+            <!-- ========================================================
+                 左侧 —— 可视化区域
+                 ======================================================== -->
+            <div class="flex-1 bg-white rounded-2xl shadow-md p-6 border border-gray-200">
+
+                <!-- 当前增量显示 (大号醒目文字) -->
+                <div id="increment-badge" class="text-center mb-6">
+                    <span class="text-gray-400 text-lg">等待开始排序...</span>
+                </div>
+
+                <!-- 正在处理的组指示器 -->
+                <div id="group-indicator" class="text-center mb-4 min-h-[28px]"></div>
+
+                <!-- 数组元素显示区 (带分组颜色的盒子) -->
+                <div id="array-container"
+                     class="flex flex-wrap gap-3 justify-center items-end min-h-[130px] mb-6">
+                    <!-- 由 JavaScript 动态填充 -->
+                </div>
+
+                <!-- 图例 (组颜色说明) -->
+                <div id="legend-container"
+                     class="flex flex-wrap gap-2 justify-center border-t border-gray-100
+                            pt-4 min-h-[40px]">
+                    <span class="text-sm text-gray-400">
+                        点击"单步执行"或"自动播放"开始排序
+                    </span>
+                </div>
+            </div>
+
+            <!-- ========================================================
+                 右侧 —— 日志侧栏 (w-80)
+                 ======================================================== -->
+            <div class="w-full lg:w-80 flex-shrink-0 bg-white rounded-2xl shadow-md
+                        border border-gray-200 flex flex-col"
+                 style="max-height: 600px;">
+
+                <!-- 日志标题 + 状态徽章 -->
+                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <h2 class="font-bold text-gray-700">执行日志</h2>
+                    <span id="status-badge"
+                          class="px-2 py-0.5 rounded-full text-xs font-medium
+                                 bg-gray-100 text-gray-500">
+                        就绪
+                    </span>
+                </div>
+
+                <!-- 日志内容 (可滚动) -->
+                <div class="flex-1 overflow-y-auto p-4 log-area" id="log-scroll">
+                    <div id="log-entries">
+                        <div class="text-gray-400 text-xs text-center py-4">暂无日志</div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /flex 主内容区 -->
+    </div><!-- /主容器 -->
+
+
+    <script>
+    (function() {
+        'use strict';
+
+        /* =========================================================
+           常量与配置
+           ========================================================= */
+
+        /**
+         * 组颜色配置
+         * 408 考试中，每个 d 将数组分为 d 组，每组用不同颜色标识。
+         * 这里定义 6 种颜色，超出时循环使用。
+         */
+        var GROUP_COLORS = [
+            { name: '蓝色组', bg: 'bg-blue-50',  border: 'border-blue-400',  text: 'text-blue-700',  dot: 'bg-blue-500'  },
+            { name: '绿色组', bg: 'bg-green-50', border: 'border-green-400', text: 'text-green-700', dot: 'bg-green-500' },
+            { name: '紫色组', bg: 'bg-purple-50',border: 'border-purple-400',text: 'text-purple-700',dot: 'bg-purple-500'},
+            { name: '橙色组', bg: 'bg-amber-50', border: 'border-amber-400', text: 'text-amber-700', dot: 'bg-amber-500' },
+            { name: '粉色组', bg: 'bg-rose-50',  border: 'border-rose-400',  text: 'text-rose-700',  dot: 'bg-rose-500'  },
+            { name: '青色组', bg: 'bg-cyan-50',  border: 'border-cyan-400',  text: 'text-cyan-700',  dot: 'bg-cyan-500'  }
+        ];
+
+        /** 默认待排序数据 (408 教材示例) */
+        var DEFAULT_DATA = [49, 38, 65, 97, 76, 13, 27, 49, 55, 4];
+
+        /* =========================================================
+           状态机定义
+           ========================================================= */
+
+        /**
+         * 顶层排序状态
+         * IDLE           - 初始/已重置，等待开始
+         * WITHIN_PASS    - 正在某个增量 d 内执行插入排序
+         * BETWEEN_PASSES - 当前增量 d 的所有组处理完毕，等待切换到下一增量
+         * DONE           - 全部增量处理完毕，排序结束
+         */
+        var State = Object.freeze({
+            IDLE:           'IDLE',
+            WITHIN_PASS:    'WITHIN_PASS',
+            BETWEEN_PASSES: 'BETWEEN_PASSES',
+            DONE:           'DONE'
+        });
+
+        /**
+         * 增量内的操作子阶段 (step() 的粒度)
+         * READY      - 准备处理下一个元素
+         * CHECKING   - 比较 arr[i] 与 arr[i-d] 决定是否需要插入
+         * EXTRACTING - 暂存 temp = arr[i]
+         * COMPARING  - 在组内比较 arr[j] 与 temp
+         * SHIFTING   - 后移 arr[j] → arr[j+d]
+         * PLACING    - 将 temp 放到最终位置
+         */
+        var Phase = Object.freeze({
+            READY:      'READY',
+            CHECKING:   'CHECKING',
+            EXTRACTING: 'EXTRACTING',
+            COMPARING:  'COMPARING',
+            SHIFTING:   'SHIFTING',
+            PLACING:    'PLACING'
+        });
+
+        /* =========================================================
+           运行时变量
+           ========================================================= */
+
+        var state  = State.IDLE;                     // 当前顶层状态
+        var phase  = Phase.READY;                    // 当前子阶段
+
+        var arr          = DEFAULT_DATA.slice();      // 待排序数组 (副本)
+        var n            = arr.length;                // 数组长度
+        var incrementSeq = [];                         // 增量序列，如 [5, 3, 1]
+        var currentDIdx  = -1;                         // 当前增量在序列中的下标
+        var currentD     = 0;                          // 当前增量值 d
+
+        /* 一趟插入排序的临时变量 (对应 408 教材的组内直接插入排序) */
+        var currentPos = 0;       // i: 当前处理的元素下标 (0-based)
+        var currentJ   = 0;       // j: 组内比较/移动的游标
+        var tempValue  = null;    // 暂存的待插入值 (对应 408 教材的 A[0] 哨兵或 temp)
+
+        /* 可视化高亮状态 (传递给渲染函数) */
+        var highlightA    = -1;     // 主高亮元素下标
+        var highlightB    = -1;     // 次高亮元素下标，-1 表示无
+        var highlightType = '';     // 'compare' | 'shift' | 'extract' | 'place'
+
+        /* 自动播放控制 */
+        var autoTimer = null;
+        var isPlaying = false;
+        var AUTO_SPEED = 1000;      // 每步间隔 (ms)，希尔排序步骤较复杂
+
+        /* 日志缓存 */
+        var logs = [];
+
+        /* =========================================================
+           DOM 快捷访问
+           ========================================================= */
+        function $(id) { return document.getElementById(id); }
+
+        /* =========================================================
+           工具函数
+           ========================================================= */
+
+        /**
+         * 计算 408 标准增量序列：d = floor(n/2), floor(d/2), ..., 1
+         * 这是严蔚敏《数据结构》(C 语言版) 教材规定的标准序列。
+         * 也是考研 408 统考大纲要求的默认序列。
+         */
+        function computeIncrements(len) {
+            var seq = [];
+            var d = Math.floor(len / 2);
+            while (d >= 1) {
+                seq.push(d);
+                d = Math.floor(d / 2);
+            }
+            return seq.length > 0 ? seq : [1];
+        }
+
+        /**
+         * 获取元素所在组的颜色配置。
+         * 组号 = index % currentD (0-based)
+         * 在 DONE 状态返回统一完成色；在 IDLE 状态返回中性灰色。
+         */
+        function getGroupColor(idx) {
+            if (state === State.DONE) {
+                return { name:'完成', bg:'bg-emerald-50', border:'border-emerald-400',
+                         text:'text-emerald-700', dot:'bg-emerald-500' };
+            }
+            if (state === State.IDLE || currentD <= 0) {
+                return { name:'未分组', bg:'bg-gray-50', border:'border-gray-300',
+                         text:'text-gray-600', dot:'bg-gray-400' };
+            }
+            var gIdx = idx % currentD;
+            return GROUP_COLORS[gIdx % GROUP_COLORS.length];
+        }
+
+        /** 获取元素所属的组索引 (0-based) */
+        function getGroupIndex(idx) {
+            if (currentD <= 0) return 0;
+            return idx % currentD;
+        }
+
+        /* =========================================================
+           日志系统
+           ========================================================= */
+
+        /**
+         * 添加一条日志并刷新日志显示。
+         * @param {string} msg  日志内容
+         * @param {string} type 'info' | 'highlight' | 'success' | 'warning'
+         */
+        function addLog(msg, type) {
+            type = type || 'info';
+            var now = new Date();
+            var time = String(now.getHours()).padStart(2,'0') + ':' +
+                       String(now.getMinutes()).padStart(2,'0') + ':' +
+                       String(now.getSeconds()).padStart(2,'0');
+            logs.push({ time: time, msg: msg, type: type });
+            renderLogs();
+            updateStatusBadge();
+        }
+
+        /** 重新渲染日志列表 (最新在上，最多显示 40 条) */
+        function renderLogs() {
+            var container = $('log-entries');
+            if (!container) return;
+            var recent = logs.slice(-40);
+            var html = '';
+            for (var i = recent.length - 1; i >= 0; i--) {
+                var e = recent[i];
+                var cls = 'text-gray-700';
+                if (e.type === 'highlight') cls = 'text-indigo-700 font-semibold';
+                if (e.type === 'success')   cls = 'text-emerald-700 font-semibold';
+                if (e.type === 'warning')   cls = 'text-amber-700';
+                html += '<div class="animate-slide-in text-xs py-1.5 border-b border-gray-50 ' +
+                        'last:border-0 ' + cls + '">' +
+                        '<span class="text-gray-400 mr-1.5 font-mono">' + e.time + '</span>' +
+                        e.msg + '</div>';
+            }
+            container.innerHTML = html || '<div class="text-gray-400 text-xs text-center py-4">暂无日志</div>';
+            /* 自动滚动到底部 */
+            var scrollEl = $('log-scroll');
+            if (scrollEl) setTimeout(function() { scrollEl.scrollTop = scrollEl.scrollHeight; }, 50);
+        }
+
+        /** 更新日志标题栏的状态徽章 */
+        function updateStatusBadge() {
+            var badge = $('status-badge');
+            if (!badge) return;
+            switch (state) {
+                case State.IDLE:
+                    badge.textContent = '就绪';
+                    badge.className = 'px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500';
+                    break;
+                case State.WITHIN_PASS:
+                    badge.textContent = '排序中';
+                    badge.className = 'px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-600';
+                    break;
+                case State.BETWEEN_PASSES:
+                    badge.textContent = '增量完成';
+                    badge.className = 'px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-600';
+                    break;
+                case State.DONE:
+                    badge.textContent = '已完成';
+                    badge.className = 'px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-600';
+                    break;
+            }
+        }
+
+        /* =========================================================
+           渲染函数
+           ========================================================= */
+
+        /**
+         * 渲染数组可视化 —— 带分组颜色的元素盒子。
+         * 这是希尔排序最核心的视觉特征：每个元素根据其所属组显示不同颜色。
+         */
+        function renderArray() {
+            var container = $('array-container');
+            if (!container) return;
+
+            var html = '<div class="flex flex-wrap gap-3 justify-center items-end">';
+
+            for (var i = 0; i < n; i++) {
+                var color = getGroupColor(i);
+                var extraCls = 'shadow-sm';
+                var arrow = '';
+
+                /* 根据高亮类型添加视觉反馈 */
+                if (highlightType === 'compare' && (highlightA === i || highlightB === i)) {
+                    /* 比较中的两个元素 —— 红色高亮 + 上浮 */
+                    extraCls = 'ring-2 ring-red-400 arr-cell active-compare shadow-lg z-10 animate-compare-glow';
+                    arrow = '<div class="text-red-400 text-xs mt-1 font-bold">▲</div>';
+                } else if (highlightType === 'shift' && highlightA === i) {
+                    /* 后移的源位置 —— 琥珀色 + 半透明 */
+                    extraCls = 'ring-2 ring-amber-400 arr-cell active-shift opacity-50 animate-shift-glow';
+                    arrow = '<div class="text-amber-400 text-xs mt-1">← 移出</div>';
+                } else if (highlightType === 'shift' && highlightB === i) {
+                    /* 后移的目标位置 —— 琥珀色 */
+                    extraCls = 'ring-2 ring-amber-400 arr-cell animate-shift-glow';
+                    arrow = '<div class="text-amber-400 text-xs mt-1">移入 →</div>';
+                } else if (highlightType === 'extract' && highlightA === i) {
+                    /* 正在提取的元素 —— 蓝色 + 半透明 (temp 暂存) */
+                    extraCls = 'ring-2 ring-blue-400 arr-cell opacity-40';
+                    arrow = '<div class="text-blue-400 text-xs mt-1">temp ↑</div>';
+                } else if (highlightType === 'place' && (highlightA === i || highlightB === i)) {
+                    /* 放置 temp 的位置 —— 绿色 + 脉动 */
+                    extraCls = 'ring-2 ring-emerald-400 arr-cell active-compare shadow-lg animate-pulse-custom';
+                    arrow = '<div class="text-emerald-400 text-xs mt-1 font-bold">▼</div>';
+                }
+
+                html += '<div class="flex flex-col items-center animate-fade-in">' +
+                        /* 下标标签 (408 教材使用 1-based 索引: R[1], R[2], ..., R[n]) */
+                        '<span class="text-xs text-gray-400 font-mono mb-1">R[' + (i + 1) + ']</span>' +
+                        /* 元素盒子 */
+                        '<div class="arr-cell w-14 h-14 ' + color.bg + ' ' + color.border +
+                        ' border-2 rounded-xl flex items-center justify-center font-bold text-lg ' +
+                        color.text + ' ' + extraCls + '">' +
+                        arr[i] + '</div>' +
+                        arrow +
+                        '</div>';
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        /**
+         * 渲染当前增量徽章。
+         * 用大号醒目文字显示 "当前增量 d = X"，是希尔排序的标志性元素。
+         */
+        function renderIncrementBadge() {
+            var container = $('increment-badge');
+            if (!container) return;
+
+            if (state === State.IDLE) {
+                container.innerHTML = '<span class="text-gray-400 text-lg">等待开始排序...</span>';
+                return;
+            }
+            if (state === State.DONE) {
+                container.innerHTML = '<span class="text-emerald-600 text-2xl font-bold">排序完成！</span>';
+                return;
+            }
+            if (state === State.BETWEEN_PASSES) {
+                /* 增量已完成的过渡状态 (半透明显示) */
+                container.innerHTML = '<span class="increment-badge text-white px-6 py-3 rounded-2xl ' +
+                    'text-3xl font-bold shadow-lg inline-block opacity-70">' +
+                    '当前增量 d = ' + currentD +
+                    ' <span class="text-lg font-normal">(已完成)</span></span>';
+                return;
+            }
+            /* WITHIN_PASS —— 正在处理 */
+            container.innerHTML = '<span class="increment-badge text-white px-6 py-3 rounded-2xl ' +
+                'text-3xl font-bold shadow-lg inline-block">' +
+                '当前增量 d = ' + currentD + '</span>';
+        }
+
+        /**
+         * 渲染图例 —— 显示所有组的颜色、组名、以及该组包含的元素。
+         * 让用户一目了然地看到分组情况。
+         */
+        function renderLegend() {
+            var container = $('legend-container');
+            if (!container) return;
+
+            if (state === State.DONE) {
+                container.innerHTML = '<span class="text-sm text-emerald-600 font-medium">' +
+                    '排序完成，所有元素已有序</span>';
+                return;
+            }
+            if (state === State.IDLE) {
+                container.innerHTML = '<span class="text-sm text-gray-400">' +
+                    '点击"单步执行"或"自动播放"开始排序</span>';
+                return;
+            }
+
+            /* 为每个组显示：颜色圆点 + 组名 + 包含的元素 */
+            var html = '<div class="flex flex-wrap gap-2 text-xs justify-center">';
+            for (var g = 0; g < currentD; g++) {
+                var color = GROUP_COLORS[g % GROUP_COLORS.length];
+                var members = [];
+                for (var i = g; i < n; i += currentD) {
+                    members.push('R[' + (i + 1) + ']');
+                }
+                html += '<div class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full ' +
+                        color.bg + ' ' + color.border + ' border">' +
+                        '<span class="w-3 h-3 rounded-full ' + color.dot + ' flex-shrink-0"></span>' +
+                        '<span class="' + color.text + ' font-medium">第' + (g + 1) + '组</span>' +
+                        '<span class="text-gray-500">' + members.join(' ') + '</span></div>';
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        /**
+         * 渲染正在处理的组指示器。
+         * 显示当前正在对哪个组的哪个元素进行操作。
+         */
+        function renderGroupIndicator() {
+            var container = $('group-indicator');
+            if (!container) return;
+
+            /* 只在 WITHIN_PASS 状态且不在 READY 阶段时显示 */
+            if (state !== State.WITHIN_PASS || currentPos >= n || phase === Phase.READY) {
+                container.innerHTML = '';
+                return;
+            }
+
+            var color = getGroupColor(currentPos);
+            var gIdx = getGroupIndex(currentPos);
+            var gName = GROUP_COLORS[gIdx % GROUP_COLORS.length].name;
+            container.innerHTML = '<div class="text-sm ' + color.text +
+                ' font-medium animate-fade-in">' +
+                '正在处理: <span class="' + color.bg + ' ' + color.border +
+                ' border px-2 py-0.5 rounded-full">' + gName +
+                ' (第' + (gIdx + 1) + '组)</span>  —  元素 R[' + (currentPos + 1) + ']</div>';
+        }
+
+        /** 更新按钮启用/禁用状态 */
+        function updateButtons() {
+            var btnStep = $('btn-step');
+            var btnAuto = $('btn-auto');
+            if (btnStep) btnStep.disabled = (state === State.DONE);
+            if (btnAuto) {
+                btnAuto.disabled = (state === State.DONE);
+                btnAuto.textContent = isPlaying ? '⏸ 暂停' : '▶ 自动播放';
+            }
+        }
+
+        /** 一次性更新全部可视化元素 */
+        function updateDisplay() {
+            renderArray();
+            renderIncrementBadge();
+            renderLegend();
+            renderGroupIndicator();
+            updateButtons();
+        }
+
+        /* =========================================================
+           核心算法 —— 状态机驱动的单步执行
+
+           每一步只完成一个原子操作：
+           - 一次元素比较
+           - 一次数据后移
+           - 一次数据插入
+           - 或一次增量切换
+
+           这使得希尔排序的每一次组内插入排序步骤都清晰可见。
+           ========================================================= */
+
+        /**
+         * 执行一个子步骤。
+         * 这是"单步执行"按钮和"自动播放"的工作单元。
+         */
+        function step() {
+            /* 清除上一步的高亮 */
+            highlightA = -1;
+            highlightB = -1;
+            highlightType = '';
+
+            switch (state) {
+                case State.IDLE:           _stepStart();        break;
+                case State.WITHIN_PASS:    _stepWithinPass();   break;
+                case State.BETWEEN_PASSES: _stepBetweenPasses(); break;
+                case State.DONE:           /* 已完成, 无操作 */ break;
+            }
+            updateDisplay();
+        }
+
+        /**
+         * 从 IDLE 状态开始排序。
+         * 设置第一个增量，进入 WITHIN_PASS 状态。
+         */
+        function _stepStart() {
+            if (incrementSeq.length === 0) {
+                addLog('错误：增量序列为空，请先初始化', 'warning');
+                return;
+            }
+            currentDIdx = 0;
+            currentD    = incrementSeq[currentDIdx];
+            /* 408 教材：从第 d+1 个元素开始处理 (0-based: 下标 d) */
+            currentPos  = currentD;
+            phase       = Phase.READY;
+            state       = State.WITHIN_PASS;
+            addLog('▶ 开始希尔排序，增量序列: [' + incrementSeq.join(', ') +
+                   ']，初始 d = ' + currentD, 'highlight');
+        }
+
+        /**
+         * 在 WITHIN_PASS 状态下处理一个子步骤。
+         * 这是 Shell 排序的核心：对当前增量 d 执行一趟"组内插入排序"的一小步。
+         *
+         * 408 算法伪代码：
+         *   for (i = d; i < n; i++)
+         *     if (arr[i] < arr[i-d]) {
+         *       temp = arr[i];
+         *       for (j = i-d; j >= 0 && arr[j] > temp; j -= d)
+         *         arr[j+d] = arr[j];
+         *       arr[j+d] = temp;
+         *     }
+         */
+        function _stepWithinPass() {
+            switch (phase) {
+
+                /* ---- READY: 准备处理下一个元素 ---- */
+                case Phase.READY:
+                    if (currentPos >= n) {
+                        /* 当前增量的所有位置都处理完毕，进入 BETWEEN_PASSES */
+                        state = State.BETWEEN_PASSES;
+                        addLog('--- 增量 d = ' + currentD + ' 排序完成，当前数组: [' +
+                               arr.join(', ') + '] ---', 'success');
+                        return;
+                    }
+                    /* 开始检查 arr[currentPos] 是否需要前插 */
+                    phase = Phase.CHECKING;
+                    highlightA = currentPos;
+                    highlightB = currentPos - currentD;
+                    highlightType = 'compare';
+                    var gIdx = getGroupIndex(currentPos);
+                    var gName = GROUP_COLORS[gIdx % GROUP_COLORS.length].name;
+                    addLog('检查 R[' + (currentPos + 1) + ']=' + arr[currentPos] +
+                           ' (' + gName + ', 第' + (gIdx + 1) + '组)');
+                    break;
+
+                /* ---- CHECKING: 比较 arr[i] 与 arr[i-d] ---- */
+                case Phase.CHECKING:
+                    if (arr[currentPos] < arr[currentPos - currentD]) {
+                        /* 需要插入 —— 进入提取阶段 */
+                        phase = Phase.EXTRACTING;
+                        highlightA = currentPos;
+                        highlightB = currentPos - currentD;
+                        highlightType = 'compare';
+                        addLog('  R[' + (currentPos + 1) + ']=' + arr[currentPos] +
+                               ' < R[' + (currentPos - currentD + 1) + ']=' +
+                               arr[currentPos - currentD] + '，需要前插');
+                    } else {
+                        /* 已有序，跳过该元素 */
+                        addLog('  R[' + (currentPos + 1) + ']=' + arr[currentPos] +
+                               ' &ge; R[' + (currentPos - currentD + 1) + ']=' +
+                               arr[currentPos - currentD] + '，无需移动');
+                        currentPos++;
+                        phase = Phase.READY;
+                    }
+                    break;
+
+                /* ---- EXTRACTING: 暂存 temp = arr[currentPos] ---- */
+                case Phase.EXTRACTING:
+                    tempValue = arr[currentPos];
+                    currentJ  = currentPos - currentD;
+                    highlightA = currentPos;
+                    highlightType = 'extract';
+                    addLog('  暂存 temp = arr[' + (currentPos + 1) + '] = ' + tempValue +
+                           ', j = ' + (currentJ + 1));
+                    phase = Phase.COMPARING;
+                    break;
+
+                /* ---- COMPARING: 在组内比较 arr[j] 与 temp ---- */
+                case Phase.COMPARING:
+                    highlightA = currentJ;
+                    if (currentJ >= 0 && arr[currentJ] > tempValue) {
+                        /* arr[j] > temp → 需要后移 arr[j] */
+                        highlightType = 'compare';
+                        addLog('  比较: arr[' + (currentJ + 1) + ']=' + arr[currentJ] +
+                               ' > temp=' + tempValue + '，需要后移');
+                        phase = Phase.SHIFTING;
+                    } else {
+                        /* arr[j] <= temp 或已到达组边界 → 找到插入位置 */
+                        highlightType = 'place';
+                        highlightA = currentJ + currentD;
+                        if (currentJ >= 0) {
+                            addLog('  比较: arr[' + (currentJ + 1) + ']=' + arr[currentJ] +
+                                   ' &le; temp=' + tempValue + '，找到插入位置 R[' +
+                                   (currentJ + currentD + 1) + ']');
+                        } else {
+                            addLog('  已到达组边界，插入位置为 R[' +
+                                   (currentJ + currentD + 1) + ']');
+                        }
+                        phase = Phase.PLACING;
+                    }
+                    break;
+
+                /* ---- SHIFTING: 后移 arr[j] → arr[j+d] ---- */
+                case Phase.SHIFTING:
+                    arr[currentJ + currentD] = arr[currentJ];
+                    highlightA = currentJ;
+                    highlightB = currentJ + currentD;
+                    highlightType = 'shift';
+                    addLog('  后移: arr[' + (currentJ + currentD + 1) + '] ← arr[' +
+                           (currentJ + 1) + '] = ' + arr[currentJ]);
+                    currentJ -= currentD;  /* j 向前移动一个步长 */
+                    phase = Phase.COMPARING;
+                    break;
+
+                /* ---- PLACING: 将 temp 插入最终位置 ---- */
+                case Phase.PLACING:
+                    arr[currentJ + currentD] = tempValue;
+                    highlightA = currentJ + currentD;
+                    highlightType = 'place';
+                    addLog('  插入: arr[' + (currentJ + currentD + 1) + '] = ' + tempValue);
+                    currentPos++;       /* 前进到下一个待处理元素 */
+                    tempValue = null;
+                    phase = Phase.READY;
+                    break;
+            }
+        }
+
+        /**
+         * 切换到下一个增量。
+         * 如果序列中还有增量，更新 currentD 并回到 WITHIN_PASS。
+         * 如果已用完所有增量，进入 DONE 状态。
+         */
+        function _stepBetweenPasses() {
+            currentDIdx++;
+            if (currentDIdx >= incrementSeq.length) {
+                /* 所有增量处理完毕，排序完成 */
+                state = State.DONE;
+                highlightA = -1;
+                highlightB = -1;
+                highlightType = '';
+                addLog('希尔排序完成！最终有序数组: [' + arr.join(', ') + ']', 'success');
+                return;
+            }
+            /* 切换到下一个增量，重新开始组内插入排序 */
+            currentD   = incrementSeq[currentDIdx];
+            currentPos = currentD;      /* 从新 d 的第 d 个元素开始 */
+            phase      = Phase.READY;
+            state      = State.WITHIN_PASS;
+            highlightA = -1;
+            highlightB = -1;
+            highlightType = '';
+            addLog('--- 增量变为 d = ' + currentD + '，重新分组 ---', 'highlight');
+        }
+
+        /* =========================================================
+           初始化 / 重置
+           ========================================================= */
+
+        /**
+         * 从输入框读取数据、解析增量序列、重置所有状态。
+         * 点击"初始化/重置"按钮时调用，页面加载时也会自动调用。
+         */
+        function init() {
+            /* 停止自动播放 */
+            stopAutoPlay();
+
+            /* ---- 解析待排序数据 ---- */
+            var dataStr = ($('data-input').value || '').trim();
+            /* 支持逗号、中文逗号、空白字符作为分隔符 */
+            var parsed = dataStr.split(/[,，\s]+/).map(function(s) {
+                return parseInt(s, 10);
+            }).filter(function(v) { return !isNaN(v); });
+
+            if (parsed.length === 0) {
+                /* 输入无效时回退到默认数据 */
+                parsed = DEFAULT_DATA.slice();
+                $('data-input').value = DEFAULT_DATA.join(',');
+            }
+            arr = parsed;
+            n   = arr.length;
+
+            /* ---- 解析或自动计算增量序列 ---- */
+            var incStr = ($('increment-input').value || '').trim();
+            if (incStr) {
+                incrementSeq = incStr.split(/[,，\s]+/).map(function(s) {
+                    return parseInt(s, 10);
+                }).filter(function(v) { return !isNaN(v) && v > 0; });
+            }
+            if (incrementSeq.length === 0) {
+                /* 未提供有效增量序列时，使用 408 标准序列自动计算 */
+                incrementSeq = computeIncrements(n);
+            }
+            /* 408 规定：最后一个增量必须为 1 (保证最终有序) */
+            if (incrementSeq[incrementSeq.length - 1] !== 1) {
+                incrementSeq.push(1);
+            }
+            /* 过滤掉 >= n 的增量 (无实际意义) */
+            incrementSeq = incrementSeq.filter(function(d) { return d < n; });
+            if (incrementSeq.length === 0) incrementSeq = [1];
+
+            /* 同步增量输入框 */
+            $('increment-input').value = incrementSeq.join(',');
+
+            /* ---- 重置所有运行时状态 ---- */
+            state         = State.IDLE;
+            phase         = Phase.READY;
+            currentDIdx   = -1;
+            currentD      = 0;
+            currentPos    = 0;
+            currentJ      = 0;
+            tempValue     = null;
+            highlightA    = -1;
+            highlightB    = -1;
+            highlightType = '';
+            logs          = [];
+
+            addLog('初始化完成，数组长度 n = ' + n +
+                   '，增量序列: [' + incrementSeq.join(', ') + ']', 'highlight');
+            updateDisplay();
+        }
+
+        /* =========================================================
+           自动播放控制
+           ========================================================= */
+
+        /** 切换自动播放状态 (播放/暂停) */
+        function toggleAutoPlay() {
+            if (isPlaying) { stopAutoPlay(); } else { startAutoPlay(); }
+        }
+
+        /** 开始自动播放 */
+        function startAutoPlay() {
+            if (state === State.DONE) return;
+            isPlaying = true;
+            updateButtons();
+            _autoStep();
+        }
+
+        /** 停止自动播放 */
+        function stopAutoPlay() {
+            isPlaying = false;
+            if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+            updateButtons();
+        }
+
+        /** 自动播放的递归步骤 (每 AUTO_SPEED ms 执行一步) */
+        function _autoStep() {
+            if (!isPlaying) return;
+            if (state === State.DONE) { stopAutoPlay(); return; }
+            step();                                     /* 执行一步 */
+            autoTimer = setTimeout(_autoStep, AUTO_SPEED);  /* 1000ms 后执行下一步 */
+        }
+
+        /* =========================================================
+           辅助按钮 (挂载到 window 上供 HTML onclick 属性调用)
+           ========================================================= */
+
+        /**
+         * "自动" 按钮：根据当前数据输入框的内容自动计算 408 标准增量序列，
+         * 并填入增量序列输入框。公式: d = n/2, n/4, ..., 1
+         */
+        window.autoCalcIncrements = function() {
+            var dataStr = ($('data-input').value || '').trim();
+            var tempArr = dataStr.split(/[,，\s]+/).map(function(s) {
+                return parseInt(s, 10);
+            }).filter(function(v) { return !isNaN(v); });
+            var seq = computeIncrements(tempArr.length || DEFAULT_DATA.length);
+            $('increment-input').value = seq.join(',');
+        };
+
+        /* 暴露核心函数到全局作用域 (HTML onclick 属性需要) */
+        window.init          = init;
+        window.step          = step;
+        window.toggleAutoPlay = toggleAutoPlay;
+
+        /* =========================================================
+           页面加载完成后自动初始化
+           ========================================================= */
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+        });
+
+    })();
+    </script>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

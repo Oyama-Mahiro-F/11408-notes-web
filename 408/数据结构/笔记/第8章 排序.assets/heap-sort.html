@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>堆排序演示</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulseNode {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.18); }
+  }
+  @keyframes swapFlash {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.8); }
+    100% { filter: brightness(1); }
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes highlightBorder {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(239,68,68,0.5); }
+    50% { box-shadow: 0 0 0 6px rgba(239,68,68,0.2); }
+  }
+  @keyframes siftDownGlow {
+    0% { box-shadow: 0 0 8px rgba(168,85,247,0.6); }
+    50% { box-shadow: 0 0 20px rgba(168,85,247,0.9); }
+    100% { box-shadow: 0 0 8px rgba(168,85,247,0.6); }
+  }
+  .tree-node {
+    position: absolute;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    transform: translate(-50%, -50%);
+    transition: left 0.4s ease, top 0.4s ease, background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    cursor: default;
+    z-index: 10;
+    user-select: none;
+  }
+  .tree-node.pulse {
+    animation: pulseNode 0.6s ease-in-out infinite;
+  }
+  .tree-node.swap-flash {
+    animation: swapFlash 0.4s ease-in-out;
+  }
+  .tree-node.sift-glow {
+    animation: siftDownGlow 0.7s ease-in-out infinite;
+  }
+  .node-default { background: #6366f1; border: 2px solid #4f46e5; color: #fff; }
+  .node-sorted { background: #22c55e; border: 2px solid #16a34a; color: #fff; }
+  .node-root-adjust { background: #ef4444; border: 2px solid #dc2626; color: #fff; }
+  .node-compare-child { background: #f97316; border: 2px solid #ea580c; color: #fff; }
+  .node-current-pos { background: #eab308; border: 2px solid #ca8a04; color: #1c1917; }
+  .node-move-target { background: #a855f7; border: 2px solid #9333ea; color: #fff; }
+  .node-place-target { background: #14b8a6; border: 2px solid #0d9488; color: #fff; }
+  .node-swap-a { background: #f43f5e; border: 2px solid #e11d48; color: #fff; }
+  .tree-line { transition: stroke 0.3s; }
+  .array-cell {
+    width: 46px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    font-size: 14px; font-weight: 600;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+    user-select: none;
+  }
+  .log-entry {
+    animation: fadeInUp 0.25s ease-out;
+    padding: 4px 10px;
+    border-left: 3px solid #6366f1;
+    margin-bottom: 4px;
+    font-size: 13px;
+    background: #f8fafc;
+    border-radius: 0 4px 4px 0;
+  }
+  .log-entry.important {
+    border-left-color: #ef4444;
+    background: #fef2f2;
+  }
+  .log-entry.swap-log {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+  }
+  #logContainer::-webkit-scrollbar { width: 4px; }
+  #logContainer::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+  .phase-badge {
+    display: inline-block; padding: 2px 10px; border-radius: 9999px;
+    font-size: 12px; font-weight: 600;
+  }
+  .phase-build { background: #dbeafe; color: #1d4ed8; }
+  .phase-sort { background: #fef3c7; color: #b45309; }
+  .phase-done { background: #d1fae5; color: #065f46; }
+  .phase-idle { background: #f1f5f9; color: #475569; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button { transition: all 0.2s; }
+  button:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  button:not(:disabled):active { transform: translateY(0); }
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+<!-- ===== TOP CONTROL BAR ===== -->
+<div class="bg-white shadow-md border-b border-slate-200 px-6 py-4 flex flex-wrap items-center gap-3">
+  <h1 class="text-xl font-bold text-slate-800 mr-2 whitespace-nowrap">堆排序演示</h1>
+  <input id="dataInput" type="text" value="49,38,65,97,76,13,27,49"
+    class="flex-1 min-w-[260px] max-w-lg px-3 py-2 border border-slate-300 rounded-lg text-sm
+           focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400"
+    placeholder="输入逗号分隔的数字" />
+  <button id="btnReset" onclick="resetAll()"
+    class="px-4 py-2 bg-indigo-500 text-white text-sm font-semibold rounded-lg hover:bg-indigo-600">
+    初始化 / 重置</button>
+  <button id="btnStep" onclick="stepOnce()"
+    class="px-4 py-2 bg-emerald-500 text-white text-sm font-semibold rounded-lg hover:bg-emerald-600">
+    单步执行</button>
+  <button id="btnAuto" onclick="toggleAuto()"
+    class="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600">自动播放</button>
+  <span id="speedLabel" class="text-xs text-slate-400">900ms/步</span>
+</div>
+
+<!-- ===== MAIN AREA ===== -->
+<div class="flex flex-col lg:flex-row gap-0" style="min-height: calc(100vh - 80px);">
+
+  <!-- LEFT: VISUALIZATION -->
+  <div class="flex-1 flex flex-col bg-white border-r border-slate-200 overflow-auto p-4">
+
+    <!-- Phase info bar -->
+    <div class="flex flex-wrap items-center gap-3 mb-3 px-2">
+      <span class="text-sm font-semibold text-slate-600">当前阶段:</span>
+      <span id="phaseBadge" class="phase-badge phase-idle">空闲</span>
+      <span id="heapAdjustParams" class="text-sm text-slate-500 ml-2"></span>
+      <span class="flex-1"></span>
+      <span class="text-sm text-slate-600">已排序元素:</span>
+      <span id="sortedInfo" class="text-sm font-mono font-bold text-green-600">-</span>
+    </div>
+
+    <!-- Tree visualization -->
+    <div class="flex justify-center mb-2">
+      <div class="text-sm font-semibold text-slate-500 mb-1">-- 完全二叉树 (堆) --</div>
+    </div>
+    <div id="treeContainer" class="relative mx-auto border border-dashed border-slate-200 rounded-xl bg-slate-50/50"
+      style="width: 750px; min-height: 320px;">
+      <svg id="treeSvg" class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;"></svg>
+      <div id="treeNodes" class="absolute inset-0" style="z-index: 10;"></div>
+    </div>
+
+    <!-- Legend -->
+    <div class="flex flex-wrap justify-center gap-4 mt-3 mb-2 text-xs text-slate-500">
+      <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full bg-indigo-500"></span> 普通节点</span>
+      <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full bg-red-500"></span> 调整根</span>
+      <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full bg-orange-500"></span> 比较孩子</span>
+      <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full bg-amber-400"></span> 当前位置</span>
+      <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full bg-green-500"></span> 已排序</span>
+    </div>
+
+    <!-- Array visualization -->
+    <div class="flex justify-center mt-4">
+      <div class="text-sm font-semibold text-slate-500 mb-1">-- 数组视图 (1-based) --</div>
+    </div>
+    <div class="flex justify-center">
+      <div id="arrayContainer" class="flex flex-wrap items-end gap-1.5 justify-center p-3 bg-slate-50 rounded-xl border border-slate-200 min-h-[70px]">
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: LOG SIDEBAR -->
+  <div class="w-80 flex-shrink-0 bg-white flex flex-col border-l border-slate-200" style="max-height: calc(100vh - 80px);">
+    <div class="px-4 py-3 border-b border-slate-200 flex items-center gap-2">
+      <span class="font-semibold text-slate-700">执行日志</span>
+      <span id="logCount" class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">0</span>
+    </div>
+    <div id="logContainer" class="flex-1 overflow-y-auto px-3 py-2 space-y-0.5">
+      <div class="text-xs text-slate-400 italic text-center py-6">点击"单步执行"或"自动播放"开始</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== DATA & STATE ====================
+let data = [];          // internal 0-based, data[i] corresponds to R[i+1] in 408
+let n = 0;
+let phase = 'IDLE';     // IDLE | BUILD_HEAP_ADJUSTING | BUILD_HEAP_NEXT | SORTING_SWAP | SORTING_ADJUST | DONE
+let sortedIndices = new Set();  // 1-based indices that are sorted
+let logs = [];
+let autoTimer = null;
+let autoRunning = false;
+
+// Build-heap state
+let buildI = 0;         // current non-leaf node index (n/2 down to 1)
+
+// Sort state
+let sortPass = 1;       // current sort pass (1 to n-1)
+
+// HeapAdjust state
+let adjRoot = 0;        // original root of current HeapAdjust (1-based)
+let adjK = 0;           // current "hole" position
+let adjChild = 0;       // current child being examined
+let adjLen = 0;         // heap size for current HeapAdjust
+let adjSaved = null;    // saved value (A[0] in 408)
+let adjStep = '';       // init | find_child | compare | move | place
+
+// Highlight tracking
+let highlightRoot = 0;      // index highlighted as root (red)
+let highlightChild = 0;     // index highlighted as child (orange)
+let highlightK = 0;         // index highlighted as current position (amber)
+let highlightSwap = [];     // indices being swapped
+
+// ==================== INITIALIZATION ====================
+function parseInput() {
+  const raw = document.getElementById('dataInput').value.trim();
+  if (!raw) return [49, 38, 65, 97, 76, 13, 27, 49];
+  const parts = raw.split(/[,，\s]+/).filter(s => s.length > 0);
+  const nums = parts.map(s => parseInt(s, 10)).filter(v => !isNaN(v));
+  return nums.length > 0 ? nums : [49, 38, 65, 97, 76, 13, 27, 49];
+}
+
+function resetState(arr) {
+  data = [...arr];
+  n = data.length;
+  phase = 'IDLE';
+  sortedIndices = new Set();
+  logs = [];
+  buildI = Math.floor(n / 2);
+  sortPass = 1;
+  adjRoot = 0;
+  adjK = 0;
+  adjChild = 0;
+  adjLen = n;
+  adjSaved = null;
+  adjStep = '';
+  highlightRoot = 0;
+  highlightChild = 0;
+  highlightK = 0;
+  highlightSwap = [];
+  stopAuto();
+  updateUI();
+  renderAll();
+  addLog('系统', '已初始化，共 ' + n + ' 个元素。点击"单步执行"或"自动播放"开始。');
+}
+
+function resetAll() {
+  const arr = parseInput();
+  resetState(arr);
+  document.getElementById('dataInput').value = arr.join(',');
+}
+
+// ==================== LOGGING ====================
+function addLog(type, msg) {
+  const entry = { type, msg, time: new Date() };
+  logs.push(entry);
+  const container = document.getElementById('logContainer');
+  // Remove placeholder if exists
+  const placeholder = container.querySelector('.italic');
+  if (placeholder) placeholder.remove();
+
+  const div = document.createElement('div');
+  let cls = 'log-entry';
+  if (type === 'important' || type === 'adjust') cls += ' important';
+  if (type === 'swap') cls += ' swap-log';
+  div.className = cls;
+  const prefix = type === 'swap' ? '[交换] ' : type === 'adjust' ? '[调整] ' : type === 'phase' ? '[阶段] ' : type === 'done' ? '[完成] ' : '[信息] ';
+  div.textContent = prefix + msg;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+
+  document.getElementById('logCount').textContent = logs.length;
+}
+
+// ==================== RENDERING ====================
+function getNodeLevel(idx) {
+  // idx is 1-based, returns 0-based level
+  return Math.floor(Math.log2(idx));
+}
+
+function computePositions() {
+  // Returns array of {x, y} for each 1-based index, or null
+  if (n === 0) return [];
+  const positions = new Array(n + 1);
+  const containerW = 750;
+  const marginX = 45;
+  const usableW = containerW - 2 * marginX;
+  const marginTop = 25;
+  const levelH = 78;
+
+  // Assign leaf positions left to right
+  const firstLeaf = Math.floor(n / 2) + 1;
+  const leafCount = n - firstLeaf + 1;
+  const leafSpacing = usableW / (leafCount + 1);
+  let leafIdx = 0;
+  for (let i = firstLeaf; i <= n; i++) {
+    leafIdx++;
+    const level = getNodeLevel(i);
+    positions[i] = {
+      x: marginX + leafSpacing * leafIdx,
+      y: marginTop + level * levelH
+    };
+  }
+
+  // Internal nodes: center over children
+  for (let i = firstLeaf - 1; i >= 1; i--) {
+    const level = getNodeLevel(i);
+    const leftChild = 2 * i;
+    const rightChild = 2 * i + 1;
+    if (rightChild <= n) {
+      positions[i] = {
+        x: (positions[leftChild].x + positions[rightChild].x) / 2,
+        y: marginTop + level * levelH
+      };
+    } else if (leftChild <= n) {
+      positions[i] = {
+        x: positions[leftChild].x,
+        y: marginTop + level * levelH
+      };
+    } else {
+      // Leaf that is also internal? shouldn't happen in complete tree
+      positions[i] = {
+        x: marginX + usableW / 2,
+        y: marginTop + level * levelH
+      };
+    }
+  }
+  return positions;
+}
+
+function computeNodeClass(idx) {
+  // idx is 1-based
+  if (sortedIndices.has(idx)) return 'tree-node node-sorted';
+  if (highlightSwap.includes(idx)) return 'tree-node node-swap-a swap-flash';
+  if (idx === highlightRoot) return 'tree-node node-root-adjust pulse';
+  if (idx === highlightChild) return 'tree-node node-compare-child pulse';
+  if (idx === highlightK && (phase === 'SORTING_ADJUST' || phase === 'BUILD_HEAP_ADJUSTING')) {
+    if (adjStep === 'move') return 'tree-node node-move-target sift-glow';
+    if (adjStep === 'place') return 'tree-node node-place-target';
+    if (adjStep === 'compare' || adjStep === 'find_child') return 'tree-node node-current-pos';
+  }
+  return 'tree-node node-default';
+}
+
+function renderTree() {
+  const positions = computePositions();
+  const container = document.getElementById('treeContainer');
+  const nodesDiv = document.getElementById('treeNodes');
+  const svg = document.getElementById('treeSvg');
+  const circleR = 22;
+
+  // Compute number of levels for container height
+  const numLevels = n > 0 ? Math.floor(Math.log2(n)) + 1 : 1;
+  const treeHeight = 25 + (numLevels - 1) * 78 + 44 + 20;
+  container.style.height = Math.max(treeHeight, 200) + 'px';
+
+  // Clear
+  nodesDiv.innerHTML = '';
+  svg.innerHTML = '';
+
+  if (n === 0) return;
+
+  // Draw SVG lines first (behind nodes)
+  for (let i = 1; i <= n; i++) {
+    const leftChild = 2 * i;
+    const rightChild = 2 * i + 1;
+    const px = positions[i].x;
+    const py = positions[i].y;
+
+    [leftChild, rightChild].forEach(ci => {
+      if (ci <= n) {
+        const cx = positions[ci].x;
+        const cy = positions[ci].y;
+        // Line from bottom of parent to top of child
+        const x1 = px, y1 = py + circleR;
+        const x2 = cx, y2 = cy - circleR;
+        // Check if this edge connects sorted node
+        let strokeColor = '#94a3b8';
+        if (sortedIndices.has(i) || sortedIndices.has(ci)) {
+          strokeColor = '#86efac';
+        }
+        if (i === highlightRoot || i === highlightK || ci === highlightChild || ci === highlightK) {
+          strokeColor = '#f97316';
+        }
+        if (highlightSwap.includes(i) || highlightSwap.includes(ci)) {
+          strokeColor = '#f43f5e';
+        }
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('stroke', strokeColor);
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('class', 'tree-line');
+        if (sortedIndices.has(ci)) {
+          line.setAttribute('stroke-dasharray', '5,3');
+        }
+        svg.appendChild(line);
+      }
+    });
+  }
+
+  // Draw nodes
+  for (let i = 1; i <= n; i++) {
+    const pos = positions[i];
+    if (!pos) continue;
+    const node = document.createElement('div');
+    node.className = computeNodeClass(i);
+    node.style.left = pos.x + 'px';
+    node.style.top = pos.y + 'px';
+    node.textContent = data[i - 1];
+    node.title = 'R[' + i + '] = ' + data[i - 1];
+    nodesDiv.appendChild(node);
+  }
+}
+
+function renderArray() {
+  const container = document.getElementById('arrayContainer');
+  container.innerHTML = '';
+
+  for (let i = 0; i < n; i++) {
+    const idx1 = i + 1;
+    const cell = document.createElement('div');
+    cell.className = 'array-cell';
+    cell.textContent = data[i];
+
+    if (sortedIndices.has(idx1)) {
+      cell.className += ' bg-green-500 text-white border-2 border-green-600';
+    } else if (highlightSwap.includes(idx1)) {
+      cell.className += ' bg-rose-400 text-white border-2 border-rose-600 swap-flash';
+    } else if (idx1 === highlightRoot) {
+      cell.className += ' bg-red-500 text-white border-2 border-red-600 pulse';
+    } else if (idx1 === highlightChild) {
+      cell.className += ' bg-orange-500 text-white border-2 border-orange-600 pulse';
+    } else if (idx1 === highlightK) {
+      if (adjStep === 'move') cell.className += ' bg-purple-400 text-white border-2 border-purple-600 sift-glow';
+      else if (adjStep === 'place') cell.className += ' bg-teal-400 text-white border-2 border-teal-600';
+      else cell.className += ' bg-amber-300 text-amber-900 border-2 border-amber-500';
+    } else {
+      cell.className += ' bg-indigo-100 text-indigo-800 border-2 border-indigo-200';
+    }
+
+    // Index label below
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flex flex-col items-center gap-0.5';
+    wrapper.appendChild(cell);
+    const lbl = document.createElement('span');
+    lbl.className = 'text-xs text-slate-400 font-mono';
+    lbl.textContent = 'R[' + idx1 + ']';
+    wrapper.appendChild(lbl);
+    container.appendChild(wrapper);
+  }
+}
+
+function updateUI() {
+  // Phase badge
+  const badge = document.getElementById('phaseBadge');
+  let phaseText = '空闲', phaseCls = 'phase-idle';
+  if (phase === 'IDLE') { phaseText = '空闲'; phaseCls = 'phase-idle'; }
+  else if (phase === 'BUILD_HEAP_ADJUSTING' || phase === 'BUILD_HEAP_NEXT') { phaseText = '建堆'; phaseCls = 'phase-build'; }
+  else if (phase === 'SORTING_SWAP' || phase === 'SORTING_ADJUST') { phaseText = '排序'; phaseCls = 'phase-sort'; }
+  else if (phase === 'DONE') { phaseText = '完成'; phaseCls = 'phase-done'; }
+  badge.textContent = phaseText;
+  badge.className = 'phase-badge ' + phaseCls;
+
+  // HeapAdjust params
+  const paramsEl = document.getElementById('heapAdjustParams');
+  if ((phase === 'BUILD_HEAP_ADJUSTING' || phase === 'SORTING_ADJUST') && adjRoot > 0) {
+    paramsEl.textContent = 'HeapAdjust(A, ' + adjRoot + ', ' + adjLen + ')' +
+      (adjSaved !== null ? ' | 暂存=' + adjSaved : '') +
+      ' | k=' + adjK + ' | child=' + (adjChild <= adjLen ? adjChild : '-');
+  } else {
+    paramsEl.textContent = '';
+  }
+
+  // Sorted info
+  const sortedEl = document.getElementById('sortedInfo');
+  if (sortedIndices.size > 0) {
+    const sorted = Array.from(sortedIndices).sort((a, b) => a - b);
+    sortedEl.textContent = sorted.map(i => 'R[' + i + ']=' + data[i - 1]).join(', ');
+  } else {
+    sortedEl.textContent = '-';
+  }
+
+  // Button states
+  const btnStep = document.getElementById('btnStep');
+  const btnAuto = document.getElementById('btnAuto');
+  btnStep.disabled = (phase === 'DONE');
+  btnAuto.disabled = (phase === 'DONE');
+  if (autoRunning) {
+    btnAuto.textContent = '停止播放';
+  } else {
+    btnAuto.textContent = '自动播放';
+  }
+}
+
+function renderAll() {
+  renderTree();
+  renderArray();
+  updateUI();
+}
+
+// ==================== STATE MACHINE ====================
+function clearHighlights() {
+  highlightRoot = 0;
+  highlightChild = 0;
+  highlightK = 0;
+  highlightSwap = [];
+}
+
+function stepOnce() {
+  if (phase === 'DONE') return;
+
+  if (phase === 'IDLE') {
+    // Start build-heap phase
+    phase = 'BUILD_HEAP_NEXT';
+    buildI = Math.floor(n / 2);
+    clearHighlights();
+    addLog('phase', '开始建堆阶段，从最后一个非叶节点 R[' + buildI + '] 开始调整');
+    renderAll();
+    // Immediately process the first BUILD_HEAP_NEXT
+    processBuildHeapNext();
+    return;
+  }
+
+  if (phase === 'BUILD_HEAP_NEXT') {
+    processBuildHeapNext();
+    return;
+  }
+
+  if (phase === 'BUILD_HEAP_ADJUSTING') {
+    processHeapAdjustStep();
+    return;
+  }
+
+  if (phase === 'SORTING_SWAP') {
+    processSortSwap();
+    return;
+  }
+
+  if (phase === 'SORTING_ADJUST') {
+    processHeapAdjustStep();
+    return;
+  }
+}
+
+function processBuildHeapNext() {
+  if (buildI < 1) {
+    // Build heap complete, start sorting
+    phase = 'SORTING_SWAP';
+    sortPass = 1;
+    adjLen = n;
+    clearHighlights();
+    addLog('phase', '建堆完成！当前堆顶 R[1]=' + data[0] + '。开始排序阶段。');
+    renderAll();
+    return;
+  }
+
+  // Start HeapAdjust on buildI — initialize only, the first visible step ('init')
+  // will be processed on the next step() call by processHeapAdjustStep
+  phase = 'BUILD_HEAP_ADJUSTING';
+  adjRoot = buildI;
+  adjK = buildI;
+  adjLen = n;
+  adjChild = 2 * buildI;
+  adjSaved = data[buildI - 1];
+  adjStep = 'init';
+  clearHighlights();
+  highlightRoot = buildI;
+  addLog('adjust', 'HeapAdjust(A, ' + buildI + ', ' + n + '): 暂存 R[' + buildI + ']=' + adjSaved);
+  renderAll();
+}
+
+function processHeapAdjustStep() {
+  // ---- init: show the root being adjusted, nothing else ----
+  if (adjStep === 'init') {
+    adjStep = 'find_child';
+    clearHighlights();
+    highlightK = adjK;
+    // If child initially out of bounds, jump straight to place
+    if (adjChild > adjLen) {
+      highlightChild = 0;
+      addLog('adjust', 'R[' + adjK + '] 无孩子节点');
+    }
+    renderAll();
+    return;
+  }
+
+  // ---- find_child: select the larger child (or note there isn't one) ----
+  if (adjStep === 'find_child') {
+    if (adjChild > adjLen || adjChild === 0) {
+      adjStep = 'place';
+      clearHighlights();
+      highlightK = adjK;
+      addLog('adjust', 'R[' + adjK + '] 无孩子可比较，将暂存值 ' + adjSaved + ' 放入此处');
+      renderAll();
+      return;
+    }
+
+    // Select larger child if two children exist
+    const rightChild = adjChild + 1;
+    if (rightChild <= adjLen && data[rightChild - 1] > data[adjChild - 1]) {
+      const leftVal = data[adjChild - 1];
+      const rightVal = data[rightChild - 1];
+      adjChild = rightChild;
+      addLog('adjust', '比较孩子: R[' + (adjChild - 1) + ']=' + leftVal + ' vs R[' + adjChild + ']=' + rightVal + ', 选较大者 R[' + adjChild + ']');
+    } else if (rightChild <= adjLen) {
+      addLog('adjust', '比较孩子: R[' + adjChild + ']=' + data[adjChild - 1] + ' >= R[' + rightChild + ']=' + data[rightChild - 1] + ', 选 R[' + adjChild + ']');
+    } else {
+      addLog('adjust', 'R[' + adjK + '] 只有一个孩子 R[' + adjChild + ']=' + data[adjChild - 1]);
+    }
+
+    adjStep = 'compare';
+    clearHighlights();
+    highlightK = adjK;
+    highlightChild = adjChild;
+    renderAll();
+    return;
+  }
+
+  // ---- compare: compare saved value with selected child ----
+  if (adjStep === 'compare') {
+    const childVal = data[adjChild - 1];
+    if (adjSaved >= childVal) {
+      // Root value >= child, stop sifting
+      adjStep = 'place';
+      clearHighlights();
+      highlightK = adjK;
+      addLog('adjust', '比较: 暂存值 ' + adjSaved + ' >= R[' + adjChild + ']=' + childVal + ', 无需继续下滤');
+      renderAll();
+      return;
+    }
+    // Need to move child up
+    adjStep = 'move';
+    clearHighlights();
+    highlightK = adjK;
+    highlightChild = adjChild;
+    addLog('adjust', '比较: 暂存值 ' + adjSaved + ' < R[' + adjChild + ']=' + childVal + ', 需要下滤');
+    renderAll();
+    return;
+  }
+
+  // ---- move: move the larger child value up into the "hole" ----
+  if (adjStep === 'move') {
+    const oldK = adjK;
+    const oldChild = adjChild;
+    const childVal = data[oldChild - 1];
+    data[oldK - 1] = childVal;
+
+    // Advance the "hole" down to the child position
+    adjK = oldChild;
+    adjChild = 2 * adjK;  // new child at next level
+
+    adjStep = 'find_child';
+    clearHighlights();
+    highlightK = adjK;
+
+    // Show info about the new position and its children
+    if (adjChild <= adjLen) {
+      highlightChild = adjChild;
+      addLog('adjust', '下滤: R[' + oldChild + ']=' + childVal + ' 上移至 R[' + oldK + '], 现在考察新位置 R[' + adjK + ']');
+    } else {
+      highlightChild = 0;
+      addLog('adjust', '下滤: R[' + oldChild + ']=' + childVal + ' 上移至 R[' + oldK + '], R[' + adjK + '] 已是叶子节点');
+    }
+    renderAll();
+    return;
+  }
+
+  // ---- place: put the saved value at its final position ----
+  if (adjStep === 'place') {
+    data[adjK - 1] = adjSaved;
+    clearHighlights();
+    highlightK = adjK;
+    addLog('adjust', '将暂存值 ' + adjSaved + ' 放入 R[' + adjK + '], HeapAdjust 完成');
+
+    // Transition to next state
+    if (phase === 'BUILD_HEAP_ADJUSTING') {
+      phase = 'BUILD_HEAP_NEXT';
+      buildI--;
+      adjRoot = 0; adjK = 0; adjChild = 0; adjSaved = null; adjStep = '';
+      highlightK = 0;
+      renderAll();
+      if (buildI >= 1) {
+        addLog('info', '准备调整下一个子树: R[' + buildI + ']');
+      }
+    } else if (phase === 'SORTING_ADJUST') {
+      sortPass++;
+      adjRoot = 0; adjK = 0; adjChild = 0; adjSaved = null; adjStep = '';
+      highlightK = 0;
+      if (sortPass >= n) {
+        sortedIndices.add(1);
+        phase = 'DONE';
+        clearHighlights();
+        addLog('done', '排序完成！数组已升序排列。');
+      } else {
+        phase = 'SORTING_SWAP';
+        addLog('info', 'HeapAdjust 完成，准备第 ' + sortPass + ' 趟交换');
+      }
+      renderAll();
+    }
+    return;
+  }
+}
+
+function processSortSwap() {
+  if (sortPass >= n) {
+    phase = 'DONE';
+    clearHighlights();
+    addLog('done', '排序完成！');
+    renderAll();
+    return;
+  }
+
+  const lastIdx = n - sortPass + 1;  // 1-based index of last element in current heap
+  const rootVal = data[0];
+  const lastVal = data[lastIdx - 1];
+
+  // Perform swap
+  data[0] = lastVal;
+  data[lastIdx - 1] = rootVal;
+
+  highlightSwap = [1, lastIdx];
+  addLog('swap', '第 ' + sortPass + ' 趟: 交换 R[1]=' + rootVal + ' 与 R[' + lastIdx + ']=' + lastVal);
+  renderAll();
+
+  // Mark lastIdx as sorted
+  sortedIndices.add(lastIdx);
+  highlightSwap = [];
+  addLog('info', 'R[' + lastIdx + ']=' + rootVal + ' 已排序 (绿色)');
+
+  if (sortPass >= n - 1) {
+    // Only root left
+    sortedIndices.add(1);
+    phase = 'DONE';
+    clearHighlights();
+    addLog('done', '排序完成！数组已升序排列。');
+    renderAll();
+    return;
+  }
+
+  // Transition to adjust — initialize only, the first visible step ('init')
+  // will be processed on the next step() call by processHeapAdjustStep
+  phase = 'SORTING_ADJUST';
+  adjRoot = 1;
+  adjK = 1;
+  adjLen = n - sortPass;
+  adjChild = 2;  // 2 * 1
+  adjSaved = data[0];
+  adjStep = 'init';
+  clearHighlights();
+  highlightRoot = 1;
+  addLog('adjust', 'HeapAdjust(A, 1, ' + adjLen + '): 暂存 R[1]=' + adjSaved);
+  renderAll();
+}
+
+// ==================== AUTO PLAY ====================
+function toggleAuto() {
+  if (autoRunning) {
+    stopAuto();
+  } else {
+    startAuto();
+  }
+}
+
+function startAuto() {
+  if (autoRunning) return;
+  if (phase === 'DONE') return;
+  autoRunning = true;
+  document.getElementById('btnAuto').textContent = '停止播放';
+  autoStep();
+}
+
+function stopAuto() {
+  autoRunning = false;
+  if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+  document.getElementById('btnAuto').textContent = '自动播放';
+  renderAll();
+}
+
+function autoStep() {
+  if (!autoRunning) return;
+  if (phase === 'DONE') { stopAuto(); return; }
+  stepOnce();
+  autoTimer = setTimeout(autoStep, 900);
+}
+
+// ==================== INIT ====================
+window.addEventListener('DOMContentLoaded', () => {
+  resetAll();
+});
+
+// Allow keyboard shortcut: Space for step
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && e.target === document.body) {
+    e.preventDefault();
+    stepOnce();
+  } else if (e.code === 'KeyA' && e.target === document.body) {
+    e.preventDefault();
+    toggleAuto();
+  } else if (e.code === 'KeyR' && e.target === document.body) {
+    e.preventDefault();
+    resetAll();
+  }
+});
+</script>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

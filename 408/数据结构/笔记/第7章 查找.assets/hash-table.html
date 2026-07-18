@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>散列表/哈希表演示 (408标准)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hash-cell {
+            width: 100%; min-height: 64px; border: 2px solid #e5e7eb;
+            border-radius: 0.5rem; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; background: white;
+            transition: all 0.35s ease; position: relative; padding: 4px;
+        }
+        .hash-cell.probing-cell { border-color: #f59e0b; background: #fffbeb; box-shadow: 0 0 0 4px rgba(245,158,11,0.2); }
+        .hash-cell.filled-cell { border-color: #22c55e; background: #f0fdf4; }
+        .hash-cell.collision-cell { border-color: #ef4444; background: #fef2f2; box-shadow: 0 0 0 3px rgba(239,68,68,0.15); }
+        .hash-cell.current-cell { border-color: #3b82f6; background: #eff6ff; box-shadow: 0 0 0 5px rgba(59,130,246,0.25); transform: scale(1.03); }
+        .chain-list { list-style: none; padding: 0; margin: 0; }
+        .chain-list li {
+            padding: 2px 10px; margin: 2px 0; border-radius: 4px; background: #f1f5f9;
+            border: 1px solid #e2e8f0; font-size: 0.8rem; font-weight: bold; text-align: center;
+        }
+        .chain-list li.highlight-chain { background: #fef3c7; border-color: #f59e0b; }
+        .tab-btn { padding: 6px 16px; border-radius: 0.375rem 0.375rem 0 0; font-size: 0.85rem; font-weight: 600; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; }
+        .tab-btn.active { background: white; border-color: #e5e7eb; border-bottom-color: white; color: #3b82f6; }
+        .tab-btn.inactive { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
+    </style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+    <!-- 顶部控制栏 -->
+    <div class="bg-white shadow-sm border-b p-4 flex flex-wrap gap-4 items-center justify-between z-10">
+        <div class="flex gap-4 items-center flex-wrap">
+            <h1 class="text-xl font-bold text-blue-600 mr-2">散列表 / 哈希表演示</h1>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">表长:</label>
+                <input type="number" id="input-size" value="13" min="5" max="30" class="border rounded px-2 py-1 w-16 focus:outline-none focus:border-blue-500 text-sm">
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">散列函数:</label>
+                <select id="input-hash-func" class="border rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500">
+                    <option value="mod">H(key) = key % m</option>
+                    <option value="digit">H(key) = key 各位数字之和 % m</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">冲突解决:</label>
+                <div class="flex" id="tab-buttons">
+                    <button class="tab-btn active" onclick="switchMethod('linear')">线性探测</button>
+                    <button class="tab-btn inactive" onclick="switchMethod('quadratic')">二次探测</button>
+                    <button class="tab-btn inactive" onclick="switchMethod('chaining')">拉链法</button>
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-2 items-center">
+            <div class="flex items-center gap-1">
+                <label class="text-sm font-medium">关键字:</label>
+                <input type="number" id="input-key" value="" placeholder="数字" class="border rounded px-2 py-1 w-20 focus:outline-none focus:border-blue-500 text-sm">
+                <button onclick="doInsert()" class="px-3 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition text-sm">插入</button>
+                <button onclick="doSearch()" class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">查找</button>
+            </div>
+            <button onclick="resetHash()" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition text-sm">重置</button>
+        </div>
+    </div>
+
+    <div class="flex-1 flex overflow-hidden">
+        <div class="flex-1 p-6 overflow-auto bg-gray-50 flex flex-col gap-4">
+            <!-- 散列表可视化 -->
+            <div class="bg-white p-5 rounded-lg shadow-sm border">
+                <h2 class="text-lg font-bold mb-3">散列表 <span class="text-sm font-normal text-gray-500" id="method-label">(线性探测法)</span></h2>
+                <div class="grid gap-2" id="hash-grid" style="grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));"></div>
+            </div>
+
+            <!-- 统计 -->
+            <div class="bg-white p-5 rounded-lg shadow-sm border">
+                <h2 class="text-lg font-bold mb-3">散列表分析</h2>
+                <div class="grid grid-cols-5 gap-3 text-sm">
+                    <div class="bg-blue-50 p-3 rounded-lg text-center"><div class="text-gray-500">装填因子 α</div><div class="text-2xl font-bold text-blue-600 font-mono" id="stat-alpha">0.00</div></div>
+                    <div class="bg-green-50 p-3 rounded-lg text-center"><div class="text-gray-500">成功 ASL</div><div class="text-2xl font-bold text-green-600 font-mono" id="stat-asl-success">--</div></div>
+                    <div class="bg-red-50 p-3 rounded-lg text-center"><div class="text-gray-500">失败 ASL</div><div class="text-2xl font-bold text-red-600 font-mono" id="stat-asl-fail">--</div></div>
+                    <div class="bg-purple-50 p-3 rounded-lg text-center"><div class="text-gray-500">元素数</div><div class="text-2xl font-bold text-purple-600 font-mono" id="stat-count">0</div></div>
+                    <div class="bg-orange-50 p-3 rounded-lg text-center"><div class="text-gray-500">冲突次数</div><div class="text-2xl font-bold text-orange-600 font-mono" id="stat-collisions">0</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧日志 -->
+        <div class="w-80 bg-white border-l flex flex-col shadow-[-4px_0_15px_rgba(0,0,0,0.03)]">
+            <div class="p-4 border-b bg-gray-50 font-bold flex justify-between items-center">
+                <span>执行日志</span>
+                <span id="status-badge" class="px-2 py-1 rounded text-xs bg-gray-200 text-gray-700">就绪</span>
+            </div>
+            <div id="log-container" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2 font-mono text-sm"></div>
+        </div>
+    </div>
+
+    <script>
+        let tableSize = 13;
+        let hashMethod = 'linear'; // 'linear', 'quadratic', 'chaining'
+        let hashFuncType = 'mod';
+        // hashTable: 线性/二次探测时为数组，拉链法时为数组的数组
+        let hashTable = [];
+        // 每个位置的探测次数（用于ASL计算）
+        let probeCount = [];
+        // 拉链法链表
+        let chainTable = [];
+        let collisionCount = 0;
+        let currentProbing = -1; // 当前正在探测的位置
+        let currentKey = null;
+
+        function resetHash() {
+            tableSize = parseInt(document.getElementById('input-size').value) || 13;
+            hashFuncType = document.getElementById('input-hash-func').value;
+            hashTable = new Array(tableSize).fill(null);
+            chainTable = new Array(tableSize).fill(null).map(() => []);
+            probeCount = new Array(tableSize).fill(0);
+            collisionCount = 0;
+            currentProbing = -1; currentKey = null;
+            document.getElementById('log-container').innerHTML = '';
+            updateStats();
+            renderHashTable();
+            addLog('系统', `散列表初始化。表长 m=${tableSize}，方法: ${getMethodName()}，散列函数: ${getHashFuncName()}。`);
+            updateStatusBadge('就绪', 'bg-gray-200 text-gray-700');
+        }
+
+        function getMethodName() {
+            return { linear: '线性探测法', quadratic: '二次探测法', chaining: '拉链法' }[hashMethod];
+        }
+
+        function getHashFuncName() {
+            return { mod: 'H(key)=key%m', digit: 'H(key)=各位数之和%m' }[hashFuncType];
+        }
+
+        function hashFunc(key) {
+            const num = Number(key);
+            if (hashFuncType === 'mod') {
+                return ((num % tableSize) + tableSize) % tableSize;
+            } else {
+                // 各位数字之和
+                const sum = String(Math.abs(num)).split('').reduce((a, b) => a + Number(b), 0);
+                return sum % tableSize;
+            }
+        }
+
+        function switchMethod(method) {
+            hashMethod = method;
+            document.getElementById('method-label').textContent = `(${getMethodName()})`;
+            // 更新tab样式
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'inactive');
+                btn.classList.add('inactive');
+            });
+            const btns = document.querySelectorAll('#tab-buttons .tab-btn');
+            const idx = { linear: 0, quadratic: 1, chaining: 2 }[method];
+            if (btns[idx]) { btns[idx].classList.remove('inactive'); btns[idx].classList.add('active'); }
+            resetHash();
+        }
+
+        function doInsert() {
+            const val = document.getElementById('input-key').value;
+            if (!val && val !== 0) return alert('请输入关键字');
+            const key = Number(val);
+            if (isNaN(key)) return alert('请输入有效数字');
+
+            currentKey = key; currentProbing = -1;
+
+            if (hashMethod === 'chaining') {
+                insertChaining(key);
+            } else {
+                insertProbing(key);
+            }
+            document.getElementById('input-key').value = '';
+            updateStats();
+            renderHashTable();
+            setTimeout(() => { currentProbing = -1; currentKey = null; renderHashTable(); }, 3000);
+        }
+
+        function insertProbing(key) {
+            let h = hashFunc(key);
+            let pos = h;
+            let step = 0;
+            const maxSteps = tableSize;
+
+            addLog('插入', `尝试插入关键字 ${key}，H(${key}) = ${h}。`, 'text-purple-600');
+
+            for (let i = 0; i < maxSteps; i++) {
+                currentProbing = pos;
+                renderHashTable();
+
+                if (hashTable[pos] === null || hashTable[pos] === undefined) {
+                    hashTable[pos] = key;
+                    probeCount[pos] = step + 1;
+                    addLog('成功', `位置 ${pos} 为空，将 ${key} 存入。探测 ${step + 1} 次，无冲突。` + (step > 0 ? ` (发生 ${step} 次冲突)` : ''), 'text-green-600 font-bold');
+                    updateStatusBadge('已插入 ' + key, 'bg-purple-100 text-purple-700');
+                    currentProbing = pos;
+                    return;
+                }
+
+                // 冲突
+                collisionCount++;
+                addLog('冲突', `位置 ${pos} 已被 ${hashTable[pos]} 占用。冲突！探测第 ${i + 1} 次。`, 'text-red-500');
+
+                if (hashMethod === 'linear') {
+                    pos = (h + i + 1) % tableSize;
+                    step = i + 1;
+                } else {
+                    // 二次探测: pos = (h + i²) % m，i = 1,2,3,...
+                    const offset = (i + 1) * (i + 1);
+                    pos = (h + offset) % tableSize;
+                    step = i + 1;
+                }
+            }
+            addLog('失败', `散列表已满！无法插入 ${key}。探测 ${maxSteps} 次均冲突。`, 'text-red-600 font-bold text-base');
+            updateStatusBadge('插入失败', 'bg-red-100 text-red-700');
+        }
+
+        function insertChaining(key) {
+            let h = hashFunc(key);
+            chainTable[h].push(key);
+            const chainLen = chainTable[h].length;
+            currentProbing = h;
+            addLog('插入', `插入 ${key}，H(${key}) = ${h}，添加到链表位置 ${h} 的末尾 (链表长 ${chainLen})。`, 'text-purple-600');
+            updateStatusBadge('已插入 ' + key, 'bg-purple-100 text-purple-700');
+            if (chainLen > 1) {
+                collisionCount++;
+                addLog('冲突', `位置 ${h} 已有 ${chainLen - 1} 个元素，追加到链表末尾。`, 'text-orange-500');
+            }
+        }
+
+        function doSearch() {
+            const val = document.getElementById('input-key').value;
+            if (!val && val !== 0) return alert('请输入查找关键字');
+            const key = Number(val);
+            if (isNaN(key)) return alert('请输入有效数字');
+            currentKey = key;
+
+            if (hashMethod === 'chaining') {
+                searchChaining(key);
+            } else {
+                searchProbing(key);
+            }
+            updateStats();
+            renderHashTable();
+            setTimeout(() => { currentProbing = -1; currentKey = null; renderHashTable(); }, 3000);
+        }
+
+        function searchProbing(key) {
+            let h = hashFunc(key);
+            let pos = h;
+            const maxSteps = tableSize;
+            addLog('查找', `查找关键字 ${key}，H(${key}) = ${h}。`, 'text-blue-600');
+
+            for (let i = 0; i < maxSteps; i++) {
+                currentProbing = pos;
+                renderHashTable();
+
+                if (hashTable[pos] === null || hashTable[pos] === undefined) {
+                    addLog('失败', `位置 ${pos} 为空，${key} 不在表中。查找失败，共探测 ${i + 1} 次。`, 'text-red-600 font-bold');
+                    updateStatusBadge('查找失败', 'bg-red-100 text-red-700');
+                    return;
+                }
+                if (hashTable[pos] === key) {
+                    addLog('成功', `在位置 ${pos} 找到 ${key}！共探测 ${i + 1} 次。`, 'text-green-600 font-bold');
+                    updateStatusBadge('查找成功', 'bg-green-100 text-green-700');
+                    return;
+                }
+                addLog('探测', `位置 ${pos} 存储的是 ${hashTable[pos]} != ${key}，继续探测。`, 'text-gray-600');
+
+                if (hashMethod === 'linear') {
+                    pos = (h + i + 1) % tableSize;
+                } else {
+                    pos = (h + (i + 1) * (i + 1)) % tableSize;
+                }
+            }
+            addLog('失败', `查找 ${key} 失败，遍历完整个表。`, 'text-red-600 font-bold');
+            updateStatusBadge('查找失败', 'bg-red-100 text-red-700');
+        }
+
+        function searchChaining(key) {
+            let h = hashFunc(key);
+            currentProbing = h;
+            const chain = chainTable[h];
+            addLog('查找', `查找 ${key}，H(${key}) = ${h}，在链表 ${h} 中顺序查找。`, 'text-blue-600');
+            const idx = chain.indexOf(key);
+            if (idx >= 0) {
+                addLog('成功', `在链表 ${h} 的第 ${idx + 1} 位找到 ${key}！比较 ${idx + 1} 次。`, 'text-green-600 font-bold');
+                updateStatusBadge('查找成功', 'bg-green-100 text-green-700');
+            } else {
+                addLog('失败', `链表 ${h} 中未找到 ${key}。比较 ${chain.length} 次。`, 'text-red-600 font-bold');
+                updateStatusBadge('查找失败', 'bg-red-100 text-red-700');
+            }
+        }
+
+        function updateStats() {
+            let filled = 0;
+            if (hashMethod === 'chaining') {
+                filled = chainTable.reduce((sum, arr) => sum + arr.length, 0);
+            } else {
+                filled = hashTable.filter(v => v !== null && v !== undefined).length;
+            }
+            const alpha = (filled / tableSize).toFixed(2);
+            document.getElementById('stat-alpha').textContent = alpha;
+            document.getElementById('stat-count').textContent = filled;
+            document.getElementById('stat-collisions').textContent = collisionCount;
+
+            // ASL计算
+            let aslSuccess = 0, aslFail = 0;
+            if (hashMethod === 'chaining') {
+                // 拉链法ASL
+                const totalElements = filled;
+                let totalSearchLen = 0;
+                chainTable.forEach(arr => {
+                    for (let i = 0; i < arr.length; i++) totalSearchLen += (i + 1);
+                });
+                aslSuccess = totalElements > 0 ? (totalSearchLen / totalElements).toFixed(2) : '0.00';
+                // 失败ASL = alpha + 1 (大概)
+                aslFail = (Number(alpha) + 1.0).toFixed(2);
+            } else {
+                // 开放定址法
+                const totalElements = filled;
+                let totalProbes = 0;
+                let totalFailProbes = 0;
+                hashTable.forEach((v, idx) => {
+                    if (v !== null && v !== undefined) {
+                        // 重新计算探测次数
+                        let h0 = hashFunc(v);
+                        let probes = 1;
+                        if (hashMethod === 'linear') {
+                            let p = h0;
+                            while (p !== idx) {
+                                p = (p + 1) % tableSize;
+                                probes++;
+                                if (probes > tableSize) break;
+                            }
+                        } else {
+                            let step = 1;
+                            let p = h0;
+                            while (p !== idx) {
+                                p = (h0 + step * step) % tableSize;
+                                step++;
+                                probes++;
+                                if (step > tableSize) break;
+                            }
+                        }
+                        totalProbes += probes;
+                    } else {
+                        // 空位置
+                        let probes = 1;
+                        if (hashMethod === 'linear') {
+                            let p = idx;
+                            while (p >= 0 && hashTable[p] === null && (p > 0 ? hashTable[p - 1] !== null : false) === false) {
+                                if (p === 0) break;
+                                if (hashTable[p - 1] !== null && hashTable[p - 1] !== undefined) break;
+                                p--;
+                            }
+                        }
+                    }
+                });
+                // 简化ASL
+                if (totalElements > 0) {
+                    let sumProbes = 0;
+                    hashTable.forEach((v, idx) => {
+                        if (v !== null && v !== undefined) {
+                            let h0 = hashFunc(v);
+                            let probes = 1;
+                            if (hashMethod === 'linear') {
+                                let p = h0;
+                                while (p !== idx) { p = (p + 1) % tableSize; probes++; if (probes > tableSize) break; }
+                            } else {
+                                let st = 1; let p = h0;
+                                while (p !== idx) { p = (h0 + st * st) % tableSize; st++; probes++; if (st > tableSize) break; }
+                            }
+                            sumProbes += probes;
+                        }
+                    });
+                    aslSuccess = (sumProbes / totalElements).toFixed(2);
+                } else {
+                    aslSuccess = '0.00';
+                }
+                // 简化失败ASL
+                let failSum = 0;
+                for (let i = 0; i < tableSize; i++) {
+                    let probes = 1;
+                    let pos = i;
+                    if (hashMethod === 'linear') {
+                        while (hashTable[pos] !== null && hashTable[pos] !== undefined && probes <= tableSize) {
+                            pos = (pos + 1) % tableSize;
+                            probes++;
+                        }
+                    } else {
+                        probes = Math.min(tableSize, Math.ceil(Math.sqrt(tableSize)));
+                    }
+                    failSum += Math.min(probes, tableSize);
+                }
+                aslFail = (failSum / tableSize).toFixed(2);
+            }
+            document.getElementById('stat-asl-success').textContent = aslSuccess;
+            document.getElementById('stat-asl-fail').textContent = aslFail;
+        }
+
+        function renderHashTable() {
+            const grid = document.getElementById('hash-grid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < tableSize; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'hash-cell';
+                cell.id = `cell-${i}`;
+
+                const idxLabel = document.createElement('div');
+                idxLabel.className = 'text-[10px] text-gray-400 font-mono';
+                idxLabel.textContent = '[' + i + ']';
+                cell.appendChild(idxLabel);
+
+                if (hashMethod === 'chaining') {
+                    const chain = chainTable[i];
+                    if (chain.length > 0) {
+                        const ul = document.createElement('ul');
+                        ul.className = 'chain-list';
+                        chain.forEach((key, ci) => {
+                            const li = document.createElement('li');
+                            li.textContent = key;
+                            if (currentProbing === i && currentKey !== null && key === currentKey) li.classList.add('highlight-chain');
+                            ul.appendChild(li);
+                        });
+                        cell.appendChild(ul);
+                    }
+                    if (chain.length > 1 && currentProbing === i) cell.classList.add('collision-cell');
+                } else {
+                    // 开放定址
+                    if (hashTable[i] !== null && hashTable[i] !== undefined) {
+                        const valDiv = document.createElement('div');
+                        valDiv.className = 'font-bold text-sm';
+                        valDiv.textContent = hashTable[i];
+                        cell.appendChild(valDiv);
+                        cell.classList.add('filled-cell');
+                    }
+                }
+
+                // 高亮
+                if (currentProbing === i) cell.classList.add('probing-cell');
+                if (hashMethod !== 'chaining' && currentProbing === i) cell.classList.add('current-cell');
+
+                grid.appendChild(cell);
+            }
+        }
+
+        function addLog(type, message, colorClass = 'text-gray-800') {
+            const container = document.getElementById('log-container');
+            const entry = document.createElement('div');
+            entry.className = `p-3 bg-white rounded border border-gray-100 shadow-sm ${colorClass} leading-relaxed animate-fade-in`;
+            entry.innerHTML = `<span class="inline-block px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-500 mb-1 border">${type}</span><br>${message}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateStatusBadge(text, classes) {
+            const badge = document.getElementById('status-badge');
+            badge.textContent = text; badge.className = `px-2 py-1 rounded text-xs font-bold ${classes}`;
+        }
+
+        // 加载预设
+        window.onload = function () {
+            resetHash();
+            // 预设一些插入值
+            setTimeout(() => {
+                addLog('提示', '可以插入关键字演示散列表操作。尝试: 26,36,41,24,15,68（它们会产生冲突展示线性探测/二次探测/拉链法）');
+            }, 300);
+        };
+    </script>
+    <style>
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

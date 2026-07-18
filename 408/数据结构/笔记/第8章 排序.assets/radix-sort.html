@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基数排序演示 (LSD)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Microsoft YaHei',sans-serif;background:#f0f4f8;min-height:100vh}
+
+/* Cards */
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);padding:16px}
+
+/* Digit cells */
+.digit-cell{display:inline-flex;align-items:center;justify-content:center;width:34px;height:38px;border:2px solid #d1d5db;margin:0 1px;border-radius:5px;font-family:'Courier New','Consolas',monospace;font-size:15px;font-weight:700;transition:all .35s cubic-bezier(.4,0,.2,1);background:#f9fafb;color:#374151;position:relative}
+.digit-cell.current-digit{background:#ef4444!important;color:#fff!important;border-color:#dc2626!important;box-shadow:0 0 0 3px rgba(239,68,68,.35);transform:scale(1.10);z-index:2}
+.digit-cell.next-target{box-shadow:0 0 0 3px rgba(245,158,11,.5);border-color:#f59e0b!important}
+.number-group{display:inline-flex;align-items:center;margin:0 8px 8px 0;position:relative;transition:all .35s ease;border-radius:6px;padding:2px}
+.number-group.distributed{opacity:.25;pointer-events:none}
+.number-group.active-element{background:#fef3c7;box-shadow:0 0 0 2px #f59e0b}
+.number-group.new-collected{animation:collectFlash .5s ease}
+
+/* Element chips in buckets */
+.elem-chip{display:inline-flex;align-items:center;padding:3px 10px;margin:2px 0;border-radius:6px;font-family:'Courier New','Consolas',monospace;font-size:13px;font-weight:600;background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;transition:all .3s ease;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)}
+.elem-chip.collecting-chip{background:#d1fae5;border-color:#6ee7b7;color:#065f46;animation:pulseChip .6s ease infinite}
+.chain-arrow{margin:0 4px;color:#9ca3af;font-size:12px;font-weight:700;user-select:none}
+
+/* Bucket row */
+.bucket-row{min-height:44px;border-bottom:1px solid #e5e7eb;padding:6px 12px;display:flex;align-items:center;flex-wrap:wrap;transition:all .35s ease;gap:2px}
+.bucket-row:last-child{border-bottom:none}
+.bucket-row:hover{background:#f9fafb}
+.bucket-label{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;font-size:13px;margin-right:12px;flex-shrink:0;background:#f3f4f6;color:#6b7280;transition:all .3s ease}
+.bucket-row.active-row{background:#fef3c7}
+.bucket-row.collected-row{opacity:.35}
+.bucket-label.active-label{background:#f59e0b;color:#fff;box-shadow:0 0 0 4px rgba(245,158,11,.3)}
+.bucket-label.target-label{background:#3b82f6;color:#fff}
+.bucket-empty-text{color:#d1d5db;font-size:12px;font-style:italic}
+
+/* Phase badge */
+.phase-badge{padding:4px 14px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap}
+.phase-idle{background:#e5e7eb;color:#6b7280}
+.phase-distributing{background:#dbeafe;color:#1e40af}
+.phase-collecting{background:#d1fae5;color:#065f46}
+.phase-pass-complete{background:#ede9fe;color:#6d28d9}
+.phase-done{background:#d1fae5;color:#065f46}
+
+/* Buttons */
+.btn{padding:8px 20px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .2s ease;white-space:nowrap}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:#3b82f6;color:#fff}
+.btn-primary:hover:not(:disabled){background:#2563eb}
+.btn-success{background:#10b981;color:#fff}
+.btn-success:hover:not(:disabled){background:#059669}
+.btn-warning{background:#f59e0b;color:#fff}
+.btn-warning:hover:not(:disabled){background:#d97706}
+.btn-gray{background:#6b7280;color:#fff}
+.btn-gray:hover:not(:disabled){background:#4b5563}
+.btn-red{background:#ef4444;color:#fff}
+.btn-red:hover:not(:disabled){background:#dc2626}
+
+/* Log */
+.log-entry{padding:6px 10px;border-bottom:1px solid #f3f4f6;font-size:13px;line-height:1.5;animation:slideIn .3s ease;word-break:break-all}
+.log-time{color:#9ca3af;font-size:11px;margin-right:4px}
+.log-highlight{background:#fef3c7;font-weight:600}
+.log-pass-header{background:#eff6ff;color:#1e40af;font-weight:700;font-size:14px;padding:8px 10px}
+
+/* Pass dots */
+.pass-dot{width:12px;height:12px;border-radius:50%;background:#d1d5db;transition:all .3s ease}
+.pass-dot.active{background:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.3);animation:pulseDot .8s ease infinite}
+.pass-dot.done{background:#10b981}
+
+/* Keyframes */
+@keyframes popIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 4px rgba(59,130,246,.3)}50%{box-shadow:0 0 0 8px rgba(59,130,246,.1)}}
+@keyframes pulseChip{0%,100%{opacity:1}50%{opacity:.55}}
+@keyframes collectFlash{0%{background:#bbf7d0}100%{background:transparent}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes targetGlow{0%,100%{box-shadow:0 0 0 2px rgba(245,158,11,.4)}50%{box-shadow:0 0 0 6px rgba(245,158,11,.1)}}
+
+/* Scrollbar */
+.scrollbar-thin::-webkit-scrollbar{width:6px}
+.scrollbar-thin::-webkit-scrollbar-track{background:#f1f5f9;border-radius:3px}
+.scrollbar-thin::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+
+/* Bucket grid */
+.bucket-grid{border:2px solid #e5e7eb;border-radius:8px;overflow:hidden;background:#fff}
+
+/* Distribution arrow overlay */
+.dist-arrow{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);color:#f59e0b;font-size:16px;font-weight:700;animation:bounce .5s ease infinite;z-index:5;pointer-events:none}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+
+/* Section title */
+.section-title{font-size:13px;font-weight:700;color:#6b7280;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+
+/* Status indicator */
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.status-idle{background:#d1d5db}
+.status-running{background:#f59e0b;animation:pulseDot .8s ease infinite}
+.status-done{background:#10b981}
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+<div class="max-w-7xl mx-auto space-y-4">
+
+  <!-- Control Bar -->
+  <div class="card">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+        <span class="text-2xl">🔢</span> 基数排序演示 (LSD)
+      </h1>
+      <div class="flex items-center gap-2 flex-wrap">
+        <input id="numberInput" type="text"
+               value="278,109,063,930,589,184,505,269,008,083"
+               class="px-3 py-2 border border-gray-300 rounded-lg text-sm w-72 font-mono focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+               placeholder="输入数字，逗号分隔" />
+        <button id="btnInit" class="btn btn-primary">初始化/重置</button>
+        <button id="btnStep" class="btn btn-success" disabled>单步执行</button>
+        <button id="btnPlay" class="btn btn-warning" disabled>▶ 自动播放</button>
+        <select id="speedSelect" class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+          <option value="300">快速 (300ms)</option>
+          <option value="600" selected>正常 (600ms)</option>
+          <option value="1000">慢速 (1000ms)</option>
+          <option value="1500">极慢 (1500ms)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Status Row -->
+    <div class="flex items-center gap-4 mt-3 flex-wrap text-sm">
+      <div class="flex items-center gap-2">
+        <span class="status-dot status-idle" id="statusDot"></span>
+        <span id="phaseBadge" class="phase-badge phase-idle">等待开始</span>
+      </div>
+      <div class="flex items-center gap-1 text-gray-500">
+        <span>当前处理位数：</span>
+        <span id="digitLabel" class="font-bold text-blue-600">-</span>
+      </div>
+      <div class="flex items-center gap-1 text-gray-500">
+        <span>当前阶段：</span>
+        <span id="stageLabel" class="font-bold text-orange-600">-</span>
+      </div>
+      <!-- Pass progress dots -->
+      <div class="flex items-center gap-2 ml-auto" id="passDotsContainer">
+        <span class="text-xs text-gray-400">个位</span><span class="pass-dot" data-pass="0"></span>
+        <span class="text-xs text-gray-400">十位</span><span class="pass-dot" data-pass="1"></span>
+        <span class="text-xs text-gray-400">百位</span><span class="pass-dot" data-pass="2"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex gap-4 flex-col lg:flex-row">
+
+    <!-- Left: Visualization -->
+    <div class="flex-1 space-y-4 min-w-0">
+
+      <!-- Current Array Display -->
+      <div class="card">
+        <h3 class="section-title">当前数组</h3>
+        <div id="arrayDisplay" class="flex flex-wrap items-center min-h-[70px] relative">
+          <span class="text-gray-400 text-sm">请输入数字并点击"初始化/重置"</span>
+        </div>
+        <div id="distIndicator" class="hidden text-center text-xs text-orange-600 mt-2 font-bold">
+          ↓ 即将分配至对应桶 ↓
+        </div>
+      </div>
+
+      <!-- Phase Description -->
+      <div id="phaseDescription" class="card bg-blue-50 border border-blue-200 hidden">
+        <div class="flex items-start gap-2">
+          <span class="text-blue-500 text-lg">ℹ️</span>
+          <div>
+            <p id="phaseDescText" class="text-sm text-blue-800 font-medium"></p>
+            <p id="phaseDescDetail" class="text-xs text-blue-600 mt-1"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bucket Grid -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="section-title mb-0">桶分布 (桶 0 — 9)</h3>
+          <span id="bucketCountBadge" class="text-xs text-gray-400">共0个元素</span>
+        </div>
+        <div class="bucket-grid" id="bucketGrid">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+
+      <!-- Collection Result -->
+      <div id="resultCard" class="card hidden">
+        <h3 class="section-title">收集结果（本轮排序后数组）</h3>
+        <div id="resultDisplay" class="flex flex-wrap items-center min-h-[48px]"></div>
+      </div>
+
+      <!-- Legend -->
+      <div class="card">
+        <h3 class="section-title">图例说明</h3>
+        <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-600">
+          <div class="flex items-center gap-1">
+            <span class="digit-cell current-digit inline-flex" style="width:22px;height:22px;font-size:10px"></span>
+            <span>当前处理位（红色高亮）</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="digit-cell inline-flex" style="width:22px;height:22px;font-size:10px;background:#f9fafb"></span>
+            <span>普通位</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="elem-chip" style="font-size:11px;padding:2px 8px">元素</span>
+            <span>桶中元素</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-orange-500 font-bold">→</span>
+            <span>链表指针（桶内链式连接）</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="text-green-500 font-bold text-xs px-1">+收集</span>
+            <span>正被收集的元素</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span style="opacity:.3">灰色</span>
+            <span>已处理/已收集</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Log Sidebar -->
+    <div class="lg:w-80 w-full flex-shrink-0">
+      <div class="card h-full flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="section-title mb-0">执行日志</h3>
+          <span id="logBadge" class="text-xs px-3 py-1 rounded-full bg-gray-200 text-gray-600">等待中</span>
+        </div>
+        <div id="logContainer" class="flex-1 max-h-[620px] overflow-y-auto scrollbar-thin border border-gray-100 rounded-lg bg-gray-50/50">
+          <div class="log-entry text-gray-400 text-sm">等待开始执行...</div>
+        </div>
+        <button id="btnClearLog" class="btn btn-gray text-xs mt-2 w-full">清空日志</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  /* ===================== Constants ===================== */
+  var PASS_NAMES = ['个位','十位','百位','千位','万位'];
+  var STATE = {IDLE:0,DISTRIBUTING:1,COLLECTING:2,PASS_COMPLETE:3,DONE:4};
+  var STATE_LABEL = ['等待开始','分配中','收集中','本轮完成','排序完成'];
+  var STATE_CSS  = ['phase-idle','phase-distributing','phase-collecting','phase-pass-complete','phase-done'];
+
+  /* ===================== DOM Refs ===================== */
+  function $(id){return document.getElementById(id)}
+  var el = {
+    numberInput:$('numberInput'),btnInit:$('btnInit'),btnStep:$('btnStep'),btnPlay:$('btnPlay'),
+    speedSelect:$('speedSelect'),phaseBadge:$('phaseBadge'),digitLabel:$('digitLabel'),
+    stageLabel:$('stageLabel'),arrayDisplay:$('arrayDisplay'),bucketGrid:$('bucketGrid'),
+    bucketCountBadge:$('bucketCountBadge'),resultCard:$('resultCard'),
+    resultDisplay:$('resultDisplay'),logContainer:$('logContainer'),logBadge:$('logBadge'),
+    phaseDescription:$('phaseDescription'),phaseDescText:$('phaseDescText'),
+    phaseDescDetail:$('phaseDescDetail'),distIndicator:$('distIndicator'),
+    passDotsContainer:$('passDotsContainer'),statusDot:$('statusDot'),btnClearLog:$('btnClearLog')
+  };
+
+  /* ===================== App State ===================== */
+  var app = {
+    phase: STATE.IDLE,
+    numbers: [],          // original integers
+    padded: [],           // zero-padded strings
+    digitCount: 0,        // 3 for 3-digit numbers
+    currentPass: 0,       // 0=个位, 1=十位, 2=百位
+    currentElemIdx: 0,    // index into workArray for distribution
+    currentBktIdx: 0,     // bucket index 0-9 for collection
+    buckets: [],          // 10 arrays of strings
+    workArray: [],        // current array being worked on
+    collectedArray: [],   // being built during collection
+    distFlags: [],        // boolean per element: distributed?
+    collFlags: [],        // boolean[10]: bucket collected?
+    isPlaying: false,
+    playTimer: null,
+    passResults: [],       // pass indices that have completed
+  };
+
+  /* ===================== Log ===================== */
+  function addLog(msg, cls) {
+    var now = new Date();
+    var t = now.toLocaleTimeString('zh-CN',{hour12:false});
+    var div = document.createElement('div');
+    div.className = 'log-entry' + (cls ? ' '+cls : '');
+    div.innerHTML = '<span class="log-time">['+t+']</span> '+msg;
+    el.logContainer.appendChild(div);
+    el.logContainer.scrollTop = el.logContainer.scrollHeight;
+  }
+
+  function clearLog() {
+    el.logContainer.innerHTML = '';
+  }
+
+  /* ===================== UI Update ===================== */
+  function updateUI() {
+    var p = app.phase;
+    el.phaseBadge.textContent = STATE_LABEL[p];
+    el.phaseBadge.className = 'phase-badge ' + STATE_CSS[p];
+
+    // Status dot
+    el.statusDot.className = 'status-dot';
+    if (p === STATE.IDLE) el.statusDot.classList.add('status-idle');
+    else if (p === STATE.DONE) el.statusDot.classList.add('status-done');
+    else el.statusDot.classList.add('status-running');
+
+    // Digit label
+    if (p === STATE.DISTRIBUTING || p === STATE.COLLECTING || p === STATE.PASS_COMPLETE) {
+      el.digitLabel.textContent = PASS_NAMES[app.currentPass] + '位';
+    } else if (p === STATE.DONE) {
+      el.digitLabel.textContent = '已完成';
+    } else {
+      el.digitLabel.textContent = '-';
+    }
+
+    // Stage label
+    if (p === STATE.DISTRIBUTING) el.stageLabel.textContent = '分配';
+    else if (p === STATE.COLLECTING) el.stageLabel.textContent = '收集';
+    else if (p === STATE.PASS_COMPLETE) el.stageLabel.textContent = '本轮结束';
+    else if (p === STATE.DONE) el.stageLabel.textContent = '完成';
+    else el.stageLabel.textContent = '-';
+
+    // Pass dots
+    var dots = el.passDotsContainer.querySelectorAll('.pass-dot');
+    dots.forEach(function(dot,i){
+      if (i >= app.digitCount) { dot.style.display='none'; return; }
+      dot.style.display='';
+      dot.className='pass-dot';
+      if (app.passResults.indexOf(i) !== -1) dot.classList.add('done');
+      if (i === app.currentPass && p !== STATE.IDLE && p !== STATE.DONE) dot.classList.add('active');
+    });
+
+    // Buttons
+    el.btnStep.disabled = (app.isPlaying || p === STATE.DONE);
+    el.btnPlay.disabled = (app.digitCount === 0 || p === STATE.DONE);
+    el.btnPlay.textContent = app.isPlaying ? '⏸ 暂停' : '▶ 自动播放';
+
+    // Log badge
+    var badgeTexts = ['等待中','分配中','收集中','本轮完成','完成'];
+    var badgeColors = ['bg-gray-200 text-gray-600','bg-blue-100 text-blue-700','bg-green-100 text-green-700','bg-purple-100 text-purple-700','bg-green-100 text-green-700'];
+    el.logBadge.textContent = badgeTexts[p];
+    el.logBadge.className = 'text-xs px-3 py-1 rounded-full ' + badgeColors[p];
+
+    // Distribution indicator
+    if (p === STATE.DISTRIBUTING && app.currentElemIdx < app.workArray.length) {
+      el.distIndicator.classList.remove('hidden');
+      var targetDigit = getTargetDigit(app.workArray[app.currentElemIdx]);
+      el.distIndicator.textContent = '↓ 正在将 ' + app.workArray[app.currentElemIdx] + ' 分配到桶 ' + targetDigit + ' ↓';
+    } else {
+      el.distIndicator.classList.add('hidden');
+    }
+  }
+
+  function getTargetDigit(paddedStr) {
+    var pos = app.digitCount - 1 - app.currentPass;
+    return parseInt(paddedStr[pos], 10);
+  }
+
+  function getDigitPos() {
+    return app.digitCount - 1 - app.currentPass;
+  }
+
+  /* ===================== Rendering ===================== */
+  function renderAll() {
+    renderArray();
+    renderBuckets();
+    renderResult();
+    renderPhaseDesc();
+    updateUI();
+  }
+
+  function renderArray() {
+    var container = el.arrayDisplay;
+    container.innerHTML = '';
+
+    if (app.digitCount === 0) {
+      container.innerHTML = '<span class="text-gray-400 text-sm">请输入数字并点击"初始化/重置"</span>';
+      return;
+    }
+
+    var digitPos = getDigitPos();
+
+    for (var i = 0; i < app.workArray.length; i++) {
+      var str = app.workArray[i];
+      var isDistributed = app.distFlags[i] === true;
+      var isActive = (app.phase === STATE.DISTRIBUTING && i === app.currentElemIdx);
+
+      var group = document.createElement('span');
+      group.className = 'number-group';
+      if (isDistributed) group.classList.add('distributed');
+      if (isActive) group.classList.add('active-element');
+
+      // Build digit cells
+      for (var d = 0; d < str.length; d++) {
+        var cell = document.createElement('span');
+        cell.className = 'digit-cell';
+        cell.textContent = str[d];
+        if (d === digitPos && app.phase !== STATE.IDLE && app.phase !== STATE.DONE) {
+          cell.classList.add('current-digit');
+        }
+        group.appendChild(cell);
+      }
+
+      // Show arrow for active element during distribution
+      if (isActive) {
+        var arrow = document.createElement('span');
+        arrow.className = 'dist-arrow';
+        arrow.textContent = '▼';
+        group.appendChild(arrow);
+      }
+
+      container.appendChild(group);
+    }
+  }
+
+  function renderBuckets() {
+    var grid = el.bucketGrid;
+    grid.innerHTML = '';
+    var totalElements = 0;
+
+    for (var b = 0; b < 10; b++) {
+      var row = document.createElement('div');
+      row.className = 'bucket-row';
+      var isCollected = app.collFlags[b] === true;
+      var isActiveBkt = (app.phase === STATE.COLLECTING && b === app.currentBktIdx);
+      var isTargetBkt = (app.phase === STATE.DISTRIBUTING && app.currentElemIdx < app.workArray.length && b === getTargetDigit(app.workArray[app.currentElemIdx]));
+
+      if (isActiveBkt) row.classList.add('active-row');
+      if (isCollected) row.classList.add('collected-row');
+
+      // Label
+      var label = document.createElement('span');
+      label.className = 'bucket-label';
+      if (isActiveBkt) label.classList.add('active-label');
+      else if (isTargetBkt) label.classList.add('target-label');
+      label.textContent = b;
+      row.appendChild(label);
+
+      // Contents
+      var contents = app.buckets[b] || [];
+      totalElements += contents.length;
+
+      if (contents.length === 0) {
+        var empty = document.createElement('span');
+        empty.className = 'bucket-empty-text';
+        empty.textContent = '空';
+        row.appendChild(empty);
+      } else {
+        for (var i = 0; i < contents.length; i++) {
+          // Arrow between elements (chain visualization)
+          if (i > 0) {
+            var arr = document.createElement('span');
+            arr.className = 'chain-arrow';
+            arr.textContent = '→';
+            row.appendChild(arr);
+          }
+          var chip = document.createElement('span');
+          chip.className = 'elem-chip';
+          if (isActiveBkt) chip.classList.add('collecting-chip');
+          chip.textContent = contents[i];
+          row.appendChild(chip);
+        }
+      }
+
+      grid.appendChild(row);
+    }
+
+    el.bucketCountBadge.textContent = '共' + totalElements + '个元素';
+  }
+
+  function renderResult() {
+    if (app.collectedArray.length > 0 || app.phase === STATE.PASS_COMPLETE || app.phase === STATE.DONE) {
+      el.resultCard.classList.remove('hidden');
+    } else {
+      el.resultCard.classList.add('hidden');
+      return;
+    }
+
+    var display = el.resultDisplay;
+    display.innerHTML = '';
+
+    var arr = (app.phase === STATE.PASS_COMPLETE || app.phase === STATE.DONE) ? app.workArray : app.collectedArray;
+
+    for (var i = 0; i < arr.length; i++) {
+      var str = arr[i];
+      var group = document.createElement('span');
+      group.className = 'number-group';
+
+      // If we just collected this element (during collecting), flash it
+      if (app.phase === STATE.COLLECTING && i >= app.collectedArray.length - (app.buckets[app.currentBktIdx - 1] || []).length) {
+        group.classList.add('new-collected');
+      }
+
+      for (var d = 0; d < str.length; d++) {
+        var cell = document.createElement('span');
+        cell.className = 'digit-cell';
+        cell.textContent = str[d];
+        group.appendChild(cell);
+      }
+      display.appendChild(group);
+    }
+
+    // Show arrow between elements in collected result to indicate ordering
+    // Add small separator arrows
+    if (arr.length > 1) {
+      var children = display.children;
+      for (var j = 0; j < children.length; j++) {
+        if (j > 0) {
+          var spacer = document.createElement('span');
+          spacer.className = 'chain-arrow mx-1';
+          spacer.textContent = '→';
+          display.insertBefore(spacer, children[j]);
+          j++; // skip the spacer we just added
+        }
+      }
+    }
+  }
+
+  function renderPhaseDesc() {
+    if (app.phase === STATE.IDLE || app.phase === STATE.DONE) {
+      el.phaseDescription.classList.add('hidden');
+      return;
+    }
+    el.phaseDescription.classList.remove('hidden');
+
+    var passName = PASS_NAMES[app.currentPass];
+
+    if (app.phase === STATE.DISTRIBUTING) {
+      el.phaseDescText.textContent = '分配阶段 — 处理 ' + passName + '位';
+      el.phaseDescDetail.textContent = '依次取出数组中每个元素，根据其' + passName + '位数字（红色高亮位），放入对应的桶中（桶0-9）。' + (app.currentElemIdx < app.workArray.length ? '当前正在分配第 ' + (app.currentElemIdx + 1) + '/' + app.workArray.length + ' 个元素。' : '所有元素已分配完毕。');
+    } else if (app.phase === STATE.COLLECTING) {
+      el.phaseDescText.textContent = '收集阶段 — 从桶0到桶9依次收集';
+      el.phaseDescDetail.textContent = '按桶编号从小到大（0→9），将每个桶中的元素按先进先出顺序取出，连接成新的数组。当前正收集桶 ' + app.currentBktIdx + '。';
+    } else if (app.phase === STATE.PASS_COMPLETE) {
+      el.phaseDescText.textContent = '本轮完成 — ' + passName + '位排序结束';
+      el.phaseDescDetail.textContent = '经过分配和收集后，数组已按' + passName + '位有序。结果显示在下方"收集结果"区域中。';
+    }
+  }
+
+  /* ===================== Core Step Logic ===================== */
+  function initApp() {
+    stopPlay();
+    var raw = el.numberInput.value.trim();
+    if (!raw) { addLog('错误：输入为空','log-highlight'); return; }
+
+    var parts = raw.split(/[,，\s]+/).filter(function(p){return p.trim()!==''});
+    var nums = [];
+    for (var i = 0; i < parts.length; i++) {
+      var n = parseInt(parts[i], 10);
+      if (isNaN(n)) { addLog('错误：无法解析 "'+parts[i]+'"','log-highlight'); return; }
+      nums.push(n);
+    }
+    if (nums.length === 0) { addLog('错误：没有有效数字','log-highlight'); return; }
+
+    var maxNum = Math.max.apply(null, nums);
+    var digitCount = Math.max(1, String(maxNum).length);
+    var padded = nums.map(function(n){return String(n).padStart(digitCount,'0')});
+
+    app.phase = STATE.IDLE;
+    app.numbers = nums;
+    app.padded = padded;
+    app.digitCount = digitCount;
+    app.currentPass = 0;
+    app.currentElemIdx = 0;
+    app.currentBktIdx = 0;
+    app.buckets = Array.from({length:10},function(){return[]});
+    app.workArray = padded.slice();
+    app.collectedArray = [];
+    app.distFlags = [];
+    app.collFlags = Array.from({length:10},function(){return false});
+    app.isPlaying = false;
+    app.passResults = [];
+
+    clearLog();
+    addLog('初始化完成：' + padded.length + ' 个数字，' + digitCount + ' 位数');
+    addLog('原始数组：' + padded.join(', '));
+    addLog('将依次处理：' + PASS_NAMES.slice(0,digitCount).join(' → '));
+    addLog('━━━━━━━━━━━━━━━━━━━━');
+
+    el.resultCard.classList.add('hidden');
+    el.resultDisplay.innerHTML = '';
+    el.phaseDescription.classList.add('hidden');
+    el.distIndicator.classList.add('hidden');
+
+    renderAll();
+  }
+
+  function startPass(passIdx) {
+    app.currentPass = passIdx;
+    app.buckets = Array.from({length:10},function(){return[]});
+    app.collectedArray = [];
+    app.distFlags = app.workArray.map(function(){return false});
+    app.collFlags = Array.from({length:10},function(){return false});
+    app.currentElemIdx = 0;
+    app.currentBktIdx = 0;
+
+    addLog('━━━ 开始处理 ' + PASS_NAMES[passIdx] + '位 ━━━','log-pass-header');
+    addLog('当前数组：' + app.workArray.join(', '));
+
+    app.phase = STATE.DISTRIBUTING;
+
+    // Immediately distribute first element so user sees action
+    distributeOne();
+    renderAll();
+  }
+
+  function distributeOne() {
+    if (app.currentElemIdx >= app.workArray.length) {
+      // All elements already distributed
+      app.phase = STATE.COLLECTING;
+      app.currentBktIdx = 0;
+      addLog('── 分配完成，进入收集阶段 ──');
+      updateBucketsSummary();
+      renderAll();
+      return;
+    }
+
+    var elem = app.workArray[app.currentElemIdx];
+    var digitPos = app.digitCount - 1 - app.currentPass;
+    var digit = parseInt(elem[digitPos], 10);
+
+    app.buckets[digit].push(elem);
+    app.distFlags[app.currentElemIdx] = true;
+
+    var posDesc = PASS_NAMES[app.currentPass];
+    addLog('分配 [' + (app.currentElemIdx+1) + '/' + app.workArray.length + ']：<b>' + elem + '</b> → 桶<b>' + digit + '</b>（' + posDesc + '位=' + elem[digitPos] + '）');
+
+    app.currentElemIdx++;
+
+    if (app.currentElemIdx >= app.workArray.length) {
+      app.phase = STATE.COLLECTING;
+      app.currentBktIdx = 0;
+      addLog('── 分配完成，进入收集阶段 ──');
+      updateBucketsSummary();
+    }
+
+    renderAll();
+  }
+
+  function updateBucketsSummary() {
+    for (var b = 0; b < 10; b++) {
+      if (app.buckets[b].length > 0) {
+        addLog('  桶' + b + '：[' + app.buckets[b].join(', ') + ']');
+      }
+    }
+  }
+
+  function collectOne() {
+    if (app.currentBktIdx >= 10) {
+      // All buckets collected
+      app.workArray = app.collectedArray.slice();
+      app.passResults.push(app.currentPass);
+      app.phase = STATE.PASS_COMPLETE;
+      addLog('── 收集完成 ──','log-highlight');
+      addLog('本轮结果：<b>' + app.collectedArray.join(', ') + '</b>','log-highlight');
+      renderAll();
+      return;
+    }
+
+    var bktIdx = app.currentBktIdx;
+    var items = app.buckets[bktIdx];
+
+    if (items.length > 0) {
+      for (var i = 0; i < items.length; i++) {
+        app.collectedArray.push(items[i]);
+      }
+      addLog('收集桶<b>' + bktIdx + '</b>：[' + items.join(', ') + '] → 加入结果（当前结果长度：' + app.collectedArray.length + '）');
+    } else {
+      addLog('收集桶<b>' + bktIdx + '</b>：空，跳过');
+    }
+
+    app.collFlags[bktIdx] = true;
+    app.currentBktIdx++;
+
+    if (app.currentBktIdx >= 10) {
+      app.workArray = app.collectedArray.slice();
+      app.passResults.push(app.currentPass);
+      app.phase = STATE.PASS_COMPLETE;
+      addLog('── 收集完成 ──','log-highlight');
+      addLog('本轮结果：<b>' + app.collectedArray.join(', ') + '</b>','log-highlight');
+    }
+
+    renderAll();
+  }
+
+  /* ===================== Public Step ===================== */
+  function step() {
+    if (app.isPlaying) return;
+
+    switch (app.phase) {
+      case STATE.IDLE:
+        if (app.digitCount === 0) {
+          addLog('请先点击"初始化/重置"','log-highlight');
+          return;
+        }
+        startPass(0);
+        break;
+
+      case STATE.DISTRIBUTING:
+        distributeOne();
+        break;
+
+      case STATE.COLLECTING:
+        collectOne();
+        break;
+
+      case STATE.PASS_COMPLETE:
+        var nextPass = app.currentPass + 1;
+        if (nextPass < app.digitCount) {
+          startPass(nextPass);
+        } else {
+          app.phase = STATE.DONE;
+          app.passResults.push(app.currentPass); // mark last pass done too
+          addLog('══════ 排序完成！══════','log-highlight');
+          addLog('最终结果：<b>' + app.workArray.join(', ') + '</b>','log-highlight');
+          // Convert back to integers for final display
+          var finalInts = app.workArray.map(function(s){return parseInt(s,10)});
+          addLog('整数形式：<b>' + finalInts.join(', ') + '</b>','log-highlight');
+          updateUI();
+          renderAll();
+        }
+        break;
+
+      case STATE.DONE:
+        // Reset for re-run
+        initApp();
+        if (app.digitCount > 0) startPass(0);
+        break;
+    }
+  }
+
+  /* ===================== Auto-play ===================== */
+  function togglePlay() {
+    if (app.isPlaying) {
+      stopPlay();
+    } else {
+      startPlay();
+    }
+  }
+
+  function startPlay() {
+    if (app.phase === STATE.DONE) {
+      // Reset and restart
+      initApp();
+      if (app.digitCount === 0) return;
+    }
+    if (app.phase === STATE.IDLE) {
+      // Do first step to get started
+      step();
+    }
+    app.isPlaying = true;
+    var speed = parseInt(el.speedSelect.value, 10) || 600;
+    updateUI();
+
+    app.playTimer = setInterval(function(){
+      if (app.phase === STATE.DONE) {
+        stopPlay();
+        return;
+      }
+      step();
+    }, speed);
+  }
+
+  function stopPlay() {
+    app.isPlaying = false;
+    if (app.playTimer) {
+      clearInterval(app.playTimer);
+      app.playTimer = null;
+    }
+    updateUI();
+  }
+
+  /* ===================== Event Bindings ===================== */
+  el.btnInit.addEventListener('click', function(){
+    stopPlay();
+    initApp();
+  });
+
+  el.btnStep.addEventListener('click', step);
+
+  el.btnPlay.addEventListener('click', togglePlay);
+
+  el.btnClearLog.addEventListener('click', function(){
+    clearLog();
+    addLog('日志已清空');
+  });
+
+  el.speedSelect.addEventListener('change', function(){
+    if (app.isPlaying) {
+      // Restart timer with new speed
+      stopPlay();
+      var speed = parseInt(el.speedSelect.value, 10) || 600;
+      app.isPlaying = true;
+      app.playTimer = setInterval(function(){
+        if (app.phase === STATE.DONE) { stopPlay(); return; }
+        step();
+      }, speed);
+      updateUI();
+    }
+  });
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function(e){
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+    if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      step();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      togglePlay();
+    }
+  });
+
+  /* ===================== Initial Render ===================== */
+  // Pre-generate empty bucket rows
+  (function initBucketGrid() {
+    var grid = el.bucketGrid;
+    for (var b = 0; b < 10; b++) {
+      var row = document.createElement('div');
+      row.className = 'bucket-row';
+      var label = document.createElement('span');
+      label.className = 'bucket-label';
+      label.textContent = b;
+      row.appendChild(label);
+      var empty = document.createElement('span');
+      empty.className = 'bucket-empty-text';
+      empty.textContent = '空';
+      row.appendChild(empty);
+      grid.appendChild(row);
+    }
+  })();
+
+  // Auto-init on load
+  initApp();
+
+  console.log('基数排序演示 (LSD) 已就绪');
+  console.log('操作提示：点击"单步执行"逐步演示，或点击"自动播放"自动演示');
+  console.log('键盘快捷键：空格键 = 单步执行，回车键 = 播放/暂停');
+})();
+</script>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>
