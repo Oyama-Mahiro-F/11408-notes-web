@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二叉树遍历演示 - 408考研</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f4f8; min-height: 100vh; }
+.tree-container { position: relative; width: 100%; height: 440px; background: #fafbfc;
+  border-radius: 12px; border: 2px solid #e2e8f0; overflow: hidden; }
+.tree-container svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.tree-node { position: absolute; width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-weight: bold;
+  font-size: 18px; transition: all 0.45s ease; z-index: 2; cursor: default;
+  border: 3px solid #94a3b8; background: #f1f5f9; color: #475569;
+  transform: translate(-50%, -50%); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+.tree-node.current { background: #dbeafe; border-color: #3b82f6; color: #1e40af;
+  box-shadow: 0 0 18px rgba(59,130,246,0.5); transform: translate(-50%, -50%) scale(1.12); z-index: 5; }
+.tree-node.visited { background: #dcfce7; border-color: #22c55e; color: #166534; }
+.tree-node.in-stack { background: #fef9c3; border-color: #eab308; color: #854d0e; }
+.tree-node.unvisited { background: #f1f5f9; border-color: #cbd5e1; color: #94a3b8; }
+.edge-line { stroke: #94a3b8; stroke-width: 2.5; fill: none; transition: stroke 0.3s; }
+.edge-line.highlight { stroke: #3b82f6; stroke-width: 3.5; }
+.stack-item { padding: 5px 12px; background: #fef9c3; border: 1px solid #eab308;
+  border-radius: 6px; margin: 2px 0; font-weight: 600; font-size: 14px;
+  display: inline-block; transition: all 0.3s; }
+.queue-item { padding: 5px 12px; background: #e0e7ff; border: 1px solid #6366f1;
+  border-radius: 6px; margin: 2px 3px; font-weight: 600; font-size: 14px;
+  display: inline-block; transition: all 0.3s; }
+.output-item { display: inline-block; width: 32px; height: 32px; border-radius: 6px;
+  background: #dcfce7; border: 2px solid #22c55e; text-align: center; line-height: 28px;
+  font-weight: bold; margin: 2px; font-size: 15px; color: #166534; animation: popIn 0.3s ease; }
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.control-btn { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px;
+  cursor: pointer; transition: all 0.2s; border: 2px solid transparent; white-space: nowrap; }
+.control-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.control-btn.active { box-shadow: 0 0 0 3px rgba(59,130,246,0.4); }
+.log-entry { padding: 3px 8px; font-size: 12px; border-left: 3px solid #6366f1;
+  margin: 2px 0; background: #f8fafc; border-radius: 0 4px 4px 0; animation: slideIn 0.3s ease; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+.mode-select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 8px;
+  background: white; font-size: 13px; font-weight: 600; cursor: pointer; }
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="bg-white rounded-xl shadow-md p-4 mb-3">
+    <h1 class="text-2xl font-bold text-gray-800 text-center">二叉树遍历演示</h1>
+    <p class="text-center text-gray-500 text-sm mt-1">408考研 数据结构 · 第5章 树与二叉树 · 先序/中序/后序/层序遍历</p>
+  </div>
+
+  <!-- Control Bar -->
+  <div class="bg-white rounded-xl shadow-md p-3 mb-3">
+    <div class="flex flex-wrap items-center gap-2">
+      <label class="text-sm font-semibold text-gray-700">遍历方式：</label>
+      <select id="modeSelect" class="mode-select" onchange="changeMode()">
+        <option value="pre-rec">先序遍历 (递归)</option>
+        <option value="pre-nonrec">先序遍历 (非递归·栈)</option>
+        <option value="in-rec">中序遍历 (递归)</option>
+        <option value="in-nonrec">中序遍历 (非递归·栈)</option>
+        <option value="post-rec">后序遍历 (递归)</option>
+        <option value="post-nonrec">后序遍历 (非递归·栈)</option>
+        <option value="level">层序遍历 (队列)</option>
+      </select>
+      <button onclick="resetTraversal()" class="control-btn bg-gray-500 text-white hover:bg-gray-600">重置</button>
+      <button id="stepBtn" onclick="nextStep()" class="control-btn bg-blue-600 text-white hover:bg-blue-700">下一步</button>
+      <button id="autoBtn" onclick="toggleAuto()" class="control-btn bg-green-600 text-white hover:bg-green-700">自动播放</button>
+      <button onclick="jumpEnd()" class="control-btn bg-purple-600 text-white hover:bg-purple-700">跳至完成</button>
+      <label class="text-sm text-gray-600 ml-2">速度：</label>
+      <input id="speedSlider" type="range" min="200" max="2000" value="600" step="100" style="width:90px; accent-color:#3b82f6;">
+      <span id="speedLabel" class="text-xs text-gray-500">600ms</span>
+      <span class="text-xs text-gray-400 ml-auto">提示：先序(NLR) 中序(LNR) 后序(LRN) 层序(逐层)</span>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="flex flex-wrap gap-3 mb-2 text-xs text-gray-500 px-2">
+    <span><span class="inline-block w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500 align-middle mr-1"></span> 当前访问节点</span>
+    <span><span class="inline-block w-4 h-4 rounded-full bg-green-100 border-2 border-green-500 align-middle mr-1"></span> 已访问节点</span>
+    <span><span class="inline-block w-4 h-4 rounded-full bg-yellow-100 border-2 border-yellow-500 align-middle mr-1"></span> 栈/队列中节点</span>
+    <span><span class="inline-block w-4 h-4 rounded-full bg-gray-100 border-2 border-gray-300 align-middle mr-1"></span> 未访问节点</span>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex flex-col lg:flex-row gap-3">
+    <!-- Left: Tree -->
+    <div class="flex-1 bg-white rounded-xl shadow-md p-3">
+      <h3 class="text-md font-bold text-gray-700 mb-2">二叉树</h3>
+      <div id="treeVis" class="tree-container"></div>
+    </div>
+
+    <!-- Right: Sidebar -->
+    <div class="w-full lg:w-80 flex flex-col gap-3">
+      <!-- Stack/Queue -->
+      <div class="bg-white rounded-xl shadow-md p-3">
+        <h3 class="text-md font-bold text-gray-700 mb-2" id="stackQueueTitle">调用栈 (递归)</h3>
+        <div id="stackQueueDisplay" class="min-h-[60px] flex flex-wrap items-start gap-1 p-2 bg-gray-50 rounded-lg"></div>
+      </div>
+
+      <!-- Output -->
+      <div class="bg-white rounded-xl shadow-md p-3">
+        <h3 class="text-md font-bold text-gray-700 mb-2">访问序列</h3>
+        <div id="outputDisplay" class="min-h-[50px] flex flex-wrap gap-1 p-2 bg-gray-50 rounded-lg">
+          <span class="text-gray-400 text-sm">等待遍历开始...</span>
+        </div>
+        <div class="text-xs text-gray-500 mt-1"><span id="outputText"></span></div>
+      </div>
+
+      <!-- Current Step Info -->
+      <div class="bg-white rounded-xl shadow-md p-3" id="stepInfo">
+        <h3 class="text-md font-bold text-gray-700 mb-1">当前操作</h3>
+        <p id="stepDesc" class="text-sm text-gray-600">请选择遍历方式并点击"下一步"</p>
+      </div>
+
+      <!-- Log -->
+      <div class="bg-white rounded-xl shadow-md p-3 flex-1">
+        <h3 class="text-md font-bold text-gray-700 mb-2">执行日志</h3>
+        <div id="logPanel" class="max-h-32 overflow-y-auto text-sm"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== TREE DATA ====================
+const treeNodes = {
+  'A': { x: 350, y: 40,  left: 'B', right: 'C' },
+  'B': { x: 175, y: 150, left: 'D', right: 'E' },
+  'C': { x: 525, y: 150, left: 'F', right: 'G' },
+  'D': { x: 70,  y: 290, left: null, right: null },
+  'E': { x: 280, y: 290, left: null, right: null },
+  'F': { x: 420, y: 290, left: null, right: null },
+  'G': { x: 630, y: 290, left: null, right: null },
+};
+
+const treeEdges = [
+  { from: 'A', to: 'B', left: true },
+  { from: 'A', to: 'C', left: false },
+  { from: 'B', to: 'D', left: true },
+  { from: 'B', to: 'E', left: false },
+  { from: 'C', to: 'F', left: true },
+  { from: 'C', to: 'G', left: false },
+];
+
+const inOrderAll = ['D','B','E','A','F','C','G'];
+const preOrderAll = ['A','B','D','E','C','F','G'];
+const postOrderAll = ['D','E','B','F','G','C','A'];
+const levelOrderAll = ['A','B','C','D','E','F','G'];
+
+// ==================== GLOBAL STATE ====================
+let currentMode = 'pre-rec';
+let snapshots = [];
+let currentStepIdx = -1;
+let autoTimer = null;
+let isAutoPlaying = false;
+
+// ==================== COMPUTE SNAPSHOTS ====================
+function getChild(nodeId, dir) {
+  if (dir === 'left') return treeNodes[nodeId].left;
+  return treeNodes[nodeId].right;
+}
+
+function prepareRecursivePreorder() {
+  const events = [];
+  const visited = new Set();
+  const output = [];
+  const callStack = []; // [{node, state: 'enter'|'left'|'right'}]
+
+  function walk(nodeId) {
+    // Enter
+    callStack.push({ node: nodeId, phase: 'enter' });
+    events.push(makeSnapshot(nodeId, 'enter', visited, output, callStack,
+      `递归调用 preOrder(${nodeId})，进入节点 ${nodeId}`));
+    // Visit
+    visited.add(nodeId);
+    output.push(nodeId);
+    events.push(makeSnapshot(nodeId, 'visit', visited, output, callStack,
+      `访问节点 ${nodeId}，加入输出序列`));
+
+    const left = getChild(nodeId, 'left');
+    if (left) {
+      callStack[callStack.length-1].phase = 'left';
+      walk(left);
+    }
+
+    const right = getChild(nodeId, 'right');
+    if (right) {
+      callStack[callStack.length-1].phase = 'right';
+      walk(right);
+    }
+
+    callStack.pop();
+    events.push(makeSnapshot(null, 'leave', visited, output, callStack,
+      `递归返回: preOrder(${nodeId}) 执行完毕，从调用栈弹出`));
+  }
+
+  walk('A');
+  return events;
+}
+
+function prepareRecursiveInorder() {
+  const events = [];
+  const visited = new Set();
+  const output = [];
+  const callStack = [];
+
+  function walk(nodeId) {
+    callStack.push({ node: nodeId, phase: 'enter' });
+    events.push(makeSnapshot(nodeId, 'enter', visited, output, callStack,
+      `递归调用 inOrder(${nodeId})，进入节点 ${nodeId}`));
+
+    const left = getChild(nodeId, 'left');
+    if (left) {
+      callStack[callStack.length-1].phase = 'left';
+      walk(left);
+    }
+
+    // Visit
+    visited.add(nodeId);
+    output.push(nodeId);
+    events.push(makeSnapshot(nodeId, 'visit', visited, output, callStack,
+      `访问节点 ${nodeId}，加入输出序列（中序：遍历完左子树后访问根）`));
+
+    const right = getChild(nodeId, 'right');
+    if (right) {
+      callStack[callStack.length-1].phase = 'right';
+      walk(right);
+    }
+
+    callStack.pop();
+    events.push(makeSnapshot(null, 'leave', visited, output, callStack,
+      `递归返回: inOrder(${nodeId}) 执行完毕`));
+  }
+
+  walk('A');
+  return events;
+}
+
+function prepareRecursivePostorder() {
+  const events = [];
+  const visited = new Set();
+  const output = [];
+  const callStack = [];
+
+  function walk(nodeId) {
+    callStack.push({ node: nodeId, phase: 'enter' });
+    events.push(makeSnapshot(nodeId, 'enter', visited, output, callStack,
+      `递归调用 postOrder(${nodeId})，进入节点 ${nodeId}`));
+
+    const left = getChild(nodeId, 'left');
+    if (left) {
+      callStack[callStack.length-1].phase = 'left';
+      walk(left);
+    }
+
+    const right = getChild(nodeId, 'right');
+    if (right) {
+      callStack[callStack.length-1].phase = 'right';
+      walk(right);
+    }
+
+    // Visit
+    visited.add(nodeId);
+    output.push(nodeId);
+    events.push(makeSnapshot(nodeId, 'visit', visited, output, callStack,
+      `访问节点 ${nodeId}，加入输出序列（后序：遍历完左右子树后访问根）`));
+
+    callStack.pop();
+    events.push(makeSnapshot(null, 'leave', visited, output, callStack,
+      `递归返回: postOrder(${nodeId}) 执行完毕`));
+  }
+
+  walk('A');
+  return events;
+}
+
+function prepareNonRecursivePreorder() {
+  const events = [];
+  const visited = new Set();
+  const output = [];
+  const stack = ['A'];
+
+  events.push(makeSnapshot(null, 'push', visited, output, [...stack],
+    `初始化：将根节点 A 入栈`));
+
+  while (stack.length > 0) {
+    const nodeId = stack.pop();
+    events.push(makeSnapshot(nodeId, 'pop', visited, output, [...stack],
+      `弹出栈顶节点 ${nodeId}`));
+
+    visited.add(nodeId);
+    output.push(nodeId);
+    events.push(makeSnapshot(nodeId, 'visit', visited, output, [...stack],
+      `访问节点 ${nodeId}，加入输出序列`));
+
+    const right = getChild(nodeId, 'right');
+    const left = getChild(nodeId, 'left');
+    if (right) {
+      stack.push(right);
+      events.push(makeSnapshot(null, 'push', visited, output, [...stack],
+        `将 ${nodeId} 的右孩子 ${right} 入栈 (先右后左，保证左先出栈)`));
+    }
+    if (left) {
+      stack.push(left);
+      events.push(makeSnapshot(null, 'push', visited, output, [...stack],
+        `将 ${nodeId} 的左孩子 ${left} 入栈`));
+    }
+  }
+
+  return events;
+}
+
+function prepareNonRecursiveInorder() {
+  const events = [];
+  const visited = new Set();
+  const output = [];
+  const stack = [];
+  let curr = 'A';
+
+  events.push(makeSnapshot(null, 'init', visited, output, [],
+    `初始化：当前指针指向根节点 ${curr}`));
+
+  while (curr || stack.length > 0) {
+    while (curr) {
+      stack.push(curr);
+      events.push(makeSnapshot(curr, 'push', visited, output, [...stack],
+        `沿左链下行：将 ${curr} 入栈，转向其左孩子`));
+      curr = getChild(curr, 'left');
+    }
+
+    curr = stack.pop();
+    events.push(makeSnapshot(curr, 'pop', visited, output, [...stack],
+      `弹出栈顶节点 ${curr}`));
+
+    visited.add(curr);
+    output.push(curr);
+    events.push(makeSnapshot(curr, 'visit', visited, output, [...stack],
+      `访问节点 ${curr}，加入输出序列`));
+
+    curr = getChild(curr, 'right');
+    if (curr) {
+      events.push(makeSnapshot(null, 'right', visited, output, [...stack],
+        `转向右孩子 ${curr}`));
+    }
+  }
+
+  return events;
+}
+
+function prepareNonRecursivePostorder() {
+  const events = [];
+  const visited = new Set();
+  const output = [];
+  const stack = [];
+  let curr = 'A';
+  let lastVisited = null;
+
+  events.push(makeSnapshot(null, 'init', visited, output, [],
+    `初始化：当前指针指向根节点 A，lastVisited = null`));
+
+  while (curr || stack.length > 0) {
+    if (curr) {
+      stack.push(curr);
+      events.push(makeSnapshot(curr, 'push', visited, output, [...stack],
+        `沿左链下行：将 ${curr} 入栈，转向其左孩子`));
+      curr = getChild(curr, 'left');
+    } else {
+      const peek = stack[stack.length - 1];
+      const rightChild = getChild(peek, 'right');
+      if (rightChild && rightChild !== lastVisited) {
+        curr = rightChild;
+        events.push(makeSnapshot(null, 'right', visited, output, [...stack],
+          `栈顶 ${peek} 的右孩子 ${rightChild} 未访问，转向右子树`));
+      } else {
+        const nodeId = stack.pop();
+        events.push(makeSnapshot(nodeId, 'pop', visited, output, [...stack],
+          `弹出栈顶节点 ${nodeId}（右子树已访问或无右孩子）`));
+        visited.add(nodeId);
+        output.push(nodeId);
+        events.push(makeSnapshot(nodeId, 'visit', visited, output, [...stack],
+          `访问节点 ${nodeId}，加入输出序列`));
+        lastVisited = nodeId;
+        curr = null;
+      }
+    }
+  }
+
+  return events;
+}
+
+function prepareLevelOrder() {
+  const events = [];
+  const visited = new Set();
+  const output = [];
+  const queue = ['A'];
+
+  events.push(makeSnapshot(null, 'enqueue', visited, output, [...queue],
+    `初始化：将根节点 A 入队`));
+
+  while (queue.length > 0) {
+    const nodeId = queue.shift();
+    events.push(makeSnapshot(nodeId, 'dequeue', visited, output, [...queue],
+      `队首节点 ${nodeId} 出队`));
+
+    visited.add(nodeId);
+    output.push(nodeId);
+    events.push(makeSnapshot(nodeId, 'visit', visited, output, [...queue],
+      `访问节点 ${nodeId}，加入输出序列`));
+
+    const left = getChild(nodeId, 'left');
+    const right = getChild(nodeId, 'right');
+    if (left) {
+      queue.push(left);
+      events.push(makeSnapshot(null, 'enqueue', visited, output, [...queue],
+        `将 ${nodeId} 的左孩子 ${left} 入队`));
+    }
+    if (right) {
+      queue.push(right);
+      events.push(makeSnapshot(null, 'enqueue', visited, output, [...queue],
+        `将 ${nodeId} 的右孩子 ${right} 入队`));
+    }
+  }
+
+  return events;
+}
+
+function makeSnapshot(currentNode, action, visited, output, stackOrQueue, desc) {
+  return {
+    currentNode: currentNode,
+    action: action,
+    visited: new Set(visited),
+    output: [...output],
+    stackOrQueue: [...stackOrQueue],
+    description: desc
+  };
+}
+
+function computeSnapshots() {
+  switch (currentMode) {
+    case 'pre-rec': return prepareRecursivePreorder();
+    case 'in-rec': return prepareRecursiveInorder();
+    case 'post-rec': return prepareRecursivePostorder();
+    case 'pre-nonrec': return prepareNonRecursivePreorder();
+    case 'in-nonrec': return prepareNonRecursiveInorder();
+    case 'post-nonrec': return prepareNonRecursivePostorder();
+    case 'level': return prepareLevelOrder();
+    default: return [];
+  }
+}
+
+// ==================== RENDER ====================
+function renderAll() {
+  if (currentStepIdx < 0 || snapshots.length === 0) {
+    renderTreeIdle();
+    renderStackQueue([], '');
+    renderOutput([], '');
+    document.getElementById('stepDesc').textContent = '请点击"下一步"开始遍历';
+    document.getElementById('stepIndicator').textContent = '步骤: 0/0';
+    return;
+  }
+
+  const snap = snapshots[currentStepIdx];
+  renderTreeState(snap);
+  renderStackQueue(snap.stackOrQueue, currentMode);
+  renderOutput(snap.output, snap.description);
+  document.getElementById('stepDesc').textContent = snap.description || '';
+  updateStepIndicator();
+}
+
+function renderTreeIdle() {
+  const container = document.getElementById('treeVis');
+  container.innerHTML = '';
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.style.cssText = 'position:absolute;top:0;left:0;';
+
+  // Draw edges
+  for (const edge of treeEdges) {
+    const fromPos = treeNodes[edge.from];
+    const toPos = treeNodes[edge.to];
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', fromPos.x);
+    line.setAttribute('y1', fromPos.y + 24);
+    line.setAttribute('x2', toPos.x);
+    line.setAttribute('y2', toPos.y - 24);
+    line.setAttribute('class', 'edge-line');
+    svg.appendChild(line);
+
+    // L/R labels
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttribute('x', (fromPos.x + toPos.x) / 2 + (edge.left ? -14 : 14));
+    text.setAttribute('y', (fromPos.y + toPos.y) / 2 + 6);
+    text.setAttribute('font-size', '12');
+    text.setAttribute('fill', '#94a3b8');
+    text.setAttribute('text-anchor', 'middle');
+    text.textContent = edge.left ? 'L' : 'R';
+    svg.appendChild(text);
+  }
+
+  container.appendChild(svg);
+
+  // Draw nodes
+  for (const [id, pos] of Object.entries(treeNodes)) {
+    const div = document.createElement('div');
+    div.className = 'tree-node unvisited';
+    div.id = 'node-' + id;
+    div.style.left = pos.x + 'px';
+    div.style.top = pos.y + 'px';
+    div.textContent = id;
+    container.appendChild(div);
+  }
+}
+
+function renderTreeState(snap) {
+  const container = document.getElementById('treeVis');
+  container.innerHTML = '';
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.style.cssText = 'position:absolute;top:0;left:0;';
+
+  // Determine in-stack nodes
+  const inStackSet = new Set();
+  if (snap.stackOrQueue) {
+    for (const item of snap.stackOrQueue) {
+      if (typeof item === 'string') inStackSet.add(item);
+      else if (item && item.node) inStackSet.add(item.node);
+    }
+  }
+
+  // Draw edges
+  for (const edge of treeEdges) {
+    const fromPos = treeNodes[edge.from];
+    const toPos = treeNodes[edge.to];
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', fromPos.x);
+    line.setAttribute('y1', fromPos.y + 24);
+    line.setAttribute('x2', toPos.x);
+    line.setAttribute('y2', toPos.y - 24);
+    const isHighlight = snap.currentNode && (edge.from === snap.currentNode || edge.to === snap.currentNode);
+    line.setAttribute('class', 'edge-line' + (isHighlight ? ' highlight' : ''));
+    svg.appendChild(line);
+
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttribute('x', (fromPos.x + toPos.x) / 2 + (edge.left ? -14 : 14));
+    text.setAttribute('y', (fromPos.y + toPos.y) / 2 + 6);
+    text.setAttribute('font-size', '12');
+    text.setAttribute('fill', isHighlight ? '#3b82f6' : '#94a3b8');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-weight', 'bold');
+    text.textContent = edge.left ? 'L' : 'R';
+    svg.appendChild(text);
+  }
+
+  container.appendChild(svg);
+
+  // Draw nodes with state
+  for (const [id, pos] of Object.entries(treeNodes)) {
+    const div = document.createElement('div');
+    div.className = 'tree-node';
+    div.id = 'node-' + id;
+    div.style.left = pos.x + 'px';
+    div.style.top = pos.y + 'px';
+    div.textContent = id;
+
+    if (snap.currentNode === id) {
+      div.classList.add('current');
+    } else if (snap.visited && snap.visited.has(id)) {
+      div.classList.add('visited');
+    } else if (inStackSet.has(id) && !snap.visited.has(id)) {
+      div.classList.add('in-stack');
+    } else {
+      div.classList.add('unvisited');
+    }
+
+    container.appendChild(div);
+  }
+}
+
+function renderStackQueue(items, mode) {
+  const display = document.getElementById('stackQueueDisplay');
+  const title = document.getElementById('stackQueueTitle');
+
+  if (mode === 'level') {
+    title.textContent = '队列 (Queue) - 先进先出';
+  } else if (mode.includes('nonrec')) {
+    title.textContent = '显式栈 (Stack) - 后进先出';
+  } else {
+    title.textContent = '调用栈 (Call Stack) - 递归';
+  }
+
+  if (!items || items.length === 0) {
+    display.innerHTML = '<span class="text-gray-400 text-sm">空</span>';
+    return;
+  }
+
+  let html = '';
+  for (let i = items.length - 1; i >= 0; i--) {
+    const item = items[i];
+    let label = '';
+    let cls = 'stack-item';
+    if (typeof item === 'string') {
+      label = item;
+    } else if (item && item.node) {
+      label = `${item.node}(${item.phase || '?'})`;
+    } else {
+      label = String(item);
+    }
+
+    if (mode === 'level') {
+      cls = 'queue-item';
+      if (i === 0) html += `<span class="${cls}" style="border-color:#22c55e;background:#dcfce7">${label} ←队首</span>`;
+      else if (i === items.length - 1) html += `<span class="${cls}">${label} ←队尾</span>`;
+      else html += `<span class="${cls}">${label}</span>`;
+    } else {
+      if (i === items.length - 1) html += `<span class="${cls}" style="border-color:#3b82f6;background:#dbeafe">${label} ←栈顶</span>`;
+      else html += `<span class="${cls}">${label}</span>`;
+    }
+  }
+
+  if (mode === 'level') {
+    // For queue, items are already in correct order (left to right: front to back)
+  } else {
+    // For stack, we already iterate from top to bottom
+  }
+
+  display.innerHTML = html;
+}
+
+function renderOutput(output, desc) {
+  const display = document.getElementById('outputDisplay');
+  const textSpan = document.getElementById('outputText');
+
+  if (!output || output.length === 0) {
+    display.innerHTML = '<span class="text-gray-400 text-sm">等待遍历开始...</span>';
+    textSpan.textContent = '';
+    return;
+  }
+
+  let html = '';
+  for (const ch of output) {
+    html += `<span class="output-item">${ch}</span>`;
+  }
+  display.innerHTML = html;
+  textSpan.textContent = '序列: ' + output.join(' → ');
+}
+
+function updateStepIndicator() {
+  const el = document.getElementById('stepIndicator');
+  if (!el) return;
+  el.textContent = `步骤: ${Math.max(0, currentStepIdx + 1)}/${snapshots.length}`;
+}
+
+function addLog(msg) {
+  const panel = document.getElementById('logPanel');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.textContent = msg;
+  panel.appendChild(entry);
+  panel.scrollTop = panel.scrollHeight;
+}
+
+// ==================== CONTROLS ====================
+function changeMode() {
+  stopAuto();
+  currentMode = document.getElementById('modeSelect').value;
+  resetTraversal();
+}
+
+function resetTraversal() {
+  stopAuto();
+  currentStepIdx = -1;
+  snapshots = computeSnapshots();
+  document.getElementById('logPanel').innerHTML = '';
+  document.getElementById('outputDisplay').innerHTML = '<span class="text-gray-400 text-sm">等待遍历开始...</span>';
+  document.getElementById('outputText').textContent = '';
+  document.getElementById('stackQueueDisplay').innerHTML = '<span class="text-gray-400 text-sm">空</span>';
+  document.getElementById('stepDesc').textContent = '请点击"下一步"开始遍历';
+  renderTreeIdle();
+
+  // Show expected output
+  let expected = '';
+  switch (currentMode) {
+    case 'pre-rec': case 'pre-nonrec': expected = preOrderAll.join(' → '); break;
+    case 'in-rec': case 'in-nonrec': expected = inOrderAll.join(' → '); break;
+    case 'post-rec': case 'post-nonrec': expected = postOrderAll.join(' → '); break;
+    case 'level': expected = levelOrderAll.join(' → '); break;
+  }
+  addLog(`遍历方式: ${document.getElementById('modeSelect').selectedOptions[0].text}`);
+  addLog(`预期访问序列: ${expected}`);
+  addLog(`共 ${snapshots.length} 个执行步骤，点击"下一步"开始。`);
+
+  // Add step indicator
+  let indicator = document.getElementById('stepIndicator');
+  if (!indicator) {
+    indicator = document.createElement('span');
+    indicator.id = 'stepIndicator';
+    indicator.className = 'ml-auto text-sm font-semibold text-gray-600';
+    document.querySelector('.flex.flex-wrap.items-center').appendChild(indicator);
+  }
+  indicator.textContent = `步骤: 0/${snapshots.length}`;
+}
+
+function nextStep() {
+  if (snapshots.length === 0) return;
+  if (currentStepIdx >= snapshots.length - 1) {
+    addLog('遍历已完成！所有节点均已访问。');
+    return;
+  }
+
+  currentStepIdx++;
+  const snap = snapshots[currentStepIdx];
+  renderAll();
+  addLog(`[${currentStepIdx + 1}/${snapshots.length}] ${snap.description || ''}`);
+  updateStepIndicator();
+
+  if (currentStepIdx >= snapshots.length - 1) {
+    addLog('=== 遍历完成！===');
+    const outputStr = snap.output.join(' → ');
+    addLog(`最终访问序列: ${outputStr}`);
+  }
+}
+
+function jumpEnd() {
+  stopAuto();
+  if (snapshots.length === 0) return;
+  currentStepIdx = snapshots.length - 1;
+  renderAll();
+
+  document.getElementById('logPanel').innerHTML = '';
+  for (let i = 0; i < snapshots.length; i++) {
+    addLog(`[${i + 1}/${snapshots.length}] ${snapshots[i].description || ''}`);
+  }
+  addLog('=== 遍历完成！===');
+  const outputStr = snapshots[currentStepIdx].output.join(' → ');
+  addLog(`最终访问序列: ${outputStr}`);
+}
+
+function toggleAuto() {
+  if (isAutoPlaying) { stopAuto(); }
+  else { startAuto(); }
+}
+
+function startAuto() {
+  if (isAutoPlaying) return;
+  if (currentStepIdx >= snapshots.length - 1) {
+    resetTraversal();
+    currentStepIdx = -1;
+  }
+  isAutoPlaying = true;
+  document.getElementById('autoBtn').textContent = '暂停';
+  document.getElementById('autoBtn').classList.replace('bg-green-600', 'bg-red-600');
+  scheduleNext();
+}
+
+function stopAuto() {
+  isAutoPlaying = false;
+  if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+  document.getElementById('autoBtn').textContent = '自动播放';
+  document.getElementById('autoBtn').classList.replace('bg-red-600', 'bg-green-600');
+}
+
+function scheduleNext() {
+  if (!isAutoPlaying) return;
+  const speed = parseInt(document.getElementById('speedSlider').value);
+  autoTimer = setTimeout(() => {
+    if (currentStepIdx < snapshots.length - 1) {
+      nextStep();
+      scheduleNext();
+    } else {
+      stopAuto();
+      addLog('自动播放完成。');
+    }
+  }, speed);
+}
+
+// ==================== EVENT LISTENERS ====================
+document.getElementById('speedSlider').addEventListener('input', function() {
+  document.getElementById('speedLabel').textContent = this.value + 'ms';
+});
+
+// ==================== INITIALIZATION ====================
+window.addEventListener('DOMContentLoaded', () => {
+  resetTraversal();
+});
+</script>
+
+</main>
+<aside class="nav-toc">
+<div class="toc-label">目录</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#stackQueueTitle">调用栈 (递归)</a>
+</div>
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dijkstra 算法 (单源最短路径) 演示</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['"Microsoft YaHei"', '"PingFang SC"', 'sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+  .node { transition: all 0.4s ease; }
+  .log-entry { animation: slideIn 0.3s ease; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  .array-cell { transition: all 0.3s ease; }
+  .matrix-cell { transition: all 0.4s ease; }
+  .pulse-dot { animation: pulse 1s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+<!-- Top Control Bar -->
+<div class="fixed top-0 left-0 right-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg">
+  <div class="flex items-center justify-between px-5 py-3 max-w-full">
+    <div class="flex items-center gap-4">
+      <span class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Dijkstra 算法 (单源最短路径)</span>
+      <span class="text-sm text-gray-400 hidden sm:inline">贪心策略 · 每次选 dist 最小的未访问顶点</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="stepBack()" id="btnBack" class="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-md text-sm font-medium transition disabled:opacity-30 disabled:cursor-not-allowed" disabled>上一步</button>
+      <button onclick="stepForward()" id="btnStep" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 rounded-md text-sm font-medium transition">单步执行</button>
+      <button onclick="autoPlay()" id="btnPlay" class="px-4 py-1.5 bg-cyan-600 hover:bg-cyan-500 rounded-md text-sm font-medium transition">自动播放</button>
+      <button onclick="reset()" id="btnReset" class="px-4 py-1.5 bg-gray-600 hover:bg-gray-500 rounded-md text-sm font-medium transition">重置</button>
+      <span id="speedLabel" class="text-xs text-gray-400 ml-1">速度: 1.0s</span>
+      <input type="range" min="0.3" max="2.5" step="0.1" value="1.0" oninput="updateSpeed(this.value)" class="w-20 h-1 accent-cyan-500">
+    </div>
+  </div>
+  <div class="px-5 py-1.5 bg-gray-850 border-t border-gray-700 flex items-center gap-3">
+    <span class="text-sm text-gray-400">当前步骤:</span>
+    <span id="stepDesc" class="text-sm text-cyan-400 font-medium">初始化 — 源点 0 的 dist=0，其余顶点 dist=∞</span>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="flex pt-28 pb-0 h-screen">
+
+  <!-- Left: Graph Visualization -->
+  <div class="flex-1 relative p-6 overflow-hidden" style="min-width: 450px;">
+    <div class="relative w-full h-full flex items-center justify-center" style="min-height: 440px;">
+      <svg id="edgeLayer" class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;"></svg>
+      <div id="nodeLayer" class="relative z-10" style="width: 500px; height: 400px;"></div>
+    </div>
+    <!-- Legend -->
+    <div class="absolute bottom-4 left-6 flex gap-5 text-xs">
+      <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-gray-300">已确定最短路径</span></div>
+      <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-blue-500"></div><span class="text-gray-300">当前处理顶点</span></div>
+      <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-gray-600"></div><span class="text-gray-300">未访问</span></div>
+      <div class="flex items-center gap-1.5"><div class="w-4 h-0.5 bg-green-400"></div><span class="text-gray-300">最短路径树边</span></div>
+    </div>
+  </div>
+
+  <!-- Right: Info Panel -->
+  <div class="w-84 flex flex-col border-l border-gray-700 bg-gray-850 overflow-hidden" style="min-width: 340px;">
+
+    <!-- dist[] and path[] -->
+    <div class="p-4 border-b border-gray-700">
+      <h3 class="text-sm font-bold text-gray-300 mb-3">数组状态</h3>
+      <div class="mb-3">
+        <span class="text-xs text-gray-500 block mb-1 font-mono">dist[] (最短距离)</span>
+        <div class="flex gap-1 flex-wrap" id="distDisplay"></div>
+      </div>
+      <div>
+        <span class="text-xs text-gray-500 block mb-1 font-mono">path[] (前驱结点)</span>
+        <div class="flex gap-1 flex-wrap" id="pathDisplay"></div>
+      </div>
+    </div>
+
+    <!-- visited set -->
+    <div class="px-4 py-3 border-b border-gray-700">
+      <span class="text-xs text-gray-500 block mb-1 font-mono">S (已确定最短路径的顶点集合)</span>
+      <div id="visitedSet" class="text-sm text-green-400 font-mono">∅</div>
+    </div>
+
+    <!-- Status -->
+    <div class="px-4 py-3 border-b border-gray-700">
+      <div class="text-xs text-gray-400 mb-1">
+        源点: <span class="text-cyan-400 font-mono">0</span>
+      </div>
+      <div class="text-xs text-gray-400 mb-1">
+        当前顶点: <span id="currentVertex" class="text-blue-400 font-mono">-</span>
+      </div>
+      <div class="text-xs text-gray-400">
+        松弛操作次数: <span id="relaxCount" class="text-yellow-400 font-mono">0</span>
+      </div>
+    </div>
+
+    <!-- Log -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <h3 class="text-sm font-bold text-gray-300 px-4 py-2 border-b border-gray-700">执行日志</h3>
+      <div id="logPanel" class="flex-1 overflow-y-auto p-3 space-y-1.5 text-xs font-mono"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+// Classic 6-vertex directed graph for Dijkstra
+// Using adjacency list for clarity
+const nodePositions = [
+  { x: 70,  y: 120 }, // 0 - source
+  { x: 250, y: 50  }, // 1
+  { x: 400, y: 120 }, // 2
+  { x: 400, y: 300 }, // 3
+  { x: 250, y: 360 }, // 4
+  { x: 70,  y: 300 }, // 5
+];
+
+const n = 6;
+const INF = Infinity;
+
+// Directed graph: [from][to] = weight
+const graph = [
+  [INF,  10, INF, INF, INF,   8],  // 0
+  [INF, INF,   2, INF, INF, INF],  // 1
+  [INF, INF, INF,   3,   7, INF],  // 2
+  [INF, INF, INF, INF, INF, INF],  // 3
+  [  4, INF, INF,   5, INF, INF],  // 4
+  [INF,   1, INF, INF,   9, INF],  // 5
+];
+
+// Edges list for rendering
+const allEdges = [];
+for (let i = 0; i < n; i++) {
+  for (let j = 0; j < n; j++) {
+    if (graph[i][j] !== INF) {
+      allEdges.push({ from: i, to: j, weight: graph[i][j] });
+    }
+  }
+}
+
+// ==================== STATE ====================
+const SOURCE = 0;
+let dist = new Array(n).fill(INF);
+let path = new Array(n).fill(-1);
+let visited = new Array(n).fill(false);
+let spTreeEdges = []; // shortest path tree edges
+let steps = [];
+let currentStep = -1;
+let autoTimer = null;
+let playSpeed = 1000;
+
+// ==================== INIT STEPS ====================
+function initSteps() {
+  steps = [];
+  dist = new Array(n).fill(INF);
+  path = new Array(n).fill(-1);
+  visited = new Array(n).fill(false);
+  spTreeEdges = [];
+
+  // Initialize source
+  dist[SOURCE] = 0;
+
+  steps.push({
+    type: 'init',
+    description: `初始化: 源点 ${SOURCE} 的 dist=0，其余顶点 dist=∞`,
+    dist: [...dist],
+    path: [...path],
+    visited: [...visited],
+    currentVertex: -1,
+    spTreeEdges: [...spTreeEdges],
+    relaxUpdates: [],
+    highlightEdges: []
+  });
+
+  // Dijkstra: n iterations to visit all reachable vertices
+  for (let iter = 0; iter < n; iter++) {
+    // Find unvisited vertex with minimum dist
+    let minDist = INF;
+    let u = -1;
+    for (let i = 0; i < n; i++) {
+      if (!visited[i] && dist[i] < minDist) {
+        minDist = dist[i];
+        u = i;
+      }
+    }
+
+    if (u === -1 || minDist === INF) break; // no more reachable vertices
+
+    // Step: select vertex u
+    steps.push({
+      type: 'select',
+      description: `选取未访问顶点中 dist 最小的顶点: ${u} (dist=${minDist === INF ? '∞' : minDist})`,
+      dist: [...dist],
+      path: [...path],
+      visited: [...visited],
+      currentVertex: u,
+      spTreeEdges: [...spTreeEdges],
+      relaxUpdates: [],
+      highlightEdges: []
+    });
+
+    // Mark u as visited
+    visited[u] = true;
+    // If u is not the source and has a predecessor, add tree edge
+    if (u !== SOURCE && path[u] !== -1) {
+      spTreeEdges.push({ from: path[u], to: u, weight: graph[path[u]][u] });
+    }
+
+    steps.push({
+      type: 'mark',
+      description: `将顶点 ${u} 加入集合 S (已确定最短路径)`,
+      dist: [...dist],
+      path: [...path],
+      visited: [...visited],
+      currentVertex: u,
+      spTreeEdges: [...spTreeEdges],
+      relaxUpdates: [],
+      highlightEdges: []
+    });
+
+    // Relax all outgoing edges from u
+    let relaxUpdates = [];
+    let highlightEdges = [];
+    for (let v = 0; v < n; v++) {
+      if (!visited[v] && graph[u][v] !== INF && dist[u] + graph[u][v] < dist[v]) {
+        let oldDist = dist[v];
+        dist[v] = dist[u] + graph[u][v];
+        path[v] = u;
+        relaxUpdates.push({ vertex: v, oldDist: oldDist, newDist: dist[v], from: u });
+        highlightEdges.push({ from: u, to: v, weight: graph[u][v] });
+      } else if (!visited[v] && graph[u][v] !== INF) {
+        // Edge exists but not relaxing
+        highlightEdges.push({ from: u, to: v, weight: graph[u][v], relaxed: false });
+      }
+    }
+
+    if (relaxUpdates.length > 0) {
+      steps.push({
+        type: 'relax',
+        description: `从顶点 ${u} 出发进行松弛操作` + relaxUpdates.map(r => `: dist[${r.vertex}] ${r.oldDist === INF ? '∞' : r.oldDist} → ${r.newDist} (经 ${r.from})`).join('; '),
+        dist: [...dist],
+        path: [...path],
+        visited: [...visited],
+        currentVertex: u,
+        spTreeEdges: [...spTreeEdges],
+        relaxUpdates: relaxUpdates,
+        highlightEdges: highlightEdges
+      });
+    } else {
+      // No relaxation happened, just log the edge checks
+      if (highlightEdges.length > 0) {
+        steps.push({
+          type: 'relax',
+          description: `从顶点 ${u} 出发考察出边，无松弛更新`,
+          dist: [...dist],
+          path: [...path],
+          visited: [...visited],
+          currentVertex: u,
+          spTreeEdges: [...spTreeEdges],
+          relaxUpdates: [],
+          highlightEdges: highlightEdges
+        });
+      }
+    }
+  }
+
+  // Complete
+  steps.push({
+    type: 'complete',
+    description: `Dijkstra 算法完成! 所有可达顶点的最短路径已确定`,
+    dist: [...dist],
+    path: [...path],
+    visited: [...visited],
+    currentVertex: -1,
+    spTreeEdges: [...spTreeEdges],
+    relaxUpdates: [],
+    highlightEdges: []
+  });
+}
+
+// ==================== RENDER ====================
+function render() {
+  if (currentStep < 0 || currentStep >= steps.length) return;
+  const step = steps[currentStep];
+
+  renderNodes(step);
+  renderEdges(step);
+  renderArrays(step);
+  renderStatus(step);
+  updateButtons();
+}
+
+function renderNodes(step) {
+  const layer = document.getElementById('nodeLayer');
+  layer.innerHTML = '';
+
+  for (let v = 0; v < n; v++) {
+    const pos = nodePositions[v];
+    let bgClass = 'bg-gray-700 border-gray-600 text-gray-300';
+    let distLabel = '';
+
+    if (step.visited[v]) {
+      bgClass = 'bg-green-600 border-green-400 text-white shadow-lg shadow-green-500/20';
+    } else if (v === step.currentVertex) {
+      bgClass = 'bg-blue-500 border-blue-300 text-white font-bold shadow-lg shadow-blue-500/40';
+    }
+
+    // Show dist on node
+    const d = step.dist[v];
+    const dText = d === INF ? '∞' : d;
+
+    const div = document.createElement('div');
+    div.className = `node absolute w-14 h-14 rounded-full flex flex-col items-center justify-center text-xs font-bold border-2 cursor-default ${bgClass}`;
+    div.style.left = pos.x + 'px';
+    div.style.top = pos.y + 'px';
+    div.style.transform = 'translate(-50%, -50%)';
+    div.innerHTML = `<span class="text-base">${v}</span><span class="text-[10px] opacity-80">${dText}</span>`;
+
+    if (v === step.currentVertex && step.type === 'select') {
+      div.classList.add('pulse-dot');
+    }
+
+    layer.appendChild(div);
+  }
+}
+
+function renderEdges(step) {
+  const svg = document.getElementById('edgeLayer');
+  const w = svg.parentElement.clientWidth;
+  const h = svg.parentElement.clientHeight;
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+
+  const layerW = 500, layerH = 400;
+  const offsetX = (w - layerW) / 2;
+  const offsetY = (h - layerH) / 2;
+
+  const spSet = new Set();
+  for (const e of step.spTreeEdges) {
+    spSet.add(`${e.from}->${e.to}`);
+  }
+
+  const highlightSet = new Set();
+  const highlightRelaxed = new Set();
+  for (const he of step.highlightEdges) {
+    highlightSet.add(`${he.from}->${he.to}`);
+    if (he.relaxed !== false) highlightRelaxed.add(`${he.from}->${he.to}`);
+  }
+
+  let html = '';
+
+  // Draw arrow defs
+  html += `<defs>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e"/>
+    </marker>
+    <marker id="arrowYellow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#facc15"/>
+    </marker>
+    <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563"/>
+    </marker>
+  </defs>`;
+
+  for (const e of allEdges) {
+    const key = `${e.from}->${e.to}`;
+    const x1 = offsetX + nodePositions[e.from].x;
+    const y1 = offsetY + nodePositions[e.from].y;
+    const x2 = offsetX + nodePositions[e.to].x;
+    const y2 = offsetY + nodePositions[e.to].y;
+
+    // Shorten line to not overlap node circle (radius ~28 for w-14)
+    const dx = x2 - x1, dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const ux = dx / len, uy = dy / len;
+    const sx = x1 + ux * 30, sy = y1 + uy * 30;
+    const ex = x2 - ux * 32, ey = y2 - uy * 32;
+
+    const mx = (sx + ex) / 2, my = (sy + ey) / 2;
+
+    let stroke = '#4b5563';
+    let sw = 1.5;
+    let markerEnd = 'url(#arrowGray)';
+
+    if (spSet.has(key)) {
+      stroke = '#22c55e';
+      sw = 2.5;
+      markerEnd = 'url(#arrowGreen)';
+    } else if (highlightSet.has(key)) {
+      if (highlightRelaxed.has(key)) {
+        stroke = '#facc15';
+        sw = 3;
+        markerEnd = 'url(#arrowYellow)';
+      } else {
+        stroke = '#60a5fa';
+        sw = 2;
+        markerEnd = 'url(#arrowYellow)';
+      }
+    }
+
+    html += `<line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="${stroke}" stroke-width="${sw}" marker-end="${markerEnd}" stroke-linecap="round"/>`;
+
+    // Weight label
+    const labelColor = spSet.has(key) ? '#22c55e' : (highlightSet.has(key) ? '#facc15' : '#6b7280');
+    html += `<rect x="${mx - 12}" y="${my - 10}" width="24" height="18" rx="4" fill="#1f2937" opacity="0.9"/>`;
+    html += `<text x="${mx}" y="${my + 4}" text-anchor="middle" fill="${labelColor}" font-size="11" font-weight="bold">${e.weight}</text>`;
+  }
+
+  svg.innerHTML = html;
+}
+
+function renderArrays(step) {
+  // dist[]
+  const distDiv = document.getElementById('distDisplay');
+  distDiv.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const val = step.dist[i];
+    const displayVal = val === INF ? '∞' : val;
+    let cellClass = 'bg-gray-700 text-gray-400 border border-gray-600';
+    if (step.visited[i]) {
+      cellClass = 'bg-green-800 text-green-300 border border-green-600';
+    } else if (val !== INF && val !== 0) {
+      cellClass = 'bg-indigo-900 text-indigo-300 border border-indigo-700';
+    }
+    if (i === step.currentVertex && step.type === 'select') {
+      cellClass = 'bg-blue-600 text-white border border-blue-400 font-bold shadow-lg shadow-blue-500/30';
+    }
+    distDiv.innerHTML += `<div class="array-cell w-10 h-7 flex items-center justify-center text-xs rounded ${cellClass}">${displayVal}</div>`;
+  }
+
+  // path[]
+  const pathDiv = document.getElementById('pathDisplay');
+  pathDiv.innerHTML = '';
+  for (let i = 0; i < n; i++) {
+    const val = step.path[i];
+    const displayVal = val === -1 ? '-' : val;
+    let cellClass = 'bg-gray-700 text-gray-400 border border-gray-600';
+    if (step.visited[i] && i !== SOURCE) {
+      cellClass = 'bg-green-800 text-green-300 border border-green-600';
+    } else if (val !== -1) {
+      cellClass = 'bg-amber-900 text-amber-300 border border-amber-700';
+    }
+    pathDiv.innerHTML += `<div class="array-cell w-10 h-7 flex items-center justify-center text-xs rounded ${cellClass}">${displayVal}</div>`;
+  }
+}
+
+function renderStatus(step) {
+  document.getElementById('stepDesc').textContent = step.description;
+  document.getElementById('currentVertex').textContent = step.currentVertex >= 0 ? step.currentVertex : '-';
+
+  // Count relax operations so far
+  let rc = 0;
+  for (let i = 1; i <= currentStep; i++) {
+    if (steps[i].type === 'relax') rc += steps[i].relaxUpdates.length;
+  }
+  document.getElementById('relaxCount').textContent = rc;
+
+  // Visited set
+  const vs = [];
+  for (let i = 0; i < n; i++) {
+    if (step.visited[i]) vs.push(i);
+  }
+  document.getElementById('visitedSet').textContent = vs.length > 0 ? '{ ' + vs.join(', ') + ' }' : '∅';
+}
+
+function updateButtons() {
+  document.getElementById('btnBack').disabled = currentStep <= 0;
+  document.getElementById('btnStep').disabled = currentStep >= steps.length - 1;
+  document.getElementById('btnPlay').disabled = currentStep >= steps.length - 1;
+}
+
+// ==================== LOG ====================
+function addLog(msg, type) {
+  const panel = document.getElementById('logPanel');
+  let colorClass = 'text-gray-400';
+  if (type === 'init') colorClass = 'text-blue-400';
+  else if (type === 'select') colorClass = 'text-cyan-400';
+  else if (type === 'mark') colorClass = 'text-green-400';
+  else if (type === 'relax') colorClass = 'text-yellow-400';
+  else if (type === 'complete') colorClass = 'text-emerald-400';
+
+  const div = document.createElement('div');
+  div.className = `log-entry ${colorClass}`;
+  div.textContent = msg;
+  panel.appendChild(div);
+  panel.scrollTop = panel.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('logPanel').innerHTML = '';
+}
+
+// ==================== CONTROLS ====================
+function stepForward() {
+  if (currentStep >= steps.length - 1) return;
+  currentStep++;
+  const step = steps[currentStep];
+  addLog(`[步骤 ${currentStep}] ${step.description}`, step.type);
+  render();
+  if (currentStep >= steps.length - 1) stopAuto();
+}
+
+function stepBack() {
+  if (currentStep <= 0) return;
+  currentStep--;
+  const panel = document.getElementById('logPanel');
+  if (panel.lastChild) panel.removeChild(panel.lastChild);
+  render();
+}
+
+function autoPlay() {
+  if (autoTimer) {
+    stopAuto();
+    return;
+  }
+  document.getElementById('btnPlay').textContent = '暂停';
+  document.getElementById('btnPlay').classList.remove('bg-cyan-600', 'hover:bg-cyan-500');
+  document.getElementById('btnPlay').classList.add('bg-red-600', 'hover:bg-red-500');
+
+  function tick() {
+    if (currentStep >= steps.length - 1) { stopAuto(); return; }
+    stepForward();
+    if (currentStep < steps.length - 1) {
+      autoTimer = setTimeout(tick, playSpeed);
+    } else { stopAuto(); }
+  }
+  autoTimer = setTimeout(tick, playSpeed);
+}
+
+function stopAuto() {
+  if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+  document.getElementById('btnPlay').textContent = '自动播放';
+  document.getElementById('btnPlay').classList.remove('bg-red-600', 'hover:bg-red-500');
+  document.getElementById('btnPlay').classList.add('bg-cyan-600', 'hover:bg-cyan-500');
+}
+
+function reset() {
+  stopAuto();
+  currentStep = -1;
+  clearLog();
+  initSteps();
+  currentStep = 0;
+  addLog(`[初始化] ${steps[0].description}`, 'init');
+  render();
+}
+
+function updateSpeed(val) {
+  playSpeed = parseFloat(val) * 1000;
+  document.getElementById('speedLabel').textContent = '速度: ' + parseFloat(val).toFixed(1) + 's';
+}
+
+// ==================== STARTUP ====================
+function init() {
+  initSteps();
+  currentStep = 0;
+  addLog(`[初始化] ${steps[0].description}`, 'init');
+  render();
+}
+
+window.addEventListener('resize', () => {
+  if (currentStep >= 0 && currentStep < steps.length) {
+    renderEdges(steps[currentStep]);
+  }
+});
+
+init();
+</script>
+
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

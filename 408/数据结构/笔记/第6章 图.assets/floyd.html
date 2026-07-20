@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floyd 算法 (多源最短路径) 演示</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['"Microsoft YaHei"', '"PingFang SC"', 'sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+  .node { transition: all 0.4s ease; }
+  .log-entry { animation: slideIn 0.3s ease; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  .matrix-cell { transition: all 0.5s ease; font-size: 12px; }
+  .highlight-update { animation: flash 0.8s ease; }
+  @keyframes flash { 0% { transform: scale(1.3); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
+  .k-label { transition: all 0.4s ease; }
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+<!-- Top Control Bar -->
+<div class="fixed top-0 left-0 right-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg">
+  <div class="flex items-center justify-between px-5 py-3 max-w-full">
+    <div class="flex items-center gap-4">
+      <span class="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">Floyd 算法 (多源最短路径)</span>
+      <span class="text-sm text-gray-400 hidden sm:inline">动态规划 · D[i][j] = min(D[i][j], D[i][k] + D[k][j])</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="stepBack()" id="btnBack" class="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded-md text-sm font-medium transition disabled:opacity-30 disabled:cursor-not-allowed" disabled>上一步</button>
+      <button onclick="stepForward()" id="btnStep" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 rounded-md text-sm font-medium transition">单步执行</button>
+      <button onclick="autoPlay()" id="btnPlay" class="px-4 py-1.5 bg-orange-600 hover:bg-orange-500 rounded-md text-sm font-medium transition">自动播放</button>
+      <button onclick="reset()" id="btnReset" class="px-4 py-1.5 bg-gray-600 hover:bg-gray-500 rounded-md text-sm font-medium transition">重置</button>
+      <span id="speedLabel" class="text-xs text-gray-400 ml-1">速度: 1.0s</span>
+      <input type="range" min="0.3" max="2.5" step="0.1" value="1.0" oninput="updateSpeed(this.value)" class="w-20 h-1 accent-orange-500">
+    </div>
+  </div>
+  <div class="px-5 py-1.5 bg-gray-850 border-t border-gray-700 flex items-center gap-3">
+    <span class="text-sm text-gray-400">当前步骤:</span>
+    <span id="stepDesc" class="text-sm text-orange-400 font-medium">初始化 — 构造距离矩阵 D 和前驱矩阵 P</span>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="flex pt-28 pb-0 h-screen">
+
+  <!-- Left: Graph + Matrices -->
+  <div class="flex-1 flex flex-col p-4 overflow-hidden gap-4" style="min-width: 550px;">
+
+    <!-- Top: small graph -->
+    <div class="relative flex-shrink-0" style="height: 200px;">
+      <svg id="edgeLayer" class="absolute inset-0 w-full h-full pointer-events-none" style="z-index: 1;"></svg>
+      <div id="nodeLayer" class="relative z-10" style="width: 100%; height: 200px;"></div>
+    </div>
+
+    <!-- Bottom: Matrices -->
+    <div class="flex-1 flex gap-4 overflow-hidden">
+      <!-- Distance matrix D -->
+      <div class="flex-1 flex flex-col min-w-0">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-bold text-gray-300 font-mono">
+            距离矩阵 D<sup id="kSuperscriptD" class="text-orange-400">(0)</sup>
+          </span>
+          <span class="text-xs text-gray-500">
+            <span id="kIterLabel" class="text-orange-400 font-mono">k = -1</span> (未开始)
+          </span>
+        </div>
+        <div class="overflow-auto flex-1">
+          <table id="matrixD" class="border-collapse"></table>
+        </div>
+      </div>
+
+      <!-- Predecessor matrix P -->
+      <div class="flex-1 flex flex-col min-w-0">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-bold text-gray-300 font-mono">
+            前驱矩阵 P<sup id="kSuperscriptP" class="text-orange-400">(0)</sup>
+          </span>
+        </div>
+        <div class="overflow-auto flex-1">
+          <table id="matrixP" class="border-collapse"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Info Panel -->
+  <div class="w-80 flex flex-col border-l border-gray-700 bg-gray-850 overflow-hidden" style="min-width: 280px;">
+
+    <!-- Current triple-loop state -->
+    <div class="p-4 border-b border-gray-700">
+      <h3 class="text-sm font-bold text-gray-300 mb-3">当前循环状态</h3>
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div class="bg-gray-750 rounded p-2">
+          <span class="text-gray-500">k (中间顶点)</span>
+          <div id="curK" class="text-orange-400 font-mono text-lg font-bold">-</div>
+        </div>
+        <div class="bg-gray-750 rounded p-2">
+          <span class="text-gray-500">i (起点)</span>
+          <div id="curI" class="text-blue-400 font-mono text-lg font-bold">-</div>
+        </div>
+        <div class="bg-gray-750 rounded p-2">
+          <span class="text-gray-500">j (终点)</span>
+          <div id="curJ" class="text-green-400 font-mono text-lg font-bold">-</div>
+        </div>
+        <div class="bg-gray-750 rounded p-2">
+          <span class="text-gray-500">更新次数</span>
+          <div id="updateCount" class="text-yellow-400 font-mono text-lg font-bold">0</div>
+        </div>
+      </div>
+
+      <div class="mt-3 text-xs space-y-1">
+        <div class="flex justify-between">
+          <span class="text-gray-500">D[i][k] + D[k][j] =</span>
+          <span id="compareLeft" class="text-blue-400 font-mono">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">D[i][j] (当前) =</span>
+          <span id="compareRight" class="text-green-400 font-mono">-</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-500">是否更新:</span>
+          <span id="compareResult" class="font-mono font-bold">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <h3 class="text-sm font-bold text-gray-300 px-4 py-2 border-b border-gray-700">执行日志</h3>
+      <div id="logPanel" class="flex-1 overflow-y-auto p-3 space-y-1.5 text-xs font-mono"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+// 4-vertex directed weighted graph
+const nodePositions = [
+  { x: 200, y: 60  },  // 0 - top
+  { x: 380, y: 180 },  // 1 - right
+  { x: 200, y: 180 },  // 2 - bottom
+  { x: 20,  y: 180 },  // 3 - left
+];
+
+const n = 4;
+const INF = Infinity;
+
+// Graph adjacency matrix
+const graph = [
+  [  0,   3, INF,   7],  // 0
+  [  8,   0,   2, INF],  // 1
+  [  5, INF,   0,   1],  // 2
+  [  2, INF, INF,   0],  // 3
+];
+
+// Edges for SVG
+const allEdges = [];
+for (let i = 0; i < n; i++) {
+  for (let j = 0; j < n; j++) {
+    if (i !== j && graph[i][j] !== INF) {
+      allEdges.push({ from: i, to: j, weight: graph[i][j] });
+    }
+  }
+}
+
+// ==================== STATE ====================
+let D = [];   // distance matrix
+let P = [];   // predecessor matrix
+let steps = [];
+let currentStep = -1;
+let autoTimer = null;
+let playSpeed = 1000;
+
+// ==================== INIT STEPS ====================
+function initSteps() {
+  steps = [];
+
+  // Initialize D and P
+  D = [];
+  P = [];
+  for (let i = 0; i < n; i++) {
+    D[i] = [];
+    P[i] = [];
+    for (let j = 0; j < n; j++) {
+      D[i][j] = graph[i][j];
+      P[i][j] = (i !== j && graph[i][j] !== INF) ? i : -1;
+    }
+  }
+
+  steps.push({
+    type: 'init',
+    description: '初始化: D(0) = 原图的邻接矩阵, P(0) 记录直接前驱',
+    D: JSON.parse(JSON.stringify(D)),
+    P: JSON.parse(JSON.stringify(P)),
+    k: -1, i: -1, j: -1,
+    updated: false, updateInfo: null,
+    highlightCells: []
+  });
+
+  // Triple loop
+  for (let k = 0; k < n; k++) {
+    // Step announcing k
+    steps.push({
+      type: 'k-enter',
+      description: `进入 k = ${k}: 以顶点 ${k} 作为中间顶点，尝试更新所有路径 D[i][j]`,
+      D: JSON.parse(JSON.stringify(D)),
+      P: JSON.parse(JSON.stringify(P)),
+      k: k, i: -1, j: -1,
+      updated: false, updateInfo: null,
+      highlightCells: []
+    });
+
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        if (i === j || i === k || j === k) {
+          // Skip diagonal and paths involving k as endpoint for self
+          // But still record for completeness in some cases
+          // We'll skip truly uninteresting ones
+          if (i === j) continue;
+          // Just log examination without update possibility for i==k or j==k
+          if (i === k || j === k) {
+            steps.push({
+              type: 'examine',
+              description: `k=${k}, i=${i}, j=${j}: 涉及中间顶点本身，跳过`,
+              D: JSON.parse(JSON.stringify(D)),
+              P: JSON.parse(JSON.stringify(P)),
+              k: k, i: i, j: j,
+              updated: false, updateInfo: null,
+              highlightCells: [[i, k, 'blue'], [k, j, 'blue'], [i, j, 'gray']]
+            });
+            continue;
+          }
+        }
+
+        const dik = D[i][k];
+        const dkj = D[k][j];
+        const dij = D[i][j];
+        const throughK = (dik === INF || dkj === INF) ? INF : dik + dkj;
+
+        if (throughK < dij) {
+          const oldVal = dij;
+          D[i][j] = throughK;
+          P[i][j] = P[k][j];
+
+          steps.push({
+            type: 'update',
+            description: `k=${k}, i=${i}, j=${j}: D[${i}][${k}]+D[${k}][${j}] = ${dik}+${dkj} = ${throughK} < D[${i}][${j}] = ${oldVal}，更新! D[${i}][${j}] = ${throughK}`,
+            D: JSON.parse(JSON.stringify(D)),
+            P: JSON.parse(JSON.stringify(P)),
+            k: k, i: i, j: j,
+            updated: true,
+            updateInfo: { i, j, oldVal, newVal: throughK, dik, dkj, throughK },
+            highlightCells: [[i, k, 'yellow'], [k, j, 'yellow'], [i, j, 'red']]
+          });
+        } else {
+          const throughKStr = throughK === INF ? '∞' : throughK;
+          const dijStr = dij === INF ? '∞' : dij;
+          // Only log if there's a potential path (not both INF)
+          if (dik !== INF && dkj !== INF) {
+            steps.push({
+              type: 'examine',
+              description: `k=${k}, i=${i}, j=${j}: D[${i}][${k}]+D[${k}][${j}] = ${dik}+${dkj} = ${throughKStr} >= D[${i}][${j}] = ${dijStr}，不更新`,
+              D: JSON.parse(JSON.stringify(D)),
+              P: JSON.parse(JSON.stringify(P)),
+              k: k, i: i, j: j,
+              updated: false, updateInfo: null,
+              highlightCells: [[i, k, 'yellow'], [k, j, 'yellow'], [i, j, 'green']]
+            });
+          }
+        }
+      }
+    }
+
+    // k iteration complete
+    steps.push({
+      type: 'k-exit',
+      description: `k = ${k} 迭代完成。D(${k + 1}) 和 P(${k + 1}) 已确定`,
+      D: JSON.parse(JSON.stringify(D)),
+      P: JSON.parse(JSON.stringify(P)),
+      k: k, i: -1, j: -1,
+      updated: false, updateInfo: null,
+      highlightCells: []
+    });
+  }
+
+  // Complete
+  steps.push({
+    type: 'complete',
+    description: 'Floyd 算法完成! 所有顶点对之间的最短路径已求出',
+    D: JSON.parse(JSON.stringify(D)),
+    P: JSON.parse(JSON.stringify(P)),
+    k: n - 1, i: -1, j: -1,
+    updated: false, updateInfo: null,
+    highlightCells: []
+  });
+}
+
+// ==================== RENDER ====================
+function render() {
+  if (currentStep < 0 || currentStep >= steps.length) return;
+  const step = steps[currentStep];
+
+  renderGraph(step);
+  renderMatrices(step);
+  renderStatus(step);
+  updateButtons();
+}
+
+function renderGraph(step) {
+  const nodeLayer = document.getElementById('nodeLayer');
+  nodeLayer.innerHTML = '';
+
+  for (let v = 0; v < n; v++) {
+    const pos = nodePositions[v];
+    let bgClass = 'bg-gray-700 border-gray-600 text-gray-300';
+
+    if (step.k >= 0 && v === step.k && (step.type === 'k-enter' || step.type === 'examine' || step.type === 'update' || step.type === 'k-exit')) {
+      bgClass = 'bg-orange-500 border-orange-300 text-white font-bold shadow-lg shadow-orange-500/40';
+    } else if (v === step.i && step.i >= 0) {
+      bgClass = 'bg-blue-500 border-blue-300 text-white shadow-lg shadow-blue-500/30';
+    } else if (v === step.j && step.j >= 0) {
+      bgClass = 'bg-green-500 border-green-300 text-white shadow-lg shadow-green-500/30';
+    }
+
+    const div = document.createElement('div');
+    div.className = `node absolute w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold border-2 cursor-default ${bgClass}`;
+    div.style.left = pos.x + 'px';
+    div.style.top = pos.y + 'px';
+    div.style.transform = 'translate(-50%, -50%)';
+
+    // Show D[v][v] - diagonal is always 0
+    div.innerHTML = `<span>${v}</span>`;
+    nodeLayer.appendChild(div);
+  }
+
+  // Render edges
+  const svg = document.getElementById('edgeLayer');
+  const sw = svg.parentElement.clientWidth;
+  const sh = svg.parentElement.clientHeight;
+  svg.setAttribute('viewBox', `0 0 ${sw} ${sh}`);
+
+  let html = `<defs>
+    <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#60a5fa"/>
+    </marker>
+  </defs>`;
+
+  for (const e of allEdges) {
+    const x1 = nodePositions[e.from].x;
+    const y1 = nodePositions[e.from].y;
+    const x2 = nodePositions[e.to].x;
+    const y2 = nodePositions[e.to].y;
+
+    const dx = x2 - x1, dy = y2 - y1;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    const ux = dx / len, uy = dy / len;
+    const sx = x1 + ux * 26;
+    const sy = y1 + uy * 26;
+    const ex = x2 - ux * 28;
+    const ey = y2 - uy * 28;
+    const mx = (sx + ex) / 2, my = (sy + ey) / 2;
+
+    let stroke = '#4b5563', markerEnd = 'url(#arrowGray)', labelColor = '#6b7280';
+    let sw2 = 1.5;
+
+    // Highlight if this edge is part of current comparison
+    if (step.i >= 0 && step.j >= 0) {
+      if (e.from === step.i && e.to === step.k) {
+        stroke = '#facc15'; markerEnd = 'url(#arrowBlue)'; labelColor = '#facc15'; sw2 = 2.5;
+      } else if (e.from === step.k && e.to === step.j) {
+        stroke = '#facc15'; markerEnd = 'url(#arrowBlue)'; labelColor = '#facc15'; sw2 = 2.5;
+      } else if (e.from === step.i && e.to === step.j) {
+        stroke = '#60a5fa'; markerEnd = 'url(#arrowBlue)'; labelColor = '#60a5fa'; sw2 = 2;
+      }
+    }
+
+    const origWeight = graph[e.from][e.to];
+    html += `<line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="${stroke}" stroke-width="${sw2}" marker-end="${markerEnd}" stroke-linecap="round"/>`;
+    html += `<rect x="${mx - 12}" y="${my - 10}" width="24" height="18" rx="4" fill="#1f2937" opacity="0.9"/>`;
+    html += `<text x="${mx}" y="${my + 4}" text-anchor="middle" fill="${labelColor}" font-size="11" font-weight="bold">${origWeight}</text>`;
+  }
+
+  svg.innerHTML = html;
+}
+
+function renderMatrices(step) {
+  // Distance matrix D
+  const dTable = document.getElementById('matrixD');
+  let dHtml = '<thead><tr><th class="matrix-cell w-10 h-8 bg-gray-800 text-gray-500 text-xs font-mono">D</th>';
+  for (let j = 0; j < n; j++) {
+    dHtml += `<th class="matrix-cell w-14 h-8 bg-gray-800 text-gray-400 text-xs font-mono">${j}</th>`;
+  }
+  dHtml += '</tr></thead><tbody>';
+
+  for (let i = 0; i < n; i++) {
+    dHtml += '<tr>';
+    dHtml += `<td class="matrix-cell w-10 h-9 bg-gray-800 text-gray-400 text-center text-xs font-mono font-bold">${i}</td>`;
+    for (let j = 0; j < n; j++) {
+      const val = step.D[i][j];
+      const displayVal = val === INF ? '∞' : val;
+      let cellClass = 'matrix-cell w-14 h-9 text-center border border-gray-700 bg-gray-800 text-gray-400';
+
+      // Row/col highlighting for k
+      if (step.k >= 0) {
+        if (i === step.k || j === step.k) {
+          if (i === j) {
+            cellClass = 'matrix-cell w-14 h-9 text-center border border-orange-700 bg-orange-900/50 text-orange-300 font-bold';
+          } else {
+            cellClass = 'matrix-cell w-14 h-9 text-center border border-orange-800 bg-orange-900/30 text-orange-300';
+          }
+        }
+      }
+
+      // Current cell highlights
+      if (step.highlightCells && step.highlightCells.length > 0) {
+        for (const hc of step.highlightCells) {
+          if (hc[0] === i && hc[1] === j) {
+            if (hc[2] === 'red') {
+              cellClass = 'matrix-cell w-14 h-9 text-center border border-red-500 bg-red-900/60 text-red-300 font-bold highlight-update';
+            } else if (hc[2] === 'yellow') {
+              cellClass = 'matrix-cell w-14 h-9 text-center border border-yellow-500 bg-yellow-900/50 text-yellow-300';
+            } else if (hc[2] === 'green') {
+              cellClass = 'matrix-cell w-14 h-9 text-center border border-green-600 bg-green-900/40 text-green-300';
+            } else if (hc[2] === 'blue') {
+              cellClass = 'matrix-cell w-14 h-9 text-center border border-blue-500 bg-blue-900/40 text-blue-300';
+            }
+          }
+        }
+      }
+
+      // Diagonal
+      if (i === j && cellClass.indexOf('border-red') === -1 && cellClass.indexOf('border-yellow') === -1 && cellClass.indexOf('border-green') === -1) {
+        cellClass = 'matrix-cell w-14 h-9 text-center border border-gray-700 bg-gray-750 text-gray-500';
+      }
+
+      dHtml += `<td class="${cellClass}">${displayVal}</td>`;
+    }
+    dHtml += '</tr>';
+  }
+  dHtml += '</tbody>';
+  dTable.innerHTML = dHtml;
+
+  // Predecessor matrix P
+  const pTable = document.getElementById('matrixP');
+  let pHtml = '<thead><tr><th class="matrix-cell w-10 h-8 bg-gray-800 text-gray-500 text-xs font-mono">P</th>';
+  for (let j = 0; j < n; j++) {
+    pHtml += `<th class="matrix-cell w-14 h-8 bg-gray-800 text-gray-400 text-xs font-mono">${j}</th>`;
+  }
+  pHtml += '</tr></thead><tbody>';
+
+  for (let i = 0; i < n; i++) {
+    pHtml += '<tr>';
+    pHtml += `<td class="matrix-cell w-10 h-9 bg-gray-800 text-gray-400 text-center text-xs font-mono font-bold">${i}</td>`;
+    for (let j = 0; j < n; j++) {
+      const val = step.P[i][j];
+      const displayVal = val === -1 ? '-' : val;
+      let cellClass = 'matrix-cell w-14 h-9 text-center border border-gray-700 bg-gray-800 text-gray-400';
+
+      // Row/col for k
+      if (step.k >= 0 && (i === step.k || j === step.k) && i !== j) {
+        cellClass = 'matrix-cell w-14 h-9 text-center border border-orange-800 bg-orange-900/30 text-orange-300';
+      }
+
+      // Current cell highlight
+      if (step.highlightCells && step.highlightCells.length > 0) {
+        for (const hc of step.highlightCells) {
+          if (hc[0] === i && hc[1] === j) {
+            if (hc[2] === 'red') {
+              cellClass = 'matrix-cell w-14 h-9 text-center border border-red-500 bg-red-900/60 text-red-300 font-bold highlight-update';
+            }
+          }
+        }
+      }
+
+      if (i === j && !cellClass.includes('red')) {
+        cellClass = 'matrix-cell w-14 h-9 text-center border border-gray-700 bg-gray-750 text-gray-500';
+      }
+
+      pHtml += `<td class="${cellClass}">${displayVal}</td>`;
+    }
+    pHtml += '</tr>';
+  }
+  pHtml += '</tbody>';
+  pTable.innerHTML = pHtml;
+
+  // Superscripts
+  const kDisp = step.k >= 0 ? step.k + 1 : 0;
+  document.getElementById('kSuperscriptD').textContent = `(${kDisp})`;
+  document.getElementById('kSuperscriptP').textContent = `(${kDisp})`;
+  document.getElementById('kIterLabel').innerHTML = step.k >= 0 ? `k = ${step.k}` : 'k = -1 (未开始)';
+}
+
+function renderStatus(step) {
+  document.getElementById('stepDesc').textContent = step.description;
+  document.getElementById('curK').textContent = step.k >= 0 ? step.k : '-';
+  document.getElementById('curI').textContent = step.i >= 0 ? step.i : '-';
+  document.getElementById('curJ').textContent = step.j >= 0 ? step.j : '-';
+
+  // Update count
+  let uc = 0;
+  for (let s = 1; s <= currentStep; s++) {
+    if (steps[s].type === 'update') uc++;
+  }
+  document.getElementById('updateCount').textContent = uc;
+
+  // Comparison display
+  if (step.updateInfo) {
+    const ui = step.updateInfo;
+    document.getElementById('compareLeft').textContent = `${ui.dik} + ${ui.dkj} = ${ui.throughK}`;
+    document.getElementById('compareRight').textContent = ui.oldVal === INF ? '∞' : ui.oldVal;
+    document.getElementById('compareResult').textContent = '是 ✓';
+    document.getElementById('compareResult').className = 'text-red-400 font-mono font-bold';
+  } else if (step.type === 'examine' && step.i >= 0) {
+    const dik = step.D[step.i][step.k];
+    const dkj = step.D[step.k][step.j];
+    const throughK = (dik === INF || dkj === INF) ? INF : dik + dkj;
+    const throughKStr = throughK === INF ? '∞' : throughK;
+    document.getElementById('compareLeft').textContent = (dik === INF ? '∞' : dik) + ' + ' + (dkj === INF ? '∞' : dkj) + ' = ' + throughKStr;
+    const dij = step.D[step.i][step.j];
+    document.getElementById('compareRight').textContent = dij === INF ? '∞' : dij;
+    document.getElementById('compareResult').textContent = '否';
+    document.getElementById('compareResult').className = 'text-gray-400 font-mono';
+  } else {
+    document.getElementById('compareLeft').textContent = '-';
+    document.getElementById('compareRight').textContent = '-';
+    document.getElementById('compareResult').textContent = '-';
+    document.getElementById('compareResult').className = 'text-gray-400 font-mono font-bold';
+  }
+}
+
+function updateButtons() {
+  document.getElementById('btnBack').disabled = currentStep <= 0;
+  document.getElementById('btnStep').disabled = currentStep >= steps.length - 1;
+  document.getElementById('btnPlay').disabled = currentStep >= steps.length - 1;
+}
+
+// ==================== LOG ====================
+function addLog(msg, type) {
+  const panel = document.getElementById('logPanel');
+  let colorClass = 'text-gray-400';
+  if (type === 'init') colorClass = 'text-blue-400';
+  else if (type === 'k-enter') colorClass = 'text-orange-400';
+  else if (type === 'update') colorClass = 'text-red-400';
+  else if (type === 'examine') colorClass = 'text-gray-500';
+  else if (type === 'k-exit') colorClass = 'text-green-400';
+  else if (type === 'complete') colorClass = 'text-yellow-400';
+
+  const div = document.createElement('div');
+  div.className = `log-entry ${colorClass}`;
+  div.textContent = msg;
+  panel.appendChild(div);
+  panel.scrollTop = panel.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('logPanel').innerHTML = '';
+}
+
+// ==================== CONTROLS ====================
+function stepForward() {
+  if (currentStep >= steps.length - 1) return;
+  currentStep++;
+  const step = steps[currentStep];
+  addLog(`[步骤 ${currentStep}] ${step.description}`, step.type);
+  render();
+  if (currentStep >= steps.length - 1) stopAuto();
+}
+
+function stepBack() {
+  if (currentStep <= 0) return;
+  currentStep--;
+  const panel = document.getElementById('logPanel');
+  if (panel.lastChild) panel.removeChild(panel.lastChild);
+  render();
+}
+
+function autoPlay() {
+  if (autoTimer) {
+    stopAuto();
+    return;
+  }
+  document.getElementById('btnPlay').textContent = '暂停';
+  document.getElementById('btnPlay').classList.remove('bg-orange-600', 'hover:bg-orange-500');
+  document.getElementById('btnPlay').classList.add('bg-red-600', 'hover:bg-red-500');
+
+  function tick() {
+    if (currentStep >= steps.length - 1) { stopAuto(); return; }
+    stepForward();
+    if (currentStep < steps.length - 1) {
+      autoTimer = setTimeout(tick, playSpeed);
+    } else { stopAuto(); }
+  }
+  autoTimer = setTimeout(tick, playSpeed);
+}
+
+function stopAuto() {
+  if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+  document.getElementById('btnPlay').textContent = '自动播放';
+  document.getElementById('btnPlay').classList.remove('bg-red-600', 'hover:bg-red-500');
+  document.getElementById('btnPlay').classList.add('bg-orange-600', 'hover:bg-orange-500');
+}
+
+function reset() {
+  stopAuto();
+  currentStep = -1;
+  clearLog();
+  initSteps();
+  currentStep = 0;
+  addLog(`[初始化] ${steps[0].description}`, 'init');
+  render();
+}
+
+function updateSpeed(val) {
+  playSpeed = parseFloat(val) * 1000;
+  document.getElementById('speedLabel').textContent = '速度: ' + parseFloat(val).toFixed(1) + 's';
+}
+
+// ==================== STARTUP ====================
+function init() {
+  initSteps();
+  currentStep = 0;
+  addLog(`[初始化] ${steps[0].description}`, 'init');
+  render();
+}
+
+window.addEventListener('resize', () => {
+  if (currentStep >= 0 && currentStep < steps.length) {
+    renderGraph(steps[currentStep]);
+  }
+});
+
+init();
+</script>
+
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

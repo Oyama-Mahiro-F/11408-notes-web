@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>线索二叉树演示 - 408考研</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f4f8; min-height: 100vh; }
+.tree-container { position: relative; width: 100%; height: 500px; background: #fafbfc;
+  border-radius: 12px; border: 2px solid #e2e8f0; overflow: hidden; }
+.tree-container svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.tree-node { position: absolute; width: 50px; height: 50px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-weight: bold;
+  font-size: 16px; transition: all 0.5s ease; z-index: 2;
+  border: 3px solid #64748b; background: #f1f5f9; color: #1e293b;
+  transform: translate(-50%, -50%); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.tree-node.highlight { background: #dbeafe; border-color: #3b82f6; color: #1e40af;
+  box-shadow: 0 0 20px rgba(59,130,246,0.6); transform: translate(-50%, -50%) scale(1.15); z-index: 5; }
+.tree-node.head-node { width: 60px; height: 38px; border-radius: 10px; background: #ede9fe;
+  border-color: #8b5cf6; color: #5b21b6; font-size: 13px; }
+.edge-child { stroke: #64748b; stroke-width: 3; fill: none; }
+.edge-thread-left { stroke: #ef4444; stroke-width: 2.5; fill: none; stroke-dasharray: 7,4; }
+.edge-thread-right { stroke: #3b82f6; stroke-width: 2.5; fill: none; stroke-dasharray: 7,4; }
+.edge-new { stroke-width: 4; filter: drop-shadow(0 0 4px rgba(34,197,94,0.6)); }
+.tag-left { position: absolute; font-size: 10px; font-weight: bold; color: #ef4444;
+  transform: translate(-50%, -50%); pointer-events: none; z-index: 3;
+  background: rgba(255,255,255,0.85); padding: 1px 3px; border-radius: 3px; }
+.tag-right { position: absolute; font-size: 10px; font-weight: bold; color: #3b82f6;
+  transform: translate(-50%, -50%); pointer-events: none; z-index: 3;
+  background: rgba(255,255,255,0.85); padding: 1px 3px; border-radius: 3px; }
+.null-marker { font-size: 10px; color: #94a3b8; position: absolute; pointer-events: none; }
+.control-btn { padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 13px;
+  cursor: pointer; transition: all 0.2s; border: 2px solid transparent; white-space: nowrap; }
+.control-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.control-btn.active-btn { box-shadow: 0 0 0 3px rgba(59,130,246,0.4); }
+.log-entry { padding: 3px 8px; font-size: 12px; border-left: 3px solid #8b5cf6;
+  margin: 2px 0; background: #f8fafc; border-radius: 0 4px 4px 0; animation: slideIn 0.3s ease; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+.info-box { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px;
+  padding: 10px; font-size: 13px; line-height: 1.6; }
+.traversal-highlight { animation: travPulse 0.6s ease-in-out; }
+@keyframes travPulse { 0%,100% { box-shadow: 0 0 8px rgba(34,197,94,0.3); }
+  50% { box-shadow: 0 0 28px rgba(34,197,94,0.8); } }
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="bg-white rounded-xl shadow-md p-4 mb-3">
+    <h1 class="text-2xl font-bold text-gray-800 text-center">线索二叉树 (Threaded Binary Tree) 演示</h1>
+    <p class="text-center text-gray-500 text-sm mt-1">408考研 数据结构 · 第5章 树与二叉树 · 中序线索化</p>
+  </div>
+
+  <!-- Control Bar -->
+  <div class="bg-white rounded-xl shadow-md p-3 mb-3">
+    <div class="flex flex-wrap items-center gap-2">
+      <button onclick="resetAll()" class="control-btn bg-gray-500 text-white hover:bg-gray-600">重置</button>
+      <button id="stepBtn" onclick="nextStep()" class="control-btn bg-blue-600 text-white hover:bg-blue-700">下一步: 构建线索</button>
+      <button id="autoBtn" onclick="toggleAuto()" class="control-btn bg-green-600 text-white hover:bg-green-700">自动播放</button>
+      <button onclick="jumpEnd()" class="control-btn bg-purple-600 text-white hover:bg-purple-700">完成线索化</button>
+      <button id="traverseBtn" onclick="startTraversal()" class="control-btn bg-orange-500 text-white hover:bg-orange-600" disabled>遍历演示</button>
+      <button id="travNextBtn" onclick="nextTravStep()" class="control-btn bg-cyan-600 text-white hover:bg-cyan-700" disabled>遍历下一步</button>
+      <label class="text-sm text-gray-600 ml-2">速度：</label>
+      <input id="speedSlider" type="range" min="300" max="2000" value="800" step="100" style="width:90px; accent-color:#8b5cf6;">
+      <span id="speedLabel" class="text-xs text-gray-500">800ms</span>
+      <span id="stepIndicator" class="ml-auto text-sm font-semibold text-gray-600">阶段: 构建线索 步骤: 0/0</span>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="flex flex-wrap gap-3 mb-2 text-xs text-gray-500 px-2">
+    <span><span class="inline-block w-12 h-1 bg-gray-500 align-middle mr-1" style="display:inline-block;width:24px;height:3px;background:#64748b;"></span> 孩子指针(实线)</span>
+    <span><span style="display:inline-block;width:24px;height:1px;border-top:3px dashed #ef4444;"></span> 左线索(ltag=1)</span>
+    <span><span style="display:inline-block;width:24px;height:1px;border-top:3px dashed #3b82f6;"></span> 右线索(rtag=1)</span>
+    <span><span class="inline-block w-4 h-4 rounded-sm bg-purple-100 border-2 border-purple-500 align-middle mr-1"></span> 头结点</span>
+    <span><span class="inline-block w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500 align-middle mr-1"></span> 当前高亮节点</span>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex flex-col lg:flex-row gap-3">
+    <!-- Left: Tree -->
+    <div class="flex-1 bg-white rounded-xl shadow-md p-3">
+      <h3 class="text-md font-bold text-gray-700 mb-2" id="treeTitle">原始二叉树 (含空指针标记)</h3>
+      <div id="treeVis" class="tree-container"></div>
+    </div>
+
+    <!-- Right: Sidebar -->
+    <div class="w-full lg:w-80 flex flex-col gap-3">
+      <!-- Node info table -->
+      <div class="bg-white rounded-xl shadow-md p-3">
+        <h3 class="text-md font-bold text-gray-700 mb-2">节点线索标志位</h3>
+        <table class="w-full text-xs" id="flagTable">
+          <thead><tr class="bg-gray-50 text-gray-500"><th class="p-1 text-left">节点</th><th class="p-1">ltag</th><th class="p-1">rtag</th><th class="p-1 text-left">左指针</th><th class="p-1 text-left">右指针</th></tr></thead>
+          <tbody id="flagBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Current step info -->
+      <div class="bg-white rounded-xl shadow-md p-3">
+        <h3 class="text-md font-bold text-gray-700 mb-1">当前操作说明</h3>
+        <p id="stepDesc" class="text-sm text-gray-600">准备开始线索化。原始二叉树中共有若干空指针需要被线索化。</p>
+      </div>
+
+      <!-- In-order traversal path -->
+      <div class="bg-white rounded-xl shadow-md p-3">
+        <h3 class="text-md font-bold text-gray-700 mb-2">中序遍历序列</h3>
+        <div id="inorderDisplay" class="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-lg min-h-[40px] items-center">
+          <span class="text-gray-400 text-sm">D → B → E → A → C → F</span>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">遍历顺序决定前驱/后继关系</p>
+      </div>
+
+      <!-- Log -->
+      <div class="bg-white rounded-xl shadow-md p-3 flex-1">
+        <h3 class="text-md font-bold text-gray-700 mb-2">操作日志</h3>
+        <div id="logPanel" class="max-h-44 overflow-y-auto text-sm"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== TREE DATA ====================
+// Tree structure:
+//        A
+//       / \
+//      B   C
+//     / \   \
+//    D   E   F
+// In-order: D B E A C F
+
+const nodeDefs = {
+  'HEAD': { x: 350, y: 20,  type: 'head' },
+  'A':    { x: 350, y: 115, type: 'node', ltag: 0, rtag: 0 },
+  'B':    { x: 175, y: 225, type: 'node', ltag: 0, rtag: 0 },
+  'C':    { x: 525, y: 225, type: 'node', ltag: 1, rtag: 0 },
+  'D':    { x: 70,  y: 355, type: 'node', ltag: 1, rtag: 1 },
+  'E':    { x: 280, y: 355, type: 'node', ltag: 1, rtag: 1 },
+  'F':    { x: 630, y: 355, type: 'node', ltag: 1, rtag: 1 },
+};
+
+// Child relationships
+const children = {
+  'HEAD': { left: 'A', right: null },
+  'A': { left: 'B', right: 'C' },
+  'B': { left: 'D', right: 'E' },
+  'C': { left: null, right: 'F' },
+  'D': { left: null, right: null },
+  'E': { left: null, right: null },
+  'F': { left: null, right: null },
+};
+
+// In-order: D B E A C F
+const inOrderSeq = ['D','B','E','A','C','F'];
+
+// Thread relationships (after threading, for each node)
+// leftThreadTo: if node has no left child, this is its predecessor
+// rightThreadTo: if node has no right child, this is its successor
+const threadInfo = {
+  'D': { leftTo: 'HEAD', rightTo: 'B' },
+  'E': { leftTo: 'B',    rightTo: 'A' },
+  'C': { leftTo: 'A',    rightTo: null },  // C has right child F
+  'F': { leftTo: 'C',    rightTo: 'HEAD' },
+};
+
+// Build step definitions: each step reveals one element
+// Step 0: show bare tree (no head, child edges only)
+// Step 1-N: add head + threads one by one
+const buildSteps = [];
+
+function initBuildSteps() {
+  buildSteps.length = 0;
+
+  // Step 0: Show original tree (child edges only, A through F)
+  buildSteps.push({
+    phase: 'original',
+    title: '原始二叉树',
+    desc: '原始二叉树：共有7个空指针域（D/E/F各2个 + C的1个左空指针 = 7个）。在线索二叉树中，这些空指针将被替换为指向前驱/后继的线索。',
+    visibleNodes: ['A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF'],
+    newEdge: null,
+    highlightNode: null,
+  });
+
+  // Step 1: Add head node + head→A
+  buildSteps.push({
+    phase: 'add-head',
+    title: '添加头结点',
+    desc: '引入头结点(HEAD)。头结点的lchild指向根结点A（ltag=0，表示是孩子指针）。头结点使整个线索树形成双向链表结构，便于统一处理。',
+    visibleNodes: ['HEAD','A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF','c-HEAD-A'],
+    newEdge: 'c-HEAD-A',
+    highlightNode: 'HEAD',
+  });
+
+  // Step 2: D's left thread
+  buildSteps.push({
+    phase: 'threading',
+    title: '线索化 D 的左指针',
+    desc: 'D 是中序序列的第一个节点。D无左孩子(ltag=1)，左线索指向其中序前驱——头结点HEAD。头结点作为整个线索链表的起点。',
+    visibleNodes: ['HEAD','A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF','c-HEAD-A','tL-D-HEAD'],
+    newEdge: 'tL-D-HEAD',
+    highlightNode: 'D',
+  });
+
+  // Step 3: D's right thread
+  buildSteps.push({
+    phase: 'threading',
+    title: '线索化 D 的右指针',
+    desc: 'D无右孩子(rtag=1)，右线索指向其中序后继B。通过右线索，访问完D后可以直接跳转到B，无需回溯或使用栈。',
+    visibleNodes: ['HEAD','A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF','c-HEAD-A','tL-D-HEAD','tR-D-B'],
+    newEdge: 'tR-D-B',
+    highlightNode: 'D',
+  });
+
+  // Step 4: E's left thread
+  buildSteps.push({
+    phase: 'threading',
+    title: '线索化 E 的左指针',
+    desc: 'E无左孩子(ltag=1)，左线索指向其中序前驱B。中序序列为 D,B,E，E紧跟在B之后。',
+    visibleNodes: ['HEAD','A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF','c-HEAD-A','tL-D-HEAD','tR-D-B','tL-E-B'],
+    newEdge: 'tL-E-B',
+    highlightNode: 'E',
+  });
+
+  // Step 5: E's right thread
+  buildSteps.push({
+    phase: 'threading',
+    title: '线索化 E 的右指针',
+    desc: 'E无右孩子(rtag=1)，右线索指向其中序后继A。中序序列 D,B,E,A，E之后访问A。',
+    visibleNodes: ['HEAD','A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF','c-HEAD-A','tL-D-HEAD','tR-D-B','tL-E-B','tR-E-A'],
+    newEdge: 'tR-E-A',
+    highlightNode: 'E',
+  });
+
+  // Step 6: C's left thread
+  buildSteps.push({
+    phase: 'threading',
+    title: '线索化 C 的左指针',
+    desc: 'C无左孩子(ltag=1)，左线索指向其中序前驱A。中序序列 D,B,E,A,C,F，A是C的前驱。注意C有右孩子F，所以rtag=0，右指针仍为孩子指针。',
+    visibleNodes: ['HEAD','A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF','c-HEAD-A','tL-D-HEAD','tR-D-B','tL-E-B','tR-E-A','tL-C-A'],
+    newEdge: 'tL-C-A',
+    highlightNode: 'C',
+  });
+
+  // Step 7: F's left thread
+  buildSteps.push({
+    phase: 'threading',
+    title: '线索化 F 的左指针',
+    desc: 'F无左孩子(ltag=1)，左线索指向其中序前驱C。中序序列 D,B,E,A,C,F，C是F的前驱。',
+    visibleNodes: ['HEAD','A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF','c-HEAD-A','tL-D-HEAD','tR-D-B','tL-E-B','tR-E-A','tL-C-A','tL-F-C'],
+    newEdge: 'tL-F-C',
+    highlightNode: 'F',
+  });
+
+  // Step 8: F's right thread
+  buildSteps.push({
+    phase: 'threading',
+    title: '线索化 F 的右指针',
+    desc: 'F是中序序列的最后一个节点。F无右孩子(rtag=1)，右线索指向后继——头结点HEAD。至此，所有空指针均已线索化，形成完整的线索链表：HEAD→D→B→E→A→C→F→HEAD。',
+    visibleNodes: ['HEAD','A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF','c-HEAD-A','tL-D-HEAD','tR-D-B','tL-E-B','tR-E-A','tL-C-A','tL-F-C','tR-F-HEAD'],
+    newEdge: 'tR-F-HEAD',
+    highlightNode: 'F',
+  });
+
+  // Step 9: Summary
+  buildSteps.push({
+    phase: 'complete',
+    title: '线索化完成',
+    desc: '中序线索二叉树构造完成！所有7个空指针均已替换为线索。现在可以不使用递归/栈，仅通过线索实现中序遍历：从第一个节点D出发，沿右指针(孩子或线索)依次访问D→B→E→A→C→F→HEAD(结束)。时间复杂度O(1)找后继！',
+    visibleNodes: ['HEAD','A','B','C','D','E','F'],
+    visibleEdges: ['c-AB','c-AC','c-BD','c-BE','c-CF','c-HEAD-A','tL-D-HEAD','tR-D-B','tL-E-B','tR-E-A','tL-C-A','tL-F-C','tR-F-HEAD'],
+    newEdge: null,
+    highlightNode: null,
+  });
+}
+
+// ==================== EDGE DATA FOR RENDERING ====================
+function getEdgeEndpoints(fromId, toId) {
+  const from = nodeDefs[fromId];
+  const to = nodeDefs[toId];
+  if (!from || !to) return null;
+
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  if (dist === 0) return null;
+
+  const fromR = (from.type === 'head') ? 24 : 25;
+  const toR = (to.type === 'head') ? 24 : 25;
+
+  const ux = dx / dist;
+  const uy = dy / dist;
+
+  // Start from edge of from node (move toward to)
+  const startX = from.x + ux * fromR;
+  const startY = from.y + uy * fromR;
+  // End at edge of to node (move from to toward from)
+  const endX = to.x - ux * toR;
+  const endY = to.y - uy * toR;
+
+  return { x1: startX, y1: startY, x2: endX, y2: endY };
+}
+
+// ==================== GLOBAL STATE ====================
+let currentBuildStep = -1;   // -1 = nothing shown, 0..buildSteps.length-1
+let isAutoPlaying = false;
+let autoTimer = null;
+
+// Traversal state
+let travSteps = [];
+let currentTravStep = -1;
+let isTraversalMode = false;
+
+// ==================== RENDER ====================
+function renderAll() {
+  const container = document.getElementById('treeVis');
+  container.innerHTML = '';
+
+  if (currentBuildStep < 0 || buildSteps.length === 0) {
+    container.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400">请点击"重置"开始</div>';
+    updateFlagTable(null);
+    return;
+  }
+
+  const step = buildSteps[Math.min(currentBuildStep, buildSteps.length - 1)];
+  const visibleEdges = step.visibleEdges || [];
+  const visibleNodes = step.visibleNodes || [];
+  const highlightNode = step.highlightNode;
+
+  document.getElementById('treeTitle').textContent = step.title || '线索二叉树';
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.style.cssText = 'position:absolute;top:0;left:0;';
+
+  // Draw visible edges
+  for (const edgeId of visibleEdges) {
+    let fromId, toId, cls;
+
+    if (edgeId.startsWith('c-')) {
+      // Child edge: c-FROM-TO (e.g., 'c-AB' = A→B, or 'c-HEAD-A')
+      const remainder = edgeId.substring(2);
+      // Find the split point: FROM and TO are single chars (or 'HEAD' which is 4 chars)
+      // For two single-char nodes: c-AB → A→B
+      // For HEAD→A: c-HEAD-A
+      if (remainder.startsWith('HEAD-')) {
+        fromId = 'HEAD';
+        toId = remainder.substring(5);
+      } else {
+        fromId = remainder[0];
+        toId = remainder.substring(1);
+      }
+      cls = 'edge-child';
+    } else if (edgeId.startsWith('tL-')) {
+      // Left thread: tL-FROM-TO
+      const remainder = edgeId.substring(3);
+      fromId = remainder[0];
+      toId = remainder.substring(1);
+      if (toId === 'HEAD') toId = 'HEAD';
+      cls = 'edge-thread-left';
+    } else if (edgeId.startsWith('tR-')) {
+      // Right thread: tR-FROM-TO
+      const remainder = edgeId.substring(3);
+      fromId = remainder[0];
+      toId = remainder.substring(1);
+      if (toId === 'HEAD') toId = 'HEAD';
+      cls = 'edge-thread-right';
+    } else {
+      continue;
+    }
+
+    const endpoints = getEdgeEndpoints(fromId, toId);
+    if (!endpoints) continue;
+
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', endpoints.x1);
+    line.setAttribute('y1', endpoints.y1);
+    line.setAttribute('x2', endpoints.x2);
+    line.setAttribute('y2', endpoints.y2);
+    line.setAttribute('class', cls);
+    if (edgeId === step.newEdge) {
+      line.classList.add('edge-new');
+      line.style.stroke = '#22c55e';
+      line.style.strokeDasharray = cls.includes('thread') ? '7,4' : 'none';
+    }
+    svg.appendChild(line);
+  }
+
+  // Draw NULL markers for nodes that haven't been threaded yet
+  if (currentBuildStep <= 1) {
+    // Show NULL markers
+    const nullNodes = { 'D': ['left','right'], 'E': ['left','right'], 'C': ['left'], 'F': ['left','right'] };
+    for (const [nodeId, sides] of Object.entries(nullNodes)) {
+      const pos = nodeDefs[nodeId];
+      if (!pos) continue;
+      for (const side of sides) {
+        // Check if this null has been replaced by a thread
+        const isThreaded = visibleEdges.some(e => {
+          if (side === 'left') return e.startsWith('tL-' + nodeId);
+          return e.startsWith('tR-' + nodeId);
+        });
+        if (isThreaded) continue;
+
+        let nx, ny;
+        if (side === 'left') { nx = pos.x - 45; ny = pos.y; }
+        else { nx = pos.x + 45; ny = pos.y; }
+
+        const marker = document.createElementNS(svgNS, 'text');
+        marker.setAttribute('x', nx);
+        marker.setAttribute('y', ny);
+        marker.setAttribute('text-anchor', 'middle');
+        marker.setAttribute('font-size', '11');
+        marker.setAttribute('fill', '#94a3b8');
+        marker.textContent = side === 'left' ? 'NULL' : 'NULL';
+        svg.appendChild(marker);
+
+        // Small line from node to NULL
+        const dotLine = document.createElementNS(svgNS, 'line');
+        const ep = getEdgeEndpoints(nodeId, nodeId); // dummy
+        dotLine.setAttribute('x1', pos.x + (side === 'left' ? -25 : 25));
+        dotLine.setAttribute('y1', pos.y);
+        dotLine.setAttribute('x2', side === 'left' ? pos.x - 38 : pos.x + 38);
+        dotLine.setAttribute('y2', pos.y);
+        dotLine.setAttribute('stroke', '#cbd5e1');
+        dotLine.setAttribute('stroke-width', '1.5');
+        dotLine.setAttribute('stroke-dasharray', '3,3');
+        svg.appendChild(dotLine);
+      }
+    }
+  }
+
+  container.appendChild(svg);
+
+  // Draw nodes
+  for (const nodeId of visibleNodes) {
+    const pos = nodeDefs[nodeId];
+    if (!pos) continue;
+
+    const div = document.createElement('div');
+    div.className = 'tree-node';
+    div.id = 'tree-node-' + nodeId;
+    if (pos.type === 'head') div.classList.add('head-node');
+    if (nodeId === highlightNode) div.classList.add('highlight');
+    div.style.left = pos.x + 'px';
+    div.style.top = pos.y + 'px';
+    div.textContent = nodeId;
+    if (pos.type === 'head') div.textContent = 'HEAD';
+    container.appendChild(div);
+
+    // Add ltag/rtag labels
+    if (pos.type === 'node') {
+      const ltagVal = nodeDefs[nodeId].ltag;
+      const rtagVal = nodeDefs[nodeId].rtag;
+
+      const lTag = document.createElement('div');
+      lTag.className = 'tag-left';
+      lTag.style.left = (pos.x - 32) + 'px';
+      lTag.style.top = (pos.y - 8) + 'px';
+      lTag.textContent = 'ltag:' + ltagVal;
+      container.appendChild(lTag);
+
+      const rTag = document.createElement('div');
+      rTag.className = 'tag-right';
+      rTag.style.left = (pos.x + 32) + 'px';
+      rTag.style.top = (pos.y - 8) + 'px';
+      rTag.textContent = 'rtag:' + rtagVal;
+      container.appendChild(rTag);
+    }
+  }
+
+  // Update description
+  document.getElementById('stepDesc').textContent = step.desc || '';
+
+  // Update flag table
+  updateFlagTable(step);
+
+  // Update step indicator
+  const totalSteps = buildSteps.length;
+  document.getElementById('stepIndicator').textContent =
+    `阶段: 构建线索  步骤: ${Math.max(0, currentBuildStep)}/${totalSteps}`;
+}
+
+function updateFlagTable(step) {
+  const tbody = document.getElementById('flagBody');
+  if (!step || step.phase === 'original') {
+    // Show original flags (all ltag=0 or based on children)
+    let html = '';
+    for (const nodeId of inOrderSeq) {
+      const leftChild = children[nodeId].left;
+      const rightChild = children[nodeId].right;
+      const ltag = leftChild ? 0 : 1;
+      const rtag = rightChild ? 0 : 1;
+      const leftTarget = leftChild || (ltag === 1 ? (threadInfo[nodeId]?.leftTo || '待定') : '');
+      const rightTarget = rightChild || (rtag === 1 ? (threadInfo[nodeId]?.rightTo || '待定') : '');
+      html += `<tr class="border-b border-gray-100">
+        <td class="p-1 font-bold">${nodeId}</td>
+        <td class="p-1 text-center ${ltag===1?'text-red-500 font-bold':'text-gray-400'}">${ltag}</td>
+        <td class="p-1 text-center ${rtag===1?'text-blue-500 font-bold':'text-gray-400'}">${rtag}</td>
+        <td class="p-1 text-xs ${ltag===1?'text-red-500':'text-gray-600'}">${leftTarget}</td>
+        <td class="p-1 text-xs ${rtag===1?'text-blue-500':'text-gray-600'}">${rightTarget}</td>
+      </tr>`;
+    }
+    tbody.innerHTML = html;
+    return;
+  }
+
+  // Build current state from visible edges
+  const visibleEdges = step.visibleEdges || [];
+
+  let html = '';
+  for (const nodeId of inOrderSeq) {
+    const leftChild = children[nodeId].left;
+    const rightChild = children[nodeId].right;
+
+    // Determine if thread exists for this node
+    const hasLeftThread = visibleEdges.some(e => e === 'tL-' + nodeId + '-' + (threadInfo[nodeId]?.leftTo || ''));
+    const hasRightThread = visibleEdges.some(e => e === 'tR-' + nodeId + '-' + (threadInfo[nodeId]?.rightTo || ''));
+
+    const ltag = leftChild ? 0 : 1;
+    const rtag = rightChild ? 0 : 1;
+
+    const leftTarget = leftChild || (threadInfo[nodeId]?.leftTo || '');
+    const rightTarget = rightChild || (threadInfo[nodeId]?.rightTo || '');
+
+    const lColor = (ltag === 1 && hasLeftThread) ? 'text-red-500 font-bold' : (ltag === 1 ? 'text-red-500' : 'text-gray-400');
+    const rColor = (rtag === 1 && hasRightThread) ? 'text-blue-500 font-bold' : (rtag === 1 ? 'text-blue-500' : 'text-gray-400');
+
+    html += `<tr class="border-b border-gray-100">
+      <td class="p-1 font-bold">${nodeId}</td>
+      <td class="p-1 text-center ${lColor}">${ltag}</td>
+      <td class="p-1 text-center ${rColor}">${rtag}</td>
+      <td class="p-1 text-xs">${leftTarget}</td>
+      <td class="p-1 text-xs">${rightTarget}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function addLog(msg) {
+  const panel = document.getElementById('logPanel');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.textContent = msg;
+  panel.appendChild(entry);
+  panel.scrollTop = panel.scrollHeight;
+}
+
+// ==================== CORE CONTROLS ====================
+function resetAll() {
+  stopAuto();
+  endTraversalMode();
+  initBuildSteps();
+  currentBuildStep = -1;
+  document.getElementById('logPanel').innerHTML = '';
+  document.getElementById('treeVis').innerHTML = '<div class="flex items-center justify-center h-full text-gray-400">请点击"重置"开始</div>';
+  document.getElementById('treeTitle').textContent = '原始二叉树';
+  document.getElementById('stepDesc').textContent = '准备开始线索化。原始二叉树中共有7个空指针域需要被线索化。';
+  document.getElementById('stepIndicator').textContent = '阶段: 构建线索  步骤: 0/0';
+  document.getElementById('flagBody').innerHTML = '';
+  document.getElementById('traverseBtn').disabled = true;
+  document.getElementById('travNextBtn').disabled = true;
+
+  // Show initial tree
+  currentBuildStep = 0;
+  renderAll();
+  addLog('初始化：显示原始二叉树。中序遍历序列为 D → B → E → A → C → F。');
+  addLog(`二叉链表共有 ${inOrderSeq.length * 2} 个指针域，其中 ${inOrderSeq.length + 1} 个非空（孩子指针），${inOrderSeq.length -1 } 个为空（将被线索化）。`);
+  addLog('点击"下一步"开始添加头结点和线索。');
+}
+
+function nextStep() {
+  if (isTraversalMode) return;
+  if (buildSteps.length === 0) { resetAll(); return; }
+  if (currentBuildStep >= buildSteps.length - 1) {
+    addLog('线索化已完成！所有空指针已被替换为线索。可以点击"遍历演示"查看如何使用线索遍历。');
+    document.getElementById('traverseBtn').disabled = false;
+    return;
+  }
+
+  currentBuildStep++;
+  const step = buildSteps[currentBuildStep];
+  renderAll();
+  addLog(`[${currentBuildStep}/${buildSteps.length - 1}] ${step.title}: ${step.desc}`);
+
+  if (currentBuildStep >= buildSteps.length - 1) {
+    addLog('=== 中序线索二叉树构造完成！===');
+    addLog('线索链表: HEAD → D → B → E → A → C → F → HEAD');
+    addLog('现在可以点击"遍历演示"查看如何利用线索进行无栈遍历。');
+    document.getElementById('traverseBtn').disabled = false;
+  }
+}
+
+function jumpEnd() {
+  stopAuto();
+  endTraversalMode();
+  if (buildSteps.length === 0) { resetAll(); return; }
+  currentBuildStep = buildSteps.length - 1;
+  renderAll();
+
+  document.getElementById('logPanel').innerHTML = '';
+  for (let i = 0; i < buildSteps.length; i++) {
+    addLog(`[${i}/${buildSteps.length - 1}] ${buildSteps[i].title}`);
+  }
+  addLog('=== 中序线索二叉树构造完成！===');
+  addLog('线索链表: HEAD → D → B → E → A → C → F → HEAD');
+  document.getElementById('traverseBtn').disabled = false;
+}
+
+function toggleAuto() {
+  if (isAutoPlaying) stopAuto();
+  else startAuto();
+}
+
+function startAuto() {
+  if (isAutoPlaying) return;
+  if (isTraversalMode) return;
+  if (currentBuildStep >= buildSteps.length - 1) {
+    currentBuildStep = -1;
+    document.getElementById('logPanel').innerHTML = '';
+  }
+  isAutoPlaying = true;
+  document.getElementById('autoBtn').textContent = '暂停';
+  document.getElementById('autoBtn').classList.replace('bg-green-600', 'bg-red-600');
+  scheduleNextBuild();
+}
+
+function stopAuto() {
+  isAutoPlaying = false;
+  if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+  document.getElementById('autoBtn').textContent = '自动播放';
+  document.getElementById('autoBtn').classList.replace('bg-red-600', 'bg-green-600');
+}
+
+function scheduleNextBuild() {
+  if (!isAutoPlaying) return;
+  const speed = parseInt(document.getElementById('speedSlider').value);
+  autoTimer = setTimeout(() => {
+    if (currentBuildStep < buildSteps.length - 1) {
+      nextStep();
+      scheduleNextBuild();
+    } else {
+      stopAuto();
+      addLog('自动播放完成。线索二叉树构造完毕。');
+      document.getElementById('traverseBtn').disabled = false;
+    }
+  }, speed);
+}
+
+// ==================== TRAVERSAL DEMO ====================
+function startTraversal() {
+  if (currentBuildStep < buildSteps.length - 1) return;
+  isTraversalMode = true;
+  document.getElementById('traverseBtn').disabled = true;
+  document.getElementById('travNextBtn').disabled = false;
+  document.getElementById('stepBtn').disabled = true;
+  document.getElementById('autoBtn').disabled = true;
+
+  // Generate traversal steps
+  // Using threads: start from first node (D), follow right pointers
+  travSteps = [];
+  const visited = [];
+
+  // Step 0: Start at head, follow lchild to first node
+  travSteps.push({
+    desc: '从头结点HEAD出发，沿lchild找到中序遍历的第一个节点（最左下节点）D。因为D的ltag=1（左线索指向HEAD），我们找到了起点。',
+    highlight: 'D',
+    pathFrom: 'HEAD',
+    pathTo: 'D',
+    output: [],
+  });
+
+  // Visit D
+  visited.push('D');
+  travSteps.push({
+    desc: '访问节点 D。D的rtag=1（右线索），所以下一个访问节点直接由右线索确定→B。无需回溯！',
+    highlight: 'D',
+    pathFrom: null,
+    pathTo: null,
+    output: [...visited],
+    nextThread: 'D→B',
+  });
+
+  // Visit B
+  visited.push('B');
+  travSteps.push({
+    desc: '访问节点 B。B的rtag=0（右孩子），所以需要先转向右孩子E，然后沿E的左链找到后继。E无左孩子(ltag=1)，所以后继就是E。',
+    highlight: 'B',
+    pathFrom: null,
+    pathTo: null,
+    output: [...visited],
+  });
+
+  // Visit E
+  visited.push('E');
+  travSteps.push({
+    desc: '访问节点 E。E的rtag=1（右线索），直接跳到后继A。线索使得找后继的时间复杂度为O(1)！',
+    highlight: 'E',
+    pathFrom: null,
+    pathTo: null,
+    output: [...visited],
+    nextThread: 'E→A',
+  });
+
+  // Visit A
+  visited.push('A');
+  travSteps.push({
+    desc: '访问节点 A。A的rtag=0（右孩子C），转向C。C的ltag=1，说明C就是下一个要访问的节点。',
+    highlight: 'A',
+    pathFrom: null,
+    pathTo: null,
+    output: [...visited],
+  });
+
+  // Visit C
+  visited.push('C');
+  travSteps.push({
+    desc: '访问节点 C。C的rtag=0（右孩子F），转向F。F的ltag=1（左线索指向C），说明F就是下一个。',
+    highlight: 'C',
+    pathFrom: null,
+    pathTo: null,
+    output: [...visited],
+  });
+
+  // Visit F
+  visited.push('F');
+  travSteps.push({
+    desc: '访问节点 F。F是中序最后一个节点，rtag=1，右线索指向HEAD。说明遍历完成！',
+    highlight: 'F',
+    pathFrom: null,
+    pathTo: null,
+    output: [...visited],
+    nextThread: 'F→HEAD',
+  });
+
+  // Done
+  travSteps.push({
+    desc: '遍历完成！到达头结点HEAD。中序序列：D → B → E → A → C → F。整个过程没有使用递归和栈，完全依靠线索指针完成遍历。时间复杂度O(n)，空间复杂度O(1)！',
+    highlight: 'HEAD',
+    pathFrom: null,
+    pathTo: null,
+    output: [...visited],
+  });
+
+  currentTravStep = -1;
+  document.getElementById('logPanel').innerHTML = '';
+  addLog('=== 开始线索遍历演示 ===');
+  addLog('利用线索进行中序遍历，无需递归和栈。');
+  nextTravStep();
+}
+
+function nextTravStep() {
+  if (!isTraversalMode) return;
+  if (currentTravStep >= travSteps.length - 1) {
+    addLog('线索遍历演示完成！');
+    endTraversalMode();
+    return;
+  }
+
+  currentTravStep++;
+  const ts = travSteps[currentTravStep];
+  renderTraversalStep(ts);
+
+  addLog(`[遍历 ${currentTravStep + 1}/${travSteps.length}] ${ts.desc}`);
+
+  if (currentTravStep >= travSteps.length - 1) {
+    addLog('=== 遍历完成！中序序列: D → B → E → A → C → F ===');
+    addLog('结论：线索二叉树可将遍历的空间复杂度从O(h)（栈深度）降为O(1)。');
+    setTimeout(() => { endTraversalMode(); }, 500);
+  }
+}
+
+function endTraversalMode() {
+  isTraversalMode = false;
+  document.getElementById('traverseBtn').disabled = false;
+  document.getElementById('travNextBtn').disabled = true;
+  document.getElementById('stepBtn').disabled = false;
+  document.getElementById('autoBtn').disabled = false;
+  currentTravStep = -1;
+  // Re-render completed tree
+  if (currentBuildStep >= 0) renderAll();
+}
+
+function renderTraversalStep(ts) {
+  const container = document.getElementById('treeVis');
+  container.innerHTML = '';
+
+  const step = buildSteps[buildSteps.length - 1]; // completed state
+  const visibleNodes = step.visibleNodes;
+  const visibleEdges = step.visibleEdges;
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.style.cssText = 'position:absolute;top:0;left:0;';
+
+  // Draw edges
+  for (const edgeId of visibleEdges) {
+    let fromId, toId, cls;
+    if (edgeId.startsWith('c-')) {
+      const remainder = edgeId.substring(2);
+      if (remainder.startsWith('HEAD-')) { fromId = 'HEAD'; toId = remainder.substring(5); }
+      else { fromId = remainder[0]; toId = remainder.substring(1); }
+      cls = 'edge-child';
+    } else if (edgeId.startsWith('tL-')) {
+      fromId = edgeId[3];
+      toId = edgeId.substring(4);
+      if (toId === 'HEAD') toId = 'HEAD';
+      cls = 'edge-thread-left';
+    } else if (edgeId.startsWith('tR-')) {
+      fromId = edgeId[3];
+      toId = edgeId.substring(4);
+      if (toId === 'HEAD') toId = 'HEAD';
+      cls = 'edge-thread-right';
+    } else continue;
+
+    const endpoints = getEdgeEndpoints(fromId, toId);
+    if (!endpoints) continue;
+
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', endpoints.x1);
+    line.setAttribute('y1', endpoints.y1);
+    line.setAttribute('x2', endpoints.x2);
+    line.setAttribute('y2', endpoints.y2);
+    line.setAttribute('class', cls);
+
+    // Highlight the "next thread" edge
+    if (ts.nextThread) {
+      const [tFrom, tTo] = ts.nextThread.split('→');
+      const edgeMatch = (edgeId === 'tR-' + tFrom + '-' + tTo) || (edgeId === 'tL-' + tFrom + '-' + tTo);
+      if (edgeMatch) {
+        line.style.strokeWidth = '5';
+        line.style.stroke = '#22c55e';
+        line.style.strokeDasharray = '7,4';
+        line.classList.add('traversal-highlight');
+      }
+    }
+
+    svg.appendChild(line);
+  }
+
+  container.appendChild(svg);
+
+  // Draw nodes
+  for (const nodeId of visibleNodes) {
+    const pos = nodeDefs[nodeId];
+    if (!pos) continue;
+    const div = document.createElement('div');
+    div.className = 'tree-node';
+    div.id = 'tree-node-' + nodeId;
+    if (pos.type === 'head') div.classList.add('head-node');
+    if (nodeId === ts.highlight) {
+      div.classList.add('highlight');
+      div.classList.add('traversal-highlight');
+      div.style.background = '#dcfce7';
+      div.style.borderColor = '#22c55e';
+      div.style.color = '#166534';
+    }
+    div.style.left = pos.x + 'px';
+    div.style.top = pos.y + 'px';
+    div.textContent = nodeId;
+    if (pos.type === 'head') div.textContent = 'HEAD';
+    container.appendChild(div);
+  }
+
+  // Update output display
+  const outDisplay = document.getElementById('inorderDisplay');
+  if (ts.output && ts.output.length > 0) {
+    let html = '';
+    for (const ch of ts.output) {
+      html += `<span class="inline-block w-8 h-8 rounded-full bg-green-100 border-2 border-green-500 text-center leading-7 font-bold text-green-800 text-sm">${ch}</span>`;
+      const idx = ts.output.indexOf(ch);
+      if (idx < ts.output.length - 1) html += '<span class="text-gray-400">→</span>';
+    }
+    outDisplay.innerHTML = html;
+  } else {
+    outDisplay.innerHTML = '<span class="text-gray-400 text-sm">D → B → E → A → C → F</span>';
+  }
+
+  document.getElementById('stepDesc').textContent = ts.desc;
+  document.getElementById('treeTitle').textContent = '线索遍历演示 - 中序遍历';
+}
+
+// ==================== EVENT LISTENERS ====================
+document.getElementById('speedSlider').addEventListener('input', function() {
+  document.getElementById('speedLabel').textContent = this.value + 'ms';
+});
+
+document.getElementById('traverseBtn').addEventListener('click', startTraversal);
+document.getElementById('travNextBtn').addEventListener('click', function() {
+  if (isTraversalMode) nextTravStep();
+});
+
+// ==================== INITIALIZATION ====================
+window.addEventListener('DOMContentLoaded', () => {
+  initBuildSteps();
+  currentBuildStep = 0;
+  renderAll();
+  addLog('初始化：显示原始二叉树。中序遍历序列为 D → B → E → A → C → F。');
+  addLog(`二叉链表共有 ${inOrderSeq.length * 2} 个指针域（n个节点有2n个指针域）。`);
+  addLog(`其中 ${inOrderSeq.length + 1} 个为孩子指针（n+1个），${inOrderSeq.length - 1} 个为空指针（n-1个）。`);
+  addLog('点击"下一步"开始线索化过程。');
+});
+</script>
+
+</main>
+<aside class="nav-toc">
+<div class="toc-label">目录</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#treeTitle">原始二叉树 (含空指针标记)</a>
+</div>
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

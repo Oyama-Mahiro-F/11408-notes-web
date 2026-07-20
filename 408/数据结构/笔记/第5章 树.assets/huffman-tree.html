@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哈夫曼树构造演示 - 408考研</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f0f4f8; min-height: 100vh; }
+.tree-container { position: relative; width: 100%; height: 480px; background: #fafbfc;
+  border-radius: 12px; border: 2px solid #e2e8f0; overflow: hidden; }
+.tree-container svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.tree-node { position: absolute; width: 50px; height: 50px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-weight: bold;
+  font-size: 13px; transition: all 0.5s ease; z-index: 2; cursor: default;
+  border: 3px solid #64748b; background: #f1f5f9; color: #1e293b;
+  transform: translate(-50%, -50%); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.tree-node.leaf { background: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+.tree-node.internal { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+.tree-node.newly-created { background: #dcfce7; border-color: #22c55e; color: #166534;
+  box-shadow: 0 0 16px rgba(34,197,94,0.5); animation: pulse 0.8s ease-in-out 3; }
+.tree-node.merging { background: #fce7f3; border-color: #ec4899; color: #831843;
+  box-shadow: 0 0 16px rgba(236,72,153,0.5); }
+.tree-node.hidden { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 8px rgba(34,197,94,0.3); }
+  50% { box-shadow: 0 0 24px rgba(34,197,94,0.7); } }
+.edge-line { stroke: #94a3b8; stroke-width: 2.5; fill: none; transition: all 0.5s ease; }
+.edge-line.hidden { opacity: 0; }
+.edge-line.left-edge { stroke: #f59e0b; stroke-dasharray: none; }
+.edge-line.right-edge { stroke: #f59e0b; stroke-dasharray: none; }
+.queue-item { padding: 8px 14px; margin: 3px 0; border-radius: 8px; font-weight: 600;
+  font-size: 14px; transition: all 0.4s ease; display: flex; justify-content: space-between; }
+.queue-item.selected { background: #fce7f3 !important; border-left: 4px solid #ec4899; }
+.code-table td { padding: 6px 12px; border-bottom: 1px solid #e2e8f0; }
+.log-entry { padding: 4px 8px; font-size: 13px; border-left: 3px solid #3b82f6;
+  margin: 2px 0; background: #f8fafc; border-radius: 0 4px 4px 0; animation: slideIn 0.3s ease; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+.control-btn { padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 14px;
+  cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+.control-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.speed-slider { width: 100px; accent-color: #3b82f6; }
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+<div class="max-w-7xl mx-auto">
+  <!-- Header -->
+  <div class="bg-white rounded-xl shadow-md p-4 mb-4">
+    <h1 class="text-2xl font-bold text-gray-800 text-center">哈夫曼树 (Huffman Tree) 构造演示</h1>
+    <p class="text-center text-gray-500 text-sm mt-1">408考研 数据结构 · 第5章 树与二叉树</p>
+  </div>
+
+  <!-- Control Bar -->
+  <div class="bg-white rounded-xl shadow-md p-4 mb-4">
+    <div class="flex flex-wrap items-center gap-3">
+      <label class="text-sm font-semibold text-gray-700">输入 (字符:权重)：</label>
+      <input id="weightInput" type="text" value="a:5,b:3,c:7,d:2,e:4,f:6"
+        class="flex-1 min-w-[260px] px-3 py-2 border-2 border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none">
+      <button onclick="loadPreset()" class="control-btn bg-indigo-500 text-white hover:bg-indigo-600">加载预设</button>
+      <button onclick="resetAll()" class="control-btn bg-gray-500 text-white hover:bg-gray-600">重置</button>
+      <button id="stepBtn" onclick="nextStep()" class="control-btn bg-blue-600 text-white hover:bg-blue-700">下一步</button>
+      <button id="autoBtn" onclick="toggleAuto()" class="control-btn bg-green-600 text-white hover:bg-green-700">自动播放</button>
+      <button onclick="jumpToEnd()" class="control-btn bg-purple-600 text-white hover:bg-purple-700">跳至完成</button>
+      <label class="text-sm text-gray-600 ml-2">速度：</label>
+      <input id="speedSlider" type="range" min="300" max="2000" value="800" step="100" class="speed-slider">
+      <span id="speedLabel" class="text-sm text-gray-500">800ms</span>
+      <span id="stepIndicator" class="ml-auto text-sm font-semibold text-gray-600">步骤: 0/0</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex flex-col lg:flex-row gap-4">
+    <!-- Left: Tree Visualization -->
+    <div class="flex-1 bg-white rounded-xl shadow-md p-4">
+      <h3 class="text-lg font-bold text-gray-700 mb-3">树的可视化构造过程</h3>
+      <div id="treeVis" class="tree-container"></div>
+      <div id="legendRow" class="flex flex-wrap gap-4 mt-2 text-xs text-gray-500">
+        <span><span class="inline-block w-4 h-4 rounded-full bg-blue-100 border-2 border-blue-500 align-middle mr-1"></span> 叶子节点(字符)</span>
+        <span><span class="inline-block w-4 h-4 rounded-full bg-amber-100 border-2 border-amber-500 align-middle mr-1"></span> 内部节点(权重和)</span>
+        <span><span class="inline-block w-4 h-4 rounded-full bg-green-100 border-2 border-green-500 align-middle mr-1"></span> 新生成节点</span>
+        <span><span class="inline-block w-4 h-4 rounded-full bg-pink-100 border-2 border-pink-500 align-middle mr-1"></span> 当前合并的两棵子树</span>
+        <span class="ml-4">叶节点左=0，右=1</span>
+      </div>
+    </div>
+
+    <!-- Right: Sidebar -->
+    <div class="w-full lg:w-80 flex flex-col gap-4">
+      <!-- Priority Queue -->
+      <div class="bg-white rounded-xl shadow-md p-4">
+        <h3 class="text-md font-bold text-gray-700 mb-2">优先队列 (当前森林)</h3>
+        <div id="queueDisplay" class="max-h-52 overflow-y-auto"></div>
+      </div>
+
+      <!-- Huffman Codes -->
+      <div class="bg-white rounded-xl shadow-md p-4" id="codesPanel">
+        <h3 class="text-md font-bold text-gray-700 mb-2">哈夫曼编码</h3>
+        <table class="code-table w-full text-sm" id="codesTable">
+          <thead><tr class="text-left text-gray-500"><th>字符</th><th>权重</th><th>编码</th><th>路径长度</th></tr></thead>
+          <tbody id="codesBody"><tr><td colspan="4" class="text-center text-gray-400 py-4">构造完成后显示</td></tr></tbody>
+        </table>
+        <div id="wplDisplay" class="mt-3 text-sm font-bold text-gray-700 hidden">
+          WPL (带权路径长度) = <span id="wplValue" class="text-blue-600"></span>
+        </div>
+      </div>
+
+      <!-- Log -->
+      <div class="bg-white rounded-xl shadow-md p-4 flex-1">
+        <h3 class="text-md font-bold text-gray-700 mb-2">操作日志</h3>
+        <div id="logPanel" class="max-h-52 overflow-y-auto text-sm"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== GLOBAL STATE ====================
+let dataChars = [];       // [{char, weight}]
+let allNodes = [];        // all TreeNode objects
+let steps = [];           // [{leftId, rightId, parentId, forest, desc}]
+let currentStep = -1;
+let finalRoot = null;
+let nodePositions = {};   // nodeId -> {x, y}
+let huffmanCodes = {};    // char -> code string
+let wplValue = 0;
+let autoTimer = null;
+let isAutoPlaying = false;
+
+// ==================== TREE NODE CLASS ====================
+class TreeNode {
+  constructor(id, char, weight, left, right) {
+    this.id = id;
+    this.char = char;
+    this.weight = weight;
+    this.left = left;
+    this.right = right;
+  }
+  isLeaf() { return this.char !== null; }
+}
+
+// ==================== PARSE INPUT ====================
+function parseInput(str) {
+  const items = str.split(',').map(s => s.trim()).filter(s => s);
+  const result = [];
+  for (const item of items) {
+    const parts = item.split(':');
+    if (parts.length !== 2) continue;
+    const ch = parts[0].trim();
+    const w = parseFloat(parts[1].trim());
+    if (!ch || isNaN(w) || w <= 0) continue;
+    result.push({ char: ch, weight: w });
+  }
+  return result;
+}
+
+// ==================== RUN HUFFMAN ALGORITHM ====================
+function runHuffmanAlgorithm(chars) {
+  allNodes = [];
+  steps = [];
+  let nextId = 1;
+
+  // Create leaf nodes
+  let forest = chars.map((c, i) => {
+    const node = new TreeNode(nextId++, c.char, c.weight, null, null);
+    allNodes.push(node);
+    return node;
+  });
+
+  // Sort by weight, then by id for stability
+  const sortForest = () => {
+    forest.sort((a, b) => a.weight !== b.weight ? a.weight - b.weight : a.id - b.id);
+  };
+  sortForest();
+
+  // Record initial state
+  steps.push({
+    leftId: null, rightId: null, parentId: null,
+    forest: forest.map(n => ({ id: n.id, char: n.char, weight: n.weight })),
+    desc: '初始森林：' + forest.map(n => `${n.char || '?'}:${n.weight}`).join(', ')
+  });
+
+  // Merge until one tree remains
+  while (forest.length > 1) {
+    sortForest();
+    const left = forest.shift();
+    const right = forest.shift();
+    const parentWeight = left.weight + right.weight;
+    const parent = new TreeNode(nextId++, null, parentWeight, left, right);
+    allNodes.push(parent);
+    forest.push(parent);
+    sortForest();
+
+    steps.push({
+      leftId: left.id, rightId: right.id, parentId: parent.id,
+      forest: forest.map(n => ({ id: n.id, char: n.char, weight: n.weight })),
+      desc: `合并 "${left.char || '内部节点'}"(${left.weight}) 和 "${right.char || '内部节点'}"(${right.weight}) → 新节点权重 ${parentWeight}。剩余森林: ${forest.map(n => `${n.char || '内部'}:${n.weight}`).join(', ')}`
+    });
+  }
+
+  finalRoot = forest[0];
+  nodePositions = {};
+  if (finalRoot) {
+    computePositions(finalRoot);
+    generateCodes(finalRoot, '', 0);
+  }
+
+  return finalRoot;
+}
+
+// ==================== COMPUTE TREE POSITIONS ====================
+function computePositions(root) {
+  const marginLeft = 60;
+  const hSpacing = 55;
+  const vSpacing = 75;
+  const topMargin = 30;
+  let inorderCounter = 0;
+
+  function inorder(node, depth) {
+    if (!node) return;
+    inorder(node.left, depth + 1);
+    nodePositions[node.id] = {
+      x: marginLeft + inorderCounter * hSpacing,
+      y: topMargin + depth * vSpacing
+    };
+    inorderCounter++;
+    inorder(node.right, depth + 1);
+  }
+
+  inorder(root, 0);
+}
+
+// ==================== GENERATE HUFFMAN CODES ====================
+function generateCodes(node, code, depth) {
+  if (!node) return;
+  if (node.isLeaf()) {
+    huffmanCodes[node.char] = code;
+    wplValue += node.weight * depth;
+    return;
+  }
+  generateCodes(node.left, code + '0', depth + 1);
+  generateCodes(node.right, code + '1', depth + 1);
+}
+
+// ==================== RENDER ====================
+function renderAll() {
+  renderTree();
+  renderQueue();
+  renderCodes();
+  updateStepIndicator();
+}
+
+function renderTree() {
+  const container = document.getElementById('treeVis');
+  container.innerHTML = '';
+
+  // Determine which nodes to show at current step
+  const visibleNodeIds = new Set();
+  const visibleEdgePairs = []; // [{parentId, childId, isLeft}]
+
+  if (currentStep >= 0 && steps.length > 0) {
+    // Always show leaf nodes
+    const leafNodes = allNodes.filter(n => n.isLeaf());
+    leafNodes.forEach(n => visibleNodeIds.add(n.id));
+
+    // Process each merge step up to currentStep
+    for (let i = 1; i <= currentStep && i < steps.length; i++) {
+      const step = steps[i];
+      if (step.parentId) {
+        visibleNodeIds.add(step.parentId);
+        visibleNodeIds.add(step.leftId);
+        visibleNodeIds.add(step.rightId);
+        visibleEdgePairs.push({ parentId: step.parentId, childId: step.leftId, isLeft: true });
+        visibleEdgePairs.push({ parentId: step.parentId, childId: step.rightId, isLeft: false });
+      }
+    }
+  }
+
+  // Create SVG for edges
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  svg.style.position = 'absolute';
+  svg.style.top = '0';
+  svg.style.left = '0';
+
+  // Draw edges
+  const drawnEdges = new Set();
+  for (const edge of visibleEdgePairs) {
+    const key = `${edge.parentId}-${edge.childId}`;
+    if (drawnEdges.has(key)) continue;
+    drawnEdges.add(key);
+
+    const pPos = nodePositions[edge.parentId];
+    const cPos = nodePositions[edge.childId];
+    if (!pPos || !cPos) continue;
+
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', pPos.x);
+    line.setAttribute('y1', pPos.y + 25);
+    line.setAttribute('x2', cPos.x);
+    line.setAttribute('y2', cPos.y - 25);
+    line.setAttribute('class', 'edge-line');
+    line.setAttribute('stroke', edge.isLeft ? '#f59e0b' : '#3b82f6');
+
+    // Check if this edge was just added in the current step
+    if (currentStep > 0 && currentStep < steps.length && steps[currentStep].parentId === edge.parentId) {
+      line.style.strokeWidth = '4';
+      line.style.stroke = '#22c55e';
+    }
+
+    svg.appendChild(line);
+  }
+
+  // Add labels on edges (0 for left, 1 for right)
+  for (const edge of visibleEdgePairs) {
+    const pPos = nodePositions[edge.parentId];
+    const cPos = nodePositions[edge.childId];
+    if (!pPos || !cPos) continue;
+
+    const text = document.createElementNS(svgNS, 'text');
+    const mx = (pPos.x + cPos.x) / 2;
+    const my = (pPos.y + cPos.y) / 2;
+    text.setAttribute('x', mx + (edge.isLeft ? -12 : 12));
+    text.setAttribute('y', my);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-size', '14');
+    text.setAttribute('font-weight', 'bold');
+    text.setAttribute('fill', edge.isLeft ? '#f59e0b' : '#3b82f6');
+    text.textContent = edge.isLeft ? '0' : '1';
+    svg.appendChild(text);
+  }
+
+  container.appendChild(svg);
+
+  // Draw nodes
+  // Find newly created node in this step
+  let newlyCreatedId = null;
+  let mergingIds = [];
+  if (currentStep > 0 && currentStep < steps.length) {
+    newlyCreatedId = steps[currentStep].parentId;
+    mergingIds = [steps[currentStep].leftId, steps[currentStep].rightId].filter(Boolean);
+  }
+
+  for (const node of allNodes) {
+    if (!visibleNodeIds.has(node.id)) continue;
+    const pos = nodePositions[node.id];
+    if (!pos) continue;
+
+    const div = document.createElement('div');
+    div.className = 'tree-node';
+    if (node.isLeaf()) div.classList.add('leaf');
+    else div.classList.add('internal');
+
+    if (node.id === newlyCreatedId) div.classList.add('newly-created');
+    if (mergingIds.includes(node.id)) div.classList.add('merging');
+
+    div.style.left = pos.x + 'px';
+    div.style.top = pos.y + 'px';
+
+    const displayText = node.isLeaf() ? `${node.char}\n${node.weight}` : `${node.weight}`;
+    div.innerHTML = displayText.replace('\n', '<br>');
+    div.title = node.isLeaf()
+      ? `字符: ${node.char}, 权重: ${node.weight}`
+      : `内部节点, 权重: ${node.weight}`;
+
+    container.appendChild(div);
+  }
+}
+
+function renderQueue() {
+  const display = document.getElementById('queueDisplay');
+  if (currentStep < 0 || currentStep >= steps.length) {
+    display.innerHTML = '<div class="text-gray-400 text-sm text-center py-4">等待输入...</div>';
+    return;
+  }
+
+  const forest = steps[currentStep].forest;
+  if (!forest || forest.length === 0) {
+    display.innerHTML = '<div class="text-gray-400 text-sm text-center py-4">森林为空</div>';
+    return;
+  }
+
+  let html = '';
+  let mergeIds = [];
+  if (currentStep > 0 && currentStep < steps.length) {
+    mergeIds = [steps[currentStep].leftId, steps[currentStep].rightId].filter(Boolean);
+  }
+
+  for (const item of forest) {
+    const isSelected = mergeIds.includes(item.id);
+    const bgClass = isSelected ? 'bg-pink-50' : 'bg-gray-50';
+    html += `<div class="queue-item ${bgClass} ${isSelected ? 'selected' : ''}">
+      <span>${item.char || '内部节点'}</span>
+      <span class="text-gray-400">权重: <b class="text-gray-700">${item.weight}</b></span>
+    </div>`;
+  }
+
+  display.innerHTML = html;
+}
+
+function renderCodes() {
+  const tbody = document.getElementById('codesBody');
+  const wplDiv = document.getElementById('wplDisplay');
+  const wplSpan = document.getElementById('wplValue');
+
+  // Only show codes when construction is complete
+  const isComplete = (currentStep >= steps.length - 1 && steps.length > 1);
+
+  if (!isComplete || Object.keys(huffmanCodes).length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-gray-400 py-4">构造完成后显示编码</td></tr>';
+    wplDiv.classList.add('hidden');
+    return;
+  }
+
+  const entries = Object.entries(huffmanCodes).sort((a, b) => {
+    // Sort by original input order
+    const idxA = dataChars.findIndex(c => c.char === a[0]);
+    const idxB = dataChars.findIndex(c => c.char === b[0]);
+    return idxA - idxB;
+  });
+
+  let html = '';
+  for (const [char, code] of entries) {
+    const item = dataChars.find(c => c.char === char);
+    const weight = item ? item.weight : '?';
+    html += `<tr>
+      <td class="font-bold text-blue-700">${char}</td>
+      <td>${weight}</td>
+      <td class="font-mono text-green-700 font-bold">${code}</td>
+      <td>${code.length}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+  wplSpan.textContent = wplValue;
+  wplDiv.classList.remove('hidden');
+}
+
+function updateStepIndicator() {
+  document.getElementById('stepIndicator').textContent =
+    `步骤: ${Math.max(0, currentStep)}/${Math.max(0, steps.length - 1)}`;
+}
+
+function addLog(message) {
+  const panel = document.getElementById('logPanel');
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  entry.textContent = message;
+  panel.appendChild(entry);
+  panel.scrollTop = panel.scrollHeight;
+}
+
+// ==================== CONTROL FUNCTIONS ====================
+function loadPreset() {
+  stopAuto();
+  document.getElementById('weightInput').value = 'a:5,b:3,c:7,d:2,e:4,f:6';
+  resetAll();
+}
+
+function resetAll() {
+  stopAuto();
+  const input = document.getElementById('weightInput').value.trim();
+  dataChars = parseInput(input);
+
+  if (dataChars.length < 2) {
+    alert('请至少输入2个字符及其权重，格式如: a:5,b:3,c:7');
+    return;
+  }
+
+  allNodes = [];
+  steps = [];
+  nodePositions = {};
+  huffmanCodes = {};
+  wplValue = 0;
+  currentStep = -1;
+
+  document.getElementById('logPanel').innerHTML = '';
+  document.getElementById('queueDisplay').innerHTML = '';
+  document.getElementById('codesBody').innerHTML = '<tr><td colspan="4" class="text-center text-gray-400 py-4">构造完成后显示编码</td></tr>';
+  document.getElementById('wplDisplay').classList.add('hidden');
+  document.getElementById('treeVis').innerHTML = '';
+
+  runHuffmanAlgorithm(dataChars);
+  currentStep = 0;
+  renderAll();
+  addLog(`解析输入: ${dataChars.map(c => `${c.char}:${c.weight}`).join(', ')}。共 ${dataChars.length} 个字符。`);
+  addLog(`初始森林已建立，共 ${steps[0].forest.length} 棵树。`);
+  addLog('点击"下一步"开始合并构造哈夫曼树。');
+}
+
+function nextStep() {
+  if (!steps.length || currentStep >= steps.length - 1) {
+    if (currentStep >= steps.length - 1 && steps.length > 1) {
+      addLog('哈夫曼树构造完成！编码已生成。');
+    }
+    return;
+  }
+
+  currentStep++;
+  const step = steps[currentStep];
+  renderAll();
+
+  if (step.parentId) {
+    addLog(`步骤 ${currentStep}: ${step.desc}`);
+  } else {
+    addLog(step.desc);
+  }
+
+  if (currentStep >= steps.length - 1) {
+    addLog('=== 哈夫曼树构造完成！===');
+    addLog(`WPL = ${wplValue}`);
+    const codeSummary = Object.entries(huffmanCodes)
+      .sort((a, b) => dataChars.findIndex(c => c.char === a[0]) - dataChars.findIndex(c => c.char === b[0]))
+      .map(([ch, code]) => `${ch}:${code}`).join(', ');
+    addLog(`哈夫曼编码: ${codeSummary}`);
+  }
+}
+
+function jumpToEnd() {
+  stopAuto();
+  while (currentStep < steps.length - 1) {
+    currentStep++;
+  }
+  renderAll();
+  // Rebuild log
+  document.getElementById('logPanel').innerHTML = '';
+  for (let i = 0; i < steps.length; i++) {
+    if (i === 0) {
+      addLog(steps[i].desc);
+    } else {
+      addLog(`步骤 ${i}: ${steps[i].desc}`);
+    }
+  }
+  addLog('=== 哈夫曼树构造完成！===');
+  addLog(`WPL = ${wplValue}`);
+  const codeSummary = Object.entries(huffmanCodes)
+    .sort((a, b) => dataChars.findIndex(c => c.char === a[0]) - dataChars.findIndex(c => c.char === b[0]))
+    .map(([ch, code]) => `${ch}:${code}`).join(', ');
+  addLog(`哈夫曼编码: ${codeSummary}`);
+}
+
+function toggleAuto() {
+  if (isAutoPlaying) {
+    stopAuto();
+  } else {
+    startAuto();
+  }
+}
+
+function startAuto() {
+  if (isAutoPlaying) return;
+  if (currentStep >= steps.length - 1) {
+    currentStep = -1;
+    document.getElementById('logPanel').innerHTML = '';
+    // Re-show initial state
+    currentStep = 0;
+    renderAll();
+    addLog(steps[0].desc);
+    addLog('自动播放开始...');
+  }
+  isAutoPlaying = true;
+  document.getElementById('autoBtn').textContent = '暂停';
+  document.getElementById('autoBtn').classList.replace('bg-green-600', 'bg-red-600');
+  document.getElementById('autoBtn').classList.replace('hover:bg-green-700', 'hover:bg-red-700');
+  scheduleNext();
+}
+
+function stopAuto() {
+  isAutoPlaying = false;
+  if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+  document.getElementById('autoBtn').textContent = '自动播放';
+  document.getElementById('autoBtn').classList.replace('bg-red-600', 'bg-green-600');
+  document.getElementById('autoBtn').classList.replace('hover:bg-red-700', 'hover:bg-green-700');
+}
+
+function scheduleNext() {
+  if (!isAutoPlaying) return;
+  const speed = parseInt(document.getElementById('speedSlider').value);
+  autoTimer = setTimeout(() => {
+    if (currentStep < steps.length - 1) {
+      nextStep();
+      scheduleNext();
+    } else {
+      stopAuto();
+      addLog('自动播放完成。');
+    }
+  }, speed);
+}
+
+// ==================== EVENT LISTENERS ====================
+document.getElementById('speedSlider').addEventListener('input', function() {
+  document.getElementById('speedLabel').textContent = this.value + 'ms';
+});
+
+// ==================== INITIALIZATION ====================
+window.addEventListener('DOMContentLoaded', () => {
+  resetAll();
+});
+</script>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

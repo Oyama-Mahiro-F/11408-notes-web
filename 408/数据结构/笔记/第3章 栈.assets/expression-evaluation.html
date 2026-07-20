@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>表达式求值 - 双栈法演示</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @keyframes pushIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popOut {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.8) translateX(20px); }
+  }
+  @keyframes flashGreen {
+    0%, 100% { background-color: #bbf7d0; }
+    50% { background-color: #22c55e; color: white; }
+  }
+  @keyframes flashYellow {
+    0%, 100% { background-color: #fef08a; }
+    50% { background-color: #eab308; color: white; }
+  }
+  .stack-item-push {
+    animation: pushIn 0.35s ease-out;
+  }
+  .stack-item-pop {
+    animation: popOut 0.35s ease-in;
+  }
+  .stack-item-flash {
+    animation: flashGreen 0.6s ease-in-out;
+  }
+  .char-highlight {
+    animation: flashYellow 0.5s ease-in-out;
+  }
+  .stack-container {
+    min-height: 280px;
+  }
+  .log-entry {
+    border-left: 3px solid #6366f1;
+    padding: 4px 10px;
+    margin: 2px 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .log-entry.compute {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+  }
+  .log-entry.operand {
+    border-left-color: #22c55e;
+    background: #f0fdf4;
+  }
+  .log-entry.operator {
+    border-left-color: #3b82f6;
+    background: #eff6ff;
+  }
+  .log-entry.success {
+    border-left-color: #8b5cf6;
+    background: #f5f3ff;
+    font-weight: bold;
+  }
+  .log-entry.info {
+    border-left-color: #6b7280;
+    background: #f9fafb;
+  }
+  .stack-label-top {
+    font-size: 11px;
+    color: #ef4444;
+    font-weight: 700;
+  }
+  .stack-label-bottom {
+    font-size: 11px;
+    color: #6b7280;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+
+<!-- Header -->
+<header class="bg-gradient-to-r from-indigo-700 to-blue-600 text-white px-6 py-4 shadow-lg">
+  <div class="flex items-center justify-between max-w-7xl mx-auto">
+    <div>
+      <h1 class="text-2xl font-bold tracking-wide">表达式求值 —— 双栈法演示</h1>
+      <p class="text-indigo-200 text-sm mt-0.5">408 考研 · 数据结构 · 栈的应用</p>
+    </div>
+    <div class="text-right text-indigo-200 text-xs">
+      <div>中缀表达式 → 后缀表达式 → 计算结果</div>
+      <div>操作数栈 + 运算符栈 协同工作</div>
+    </div>
+  </div>
+</header>
+
+<!-- Control Bar -->
+<div class="bg-white shadow-md px-6 py-3 border-b border-slate-200">
+  <div class="flex flex-wrap items-center gap-3 max-w-7xl mx-auto">
+    <span class="text-sm font-semibold text-slate-600 whitespace-nowrap">输入表达式：</span>
+    <input id="exprInput" type="text" value="3+(5-2)*4" placeholder="输入中缀表达式，如 3+(5-2)*4"
+      class="flex-1 min-w-[200px] px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono
+             focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent
+             bg-slate-50" />
+    <button onclick="loadPreset('3+(5-2)*4')"
+      class="px-3 py-2 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-700
+             hover:bg-indigo-100 border border-indigo-200 transition-colors whitespace-nowrap">
+      预置 ① 3+(5-2)*4
+    </button>
+    <button onclick="loadPreset('2*(3+4)-5')"
+      class="px-3 py-2 text-xs font-semibold rounded-lg bg-blue-50 text-blue-700
+             hover:bg-blue-100 border border-blue-200 transition-colors whitespace-nowrap">
+      预置 ② 2*(3+4)-5
+    </button>
+    <div class="h-6 w-px bg-slate-300 hidden md:block"></div>
+    <button id="btnStep" onclick="doStep()"
+      class="px-4 py-2 text-sm font-bold rounded-lg bg-indigo-600 text-white
+             hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
+      单步执行 ▸
+    </button>
+    <button id="btnPlay" onclick="togglePlay()"
+      class="px-4 py-2 text-sm font-bold rounded-lg bg-emerald-600 text-white
+             hover:bg-emerald-700 transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
+      ▶ 自动播放
+    </button>
+    <button id="btnReset" onclick="doReset()"
+      class="px-4 py-2 text-sm font-bold rounded-lg bg-slate-600 text-white
+             hover:bg-slate-700 transition-colors shadow-sm">
+      ↺ 重置
+    </button>
+    <div class="flex items-center gap-2 ml-2">
+      <span class="text-xs text-slate-500 whitespace-nowrap">速度：</span>
+      <input id="speedSlider" type="range" min="200" max="2000" value="800" step="100"
+        class="w-20 h-1 accent-indigo-600" oninput="updateSpeed()" />
+      <span id="speedLabel" class="text-xs text-slate-600 w-10">800ms</span>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Area -->
+<div class="flex flex-col lg:flex-row gap-4 max-w-7xl mx-auto p-4">
+
+  <!-- LEFT: Visualization Area -->
+  <div class="flex-1 flex flex-col gap-4 min-w-0">
+
+    <!-- Expression Display -->
+    <div class="bg-white rounded-xl shadow-md p-4 border border-slate-200">
+      <div class="text-xs text-slate-500 font-semibold mb-2 uppercase tracking-wider">当前表达式</div>
+      <div id="exprDisplay" class="text-2xl font-mono tracking-widest text-center py-3 bg-slate-50 rounded-lg
+                  min-h-[56px] flex items-center justify-center flex-wrap gap-x-1">
+        <span class="text-slate-400">请输入表达式并点击单步执行</span>
+      </div>
+      <div class="flex justify-between mt-2 text-xs text-slate-400">
+        <span id="stepCounter">步骤 0</span>
+        <span id="phaseLabel">就绪</span>
+      </div>
+    </div>
+
+    <!-- Postfix Expression -->
+    <div class="bg-white rounded-xl shadow-md p-4 border border-slate-200">
+      <div class="text-xs text-slate-500 font-semibold mb-2 uppercase tracking-wider">后缀表达式（逆波兰式）</div>
+      <div id="postfixDisplay" class="text-lg font-mono py-3 px-4 bg-amber-50 rounded-lg min-h-[48px]
+                  flex items-center flex-wrap gap-2">
+        <span class="text-slate-400 text-sm">等待计算...</span>
+      </div>
+    </div>
+
+    <!-- Two Stacks -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Operand Stack -->
+      <div class="bg-white rounded-xl shadow-md p-4 border border-slate-200">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-bold text-green-700">操作数栈 (OPND)</h3>
+          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded">操作数</span>
+        </div>
+        <div id="operandStackContainer" class="stack-container flex flex-col-reverse gap-1.5 border-2
+                    border-dashed border-green-300 rounded-lg p-2 bg-green-50/50">
+          <div class="text-xs text-slate-400 text-center py-8">栈空</div>
+        </div>
+        <div class="flex justify-between mt-1 px-1">
+          <span class="stack-label-bottom">栈底</span>
+          <span class="stack-label-top">← 栈顶</span>
+        </div>
+      </div>
+
+      <!-- Operator Stack -->
+      <div class="bg-white rounded-xl shadow-md p-4 border border-slate-200">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-bold text-blue-700">运算符栈 (OPTR)</h3>
+          <span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded">运算符</span>
+        </div>
+        <div id="operatorStackContainer" class="stack-container flex flex-col-reverse gap-1.5 border-2
+                    border-dashed border-blue-300 rounded-lg p-2 bg-blue-50/50">
+          <div class="text-xs text-slate-400 text-center py-8">栈空</div>
+        </div>
+        <div class="flex justify-between mt-1 px-1">
+          <span class="stack-label-bottom">栈底</span>
+          <span class="stack-label-top">← 栈顶</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result (shown when done) -->
+    <div id="resultPanel" class="bg-white rounded-xl shadow-md p-4 border border-slate-200 hidden">
+      <div class="text-xs text-slate-500 font-semibold mb-2 uppercase tracking-wider">计算结果</div>
+      <div class="flex items-center gap-6">
+        <div class="flex-1 text-center">
+          <div class="text-sm text-slate-500">计算结果</div>
+          <div id="finalResultValue" class="text-4xl font-bold text-indigo-700 mt-1">0</div>
+        </div>
+        <div class="w-px h-12 bg-slate-300"></div>
+        <div class="flex-1 text-center">
+          <div class="text-sm text-slate-500">后缀表达式</div>
+          <div id="finalPostfixValue" class="text-xl font-mono font-bold text-amber-700 mt-1">-</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: Sidebar -->
+  <div class="w-full lg:w-[300px] flex-shrink-0 flex flex-col gap-4">
+
+    <!-- Operator Precedence Table -->
+    <div class="bg-white rounded-xl shadow-md p-4 border border-slate-200">
+      <h3 class="text-sm font-bold text-slate-700 mb-3">运算符优先级表</h3>
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b-2 border-slate-300">
+            <th class="py-1.5 text-left text-slate-600">运算符</th>
+            <th class="py-1.5 text-center text-slate-600">优先级</th>
+            <th class="py-1.5 text-left text-slate-600">说明</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr>
+            <td class="py-1.5 font-mono font-bold text-blue-600">+</td>
+            <td class="py-1.5 text-center"><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold">1</span></td>
+            <td class="py-1.5 text-xs text-slate-500">加减</td>
+          </tr>
+          <tr>
+            <td class="py-1.5 font-mono font-bold text-blue-600">-</td>
+            <td class="py-1.5 text-center"><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold">1</span></td>
+            <td class="py-1.5 text-xs text-slate-500">加减</td>
+          </tr>
+          <tr>
+            <td class="py-1.5 font-mono font-bold text-orange-600">*</td>
+            <td class="py-1.5 text-center"><span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-xs font-bold">2</span></td>
+            <td class="py-1.5 text-xs text-slate-500">乘除</td>
+          </tr>
+          <tr>
+            <td class="py-1.5 font-mono font-bold text-orange-600">/</td>
+            <td class="py-1.5 text-center"><span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-xs font-bold">2</span></td>
+            <td class="py-1.5 text-xs text-slate-500">乘除</td>
+          </tr>
+          <tr class="bg-slate-50">
+            <td class="py-1.5 font-mono font-bold text-purple-600">(</td>
+            <td class="py-1.5 text-center"><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">-</span></td>
+            <td class="py-1.5 text-xs text-slate-500">左括号，直接入栈</td>
+          </tr>
+          <tr class="bg-slate-50">
+            <td class="py-1.5 font-mono font-bold text-purple-600">)</td>
+            <td class="py-1.5 text-center"><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold">-</span></td>
+            <td class="py-1.5 text-xs text-slate-500">右括号，弹出至 (</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Legend -->
+    <div class="bg-white rounded-xl shadow-md p-4 border border-slate-200">
+      <h3 class="text-sm font-bold text-slate-700 mb-2">图例</h3>
+      <div class="flex flex-col gap-1.5 text-xs">
+        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-green-500 inline-block"></span> 操作数栈项</div>
+        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-blue-500 inline-block"></span> 运算符栈项</div>
+        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-yellow-300 inline-block border border-yellow-500"></span> 当前处理字符</div>
+        <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-sm bg-amber-400 inline-block"></span> 正在计算的操作</div>
+      </div>
+    </div>
+
+    <!-- Log Panel -->
+    <div class="bg-white rounded-xl shadow-md border border-slate-200 flex flex-col flex-1 min-h-[300px]">
+      <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+        <h3 class="text-sm font-bold text-slate-700">执行日志</h3>
+        <button onclick="clearLog()" class="text-xs text-slate-400 hover:text-slate-600 transition-colors">清空</button>
+      </div>
+      <div id="logContainer" class="flex-1 overflow-y-auto p-2 space-y-0.5 max-h-[500px]">
+        <div class="text-xs text-slate-400 text-center py-8">点击「单步执行」开始...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ==================== CONSTANTS ====================
+const PRECEDENCE = { '+': 1, '-': 1, '*': 2, '/': 2 };
+
+// ==================== STATE ====================
+const S = {
+  expression: '',
+  currentPos: 0,
+  operandStack: [],
+  operatorStack: [],
+  postfix: [],
+  logEntries: [],
+  numberBuffer: '',
+  phase: 'idle',       // 'idle' | 'read' | 'compute' | 'popParen' | 'finish' | 'done'
+  pendingOp: null,
+  highlightCharIndex: -1,
+  stepCount: 0,
+  isPlaying: false,
+  playTimer: null,
+  playSpeed: 800,
+  finished: false,
+  finalResult: null,
+};
+
+// ==================== UTILITY FUNCTIONS ====================
+function precedence(op) {
+  return PRECEDENCE[op] || 0;
+}
+
+function compute(a, op, b) {
+  switch (op) {
+    case '+': return a + b;
+    case '-': return a - b;
+    case '*': return a * b;
+    case '/': return Math.floor(a / b);
+    default: return 0;
+  }
+}
+
+function stripExpression(raw) {
+  return raw.replace(/\s+/g, '').replace(/[^0-9+\-*/()]/g, '');
+}
+
+// ==================== LOGGING ====================
+function addLog(msg, type) {
+  S.logEntries.push({ msg, type, time: Date.now() });
+  renderLog();
+}
+
+function clearLog() {
+  S.logEntries = [];
+  renderLog();
+}
+
+// ==================== CORE LOGIC ====================
+function finalizeNumber() {
+  const num = parseInt(S.numberBuffer, 10);
+  S.operandStack.push(num);
+  S.postfix.push(num);
+  addLog('操作数 <b>' + num + '</b> 压入操作数栈，后缀表达式追加 <b>' + num + '</b>', 'operand');
+  S.numberBuffer = '';
+  S.highlightCharIndex = -1;
+}
+
+function initExpression() {
+  const raw = document.getElementById('exprInput').value;
+  S.expression = stripExpression(raw);
+  if (!S.expression) {
+    addLog('请输入有效的中缀表达式（仅支持数字和 + - * / ( )）', 'info');
+    return false;
+  }
+  S.currentPos = 0;
+  S.operandStack = [];
+  S.operatorStack = [];
+  S.postfix = [];
+  S.numberBuffer = '';
+  S.phase = 'read';
+  S.pendingOp = null;
+  S.highlightCharIndex = -1;
+  S.stepCount = 0;
+  S.finished = false;
+  S.finalResult = null;
+  S.logEntries = [];
+  document.getElementById('resultPanel').classList.add('hidden');
+  addLog('初始化表达式：<b>' + S.expression + '</b>', 'info');
+  addLog('开始逐字符处理...', 'info');
+  return true;
+}
+
+function doStep() {
+  // Initialize on first step or after reset
+  if (S.phase === 'idle' || S.phase === 'done') {
+    if (!initExpression()) return;
+  }
+
+  S.stepCount++;
+
+  if (S.phase === 'read') {
+    stepRead();
+  } else if (S.phase === 'compute') {
+    stepCompute();
+  } else if (S.phase === 'popParen') {
+    stepPopParen();
+  } else if (S.phase === 'finish') {
+    stepFinish();
+  } else if (S.phase === 'done') {
+    addLog('计算已完成，请点击「重置」开始新的表达式求值', 'info');
+  }
+
+  renderAll();
+}
+
+function stepRead() {
+  // Check if we've reached the end
+  if (S.currentPos >= S.expression.length) {
+    // Finalize any pending number
+    if (S.numberBuffer) {
+      finalizeNumber();
+      return;
+    }
+    // Move to finish phase
+    S.phase = 'finish';
+    addLog('表达式读取完毕，开始弹出剩余运算符进行计算...', 'info');
+    return;
+  }
+
+  const ch = S.expression[S.currentPos];
+  S.highlightCharIndex = S.currentPos;
+
+  // If character is a digit
+  if (/\d/.test(ch)) {
+    S.numberBuffer += ch;
+    const nextCh = S.currentPos + 1 < S.expression.length ? S.expression[S.currentPos + 1] : null;
+
+    if (nextCh === null || !/\d/.test(nextCh)) {
+      // This digit completes the number
+      finalizeNumber();
+    } else {
+      addLog('读取数字 <b>\'' + ch + '\'</b>，正在构建多位数：<b>' + S.numberBuffer + '</b>', 'operand');
+    }
+    S.currentPos++;
+    return;
+  }
+
+  // Non-digit character: first finalize any pending number
+  if (S.numberBuffer) {
+    finalizeNumber();
+    // Don't advance currentPos; next step will re-read this character
+    return;
+  }
+
+  // Process the non-digit character
+  if (ch === '(') {
+    S.operatorStack.push('(');
+    addLog('左括号 <b>\'(\'</b> 压入运算符栈', 'operator');
+    S.currentPos++;
+  } else if (ch === ')') {
+    S.phase = 'popParen';
+    addLog('遇到右括号 <b>\')\'</b>，开始弹出运算符直至遇到左括号', 'info');
+    // Don't advance currentPos yet; popParen phase handles it
+  } else {
+    // Operator: +, -, *, /
+    S.pendingOp = ch;
+    const top = S.operatorStack.length > 0 ? S.operatorStack[S.operatorStack.length - 1] : null;
+
+    if (S.operatorStack.length === 0 || top === '(' || precedence(ch) > precedence(top)) {
+      // Can push directly
+      S.operatorStack.push(ch);
+      addLog('运算符 <b>\'' + ch + '\'</b> 优先级' +
+        (top ? '高于栈顶 <b>\'' + top + '\'</b>' : '（栈空）') +
+        '，压入运算符栈', 'operator');
+      S.currentPos++;
+      S.pendingOp = null;
+    } else {
+      // Need to compute first
+      S.phase = 'compute';
+      addLog('运算符 <b>\'' + ch + '\'</b> (优先级 ' + precedence(ch) +
+        ') ≤ 栈顶 <b>\'' + top + '\'</b> (优先级 ' + precedence(top) +
+        ')，先弹出栈顶进行计算', 'compute');
+    }
+  }
+}
+
+function stepCompute() {
+  const top = S.operatorStack.length > 0 ? S.operatorStack[S.operatorStack.length - 1] : null;
+
+  // Check if we can push the pending operator now
+  if (S.operatorStack.length === 0 || top === '(' || precedence(S.pendingOp) > precedence(top)) {
+    S.operatorStack.push(S.pendingOp);
+    addLog('运算符 <b>\'' + S.pendingOp + '\'</b> 压入运算符栈', 'operator');
+    S.currentPos++;
+    S.pendingOp = null;
+    S.phase = 'read';
+    return;
+  }
+
+  // Pop and compute
+  const op = S.operatorStack.pop();
+  const right = S.operandStack.pop();
+  const left = S.operandStack.pop();
+  const result = compute(left, op, right);
+
+  S.operandStack.push(result);
+  S.postfix.push(op);
+
+  addLog('计算：<b>' + left + ' ' + op + ' ' + right + ' = ' + result + '</b>，结果压入操作数栈，<b>\'' + op + '\'</b> 加入后缀表达式', 'compute');
+}
+
+function stepPopParen() {
+  if (S.operatorStack.length === 0) {
+    addLog('错误：运算符栈为空，未找到匹配的左括号', 'info');
+    S.phase = 'read';
+    S.currentPos++;
+    return;
+  }
+
+  const op = S.operatorStack.pop();
+
+  if (op === '(') {
+    addLog('弹出左括号 <b>\'(\'</b>，括号内子表达式处理完毕', 'info');
+    S.currentPos++;
+    S.phase = 'read';
+    return;
+  }
+
+  // Pop operands and compute
+  const right = S.operandStack.pop();
+  const left = S.operandStack.pop();
+  const result = compute(left, op, right);
+
+  S.operandStack.push(result);
+  S.postfix.push(op);
+
+  addLog('计算：<b>' + left + ' ' + op + ' ' + right + ' = ' + result + '</b>，结果压入操作数栈，<b>\'' + op + '\'</b> 加入后缀表达式', 'compute');
+}
+
+function stepFinish() {
+  if (S.numberBuffer) {
+    finalizeNumber();
+    return;
+  }
+
+  if (S.operatorStack.length === 0) {
+    S.phase = 'done';
+    S.finished = true;
+    S.finalResult = S.operandStack.length > 0 ? S.operandStack[0] : null;
+    S.highlightCharIndex = -1;
+    addLog('✅ <b>计算完成！</b>', 'success');
+    addLog('最终结果：<b style="font-size:1.2em">' + S.finalResult + '</b>', 'success');
+    addLog('后缀表达式（逆波兰式）：<b>' + S.postfix.join(' ') + '</b>', 'success');
+    stopPlay();
+    return;
+  }
+
+  const op = S.operatorStack.pop();
+  if (S.operandStack.length < 2) {
+    addLog('错误：操作数不足，无法计算 <b>\'' + op + '\'</b>', 'info');
+    S.phase = 'done';
+    return;
+  }
+
+  const right = S.operandStack.pop();
+  const left = S.operandStack.pop();
+  const result = compute(left, op, right);
+
+  S.operandStack.push(result);
+  S.postfix.push(op);
+
+  addLog('剩余运算符计算：<b>' + left + ' ' + op + ' ' + right + ' = ' + result + '</b>，结果压入操作数栈', 'compute');
+}
+
+// ==================== PLAY / RESET ====================
+function togglePlay() {
+  if (S.isPlaying) {
+    stopPlay();
+  } else {
+    startPlay();
+  }
+}
+
+function startPlay() {
+  if (S.isPlaying) return;
+  if (S.phase === 'done') {
+    addLog('计算已完成，请先重置', 'info');
+    return;
+  }
+  if (S.phase === 'idle') {
+    if (!initExpression()) return;
+  }
+  S.isPlaying = true;
+  updatePlayButton();
+  scheduleNextStep();
+}
+
+function stopPlay() {
+  S.isPlaying = false;
+  if (S.playTimer) {
+    clearTimeout(S.playTimer);
+    S.playTimer = null;
+  }
+  updatePlayButton();
+}
+
+function scheduleNextStep() {
+  if (!S.isPlaying) return;
+  if (S.phase === 'done') {
+    stopPlay();
+    return;
+  }
+  S.playTimer = setTimeout(() => {
+    doStep();
+    scheduleNextStep();
+  }, S.playSpeed);
+}
+
+function updatePlayButton() {
+  const btn = document.getElementById('btnPlay');
+  if (S.isPlaying) {
+    btn.textContent = '⏸ 暂停';
+    btn.className = 'px-4 py-2 text-sm font-bold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors shadow-sm';
+  } else {
+    btn.textContent = '▶ 自动播放';
+    btn.className = 'px-4 py-2 text-sm font-bold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm';
+  }
+}
+
+function doReset() {
+  stopPlay();
+  S.expression = '';
+  S.currentPos = 0;
+  S.operandStack = [];
+  S.operatorStack = [];
+  S.postfix = [];
+  S.logEntries = [];
+  S.numberBuffer = '';
+  S.phase = 'idle';
+  S.pendingOp = null;
+  S.highlightCharIndex = -1;
+  S.stepCount = 0;
+  S.finished = false;
+  S.finalResult = null;
+  document.getElementById('resultPanel').classList.add('hidden');
+  renderAll();
+}
+
+function loadPreset(expr) {
+  stopPlay();
+  document.getElementById('exprInput').value = expr;
+  S.expression = '';
+  S.currentPos = 0;
+  S.operandStack = [];
+  S.operatorStack = [];
+  S.postfix = [];
+  S.logEntries = [];
+  S.numberBuffer = '';
+  S.phase = 'idle';
+  S.pendingOp = null;
+  S.highlightCharIndex = -1;
+  S.stepCount = 0;
+  S.finished = false;
+  S.finalResult = null;
+  document.getElementById('resultPanel').classList.add('hidden');
+  renderAll();
+}
+
+function updateSpeed() {
+  S.playSpeed = parseInt(document.getElementById('speedSlider').value, 10);
+  document.getElementById('speedLabel').textContent = S.playSpeed + 'ms';
+}
+
+// ==================== RENDERING ====================
+function renderAll() {
+  renderExpression();
+  renderStacks();
+  renderPostfix();
+  renderLog();
+  renderResult();
+  renderStatus();
+  updateButtons();
+}
+
+function renderExpression() {
+  const container = document.getElementById('exprDisplay');
+
+  if (!S.expression && S.phase === 'idle') {
+    container.innerHTML = '<span class="text-slate-400">请输入表达式并点击单步执行</span>';
+    return;
+  }
+
+  if (S.expression) {
+    let html = '';
+    for (let i = 0; i < S.expression.length; i++) {
+      const ch = S.expression[i];
+      const isHighlighted = (i === S.highlightCharIndex);
+
+      if (isHighlighted) {
+        html += '<span class="char-highlight inline-block px-1 py-0.5 rounded-md bg-yellow-300 text-yellow-900 font-bold border-2 border-yellow-500 shadow-sm">' + ch + '</span>';
+      } else {
+        let colorClass = 'text-slate-700';
+        if (/\d/.test(ch)) colorClass = 'text-green-700';
+        else if (ch === '(' || ch === ')') colorClass = 'text-purple-600';
+        else colorClass = 'text-blue-700';
+        html += '<span class="inline-block px-0.5">' + ch + '</span>';
+      }
+    }
+    container.innerHTML = html;
+  } else {
+    container.innerHTML = '<span class="text-slate-400">表达式为空</span>';
+  }
+}
+
+function renderStacks() {
+  renderOperandStack();
+  renderOperatorStack();
+}
+
+function renderOperandStack() {
+  const container = document.getElementById('operandStackContainer');
+
+  if (S.operandStack.length === 0) {
+    container.innerHTML = '<div class="text-xs text-slate-400 text-center py-8">栈空</div>';
+    return;
+  }
+
+  let html = '';
+  // Render from top (last) to bottom (first) using flex-col-reverse on container
+  for (let i = S.operandStack.length - 1; i >= 0; i--) {
+    const isTop = (i === S.operandStack.length - 1);
+    html += '<div class="stack-item-push bg-green-500 text-white font-bold text-center py-2.5 px-4 rounded-lg shadow-sm ' +
+      (isTop ? 'ring-2 ring-green-700 ring-offset-1' : 'opacity-80') + '">' +
+      S.operandStack[i] +
+      '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function renderOperatorStack() {
+  const container = document.getElementById('operatorStackContainer');
+
+  if (S.operatorStack.length === 0) {
+    container.innerHTML = '<div class="text-xs text-slate-400 text-center py-8">栈空</div>';
+    return;
+  }
+
+  let html = '';
+  for (let i = S.operatorStack.length - 1; i >= 0; i--) {
+    const isTop = (i === S.operatorStack.length - 1);
+    const val = S.operatorStack[i];
+    let bgClass = 'bg-blue-500';
+    if (val === '(') bgClass = 'bg-purple-500';
+    else if (val === '*' || val === '/') bgClass = 'bg-orange-500';
+
+    html += '<div class="stack-item-push text-white font-bold text-center py-2.5 px-4 rounded-lg shadow-sm ' +
+      bgClass + ' ' +
+      (isTop ? 'ring-2 ring-blue-700 ring-offset-1' : 'opacity-80') + '">' +
+      val +
+      '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function renderPostfix() {
+  const container = document.getElementById('postfixDisplay');
+
+  if (S.postfix.length === 0) {
+    container.innerHTML = '<span class="text-slate-400 text-sm">等待计算...</span>';
+    return;
+  }
+
+  let html = '';
+  for (let i = 0; i < S.postfix.length; i++) {
+    const token = S.postfix[i];
+    const isNumber = (typeof token === 'number');
+    html += '<span class="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-sm font-mono ' +
+      (isNumber ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800') + '">' +
+      token +
+      '</span>';
+  }
+  container.innerHTML = html;
+}
+
+function renderLog() {
+  const container = document.getElementById('logContainer');
+
+  if (S.logEntries.length === 0) {
+    container.innerHTML = '<div class="text-xs text-slate-400 text-center py-8">点击「单步执行」开始...</div>';
+    return;
+  }
+
+  let html = '';
+  for (let i = S.logEntries.length - 1; i >= Math.max(0, S.logEntries.length - 200); i--) {
+    const entry = S.logEntries[i];
+    html += '<div class="log-entry ' + entry.type + '">' +
+      '<span class="text-slate-400 text-xs">#' + (i + 1) + '</span> ' +
+      entry.msg +
+      '</div>';
+  }
+  container.innerHTML = html;
+  // Auto-scroll to top (most recent at top since we render reversed)
+  container.scrollTop = 0;
+}
+
+function renderResult() {
+  const panel = document.getElementById('resultPanel');
+  if (S.finished && S.finalResult !== null) {
+    panel.classList.remove('hidden');
+    document.getElementById('finalResultValue').textContent = S.finalResult;
+    document.getElementById('finalPostfixValue').textContent = S.postfix.join(' ');
+    // Flash animation
+    panel.classList.add('stack-item-flash');
+    setTimeout(() => panel.classList.remove('stack-item-flash'), 600);
+  }
+}
+
+function renderStatus() {
+  document.getElementById('stepCounter').textContent = '步骤 ' + S.stepCount;
+  const phaseLabel = document.getElementById('phaseLabel');
+  const phaseMap = {
+    'idle': '就绪',
+    'read': '读取字符',
+    'compute': '计算中',
+    'popParen': '处理括号',
+    'finish': '收尾计算',
+    'done': '完成'
+  };
+  phaseLabel.textContent = phaseMap[S.phase] || S.phase;
+  if (S.phase === 'done') {
+    phaseLabel.className = 'text-xs text-green-600 font-bold';
+  } else if (S.phase === 'compute') {
+    phaseLabel.className = 'text-xs text-amber-600 font-bold';
+  } else {
+    phaseLabel.className = 'text-xs text-slate-400';
+  }
+}
+
+function updateButtons() {
+  const stepBtn = document.getElementById('btnStep');
+  const playBtn = document.getElementById('btnPlay');
+
+  if (S.phase === 'done') {
+    stepBtn.disabled = true;
+    stepBtn.textContent = '已完成 ✓';
+    playBtn.disabled = true;
+  } else {
+    stepBtn.disabled = false;
+    stepBtn.textContent = '单步执行 ▸';
+    playBtn.disabled = false;
+  }
+}
+
+// ==================== INITIALIZATION ====================
+function init() {
+  // Initial render
+  S.expression = stripExpression(document.getElementById('exprInput').value);
+  renderAll();
+
+  // Keyboard shortcut: Enter to step
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      doStep();
+    } else if (e.key === ' ' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      togglePlay();
+    } else if (e.key === 'r' && e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      doReset();
+    }
+  });
+
+  // Speed slider
+  document.getElementById('speedSlider').addEventListener('input', updateSpeed);
+  updateSpeed();
+}
+
+// Start the app
+init();
+</script>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>

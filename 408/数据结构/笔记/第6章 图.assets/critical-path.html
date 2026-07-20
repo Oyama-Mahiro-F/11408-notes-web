@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关键路径演示 (AOE网) - 408 考研 · 数据结构</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        * { font-family: 'Noto Sans SC', sans-serif; }
+        .node { transition: all 0.4s ease; }
+        .node-green  { box-shadow: 0 0 18px rgba(34,197,94,0.8);  border-color: #22c55e !important; }
+        .node-blue   { box-shadow: 0 0 18px rgba(59,130,246,0.7); border-color: #3b82f6 !important; }
+        .node-orange { box-shadow: 0 0 18px rgba(251,146,60,0.7); border-color: #fb923c !important; }
+        .edge-critical { stroke: #ef4444 !important; stroke-width: 3 !important; }
+        @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+        .pulse { animation: pulse-dot 0.8s ease-in-out infinite; }
+    </style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../../index.html">首页</a><a class="tab active" href="../../../../408/">408</a><a class="tab" href="../../../../数学/">数学</a><a class="tab" href="../../../../英语/">英语</a><a class="tab" href="../../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../数学/高数/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+
+    <!-- ==================== TOP CONTROL BAR ==================== -->
+    <header class="bg-gray-900 border-b border-gray-700 px-5 py-3 flex items-center gap-4 shrink-0 flex-wrap shadow-lg z-20">
+        <h1 class="text-lg font-bold text-orange-400 tracking-wide whitespace-nowrap">
+            关键路径 (AOE网)
+        </h1>
+        <div class="h-6 w-px bg-gray-600 hidden sm:block"></div>
+
+        <!-- Phase indicator -->
+        <span id="phaseBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-gray-700 text-gray-300 whitespace-nowrap">
+            待开始
+        </span>
+
+        <button id="btnPrev" onclick="prevStep()"
+            class="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-sm rounded border border-gray-500 transition disabled:opacity-30 disabled:cursor-not-allowed">
+            ◀ 上一步
+        </button>
+        <button id="btnNext" onclick="nextStep()"
+            class="px-4 py-1.5 bg-blue-700 hover:bg-blue-600 text-sm rounded border border-blue-500 transition font-medium">
+            下一步 ▶
+        </button>
+        <button id="btnPlay" onclick="togglePlay()"
+            class="px-4 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-sm rounded border border-emerald-500 transition font-medium w-28 text-center">
+            ▶ 自动播放
+        </button>
+        <button id="btnReset" onclick="resetAll()"
+            class="px-4 py-1.5 bg-gray-700 hover:bg-gray-600 text-sm rounded border border-gray-500 transition">
+            ↻ 重置
+        </button>
+
+        <div class="h-6 w-px bg-gray-600 hidden sm:block"></div>
+        <div class="flex items-center gap-2 text-sm">
+            <span class="text-gray-400">速度:</span>
+            <input type="range" id="speedSlider" min="400" max="2500" value="1000" step="100"
+                class="w-20 h-1 accent-orange-400" oninput="updateSpeed()">
+            <span id="speedLabel" class="text-gray-300 w-16">1000ms</span>
+        </div>
+        <span id="stepCounter" class="ml-auto text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded font-mono">
+            步骤: 0
+        </span>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- ===== VISUALIZATION AREA ===== -->
+        <div class="flex-1 flex items-center justify-center overflow-auto bg-gray-950 p-4" style="min-width:0;">
+            <div id="vizWrapper" class="relative shrink-0" style="width:760px; height:580px;">
+                <!-- SVG arrow layer -->
+                <svg id="arrowSvg" style="position:absolute;top:0;left:0;width:760px;height:580px;z-index:1;pointer-events:none;">
+                    <defs>
+                        <marker id="arrowGray" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                            <polygon points="0 0, 10 4, 0 8" fill="#6b7280"/>
+                        </marker>
+                        <marker id="arrowGreen" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                            <polygon points="0 0, 10 4, 0 8" fill="#22c55e"/>
+                        </marker>
+                        <marker id="arrowRed" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                            <polygon points="0 0, 10 4, 0 8" fill="#ef4444"/>
+                        </marker>
+                    </defs>
+                    <g id="edgeGroup"></g>
+                    <g id="edgeLabelGroup"></g>
+                </svg>
+                <!-- Node layer -->
+                <div id="nodeLayer" style="position:absolute;top:0;left:0;width:760px;height:580px;z-index:2;"></div>
+            </div>
+        </div>
+
+        <!-- ===== RIGHT SIDEBAR ===== -->
+        <aside class="w-[340px] bg-gray-900 border-l border-gray-700 flex flex-col shrink-0 overflow-hidden">
+            <!-- ve[] / vl[] arrays -->
+            <div class="px-4 py-3 border-b border-gray-700">
+                <div class="text-xs text-gray-400 mb-2 font-medium">ve[] (最早发生时间) &amp; vl[] (最迟发生时间)</div>
+                <div id="veArray" class="flex flex-wrap gap-1 mb-1.5"></div>
+                <div id="vlArray" class="flex flex-wrap gap-1"></div>
+            </div>
+            <!-- Activity table header -->
+            <div class="px-4 py-2 border-b border-gray-700 shrink-0">
+                <div class="text-xs text-gray-400 font-medium">活动松弛量 (Slack) 计算</div>
+                <div class="grid grid-cols-7 text-[10px] text-gray-500 mt-1 gap-0.5">
+                    <span>活动</span><span>边</span><span>d</span><span>e=ve[i]</span><span>l=vl[j]-d</span><span>松弛</span><span>关键?</span>
+                </div>
+            </div>
+            <!-- Activity table body -->
+            <div id="activityTable" class="overflow-y-auto px-4 py-1 shrink-0" style="max-height:220px;"></div>
+            <!-- Log panel -->
+            <div class="flex-1 flex flex-col overflow-hidden border-t border-gray-700">
+                <div class="px-4 py-2 text-xs text-gray-400 font-medium border-b border-gray-700 shrink-0">执行日志</div>
+                <div id="logPanel" class="flex-1 overflow-y-auto px-3 py-2 space-y-1 text-xs font-mono">
+                    <div class="text-gray-600">就绪，点击"下一步"开始正向计算 ve[]...</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ==================== LEGEND BAR ==================== -->
+    <footer class="bg-gray-900 border-t border-gray-700 px-5 py-2 flex items-center gap-4 text-xs shrink-0">
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span> 当前处理顶点</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> 正向(ve)已计算</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-orange-500 inline-block"></span> 反向(vl)已计算</span>
+        <span class="flex items-center gap-1"><span class="w-1 h-3 bg-red-500 inline-block rounded"></span> 关键活动(松弛=0)</span>
+        <span class="flex items-center gap-1"><span class="w-1 h-3 bg-gray-500 inline-block rounded"></span> 非关键活动</span>
+    </footer>
+
+    <script>
+        // ==================== DATA ====================
+        const N = 6; // events V0-V5
+        const eventNames = ['源点 V0', 'V1', 'V2', 'V3', 'V4', '汇点 V5'];
+        const eventShort  = ['V0', 'V1', 'V2', 'V3', 'V4', 'V5'];
+
+        // Activity: {id, from, to, dur}
+        const activities = [
+            { id:'a0', from:0, to:1, dur:3 },
+            { id:'a1', from:0, to:2, dur:5 },
+            { id:'a2', from:0, to:3, dur:2 },
+            { id:'a3', from:1, to:4, dur:4 },
+            { id:'a4', from:2, to:4, dur:2 },
+            { id:'a5', from:2, to:5, dur:3 },
+            { id:'a6', from:3, to:4, dur:6 },
+            { id:'a7', from:4, to:5, dur:1 },
+        ];
+        const M = activities.length; // 8
+
+        // Node center positions in 760×580 coordinate space
+        const nodePos = [
+            { cx:380, cy:40  },  // V0 源点 (top center)
+            { cx:120, cy:175 },  // V1 (left)
+            { cx:340, cy:175 },  // V2 (center-left)
+            { cx:560, cy:175 },  // V3 (right)
+            { cx:340, cy:340 },  // V4 (middle)
+            { cx:340, cy:510 },  // V5 汇点 (bottom)
+        ];
+        const NODE_W = 104, NODE_H = 52;
+
+        // Pre-computed topological order (for forward pass)
+        const topoOrder = [0, 3, 1, 2, 4, 5];
+        const revOrder   = [5, 4, 2, 1, 3, 0];
+
+        // Build adjacency lists
+        function buildAdjLists() {
+            const incoming = Array.from({length:N}, () => []);
+            const outgoing = Array.from({length:N}, () => []);
+            activities.forEach((act, idx) => {
+                outgoing[act.from].push({ to: act.to, dur: act.dur, idx: idx });
+                incoming[act.to].push({ from: act.from, dur: act.dur, idx: idx });
+            });
+            return { incoming, outgoing };
+        }
+        const adjData = buildAdjLists();
+
+        // ==================== STATE ====================
+        let ve      = new Array(N).fill(null);
+        let vl      = new Array(N).fill(null);
+        let slack   = new Array(M).fill(null);
+        let phase   = 0; // 0=idle, 1=forward, 2=backward, 3=slack, 4=done
+        let stepIdx = 0; // index within current phase
+        let curVtx  = -1; // vertex being computed (phases 1,2)
+        let curAct  = -1; // activity being computed (phase 3)
+        let stepCount = 0;
+        let playing = false;
+        let playTimer = null;
+        let playSpeed = 1000;
+        let history = [];
+
+        // ==================== STEP LOGIC ====================
+        function nextStep() {
+            if (phase === 4) return;
+            saveHistory();
+            stepCount++;
+            document.getElementById('stepCounter').textContent = `步骤: ${stepCount}`;
+
+            if (phase === 0) {
+                // --- Transition: start forward pass ---
+                phase = 1; stepIdx = 0;
+                ve[0] = 0; curVtx = 0; curAct = -1;
+                setPhaseBadge('正向计算 ve[]', 'bg-blue-800 text-blue-200');
+                addLog('🔵 阶段一：正向计算 ve[] (事件最早发生时间)。按拓扑序处理各顶点。', 'text-blue-300');
+                addLog(`   ve[V0] = 0 (源点，起始时间)', 'text-gray-300');
+                updateButtons(); renderAll(); return;
+            }
+
+            if (phase === 1) {
+                // --- Forward pass: next vertex in topo order ---
+                stepIdx++;
+                if (stepIdx >= N) {
+                    // All ve computed → transition to backward pass
+                    phase = 2; stepIdx = 0;
+                    vl[N-1] = ve[N-1]; curVtx = N-1; curAct = -1;
+                    setPhaseBadge('反向计算 vl[]', 'bg-orange-800 text-orange-200');
+                    addLog('', 'text-transparent');
+                    addLog('🟠 阶段二：反向计算 vl[] (事件最迟发生时间)。按逆拓扑序处理各顶点。', 'text-orange-300');
+                    addLog(`   vl[V${N-1}] = ve[V${N-1}] = ${ve[N-1]} (汇点，最迟=最早)', 'text-gray-300');
+                    updateButtons(); renderAll(); return;
+                }
+                const v = topoOrder[stepIdx];
+                const incoming = adjData.incoming[v];
+                let infoParts = [];
+                let maxVal = 0;
+                for (let inc of incoming) {
+                    if (ve[inc.from] !== null) {
+                        const val = ve[inc.from] + inc.dur;
+                        infoParts.push(`ve[V${inc.from}]+${inc.dur}=${val}`);
+                        if (val > maxVal) maxVal = val;
+                    }
+                }
+                ve[v] = maxVal;
+                curVtx = v; curAct = -1;
+                addLog(`📐 ve[V${v}]: max(${infoParts.join(', ')}) = ${maxVal}`, 'text-blue-200');
+                updateButtons(); renderAll();
+
+                // Check if forward pass just completed
+                if (stepIdx === N - 1) {
+                    addLog(`✅ 正向计算完成! ve[] = [${ve.join(', ')}]`, 'text-blue-400');
+                }
+                return;
+            }
+
+            if (phase === 2) {
+                // --- Backward pass: next vertex in reverse topo order ---
+                stepIdx++;
+                if (stepIdx >= N) {
+                    phase = 3; stepIdx = 0; curVtx = -1; curAct = -1;
+                    setPhaseBadge('计算活动松弛量', 'bg-purple-800 text-purple-200');
+                    addLog('', 'text-transparent');
+                    addLog('🟣 阶段三：计算各活动的松弛量 Slack = vl[j] - ve[i] - duration', 'text-purple-300');
+                    updateButtons(); renderAll(); return;
+                }
+                const v = revOrder[stepIdx];
+                const outgoing = adjData.outgoing[v];
+                let infoParts = [];
+                let minVal = Infinity;
+                for (let out of outgoing) {
+                    if (vl[out.to] !== null) {
+                        const val = vl[out.to] - out.dur;
+                        infoParts.push(`vl[V${out.to}]-${out.dur}=${val}`);
+                        if (val < minVal) minVal = val;
+                    }
+                }
+                vl[v] = (minVal === Infinity) ? ve[v] : minVal;
+                curVtx = v; curAct = -1;
+                addLog(`📐 vl[V${v}]: min(${infoParts.join(', ')}) = ${vl[v]}`, 'text-orange-200');
+                updateButtons(); renderAll();
+
+                if (stepIdx === N - 1) {
+                    addLog(`✅ 反向计算完成! vl[] = [${vl.join(', ')}]`, 'text-orange-400');
+                }
+                return;
+            }
+
+            if (phase === 3) {
+                // --- Slack computation: next activity ---
+                if (stepIdx >= M) {
+                    phase = 4; curVtx = -1; curAct = -1;
+                    setPhaseBadge('✅ 完成', 'bg-green-800 text-green-200');
+                    const critActs = activities.filter((_,i) => slack[i] === 0);
+                    const critPath = critActs.map(a => `a${a.id.slice(1)}(V${a.from}→V${a.to})`).join(' → ');
+                    addLog('', 'text-transparent');
+                    addLog(`🏁 关键路径: ${critPath}，总工期 = ${ve[N-1]}`, 'text-green-400 font-bold');
+                    addLog(`   关键活动 (松弛=0): ${critActs.map(a=>a.id).join(', ')}`, 'text-red-300');
+                    updateButtons(); renderAll(); return;
+                }
+                const act = activities[stepIdx];
+                const e = ve[act.from];
+                const l = vl[act.to] - act.dur;
+                const s = l - e;
+                slack[stepIdx] = s;
+                curVtx = -1; curAct = stepIdx;
+                const critTag = (s === 0) ? ' ← 关键活动!' : '';
+                addLog(`📊 ${act.id}(V${act.from}→V${act.to},d=${act.dur}): e=ve[V${act.from}]=${e}, l=vl[V${act.to}]-${act.dur}=${l}, 松弛=${l-e}${critTag}`, s===0 ? 'text-red-300' : 'text-gray-300');
+                stepIdx++;
+                updateButtons(); renderAll();
+                return;
+            }
+        }
+
+        function prevStep() {
+            if (history.length === 0) return;
+            const prev = history.pop();
+            ve = prev.ve;
+            vl = prev.vl;
+            slack = prev.slack;
+            phase = prev.phase;
+            stepIdx = prev.stepIdx;
+            curVtx = prev.curVtx;
+            curAct = prev.curAct;
+            stepCount = Math.max(0, stepCount - 1);
+            document.getElementById('stepCounter').textContent = `步骤: ${stepCount}`;
+
+            // Restore phase badge
+            const badgeTexts = ['待开始', '正向计算 ve[]', '反向计算 vl[]', '计算活动松弛量', '✅ 完成'];
+            const badgeClasses = [
+                'bg-gray-700 text-gray-300',
+                'bg-blue-800 text-blue-200',
+                'bg-orange-800 text-orange-200',
+                'bg-purple-800 text-purple-200',
+                'bg-green-800 text-green-200'
+            ];
+            setPhaseBadge(badgeTexts[phase], badgeClasses[phase]);
+
+            addLog('↩ 撤销上一步', 'text-yellow-400');
+            updateButtons(); renderAll();
+        }
+
+        function saveHistory() {
+            history.push({
+                ve: [...ve], vl: [...vl], slack: [...slack],
+                phase, stepIdx, curVtx, curAct
+            });
+        }
+
+        // ==================== PLAY / STOP ====================
+        function togglePlay() {
+            if (playing) { stopPlay(); return; }
+            if (phase === 4) return;
+            playing = true;
+            const btn = document.getElementById('btnPlay');
+            btn.textContent = '⏸ 暂停';
+            btn.classList.remove('bg-emerald-700','hover:bg-emerald-600');
+            btn.classList.add('bg-amber-700','hover:bg-amber-600');
+            playLoop();
+        }
+        function stopPlay() {
+            playing = false;
+            if (playTimer) clearTimeout(playTimer);
+            playTimer = null;
+            const btn = document.getElementById('btnPlay');
+            btn.textContent = '▶ 自动播放';
+            btn.classList.remove('bg-amber-700','hover:bg-amber-600');
+            btn.classList.add('bg-emerald-700','hover:bg-emerald-600');
+        }
+        function playLoop() {
+            if (!playing || phase === 4) { stopPlay(); return; }
+            playTimer = setTimeout(() => {
+                nextStep();
+                if (phase !== 4 && playing) playLoop(); else stopPlay();
+            }, playSpeed);
+        }
+        function updateSpeed() {
+            playSpeed = parseInt(document.getElementById('speedSlider').value);
+            document.getElementById('speedLabel').textContent = playSpeed + 'ms';
+        }
+
+        // ==================== RESET ====================
+        function resetAll() {
+            stopPlay();
+            ve    = new Array(N).fill(null);
+            vl    = new Array(N).fill(null);
+            slack = new Array(M).fill(null);
+            phase = 0; stepIdx = 0; curVtx = -1; curAct = -1;
+            stepCount = 0; history = [];
+            document.getElementById('stepCounter').textContent = '步骤: 0';
+            setPhaseBadge('待开始', 'bg-gray-700 text-gray-300');
+            document.getElementById('logPanel').innerHTML =
+                '<div class="text-gray-600">就绪，点击"下一步"开始正向计算 ve[]...</div>';
+            updateButtons(); renderAll();
+        }
+
+        // ==================== RENDER ====================
+        function renderAll() {
+            renderEdges();
+            renderNodes();
+            renderArrays();
+            renderActivityTable();
+        }
+
+        function renderEdges() {
+            const edgeG   = document.getElementById('edgeGroup');
+            const labelG  = document.getElementById('edgeLabelGroup');
+            let edgeHtml   = '';
+            let labelHtml  = '';
+
+            activities.forEach((act, idx) => {
+                const p1 = nodePos[act.from], p2 = nodePos[act.to];
+                const pts = getArrowPoints(p1.cx, p1.cy, p2.cx, p2.cy);
+                let color  = '#4b5563';
+                let marker = 'url(#arrowGray)';
+                let width  = 2;
+                let extra  = '';
+
+                const isCritical = (slack[idx] !== null && slack[idx] === 0);
+                const isCurrent  = (phase === 3 && curAct === idx);
+
+                if (isCritical) {
+                    color = '#ef4444'; marker = 'url(#arrowRed)'; width = 4;
+                    extra = ' edge-critical';
+                } else if (isCurrent) {
+                    color = '#22c55e'; marker = 'url(#arrowGreen)'; width = 3;
+                }
+
+                edgeHtml += `<line x1="${pts.x1}" y1="${pts.y1}" x2="${pts.x2}" y2="${pts.y2}"
+                    stroke="${color}" stroke-width="${width}" marker-end="${marker}" class="${extra}"/>`;
+
+                // Edge label
+                const mx = (pts.x1 + pts.x2) / 2;
+                const my = (pts.y1 + pts.y2) / 2;
+                // Perpendicular offset to avoid overlapping labels
+                const dx = pts.x2 - pts.x1, dy = pts.y2 - pts.y1;
+                const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                const px = -dy / dist * 14;
+                const py =  dx / dist * 14;
+                const lx = mx + px, ly = my + py;
+
+                let labelText = `${act.id}(d=${act.dur})`;
+                let labelColor = '#9ca3af';
+                if (isCritical) { labelColor = '#fca5a5'; labelText += ' ★关键'; }
+                else if (slack[idx] !== null) {
+                    labelText += ` s=${slack[idx]}`;
+                }
+
+                labelHtml += `<text x="${lx}" y="${ly}" fill="${labelColor}" font-size="10"
+                    text-anchor="middle" dominant-baseline="middle" class="pointer-events-none select-none">${labelText}</text>`;
+            });
+
+            edgeG.innerHTML  = edgeHtml;
+            labelG.innerHTML = labelHtml;
+        }
+
+        function renderNodes() {
+            const layer = document.getElementById('nodeLayer');
+            let html = '';
+            for (let i = 0; i < N; i++) {
+                const pos = nodePos[i];
+                let border = 'border-gray-600 bg-gray-800';
+                let extra  = '';
+                let veStr  = (ve[i] !== null) ? `ve=${ve[i]}` : 've=?';
+                let vlStr  = (vl[i] !== null) ? `vl=${vl[i]}` : 'vl=?';
+                let veCls  = (ve[i] !== null) ? 'text-blue-300' : 'text-gray-600';
+                let vlCls  = (vl[i] !== null) ? 'text-orange-300' : 'text-gray-600';
+
+                // Highlight current vertex
+                if (i === curVtx) {
+                    if (phase === 1) { border = 'border-blue-400 bg-blue-900/50'; extra = 'node-blue pulse'; }
+                    else if (phase === 2) { border = 'border-orange-400 bg-orange-900/50'; extra = 'node-orange pulse'; }
+                    else { border = 'border-green-400 bg-green-900/50'; extra = 'node-green pulse'; }
+                }
+                // Highlight critical path vertices (phase 4)
+                if (phase === 4 && isCriticalVertex(i)) {
+                    border = 'border-red-400 bg-red-900/30';
+                }
+
+                html += `
+                <div class="node absolute ${border} ${extra} border-2 rounded-xl flex flex-col items-center justify-center text-center select-none"
+                    style="left:${pos.cx - NODE_W/2}px; top:${pos.cy - NODE_H/2}px; width:${NODE_W}px; height:${NODE_H}px; z-index:3;">
+                    <span class="text-xs font-bold">${eventShort[i]}</span>
+                    <span class="text-[10px] ${veCls}">${veStr}</span>
+                    <span class="text-[10px] ${vlCls}">${vlStr}</span>
+                </div>`;
+            }
+            layer.innerHTML = html;
+        }
+
+        function isCriticalVertex(v) {
+            // A vertex is on critical path if any critical activity touches it
+            // and ve[v] === vl[v] (no slack)
+            if (ve[v] === null || vl[v] === null) return false;
+            return ve[v] === vl[v];
+        }
+
+        function renderArrays() {
+            const veDiv = document.getElementById('veArray');
+            const vlDiv = document.getElementById('vlArray');
+            let veHtml = '<span class="text-[10px] text-gray-500 mr-1">ve: </span>';
+            let vlHtml = '<span class="text-[10px] text-gray-500 mr-1">vl: </span>';
+            for (let i = 0; i < N; i++) {
+                const veBg = (ve[i] !== null) ? 'bg-blue-900/60 text-blue-200' : 'bg-gray-800 text-gray-600';
+                const vlBg = (vl[i] !== null) ? 'bg-orange-900/60 text-orange-200' : 'bg-gray-800 text-gray-600';
+                veHtml += `<span class="${veBg} text-[10px] px-1.5 py-0.5 rounded font-mono">V${i}:${ve[i]!==null?ve[i]:'?'}</span>`;
+                vlHtml += `<span class="${vlBg} text-[10px] px-1.5 py-0.5 rounded font-mono">V${i}:${vl[i]!==null?vl[i]:'?'}</span>`;
+            }
+            veDiv.innerHTML = veHtml;
+            vlDiv.innerHTML = vlHtml;
+        }
+
+        function renderActivityTable() {
+            const table = document.getElementById('activityTable');
+            let html = '';
+            activities.forEach((act, idx) => {
+                let eVal = (ve[act.from] !== null) ? ve[act.from] : '?';
+                let lVal = (vl[act.to] !== null) ? vl[act.to] - act.dur : '?';
+                let sVal = (slack[idx] !== null) ? slack[idx] : '?';
+                let critTag = (slack[idx] === 0) ? '✓关键' : (slack[idx] !== null ? '-' : '?');
+                let rowCls = '';
+                if (slack[idx] === 0) rowCls = 'bg-red-900/30 text-red-200';
+                else if (idx === curAct) rowCls = 'bg-green-900/30 text-green-200';
+                else rowCls = 'text-gray-400';
+
+                html += `<div class="grid grid-cols-7 text-[10px] py-1 ${rowCls} rounded px-0.5 gap-0.5">
+                    <span class="font-mono font-bold">${act.id}</span>
+                    <span>V${act.from}→V${act.to}</span>
+                    <span>${act.dur}</span>
+                    <span>${eVal}</span>
+                    <span>${lVal}</span>
+                    <span>${sVal}</span>
+                    <span class="${slack[idx]===0?'text-red-300 font-bold':''}">${critTag}</span>
+                </div>`;
+            });
+            table.innerHTML = html;
+        }
+
+        function updateButtons() {
+            const done = (phase === 4);
+            document.getElementById('btnNext').disabled = done;
+            document.getElementById('btnPlay').disabled = done;
+            if (done && playing) stopPlay();
+        }
+
+        function setPhaseBadge(text, cls) {
+            const badge = document.getElementById('phaseBadge');
+            badge.textContent = text;
+            badge.className = 'px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap ' + cls;
+        }
+
+        // ==================== HELPERS ====================
+        function getArrowPoints(cx1, cy1, cx2, cy2) {
+            const dx = cx2 - cx1, dy = cy2 - cy1;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 1) return {x1:cx1, y1:cy1, x2:cx2, y2:cy2};
+            const ux = dx/dist, uy = dy/dist;
+            const r1 = rectDist(NODE_W, NODE_H, ux, uy);
+            const r2 = rectDist(NODE_W, NODE_H, -ux, -uy);
+            return {
+                x1: cx1 + ux*(r1+2),
+                y1: cy1 + uy*(r1+2),
+                x2: cx2 - ux*(r2+9),
+                y2: cy2 - uy*(r2+9),
+            };
+        }
+        function rectDist(w, h, ux, uy) {
+            if (Math.abs(ux)<1e-9) return h/2;
+            if (Math.abs(uy)<1e-9) return w/2;
+            return Math.min((w/2)/Math.abs(ux), (h/2)/Math.abs(uy));
+        }
+
+        function addLog(msg, cls) {
+            const panel = document.getElementById('logPanel');
+            if (panel.children.length===1 && panel.children[0].textContent.includes('就绪')) {
+                panel.innerHTML = '';
+            }
+            const div = document.createElement('div');
+            div.className = cls || 'text-gray-300';
+            div.innerHTML = msg;
+            panel.appendChild(div);
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        // ==================== KEYBOARD ====================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') { e.preventDefault(); nextStep(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevStep(); }
+            else if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+            else if (e.key === 'r' || e.key === 'R') { e.preventDefault(); resetAll(); }
+        });
+
+        // ==================== BOOTSTRAP ====================
+        function boot() {
+            updateButtons();
+            renderAll();
+            addLog('📋 AOE网 (Activity On Edge): 6个事件, 8个活动。边上的数字为活动持续时间。', 'text-gray-400');
+            addLog('💡 算法步骤: (1)正向计算ve[] (2)反向计算vl[] (3)计算松弛量=vl[j]-ve[i]-d', 'text-gray-500');
+            addLog('💡 松弛量=0的活动构成关键路径。快捷键: →下一步 ←上一步 空格播放 R重置', 'text-gray-500');
+        }
+        boot();
+    </script>
+
+</main>
+<aside class="nav-toc">
+
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+    });
+  });
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+</body>
+</html>
