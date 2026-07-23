@@ -628,6 +628,8 @@ def build_search_index(site_dir):
                 continue
             if f == 'index.html' and root == site_dir:
                 continue  # skip root index
+            if f == 'search-results.html':
+                continue  # skip standalone search results page
             filepath = os.path.join(root, f)
             rel = os.path.relpath(filepath, site_dir).replace('\\', '/')
             parts = rel.split('/')
@@ -720,7 +722,7 @@ def build_search_index(site_dir):
 site_dir = os.path.dirname(os.path.abspath(__file__))
 site_root = site_dir
 files = glob.glob(os.path.join(site_dir, '**/*.html'), recursive=True)
-files = [f for f in files if 'mkdocs' not in f and os.path.basename(f) != 'index.html' and '演示' not in f]
+files = [f for f in files if 'mkdocs' not in f and os.path.basename(f) != 'index.html' and os.path.basename(f) != 'search-results.html' and '演示' not in f]
 
 # Build search index BEFORE add_nav() processes files,
 # so it reads original Typora-exported content -- not nav boilerplate.
