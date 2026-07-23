@@ -833,6 +833,24 @@ def gen_main_index():
   .countdown-item .num { font-size: 2rem; font-weight: 700; color: #e53935; line-height: 1.2; }
   .countdown-item .unit { font-size: 0.75rem; color: #999; margin-top: 4px; }
   .footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 48px; }
+.home-search-wrap { margin-bottom: 32px; position: relative; }
+.home-search-box { display: flex; align-items: center; background: #fff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 0 16px; max-width: 440px; margin: 0 auto; transition: border-color 0.2s; }
+.home-search-box:focus-within { border-color: var(--accent); box-shadow: 0 2px 12px rgba(63,81,181,0.12); }
+.home-search-icon { font-size: 1.1rem; margin-right: 8px; color: #999; flex-shrink: 0; }
+.home-search-input { flex: 1; border: none; outline: none; font-size: 0.95rem; padding: 12px 0; color: #333; background: transparent; }
+.home-search-input::placeholder { color: #aaa; }
+.home-search-wrap .search-dropdown-list { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); z-index: 200; width: 100%; max-width: 440px; background: #fff; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; overflow: hidden; }
+.search-dropdown-item { display: block; padding: 12px 16px; text-decoration: none; color: inherit; border-bottom: 1px solid #f0f0f0; transition: background 0.1s; text-align: left; }
+.search-dropdown-item:last-of-type { border-bottom: none; }
+.search-dropdown-item:hover { background: var(--accent-light); }
+.search-dropdown-title { display: block; font-weight: 600; font-size: 0.92rem; color: #222; margin-bottom: 2px; }
+.search-dropdown-title mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-dropdown-meta { display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px; }
+.search-dropdown-snippet { display: block; font-size: 0.8rem; color: #777; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-dropdown-snippet mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-dropdown-empty { padding: 20px 16px; text-align: center; color: #999; font-size: 0.9rem; }
+.search-dropdown-more { display: block; padding: 10px 16px; text-align: center; color: var(--accent); font-size: 0.85rem; text-decoration: none; border-top: 1px solid #f0f0f0; font-weight: 500; }
+.search-dropdown-more:hover { background: var(--accent-light); }
 </style>
 </head>
 <body>
@@ -842,6 +860,13 @@ def gen_main_index():
   <div class="countdown-wrap">
     <p class="countdown-label">距离 2026 考研（12.20）</p>
     <div class="countdown-row" id="countdown"></div>
+  </div>
+  <div class="home-search-wrap">
+    <div class="home-search-box">
+      <span class="home-search-icon">🔍</span>
+      <input type="text" class="home-search-input" placeholder="搜索笔记关键词...">
+    </div>
+    <div class="search-dropdown-list" style="display:none"></div>
   </div>
   <div class="grid2">
 """
