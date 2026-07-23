@@ -775,7 +775,7 @@ for d in all_dirs:
 # Also ensure top-level section directories always get an index
 for d in os.listdir(site_dir):
     full = os.path.join(site_dir, d)
-    if os.path.isdir(full) and not d.startswith('.') and not d.endswith('.assets') and d != 'assets':
+    if os.path.isdir(full) and not d.startswith('.') and not d.endswith('.assets') and d != 'assets' and d != 'search' and d != 'docs' and d != '__pycache__':
         sections_to_generate.add(d)
 
 for dirpath in sorted(sections_to_generate):
