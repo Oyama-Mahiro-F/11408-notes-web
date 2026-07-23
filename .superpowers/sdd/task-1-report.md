@@ -50,3 +50,54 @@ Verification commands confirmed:
 ## Issues or Concerns
 
 - None. The function generates correct output on the first run.
+
+---
+
+## Fix Round 1: C1 + I1 (2026-07-23)
+
+### Critical Issue C1 — Search index contained nav boilerplate
+
+**Root cause:** `build_search_index()` was called AFTER `add_nav()` had already injected navigation shells into all HTML files. Every page's first ~500 characters was the identical nav sidebar, making the text-based search index useless (all terms matched all pages).
+
+**Fixes applied:**
+
+1. **Moved `build_search_index(site_dir)` to run BEFORE the `add_nav()` processing loop** (i.e., before files are modified). This ensures it reads the original content rather than nav-injected HTML.
+
+2. **Added `<main class="nav-content">` extraction in `build_search_index()`**: Since files may already have nav shells from a prior run, the function now checks for `<main class="nav-content">` (the container that holds the original body content inside the nav shell). If found, it extracts text from there; otherwise falls back to the raw `<body>`.
+
+3. **Added content preservation in `add_nav()`**: When processing a file that already has a nav shell, `add_nav()` now saves the content from `<main class="nav-content">` BEFORE stripping the shell markers. Previously, stripping `<!-- NAV_SHELL_START -->...<!-- NAV_SHELL_END -->` would also remove the embedded original content, causing content loss on subsequent runs.
+
+### Important Issue I1 — JSON minified, diffs enormous
+
+**Fix:** Added `indent=2` to the `json.dump()` call in `build_search_index()`.
+
+### Files Changed
+
+- `D:\university_learning\site\add_nav.py` — 3 changes:
+  - Moved `build_search_index()` call before the file processing loop
+  - Added `<main class="nav-content">` extraction to `build_search_index()` for nav-shell resilience
+  - Added content preservation in `add_nav()` to prevent content loss on re-processing
+  - Added `indent=2` to `json.dump()`
+- `D:\university_learning\site\search\408.json` — regenerated with proper content and indentation
+- `D:\university_learning\site\search\数学.json` — regenerated with proper content and indentation
+- `D:\university_learning\site\search\英语.json` — regenerated with proper content and indentation
+
+### Test Results
+
+```text
+Building search index...
+  [search] skipped 2 files outside subject dirs
+  [search] 408: 22 pages, 1932 unique terms -> 408.json
+  [search] 数学: 35 pages, 2433 unique terms -> 数学.json
+  [search] 英语: 6 pages, 578 unique terms -> 英语.json
+  [search] done — 3 indices written
+```
+
+Uniqueness verification:
+```
+408: 22 pages, 22 unique texts (100% unique)
+数学: 35 pages, 35 unique texts (100% unique)
+英语: 6 pages, 6 unique texts (100% unique)
+```
+
+JSON indentation verified — each page entry is properly pretty-printed with 2-space indent.

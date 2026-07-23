@@ -236,6 +236,18 @@ def add_nav(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         html = f.read()
 
+    # If the file already has a nav shell (from a previous run), extract the
+    # original content from inside <main class="nav-content"> BEFORE stripping
+    # the shell, because NAV_SHELL_START/END encloses the content.
+    saved_content = None
+    m = re.search(r'<main\s+class="nav-content">(.*?)</main>', html, re.DOTALL)
+    if m:
+        saved_content = m.group(1).strip()
+        # If the *only* thing in nav-content is whitespace, ignore it —
+        # the file likely has no real body content (e.g. an index page).
+        if saved_content == '':
+            saved_content = None
+
     # Remove any old nav shell
     html = re.sub(r'<style id="nav-shell-css">.*?</style>', '', html, flags=re.DOTALL)
     html = re.sub(r'<script id="nav-shell-js">.*?</script>', '', html, flags=re.DOTALL)
@@ -332,12 +344,15 @@ def add_nav(filepath):
 <!-- NAV_SHELL_END -->"""
 
     # Extract body content and insert into shell
-    body_m = re.search(r'<body[^>]*>(.*?)</body>', html, re.DOTALL)
-    if not body_m:
-        print(f'  SKIP: no body tag')
-        return False
-
-    body_content = body_m.group(1)
+    if saved_content is not None:
+        # File had an existing nav shell — use the content we saved from it
+        body_content = saved_content
+    else:
+        body_m = re.search(r'<body[^>]*>(.*?)</body>', html, re.DOTALL)
+        if not body_m:
+            print(f'  SKIP: no body tag')
+            return False
+        body_content = body_m.group(1)
 
     # Hide old TOC inside content
     body_content = re.sub(r'<div class="toc">.*?</div>\s*', '', body_content, flags=re.DOTALL)
@@ -563,6 +578,18 @@ def build_search_index(site_dir):
                 print(f'  [search] WARNING: cannot read {rel}: {e}')
                 continue
 
+            # Strip any nav shell (in case build_search_index runs after add_nav
+            # has already processed files in a previous run)
+            # The original body content is inside <main class="nav-content"> when nav shell is present
+            body_m = re.search(r'<main\s+class="nav-content">(.*?)</main>', html, re.DOTALL)
+            if body_m:
+                # Nav shell present — extract content from within it
+                body_html = body_m.group(1)
+            else:
+                # No nav shell — extract full body
+                body_m = re.search(r'<body[^>]*>(.*?)</body>', html, re.DOTALL)
+                body_html = body_m.group(1) if body_m else ''
+
             # Extract title from <title> tag
             title_m = re.search(r'<title>(.*?)</title>', html, re.DOTALL)
             title = title_m.group(1).strip() if title_m else f[:-5]
@@ -570,11 +597,11 @@ def build_search_index(site_dir):
             # Strip " - 2026考研笔记" suffix from title
             title = re.sub(r'\s*[-–|]\s*2026考研笔记.*$', '', title)
 
-            # Extract body text
-            body_m = re.search(r'<body[^>]*>(.*?)</body>', html, re.DOTALL)
-            if body_m:
+            # Extract body text (from body_html which may have been extracted
+            # from inside the nav shell or from the raw body)
+            if body_html:
                 extractor = _TextExtractor()
-                extractor.feed(body_m.group(1))
+                extractor.feed(body_html)
                 full_text = ' '.join(extractor.text)
             else:
                 full_text = title
@@ -614,7 +641,7 @@ def build_search_index(site_dir):
 
         index_file = os.path.join(search_dir, f'{subject}.json')
         with open(index_file, 'w', encoding='utf-8') as f:
-            json.dump({'pages': pages_out, 'index': inverted}, f, ensure_ascii=False)
+            json.dump({'pages': pages_out, 'index': inverted}, f, ensure_ascii=False, indent=2)
 
         print(f'  [search] {subject}: {len(pages_out)} pages, '
               f'{len(inverted)} unique terms -> '
@@ -628,6 +655,11 @@ site_dir = os.path.dirname(os.path.abspath(__file__))
 site_root = site_dir
 files = glob.glob(os.path.join(site_dir, '**/*.html'), recursive=True)
 files = [f for f in files if 'mkdocs' not in f and os.path.basename(f) != 'index.html' and '演示' not in f]
+
+# Build search index BEFORE add_nav() processes files,
+# so it reads original Typora-exported content -- not nav boilerplate.
+print('\nBuilding search index...')
+build_search_index(site_dir)
 
 count = 0
 for f in sorted(files):
@@ -783,10 +815,6 @@ def gen_main_index():
     with open(os.path.join(site_dir, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(content)
     print('  Updated: index.html')
-
-# Build search index
-print('\nBuilding search index...')
-build_search_index(site_dir)
 
 gen_main_index()
 
