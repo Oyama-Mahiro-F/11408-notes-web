@@ -689,7 +689,7 @@ def build_search_index(site_dir):
             else:
                 full_text = title
 
-            # Truncate for index (keep first 500 chars for search snippet)
+            # Store full text for indexing, snippet for display
             snippet = full_text[:500]
 
             if subject not in subjects:
@@ -700,6 +700,7 @@ def build_search_index(site_dir):
                 'title': title,
                 'path': rel,
                 'text': snippet,
+                '_full_text': full_text,  # used for tokenization, stripped before output
                 'subject': subject,
             })
 
@@ -711,7 +712,7 @@ def build_search_index(site_dir):
         # Build inverted index: bigram -> [page_ids]
         inverted = {}
         for p in pages:
-            tokens = bigram_tokenize(p['title'] + ' ' + p['text'])
+            tokens = bigram_tokenize(p['title'] + ' ' + p['_full_text'])
             for tok in tokens:
                 inverted.setdefault(tok, []).append(p['id'])
 
@@ -719,8 +720,8 @@ def build_search_index(site_dir):
         for tok in inverted:
             inverted[tok] = sorted(set(inverted[tok]))
 
-        # Remove id field from pages (redundant with array index)
-        pages_out = [{k: v for k, v in p.items() if k != 'id'} for p in pages]
+        # Remove internal fields from pages (id: array index, _full_text: only for indexing)
+        pages_out = [{k: v for k, v in p.items() if k not in ('id', '_full_text')} for p in pages]
 
         index_file = os.path.join(search_dir, f'{subject}.json')
         with open(index_file, 'w', encoding='utf-8') as f:
