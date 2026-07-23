@@ -225,3 +225,320 @@
     return div.innerHTML;
   }
 })();
+
+// ── SearchUI ───────────────────────────────────────────
+(function () {
+  'use strict';
+
+  var MAX_DROPDOWN_ITEMS = 6;
+  var DEBOUNCE_MS = 300;
+
+  function debounce(fn, ms) {
+    var timer = null;
+    return function () {
+      var ctx = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () { fn.apply(ctx, args); }, ms);
+    };
+  }
+
+  window.SearchUI = function (engine) {
+    this.engine = engine;
+    this._dropdown = null;
+    this._navInput = null;
+    this._homeInput = null;
+    this._debouncedSearch = debounce(this._doSearch.bind(this), DEBOUNCE_MS);
+  };
+
+  // ── Dropdown panel ───────────────────────────────────
+  SearchUI.prototype._ensureDropdown = function () {
+    if (this._dropdown) return this._dropdown;
+    var el = document.createElement('div');
+    el.className = 'search-dropdown';
+    el.innerHTML = '<div class="search-dropdown-list"></div>';
+    el.style.display = 'none';
+    document.body.appendChild(el);
+    this._dropdown = el;
+
+    // Click outside to close
+    var self = this;
+    document.addEventListener('click', function (e) {
+      if (!self._dropdown) return;
+      if (!self._dropdown.contains(e.target) &&
+          !(self._navInput && self._navInput.contains(e.target)) &&
+          !(self._homeInput && self._homeInput.contains(e.target))) {
+        self._closeDropdown();
+      }
+    });
+
+    // Esc to close
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') self._closeDropdown();
+    });
+
+    return el;
+  };
+
+  SearchUI.prototype._showDropdown = function (anchorEl, results, query) {
+    var dd = this._ensureDropdown();
+    var list = dd.querySelector('.search-dropdown-list');
+    var self = this;
+
+    if (results.length === 0) {
+      if (query.length > 0) {
+        list.innerHTML = '<div class="search-dropdown-empty">未找到匹配的笔记</div>';
+      } else {
+        dd.style.display = 'none';
+        return;
+      }
+    } else {
+      var html = '';
+      for (var i = 0; i < Math.min(results.length, MAX_DROPDOWN_ITEMS); i++) {
+        var r = results[i];
+        // Build breadcrumb from path
+        var parts = r.path.split('/');
+        var subject = parts[0];
+        var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
+        var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
+
+        html += '<a class="search-dropdown-item" href="' + r.path + '">' +
+          '<span class="search-dropdown-title">' + self.engine.highlight(r.title, query) + '</span>' +
+          '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
+          '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), query) + '</span>' +
+          '</a>';
+      }
+      if (results.length > MAX_DROPDOWN_ITEMS) {
+        html += '<a class="search-dropdown-more" href="search-results.html?q=' +
+          encodeURIComponent(query) + '">查看全部 ' + results.length + ' 条结果 →</a>';
+      }
+      list.innerHTML = html;
+    }
+
+    // Position relative to anchor
+    var rect = anchorEl.getBoundingClientRect();
+    var top = rect.bottom + 4;
+    var left = rect.left;
+    // Clamp to viewport
+    var maxW = Math.min(480, window.innerWidth * 0.9);
+    if (left + maxW > window.innerWidth - 8) {
+      left = Math.max(8, window.innerWidth - maxW - 8);
+    }
+    dd.style.top = top + 'px';
+    dd.style.left = left + 'px';
+    dd.style.maxWidth = maxW + 'px';
+    dd.style.display = 'block';
+  };
+
+  SearchUI.prototype._closeDropdown = function () {
+    if (this._dropdown) this._dropdown.style.display = 'none';
+    if (this._navInput) {
+      var input = this._navInput.querySelector('input');
+      if (input) { input.value = ''; input.blur(); }
+      this._navInput.classList.remove('open');
+    }
+    // Restore search icon visibility if nav
+    var icon = document.querySelector('.nav-search-icon');
+    if (icon) icon.style.display = '';
+  };
+
+  SearchUI.prototype._doSearch = function (anchorEl, query) {
+    var q = (query || '').trim();
+    if (!q) {
+      this._closeDropdown();
+      return;
+    }
+    if (!this.engine.isAvailable()) {
+      // Still loading
+      return;
+    }
+    var results = this.engine.search(q);
+    this._showDropdown(anchorEl, results, q);
+    // Also update search-results.html if on that page
+    this._renderFullResults(q, results);
+  };
+
+  // ── Nav header search ────────────────────────────────
+  SearchUI.prototype._createNavSearch = function () {
+    var header = document.querySelector('.nav-header');
+    if (!header) return;
+
+    var self = this;
+
+    // Create container
+    var wrapper = document.createElement('div');
+    wrapper.className = 'nav-search-wrap';
+    wrapper.innerHTML =
+      '<span class="nav-search-icon" title="搜索 (Ctrl+K)">🔍</span>' +
+      '<div class="nav-search-input-wrap" style="display:none">' +
+      '<input type="text" class="nav-search-input" placeholder="搜索笔记...">' +
+      '</div>';
+    header.appendChild(wrapper);
+
+    var icon = wrapper.querySelector('.nav-search-icon');
+    var inputWrap = wrapper.querySelector('.nav-search-input-wrap');
+    var input = wrapper.querySelector('.nav-search-input');
+    this._navInput = wrapper;
+
+    // Click icon → expand
+    icon.addEventListener('click', function (e) {
+      e.stopPropagation();
+      icon.style.display = 'none';
+      inputWrap.style.display = '';
+      input.focus();
+      wrapper.classList.add('open');
+    });
+
+    // Input handler
+    input.addEventListener('input', function () {
+      self._debouncedSearch(wrapper, input.value);
+    });
+
+    // Ctrl+K shortcut
+    document.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        icon.style.display = 'none';
+        inputWrap.style.display = '';
+        input.focus();
+        wrapper.classList.add('open');
+      }
+    });
+  };
+
+  // ── Home page search box ─────────────────────────────
+  SearchUI.prototype._createHomeSearch = function () {
+    // Only on pages with .idx-container (section index) or root index
+    var container = document.querySelector('.idx-container');
+    var grid = document.querySelector('.idx-grid');
+    var subtitle = document.querySelector('.idx-subtitle');
+    var referenceEl = grid || subtitle;
+    if (!referenceEl || !referenceEl.parentNode) return;
+
+    var self = this;
+    var wrap = document.createElement('div');
+    wrap.className = 'home-search-wrap';
+    wrap.innerHTML =
+      '<div class="home-search-box">' +
+      '<span class="home-search-icon">🔍</span>' +
+      '<input type="text" class="home-search-input" placeholder="搜索笔记关键词...">' +
+      '</div>' +
+      '<div class="search-dropdown-list" style="display:none"></div>';
+    referenceEl.parentNode.insertBefore(wrap, referenceEl);
+
+    var input = wrap.querySelector('.home-search-input');
+    var dropdownList = wrap.querySelector('.search-dropdown-list');
+    this._homeInput = wrap;
+
+    input.addEventListener('input', function () {
+      var q = input.value.trim();
+      if (!q) {
+        dropdownList.style.display = 'none';
+        return;
+      }
+      if (!self.engine.isAvailable()) return;
+      var results = self.engine.search(q);
+      if (results.length === 0) {
+        dropdownList.innerHTML = '<div class="search-dropdown-empty">未找到匹配的笔记</div>';
+      } else {
+        var html = '';
+        for (var i = 0; i < Math.min(results.length, MAX_DROPDOWN_ITEMS); i++) {
+          var r = results[i];
+          var parts = r.path.split('/');
+          var subject = parts[0];
+          var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
+          var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
+          html += '<a class="search-dropdown-item" href="' + r.path + '">' +
+            '<span class="search-dropdown-title">' + self.engine.highlight(r.title, query) + '</span>' +
+            '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
+            '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), query) + '</span>' +
+            '</a>';
+        }
+        if (results.length > MAX_DROPDOWN_ITEMS) {
+          html += '<a class="search-dropdown-more" href="search-results.html?q=' +
+            encodeURIComponent(q) + '">查看全部 ' + results.length + ' 条结果 →</a>';
+        }
+        dropdownList.innerHTML = html;
+      }
+      dropdownList.style.display = 'block';
+    });
+
+    // Click outside closes
+    document.addEventListener('click', function (e) {
+      if (!wrap.contains(e.target)) {
+        dropdownList.style.display = 'none';
+      }
+    });
+  };
+
+  // ── Full results page support ────────────────────────
+  SearchUI.prototype._renderFullResults = function (query, results) {
+    var container = document.getElementById('search-results-container');
+    if (!container) return;  // not on search-results page
+
+    var html = '<p class="search-results-summary">' +
+      (results.length > 0
+        ? '搜索结果：<strong>' + escapeHTML(query) + '</strong> 共 ' + results.length + ' 条'
+        : '未找到与 <strong>' + escapeHTML(query) + '</strong> 匹配的笔记') +
+      '</p>';
+
+    if (results.length === 0) {
+      container.innerHTML = html;
+      return;
+    }
+
+    var self = this;
+    for (var i = 0; i < results.length; i++) {
+      var r = results[i];
+      var parts = r.path.split('/');
+      var subject = parts[0];
+      var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
+      var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
+
+      html += '<div class="search-result-item">' +
+        '<a class="search-result-title" href="' + r.path + '">' +
+        self.engine.highlight(r.title, query) + '</a>' +
+        '<div class="search-result-meta">' +
+        '<span class="search-result-subject">' + (SUBJECT_LABELS[subject] || subject) + '</span>' +
+        '<span class="search-result-path">' + escapeHTML(breadcrumb) + '</span>' +
+        '</div>' +
+        '<div class="search-result-snippet">' +
+        self.engine.highlight(r.text.substring(0, 200), query) +
+        '</div>' +
+        '</div>';
+    }
+
+    container.innerHTML = html;
+  };
+
+  // ── Init ──────────────────────────────────────────────
+  SearchUI.prototype.init = function () {
+    this._createNavSearch();
+    this._createHomeSearch();
+
+    // If on search-results page, check for query param
+    var m = location.search.match(/[?&]q=([^&]+)/);
+    if (m && document.getElementById('search-results-container')) {
+      var query = decodeURIComponent(m[1]);
+      var input = document.getElementById('search-page-input');
+      if (input) {
+        input.value = query;
+        var self = this;
+        setTimeout(function () {
+          var results = self.engine.search(query);
+          self._renderFullResults(query, results);
+        }, 100);
+      }
+    }
+  };
+
+  // Re-expose helpers
+  function escapeHTML(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  if (typeof SUBJECT_LABELS === 'undefined') {
+    var SUBJECT_LABELS = { '408': '408', '数学': '数学', '英语': '英语', '政治': '政治' };
+  }
+})();
