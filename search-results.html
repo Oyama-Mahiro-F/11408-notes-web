@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>搜索 - 2026考研笔记</title>
+<style>
+:root { --header-h: 48px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", sans-serif; background: #f0f2f5; color: #333; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; text-decoration: none; color: #fff; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+/* -- Search bar ------------------------------- */
+.search-page-wrap { max-width: 700px; margin: 80px auto 0; padding: 20px 24px; }
+.search-page-bar { display: flex; align-items: center; background: #fff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 0 16px; transition: border-color 0.2s; }
+.search-page-bar:focus-within { border-color: var(--accent); box-shadow: 0 2px 12px rgba(63,81,181,0.12); }
+.search-page-bar .icon { font-size: 1.1rem; margin-right: 8px; color: #999; flex-shrink: 0; }
+.search-page-bar input { flex: 1; border: none; outline: none; font-size: 1rem; padding: 14px 0; color: #333; background: transparent; }
+.search-page-bar input::placeholder { color: #aaa; }
+
+/* -- Results ---------------------------------- */
+#search-results-container { max-width: 700px; margin: 0 auto; padding: 0 24px 40px; }
+.search-results-summary { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 28px; }
+.search-result-item { padding: 20px 0; border-bottom: 1px solid #e8e8e8; }
+.search-result-title { font-size: 1.1rem; font-weight: 600; color: var(--accent); text-decoration: none; line-height: 1.4; }
+.search-result-title:hover { text-decoration: underline; }
+.search-result-title mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-result-meta { font-size: 0.8rem; color: #999; margin: 4px 0 8px; display: flex; gap: 12px; align-items: center; }
+.search-result-subject { background: var(--accent-light); color: var(--accent); padding: 1px 8px; border-radius: 8px; font-size: 0.72rem; font-weight: 500; }
+.search-result-snippet { font-size: 0.88rem; color: #555; line-height: 1.6; }
+.search-result-snippet mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+
+/* -- Search dropdown (copied for standalone use) -- */
+.nav-search-wrap { display: flex; align-items: center; margin-left: auto; position: relative; }
+.nav-search-icon { color: rgba(255,255,255,0.75); cursor: pointer; font-size: 1rem; padding: 4px 8px; border-radius: 4px; user-select: none; }
+.nav-search-icon:hover { color: #fff; background: rgba(255,255,255,0.12); }
+.nav-search-input-wrap { display: flex; align-items: center; }
+.nav-search-input { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; width: 180px; outline: none; transition: width 0.2s; }
+.nav-search-input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.5); width: 220px; }
+.nav-search-input::placeholder { color: rgba(255,255,255,0.5); }
+
+.search-dropdown { position: fixed; z-index: 300; background: #fff; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; overflow: hidden; min-width: 260px; }
+.search-dropdown-list { max-height: 400px; overflow-y: auto; }
+.search-dropdown-item { display: block; padding: 12px 16px; text-decoration: none; color: inherit; border-bottom: 1px solid #f0f0f0; transition: background 0.1s; }
+.search-dropdown-item:last-of-type { border-bottom: none; }
+.search-dropdown-item:hover { background: var(--accent-light); }
+.search-dropdown-title { display: block; font-weight: 600; font-size: 0.92rem; color: #222; margin-bottom: 2px; }
+.search-dropdown-title mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-dropdown-meta { display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px; }
+.search-dropdown-snippet { display: block; font-size: 0.8rem; color: #777; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-dropdown-snippet mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-dropdown-empty { padding: 20px 16px; text-align: center; color: #999; font-size: 0.9rem; }
+.search-dropdown-more { display: block; padding: 10px 16px; text-align: center; color: var(--accent); font-size: 0.85rem; text-decoration: none; border-top: 1px solid #f0f0f0; font-weight: 500; }
+.search-dropdown-more:hover { background: var(--accent-light); }
+
+@media (max-width: 600px) {
+  .nav-search-input { width: 120px; }
+  .nav-search-input:focus { width: 150px; }
+  .nav-header a.tab { padding: 0 10px; font-size: 0.8rem; }
+  .nav-header .logo { font-size: 0.85rem; margin-right: 8px; }
+  .search-page-wrap { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div id="app-shell">
+<div class="nav-header">
+  <a class="logo" href="index.html">2026考研笔记</a>
+  <a class="tab" href="index.html">首页</a>
+  <a class="tab" href="408/">408</a>
+  <a class="tab" href="数学/">数学</a>
+  <a class="tab" href="英语/">英语</a>
+  <a class="tab" href="政治/">政治</a>
+</div>
+
+<div class="search-page-wrap">
+  <div class="search-page-bar">
+    <span class="icon">🔍</span>
+    <input type="text" id="search-page-input" placeholder="搜索笔记关键词..." autofocus>
+  </div>
+</div>
+
+<div id="search-results-container"></div>
+</div>
+
+<script src="search.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var engine = new SearchEngine();
+  var ui = new SearchUI(engine);
+
+  engine.loadIndexes().then(function () {
+    ui.init();
+
+    // Bind the page input
+    var input = document.getElementById('search-page-input');
+    if (input) {
+      var debounceTimer;
+      input.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        var q = input.value.trim();
+        debounceTimer = setTimeout(function () {
+          if (q) {
+            var results = engine.search(q);
+            ui._renderFullResults(q, results);
+          } else {
+            document.getElementById('search-results-container').innerHTML = '';
+          }
+          // Update URL without reload
+          var url = new URL(location);
+          url.searchParams.set('q', q);
+          history.replaceState(null, '', url);
+        }, 300);
+      });
+    }
+
+    // Handle initial query from URL
+    var m = location.search.match(/[?&]q=([^&]+)/);
+    if (m && input) {
+      var query = decodeURIComponent(m[1]);
+      input.value = query;
+      var results = engine.search(query);
+      if (ui._renderFullResults) {
+        ui._renderFullResults(query, results);
+      }
+    }
+  });
+});
+</script>
+
+</body>
+</html>
