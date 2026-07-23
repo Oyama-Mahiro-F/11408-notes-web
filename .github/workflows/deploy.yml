@@ -32,6 +32,9 @@ jobs:
             if [ -d "$dir" ]; then cp -r "$dir" _site/; fi
           done
           cp index.html _site/ 2>/dev/null || true
+          cp search.js _site/ 2>/dev/null || true
+          cp search-results.html _site/ 2>/dev/null || true
+          if [ -d "search" ]; then cp -r search _site/; fi
           touch _site/.nojekyll
           echo "Site files prepared."
 
