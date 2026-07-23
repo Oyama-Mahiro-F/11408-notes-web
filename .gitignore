@@ -1,5 +1,8 @@
 # Prevent stale dirs from being re-added
 site/
+!site/search.js
+!site/search-results.html
+!site/search/
 考研/
 
 # Non-HTML folders

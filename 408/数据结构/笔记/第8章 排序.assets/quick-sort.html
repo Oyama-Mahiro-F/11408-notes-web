@@ -10,6 +10,8 @@
 
 
 
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>快速排序 交互式演示 (408标准)</title>
@@ -74,6 +76,8 @@
         .tree-level { display: flex; align-items: flex-start; justify-content: center; gap: 8px; flex-wrap: wrap; }
         .tree-branch { display: flex; flex-direction: column; align-items: center; }
     </style>
+
+
 
 
 
@@ -887,11 +891,18 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <!-- NAV_SHELL_END -->
+<script>var SEARCH_BASE = "../../../../search/";</script>
 <script src="../../../../search.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){u.init();});
+ e.loadIndexes().then(function(){
+ if(e.hasError()){
+  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
+  for(var i=0;i<inputs.length;i++){inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}
+ }
+ u.init();
+ });
 });
 </script>
 </body>

@@ -10,6 +10,8 @@
 
 
 
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>冒泡排序演示</title>
@@ -169,6 +171,8 @@ button:disabled {
   cursor: not-allowed;
 }
 </style>
+
+
 
 
 
@@ -606,11 +610,18 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <!-- NAV_SHELL_END -->
+<script>var SEARCH_BASE = "../../../../search/";</script>
 <script src="../../../../search.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){u.init();});
+ e.loadIndexes().then(function(){
+ if(e.hasError()){
+  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
+  for(var i=0;i<inputs.length;i++){inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}
+ }
+ u.init();
+ });
 });
 </script>
 </body>

@@ -10,6 +10,8 @@
 
 
 
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>平衡二叉树 AVL 演示 (408标准)</title>
@@ -33,6 +35,8 @@
         .anode.rotation-node { border-color: #f59e0b; background: #fef3c7; box-shadow: 0 0 0 5px rgba(245,158,11,0.25); }
         .tree-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
     </style>
+
+
 
 
 
@@ -677,11 +681,18 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <!-- NAV_SHELL_END -->
+<script>var SEARCH_BASE = "../../../../search/";</script>
 <script src="../../../../search.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){u.init();});
+ e.loadIndexes().then(function(){
+ if(e.hasError()){
+  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
+  for(var i=0;i<inputs.length;i++){inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}
+ }
+ u.init();
+ });
 });
 </script>
 </body>

@@ -10,6 +10,8 @@
 
 
 
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DFS 深度优先搜索 演示 (408标准)</title>
@@ -33,6 +35,8 @@ tailwind.config = {
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
   #matrixInput { font-family: 'Consolas', 'Courier New', monospace; }
 </style>
+
+
 
 
 
@@ -1178,11 +1182,18 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <!-- NAV_SHELL_END -->
+<script>var SEARCH_BASE = "../../../../search/";</script>
 <script src="../../../../search.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){u.init();});
+ e.loadIndexes().then(function(){
+ if(e.hasError()){
+  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
+  for(var i=0;i<inputs.length;i++){inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}
+ }
+ u.init();
+ });
 });
 </script>
 </body>

@@ -10,6 +10,8 @@
 
 
 
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>线索二叉树演示 - 408考研</title>
@@ -53,6 +55,8 @@ body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f
 @keyframes travPulse { 0%,100% { box-shadow: 0 0 8px rgba(34,197,94,0.3); }
   50% { box-shadow: 0 0 28px rgba(34,197,94,0.8); } }
 </style>
+
+
 
 
 
@@ -1234,11 +1238,18 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 
 <!-- NAV_SHELL_END -->
+<script>var SEARCH_BASE = "../../../../search/";</script>
 <script src="../../../../search.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){u.init();});
+ e.loadIndexes().then(function(){
+ if(e.hasError()){
+  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
+  for(var i=0;i<inputs.length;i++){inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}
+ }
+ u.init();
+ });
 });
 </script>
 </body>
