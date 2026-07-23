@@ -304,7 +304,7 @@
         var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
         var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
 
-        html += '<a class="search-dropdown-item" href="' + ROOT_BASE + r.path + '">' +
+        html += '<a class="search-dropdown-item" href="' + ROOT_BASE + r.path + '#:~:text=' + encodeURIComponent(query) + '">' +
           '<span class="search-dropdown-title">' + self.engine.highlight(r.title, query) + '</span>' +
           '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
           '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), query) + '</span>' +
@@ -334,20 +334,12 @@
 
   SearchUI.prototype._closeDropdown = function () {
     if (this._dropdown) this._dropdown.style.display = 'none';
-    if (this._navInput) {
-      var input = this._navInput.querySelector('input');
-      if (input) { input.value = ''; input.blur(); }
-      this._navInput.classList.remove('open');
-    }
-    // Restore search icon visibility if nav
-    var icon = document.querySelector('.nav-search-icon');
-    if (icon) icon.style.display = '';
   };
 
   SearchUI.prototype._doSearch = function (anchorEl, query) {
     var q = (query || '').trim();
     if (!q) {
-      this._closeDropdown();
+      if (this._dropdown) this._dropdown.style.display = 'none';
       return;
     }
     if (!this.engine.isAvailable()) {
@@ -373,70 +365,69 @@
 
     var self = this;
 
-    // Create container
+    // Create container with always-visible input
     var wrapper = document.createElement('div');
     wrapper.className = 'nav-search-wrap';
     wrapper.innerHTML =
-      '<span class="nav-search-icon" title="搜索 (Ctrl+K)">🔍</span>' +
-      '<div class="nav-search-input-wrap" style="display:none">' +
-      '<input type="text" class="nav-search-input" placeholder="搜索笔记...">' +
-      '</div>';
+      '<input type="text" class="nav-search-input" placeholder="搜索笔记...">';
     header.appendChild(wrapper);
 
-    var icon = wrapper.querySelector('.nav-search-icon');
-    var inputWrap = wrapper.querySelector('.nav-search-input-wrap');
     var input = wrapper.querySelector('.nav-search-input');
     this._navInput = wrapper;
-
-    // Click icon → expand
-    icon.addEventListener('click', function (e) {
-      e.stopPropagation();
-      icon.style.display = 'none';
-      inputWrap.style.display = '';
-      input.focus();
-      wrapper.classList.add('open');
-    });
 
     // Input handler
     input.addEventListener('input', function () {
       self._debouncedSearch(wrapper, input.value);
     });
 
-    // Ctrl+K shortcut
+    // Ctrl+K shortcut → focus search
     document.addEventListener('keydown', function (e) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        icon.style.display = 'none';
-        inputWrap.style.display = '';
         input.focus();
-        wrapper.classList.add('open');
       }
     });
   };
 
   // ── Home page search box ─────────────────────────────
   SearchUI.prototype._createHomeSearch = function () {
-    // Only on pages with .idx-container (section index) or root index
-    var container = document.querySelector('.idx-container');
-    var grid = document.querySelector('.idx-grid');
-    var subtitle = document.querySelector('.idx-subtitle');
-    var referenceEl = grid || subtitle;
-    if (!referenceEl || !referenceEl.parentNode) return;
-
     var self = this;
-    var wrap = document.createElement('div');
-    wrap.className = 'home-search-wrap';
-    wrap.innerHTML =
-      '<div class="home-search-box">' +
-      '<span class="home-search-icon">🔍</span>' +
-      '<input type="text" class="home-search-input" placeholder="搜索笔记关键词...">' +
-      '</div>' +
-      '<div class="search-dropdown-list" style="display:none"></div>';
-    referenceEl.parentNode.insertBefore(wrap, referenceEl);
+    var input, dropdownList, wrap;
 
-    var input = wrap.querySelector('.home-search-input');
-    var dropdownList = wrap.querySelector('.search-dropdown-list');
-    this._homeInput = wrap;
+    // Case 1: search box already in HTML (main index page from gen_main_index)
+    var existing = document.querySelector('.home-search-input');
+    if (existing) {
+      input = existing;
+      wrap = existing.closest('.home-search-wrap');
+      dropdownList = wrap ? wrap.querySelector('.search-dropdown-list') : null;
+      if (!dropdownList) {
+        dropdownList = document.createElement('div');
+        dropdownList.className = 'search-dropdown-list';
+        dropdownList.style.display = 'none';
+        wrap.appendChild(dropdownList);
+      }
+      this._homeInput = wrap;
+    } else {
+      // Case 2: section index page — create search box dynamically
+      var grid = document.querySelector('.idx-grid');
+      var subtitle = document.querySelector('.idx-subtitle');
+      var referenceEl = grid || subtitle;
+      if (!referenceEl || !referenceEl.parentNode) return;
+
+      wrap = document.createElement('div');
+      wrap.className = 'home-search-wrap';
+      wrap.innerHTML =
+        '<div class="home-search-box">' +
+        '<span class="home-search-icon">🔍</span>' +
+        '<input type="text" class="home-search-input" placeholder="搜索笔记关键词...">' +
+        '</div>' +
+        '<div class="search-dropdown-list" style="display:none"></div>';
+      referenceEl.parentNode.insertBefore(wrap, referenceEl);
+
+      input = wrap.querySelector('.home-search-input');
+      dropdownList = wrap.querySelector('.search-dropdown-list');
+      this._homeInput = wrap;
+    }
 
     var debouncedHomeSearch = debounce(function () {
       var q = input.value.trim();
@@ -456,7 +447,7 @@
           var subject = parts[0];
           var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
           var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
-          html += '<a class="search-dropdown-item" href="' + ROOT_BASE + r.path + '">' +
+          html += '<a class="search-dropdown-item" href="' + ROOT_BASE + r.path + '#:~:text=' + encodeURIComponent(q) + '">' +
             '<span class="search-dropdown-title">' + self.engine.highlight(r.title, q) + '</span>' +
             '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
             '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), q) + '</span>' +
@@ -508,7 +499,7 @@
       var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
 
       html += '<div class="search-result-item">' +
-        '<a class="search-result-title" href="' + ROOT_BASE + r.path + '">' +
+        '<a class="search-result-title" href="' + ROOT_BASE + r.path + '#:~:text=' + encodeURIComponent(query) + '">' +
         self.engine.highlight(r.title, query) + '</a>' +
         '<div class="search-result-meta">' +
         '<span class="search-result-subject">' + (SUBJECT_LABELS[subject] || subject) + '</span>' +

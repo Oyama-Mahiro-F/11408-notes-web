@@ -15,6 +15,9 @@
 
 
 
+
+
+
 <meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
 
 <link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; --title-bar-height:20px; }
@@ -848,6 +851,9 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 
 
+
+
+
 </head>
 <body>
 <!-- NAV_SHELL_START -->
@@ -1214,7 +1220,62 @@ C_{16} &= G_3^* + P_3^* G_2^* + P_3^* P_2^* G_1^* + P_3^* P_2^* P_1^* G_0^* + P_
 </span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">⑤ 判溢出：E=128 ∈ [1,254] → 正常</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; 结果：0 10000000 0100...0 → 真值 = 1.01 × 2¹ = 2.5</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; 验算：1.5 + 1.0 = 2.5 ✓</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 392px;"></div><div class="CodeMirror-gutters" style="display: none; height: 392px;"></div></div></div></pre><h3 id='七）本章总结'><span>（七）本章总结</span></h3><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="" style="break-inside: unset;"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">第二章 数据的表示与运算</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├── 2.1 数据与文字的表示方法</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.1.0 进位计数制及其相互转换</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.1.1 数据格式（定点数 / 浮点数）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.1.2 数的机器码表示（原码 / 反码 / 补码 / 移码）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.1.3 字符和字符串表示（ASCII / Unicode / UTF-8 / 中文编码）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.1.4 C语言整数类型及类型转换</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; └── 2.1.5 数据的存储和排列（大小端 / 边界对齐）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├── 2.2 定点加法、减法运算</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.2.1 补码加减法（[A+B]补 = [A]补+[B]补 / [A−B]补 = [A]补+[−B]补）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.2.2 溢出检测（单符号位 / 进位异或 / 双符号位）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; └── 2.2.3 加法/减法器（全加器 / 串行进位 / 并行进位 CLA / 带标志加法器）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├── 2.3 定点乘法运算</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.3.1 移位运算（算术移位 / 逻辑移位）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.3.2 原码并行乘法（阵列乘法器）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.3.3 定点原码一位乘法</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; └── 2.3.4 定点补码一位乘法（Booth 算法）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├── 2.4 定点除法运算</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.4.1 定点原码一位除（恢复余数法 / 不恢复余数法）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; └── 2.4.2 定点补码一位除（加减交替法）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├── 2.5 定点运算器的组成</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.5.1 逻辑运算（AND / OR / NOT / XOR）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.5.2 多功能 ALU（74181 / 标志寄存器）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├── 2.5.3 内部总线（单总线 / 双总线 / 三总线）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; └── 2.5.4 定点运算器基本结构（寄存器组 + MUX + ALU）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">└── 2.6 浮点运算</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├── IEEE 754 标准（单精度/双精度 / 移码 / 隐含位）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├── 特殊值（规格化 / 非规格化 / 0 / ∞ / NaN）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├── 表示范围</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  └── 浮点加减运算（对阶 → 尾数运算 → 规格化 → 舍入 → 判溢出）</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 829px;"></div><div class="CodeMirror-gutters" style="display: none; height: 829px;"></div></div></div></pre><hr /><blockquote><p><strong><span>408 高频考点提醒</span></strong><span>：</span></p><ul><li><span>补码表示范围和特殊值（全 0 = 0，全 1 = −1，100…0 = −2ⁿ）</span></li><li><span>Booth 算法的推导（YᵢYᵢ₋₁ 两位判断的四种情况）</span></li><li><span>IEEE 754 浮点数与真值的互转（阶码 = 真值指数 + Bias）</span></li><li><span>浮点加减五步法（对阶→尾数运算→规格化→舍入→判溢出）</span></li><li><span>溢出的三种检测方法（单符号位 / Cₙ⊕Cₙ₋₁ / 双符号位）</span></li><li><span>大小端字节序判断 + 结构体边界对齐 sizeof</span></li><li><span>单/双/三总线结构的性能对比</span></li></ul></blockquote></div></div>
 </main>
 <aside class="nav-toc">
-
+<div class="toc-label">目录</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#一）数据与文字的表示方法"><span class="toc-toggle">▼</span>（一）数据与文字的表示方法</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一进位计数制及其相互转换">一、进位计数制及其相互转换</a>
+<a class="toc-h4" href="#二数据格式">二、数据格式</a>
+<a class="toc-h4" href="#三数的机器码表示">三、数的机器码表示</a>
+<a class="toc-h4" href="#四字符和字符串非数值）的表示方法">四、字符和字符串（非数值）的表示方法</a>
+<a class="toc-h4" href="#五c语言中的整数类型及类型转换">五、C语言中的整数类型及类型转换</a>
+<a class="toc-h4" href="#六数据的存储和排列">六、数据的存储和排列</a>
+<a class="toc-h4" href="#七校验码">七、校验码</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#二）定点加法减法运算"><span class="toc-toggle">▼</span>（二）定点加法、减法运算</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一补码加减法">一、补码加减法</a>
+<a class="toc-h4" href="#二溢出概念与检测方法">二、溢出概念与检测方法</a>
+<a class="toc-h4" href="#三基本的二进制加法减法器">三、基本的二进制加法/减法器</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#三）定点乘法运算"><span class="toc-toggle">▼</span>（三）定点乘法运算</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一定点数的移位运算">一、定点数的移位运算</a>
+<a class="toc-h4" href="#二原码并行乘法阵列乘法器）">二、原码并行乘法（阵列乘法器）</a>
+<a class="toc-h4" href="#三定点原码一位乘法">三、定点原码一位乘法</a>
+<a class="toc-h4" href="#四定点补码一位乘法">四、定点补码一位乘法</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#四）定点除法运算"><span class="toc-toggle">▼</span>（四）定点除法运算</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一定点原码一位除">一、定点原码一位除</a>
+<a class="toc-h4" href="#二定点补码一位除加减交替法）">二、定点补码一位除（加减交替法）</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#五）定点运算器的组成"><span class="toc-toggle">▼</span>（五）定点运算器的组成</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一逻辑运算">一、逻辑运算</a>
+<a class="toc-h4" href="#二多功能算术逻辑运算单元alu）">二、多功能算术/逻辑运算单元（ALU）</a>
+<a class="toc-h4" href="#三内部总线">三、内部总线</a>
+<a class="toc-h4" href="#四定点运算器的基本结构">四、定点运算器的基本结构</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#六）浮点运算"><span class="toc-toggle">▼</span>（六）浮点运算</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一浮点数的表示范围">一、浮点数的表示范围</a>
+<a class="toc-h4" href="#二浮点数的加减运算">二、浮点数的加减运算</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#七）本章总结">（七）本章总结</a>
+</div>
 </aside>
 </div>
 </div>

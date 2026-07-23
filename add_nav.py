@@ -308,7 +308,9 @@ def add_nav(filepath):
     rel_path = os.path.relpath(filepath, os.path.dirname(os.path.abspath(__file__))).replace('\\', '/')
 
     # Extract headings for right TOC (build hierarchical tree)
-    headings = extract_headings(html)
+    # Use saved_content if available (re-run on file with existing shell),
+    # otherwise use the cleaned html (first run on raw Typora export)
+    headings = extract_headings(saved_content if saved_content is not None else html)
     # Build tree: h3 items contain h4 children
     toc_tree = []
     current_h3 = None
@@ -690,8 +692,8 @@ def build_search_index(site_dir):
             else:
                 full_text = title
 
-            # Store full text for indexing, snippet for display
-            snippet = full_text[:500]
+            # Store full text for indexing, large snippet for display+scoring
+            snippet = full_text[:10000]
 
             if subject not in subjects:
                 subjects[subject] = []

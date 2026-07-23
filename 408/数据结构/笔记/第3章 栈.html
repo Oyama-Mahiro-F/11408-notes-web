@@ -15,6 +15,9 @@
 
 
 
+
+
+
 <meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
 
 <link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; --title-bar-height:20px; }
@@ -848,6 +851,9 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 
 
 
+
+
+
 </head>
 <body>
 <!-- NAV_SHELL_START -->
@@ -1176,7 +1182,41 @@ mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
 </span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">┌─ 大结局：表达式全部读完 ──────────────────────────────────────┐</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; +-----+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; |  9  | ← 最终答案 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; +-----+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; 操作数栈 &nbsp; &nbsp; &nbsp;  结果 = 9 ✓ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">└───────────────────────────────────────────────────────────┘</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 829px;"></div><div class="CodeMirror-gutters" style="display: none; height: 829px;"></div></div></div></pre><blockquote><p><strong><span>核心理解</span></strong><span>：阶段一栈 = &quot;推迟执行&quot;（低优先级压下，高优先级在上出击）；阶段二栈 = &quot;缓冲数据&quot;（没轮到计算的数字暂存，随用随取）。</span></p></blockquote><p><a href='第3章 栈.assets/expression-evaluation.html'><span>表达式求值 演示</span></a></p><p>&nbsp;</p></div></div>
 </main>
 <aside class="nav-toc">
-
+<div class="toc-label">目录</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#一）栈的基本概念"><span class="toc-toggle">▼</span>（一）栈的基本概念</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一栈的定义">一、栈的定义</a>
+<a class="toc-h4" href="#二栈的抽象类型数据定义">二、栈的抽象类型数据定义</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#二）顺序栈"><span class="toc-toggle">▼</span>（二）顺序栈</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一静态顺序栈">一、静态顺序栈</a>
+<a class="toc-h4" href="#二动态顺序栈">二、动态顺序栈</a>
+<a class="toc-h4" href="#核心对比">核心对比</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#三）链栈"><span class="toc-toggle">▼</span>（三）链栈</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一不带头结点链栈">一、不带头结点链栈</a>
+<a class="toc-h4" href="#二带头结点链栈">二、带头结点链栈</a>
+<a class="toc-h4" href="#三不带头结点-vs-带头结点-对比">三、不带头结点 vs 带头结点 对比</a>
+<a class="toc-h4" href="#四链栈-vs-顺序栈-对比">四、链栈 vs 顺序栈 对比</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#四）栈的应用"><span class="toc-toggle">▼</span>（四）栈的应用</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一括号匹配">一、括号匹配</a>
+<a class="toc-h4" href="#二进制转换">二、进制转换</a>
+<a class="toc-h4" href="#三递归调用">三、递归调用</a>
+<a class="toc-h4" href="#四函数调用">四、函数调用</a>
+<a class="toc-h4" href="#五表达式求值">五、表达式求值</a>
+</div>
+</div>
 </aside>
 </div>
 </div>
