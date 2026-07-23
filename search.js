@@ -233,6 +233,9 @@
   var MAX_DROPDOWN_ITEMS = 6;
   var DEBOUNCE_MS = 300;
 
+  // Compute root-relative base from SEARCH_BASE (injected by add_nav.py)
+  var ROOT_BASE = (typeof SEARCH_BASE !== 'undefined' ? SEARCH_BASE : 'search/').replace(/search\/$/, '');
+
   function debounce(fn, ms) {
     var timer = null;
     return function () {
@@ -301,7 +304,7 @@
         var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
         var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
 
-        html += '<a class="search-dropdown-item" href="' + r.path + '">' +
+        html += '<a class="search-dropdown-item" href="' + ROOT_BASE + r.path + '">' +
           '<span class="search-dropdown-title">' + self.engine.highlight(r.title, query) + '</span>' +
           '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
           '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), query) + '</span>' +
@@ -453,7 +456,7 @@
           var subject = parts[0];
           var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
           var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
-          html += '<a class="search-dropdown-item" href="' + r.path + '">' +
+          html += '<a class="search-dropdown-item" href="' + ROOT_BASE + r.path + '">' +
             '<span class="search-dropdown-title">' + self.engine.highlight(r.title, q) + '</span>' +
             '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
             '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), q) + '</span>' +
@@ -505,7 +508,7 @@
       var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
 
       html += '<div class="search-result-item">' +
-        '<a class="search-result-title" href="' + r.path + '">' +
+        '<a class="search-result-title" href="' + ROOT_BASE + r.path + '">' +
         self.engine.highlight(r.title, query) + '</a>' +
         '<div class="search-result-meta">' +
         '<span class="search-result-subject">' + (SUBJECT_LABELS[subject] || subject) + '</span>' +
