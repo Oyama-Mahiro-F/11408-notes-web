@@ -636,7 +636,6 @@ def build_search_index(site_dir):
 
     for root, dirs, files in os.walk(site_dir):
         dirs[:] = [d for d in dirs if not d.startswith('.')
-                   and not d.endswith('.assets')
                    and d != 'assets'
                    and d != 'search']
         for f in files:
