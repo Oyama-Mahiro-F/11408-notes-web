@@ -345,6 +345,7 @@ def add_nav(filepath):
 
     up = '../' * depth if depth > 0 else ''
     search_js = '../' * depth + 'search.js' if depth > 0 else 'search.js'
+    search_base = '../' * depth + 'search/' if depth > 0 else 'search/'
     tabs = (
         f'<a class="tab" href="{home_base}">首页</a>'
         f'<a class="tab{" active" if active_tab == "408" else ""}" href="{up}408/">408</a>'
@@ -421,11 +422,18 @@ def add_nav(filepath):
 </head>
 <body>
 {shell}
+<script>var SEARCH_BASE = "{search_base}";</script>
 <script src="{search_js}" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){{
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){{u.init();}});
+ e.loadIndexes().then(function(){{
+ if(e.hasError()){{
+  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
+  for(var i=0;i<inputs.length;i++){{inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}}
+ }}
+ u.init();
+ }});
 }});
 </script>
 </body>
@@ -444,6 +452,7 @@ def gen_section_index(dirpath, title, children, depth):
     home = '../' * depth + 'index.html' if depth > 0 else 'index.html'
     up = '../' * depth if depth > 0 else ''
     search_js = '../' * depth + 'search.js' if depth > 0 else 'search.js'
+    search_base = '../' * depth + 'search/' if depth > 0 else 'search/'
     index_rel = os.path.relpath(dirpath, site_root).replace('\\', '/') + '/index.html'
     if index_rel == './index.html':
         index_rel = 'index.html'
@@ -554,11 +563,18 @@ def gen_section_index(dirpath, title, children, depth):
 </div>
 </div>
 {SHELL_JS}
+<script>var SEARCH_BASE = "{search_base}";</script>
 <script src="{search_js}" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){{
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){{u.init();}});
+ e.loadIndexes().then(function(){{
+ if(e.hasError()){{
+  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
+  for(var i=0;i<inputs.length;i++){{inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}}
+ }}
+ u.init();
+ }});
 }});
 </script>
 </body>
@@ -902,11 +918,18 @@ def gen_main_index():
   setInterval(update, 1000);
 })();
 </script>
+<script>var SEARCH_BASE = "search/";</script>
 <script src="search.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){u.init();});
+ e.loadIndexes().then(function(){
+ if(e.hasError()){
+  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
+  for(var i=0;i<inputs.length;i++){inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}
+ }
+ u.init();
+ });
 });
 </script>
 </body>

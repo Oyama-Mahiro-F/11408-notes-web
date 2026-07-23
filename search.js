@@ -51,7 +51,7 @@
     self._loading = true;
 
     var fetches = (subjectList || SUBJECTS).map(function (subj) {
-      return fetch('search/' + subj + '.json')
+      return fetch((typeof SEARCH_BASE !== 'undefined' ? SEARCH_BASE : 'search/') + subj + '.json')
         .then(function (r) {
           if (!r.ok) throw new Error('HTTP ' + r.status);
           return r.json();
@@ -89,7 +89,7 @@
   SearchEngine.prototype._loadOneIndex = function (subject) {
     var self = this;
     if (self._indexes[subject]) return Promise.resolve();
-    return fetch('search/' + subject + '.json')
+    return fetch((typeof SEARCH_BASE !== 'undefined' ? SEARCH_BASE : 'search/') + subject + '.json')
       .then(function (r) { return r.json(); })
       .then(function (data) { self._indexes[subject] = data; })
       .catch(function () {
@@ -348,7 +348,13 @@
       return;
     }
     if (!this.engine.isAvailable()) {
-      // Still loading
+      // Show loading state
+      var dd = this._ensureDropdown();
+      dd.querySelector('.search-dropdown-list').innerHTML = '<div class="search-dropdown-empty">搜索中...</div>';
+      var rect = anchorEl.getBoundingClientRect();
+      dd.style.top = (rect.bottom + 4) + 'px';
+      dd.style.left = rect.left + 'px';
+      dd.style.display = 'block';
       return;
     }
     var results = this.engine.search(q);
