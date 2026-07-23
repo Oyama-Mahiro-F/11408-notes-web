@@ -429,7 +429,7 @@
     var dropdownList = wrap.querySelector('.search-dropdown-list');
     this._homeInput = wrap;
 
-    input.addEventListener('input', function () {
+    var debouncedHomeSearch = debounce(function () {
       var q = input.value.trim();
       if (!q) {
         dropdownList.style.display = 'none';
@@ -448,9 +448,9 @@
           var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
           var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
           html += '<a class="search-dropdown-item" href="' + r.path + '">' +
-            '<span class="search-dropdown-title">' + self.engine.highlight(r.title, query) + '</span>' +
+            '<span class="search-dropdown-title">' + self.engine.highlight(r.title, q) + '</span>' +
             '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
-            '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), query) + '</span>' +
+            '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), q) + '</span>' +
             '</a>';
         }
         if (results.length > MAX_DROPDOWN_ITEMS) {
@@ -460,6 +460,10 @@
         dropdownList.innerHTML = html;
       }
       dropdownList.style.display = 'block';
+    }, DEBOUNCE_MS);
+
+    input.addEventListener('input', function () {
+      debouncedHomeSearch();
     });
 
     // Click outside closes
