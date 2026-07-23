@@ -1,4 +1,5 @@
-import re, os, glob
+import re, os, glob, json
+from html.parser import HTMLParser
 
 # ── Auto-generate nav tree from file system ────────────────────────
 def build_nav_tree(site_dir):
@@ -486,6 +487,142 @@ def gen_section_index(dirpath, title, children, depth):
         f.write(html)
     return True
 
+# ── Search index builder ────────────────────────────────────────────
+
+class _TextExtractor(HTMLParser):
+    """Extract visible text from HTML, skipping script/style tags."""
+    def __init__(self):
+        super().__init__()
+        self.text = []
+        self.skip = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ('script', 'style', 'noscript'):
+            self.skip = True
+
+    def handle_endtag(self, tag):
+        if tag in ('script', 'style', 'noscript'):
+            self.skip = False
+
+    def handle_data(self, data):
+        if not self.skip:
+            t = data.strip()
+            if t:
+                self.text.append(t)
+
+
+def bigram_tokenize(text):
+    """Tokenize text into bigrams for Chinese + whole words for ASCII."""
+    tokens = []
+    # Split Chinese chars from ASCII words
+    segments = re.findall(r'[一-鿿]+|[a-zA-Z0-9]+|\S', text)
+    for seg in segments:
+        if re.match(r'[一-鿿]', seg):
+            # Chinese: sliding bigram window
+            for i in range(len(seg) - 1):
+                tokens.append(seg[i:i+2])
+        elif re.match(r'[a-zA-Z0-9]+', seg):
+            # ASCII word: keep as-is, lowercase
+            tokens.append(seg.lower())
+        # Single punctuation/symbol chars are skipped
+    return list(set(tokens))  # deduplicate
+
+
+def build_search_index(site_dir):
+    """Scan site_dir for .html files, build per-subject search indices."""
+    search_dir = os.path.join(site_dir, 'search')
+    os.makedirs(search_dir, exist_ok=True)
+
+    # Collect pages per subject
+    subjects = {}  # {subject_name: [page_dict, ...]}
+    skipped = []   # files that don't belong to any subject
+
+    for root, dirs, files in os.walk(site_dir):
+        dirs[:] = [d for d in dirs if not d.startswith('.')
+                   and not d.endswith('.assets')
+                   and d != 'assets'
+                   and d != 'search']
+        for f in files:
+            if not f.endswith('.html'):
+                continue
+            if f == 'index.html' and root == site_dir:
+                continue  # skip root index
+            filepath = os.path.join(root, f)
+            rel = os.path.relpath(filepath, site_dir).replace('\\', '/')
+            parts = rel.split('/')
+            subject = parts[0] if len(parts) >= 1 else None
+
+            if subject not in ('408', '数学', '英语', '政治'):
+                skipped.append(rel)
+                continue
+
+            try:
+                with open(filepath, 'r', encoding='utf-8') as fh:
+                    html = fh.read()
+            except Exception as e:
+                print(f'  [search] WARNING: cannot read {rel}: {e}')
+                continue
+
+            # Extract title from <title> tag
+            title_m = re.search(r'<title>(.*?)</title>', html, re.DOTALL)
+            title = title_m.group(1).strip() if title_m else f[:-5]
+
+            # Strip " - 2026考研笔记" suffix from title
+            title = re.sub(r'\s*[-–|]\s*2026考研笔记.*$', '', title)
+
+            # Extract body text
+            body_m = re.search(r'<body[^>]*>(.*?)</body>', html, re.DOTALL)
+            if body_m:
+                extractor = _TextExtractor()
+                extractor.feed(body_m.group(1))
+                full_text = ' '.join(extractor.text)
+            else:
+                full_text = title
+
+            # Truncate for index (keep first 500 chars for search snippet)
+            snippet = full_text[:500]
+
+            if subject not in subjects:
+                subjects[subject] = []
+            page_id = len(subjects[subject])
+            subjects[subject].append({
+                'id': page_id,
+                'title': title,
+                'path': rel,
+                'text': snippet,
+                'subject': subject,
+            })
+
+    if skipped:
+        print(f'  [search] skipped {len(skipped)} files outside subject dirs')
+
+    # Build per-subject index
+    for subject, pages in subjects.items():
+        # Build inverted index: bigram -> [page_ids]
+        inverted = {}
+        for p in pages:
+            tokens = bigram_tokenize(p['title'] + ' ' + p['text'])
+            for tok in tokens:
+                inverted.setdefault(tok, []).append(p['id'])
+
+        # Deduplicate page ids in each posting list
+        for tok in inverted:
+            inverted[tok] = sorted(set(inverted[tok]))
+
+        # Remove id field from pages (redundant with array index)
+        pages_out = [{k: v for k, v in p.items() if k != 'id'} for p in pages]
+
+        index_file = os.path.join(search_dir, f'{subject}.json')
+        with open(index_file, 'w', encoding='utf-8') as f:
+            json.dump({'pages': pages_out, 'index': inverted}, f, ensure_ascii=False)
+
+        print(f'  [search] {subject}: {len(pages_out)} pages, '
+              f'{len(inverted)} unique terms -> '
+              f'{os.path.basename(index_file)}')
+
+    print(f'  [search] done — {len(subjects)} indices written')
+
+
 # Process
 site_dir = os.path.dirname(os.path.abspath(__file__))
 site_root = site_dir
@@ -646,6 +783,10 @@ def gen_main_index():
     with open(os.path.join(site_dir, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(content)
     print('  Updated: index.html')
+
+# Build search index
+print('\nBuilding search index...')
+build_search_index(site_dir)
 
 gen_main_index()
 
