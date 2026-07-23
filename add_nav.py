@@ -644,8 +644,8 @@ def build_search_index(site_dir):
         for f in files:
             if not f.endswith('.html'):
                 continue
-            if f == 'index.html' and root == site_dir:
-                continue  # skip root index
+            if f == 'index.html':
+                continue  # skip all index pages (root + section indices)
             if f == 'search-results.html':
                 continue  # skip standalone search results page
             filepath = os.path.join(root, f)
