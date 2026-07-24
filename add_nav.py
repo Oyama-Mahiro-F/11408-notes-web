@@ -589,25 +589,40 @@ document.addEventListener('DOMContentLoaded',function(){{
 # ── Search index builder ────────────────────────────────────────────
 
 class _TextExtractor(HTMLParser):
-    """Extract visible text from HTML, skipping script/style tags."""
+    """Extract visible text from HTML, skipping script/style/CodeMirror tags."""
     def __init__(self):
         super().__init__()
         self.text = []
         self.skip = False
+        self.skip_depth = 0  # for nested CodeMirror measurement divs
 
     def handle_starttag(self, tag, attrs):
         if tag in ('script', 'style', 'noscript'):
             self.skip = True
+        if self.skip_depth > 0:
+            self.skip_depth += 1
+            return
+        # Skip CodeMirror measurement/invisible elements
+        attr_dict = dict(attrs)
+        cls = attr_dict.get('class', '')
+        if any(c in cls for c in ('CodeMirror-measure', 'CodeMirror-scrollbar-filler',
+                                   'CodeMirror-gutter-filler')):
+            self.skip_depth = 1
+        if attr_dict.get('cm-not-content') == 'true':
+            self.skip_depth = 1
 
     def handle_endtag(self, tag):
         if tag in ('script', 'style', 'noscript'):
             self.skip = False
+        if self.skip_depth > 0:
+            self.skip_depth -= 1
 
     def handle_data(self, data):
-        if not self.skip:
-            t = data.strip()
-            if t:
-                self.text.append(t)
+        if self.skip or self.skip_depth > 0:
+            return
+        t = data.strip()
+        if t:
+            self.text.append(t)
 
 
 def bigram_tokenize(text):
@@ -691,6 +706,9 @@ def build_search_index(site_dir):
                 full_text = ' '.join(extractor.text)
             else:
                 full_text = title
+
+            # Clean CodeMirror measurement artifacts (xxxxxxxxxx) from text
+            full_text = re.sub(r'\bx{5,}\b', '', full_text)
 
             # Store full text for indexing, large snippet for display+scoring
             snippet = full_text[:10000]
