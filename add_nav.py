@@ -412,9 +412,6 @@ def add_nav(filepath):
     body_content = re.sub(r'<div class="toc">.*?</div>\s*', '', body_content, flags=re.DOTALL)
     # Remove CodeMirror measurement artifacts (xxxxxxxxxx) from code blocks
     body_content = re.sub(r'<div class="CodeMirror-measure">.*?</div>', '', body_content, flags=re.DOTALL)
-    body_content = re.sub(r'<div class="CodeMirror-scrollbar-filler".*?</div>', '', body_content, flags=re.DOTALL)
-    body_content = re.sub(r'<div class="CodeMirror-gutter-filler".*?</div>', '', body_content, flags=re.DOTALL)
-    body_content = re.sub(r'<div[^>]*\bcm-not-content="true"[^>]*>.*?</div>', '', body_content, flags=re.DOTALL)
 
     shell = shell.replace('<!-- CONTENT -->', body_content)
 
