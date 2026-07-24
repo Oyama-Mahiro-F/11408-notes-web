@@ -24,6 +24,9 @@
 
 
 
+
+
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>简单选择排序演示 - 408考研</title>
@@ -167,6 +170,9 @@
 
 
 
+
+
+
 </head>
 <body>
 <!-- NAV_SHELL_START -->
@@ -175,6 +181,9 @@
 :root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
 #app-shell { display: flex; flex-direction: column; height: 100vh; }
 #app-shell * { box-sizing: border-box; }
+/* Preserve CodeMirror layout (overrides box-sizing: border-box) */
+#app-shell .CodeMirror,
+#app-shell .CodeMirror * { box-sizing: content-box; }
 
 .nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
 .nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }

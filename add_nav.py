@@ -55,6 +55,9 @@ SHELL_CSS = """
 :root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
 #app-shell { display: flex; flex-direction: column; height: 100vh; }
 #app-shell * { box-sizing: border-box; }
+/* Preserve CodeMirror layout (overrides box-sizing: border-box) */
+#app-shell .CodeMirror,
+#app-shell .CodeMirror * { box-sizing: content-box; }
 
 .nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
 .nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
@@ -180,6 +183,39 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 """
 
+# ── CodeMirror fallback theme (for pages missing cm-s-inner CSS) ────
+CM_THEME_CSS = """
+<style id="cm-fallback-css">
+/* Base reset missing in some Typora exports: without margin:0, browser
+   default pre margins (1em 0) double the code line spacing */
+.CodeMirror pre { border-radius: 0px; border-width: 0px; background: 0px 0px; font-family: inherit; font-size: inherit; margin: 0px; white-space: pre; overflow-wrap: normal; color: inherit; z-index: 2; position: relative; overflow: visible; }
+.cm-s-inner { background: inherit; }
+.cm-s-inner .cm-keyword { color: rgb(119, 0, 136); }
+.cm-s-inner .cm-atom, .cm-s-inner.cm-atom { color: rgb(34, 17, 153); }
+.cm-s-inner .cm-number { color: rgb(17, 102, 68); }
+.cm-s-inner .cm-def { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-variable { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-variable-2 { color: rgb(0, 85, 170); }
+.cm-s-inner .cm-variable-3 { color: rgb(0, 136, 85); }
+.cm-s-inner .cm-string { color: rgb(170, 17, 17); }
+.cm-s-inner .cm-property { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-operator { color: rgb(152, 26, 26); }
+.cm-s-inner .cm-comment, .cm-s-inner.cm-comment { color: rgb(170, 85, 0); }
+.cm-s-inner .cm-string-2 { color: rgb(255, 85, 0); }
+.cm-s-inner .cm-meta { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-qualifier { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-builtin { color: rgb(51, 0, 170); }
+.cm-s-inner .cm-bracket { color: rgb(153, 153, 119); }
+.cm-s-inner .cm-tag { color: rgb(17, 119, 0); }
+.cm-s-inner .cm-attribute { color: rgb(0, 0, 204); }
+.cm-s-inner .cm-header, .cm-s-inner.cm-header { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-quote, .cm-s-inner.cm-quote { color: rgb(0, 153, 0); }
+.cm-s-inner .cm-hr, .cm-s-inner.cm-hr { color: rgb(153, 153, 153); }
+.cm-s-inner .cm-link, .cm-s-inner.cm-link { color: rgb(0, 0, 204); }
+.cm-s-inner .CodeMirror-activeline-background { background: inherit; }
+</style>
+"""
+
 # ── Index page card CSS ──────────────────────────────────────────────
 INDEX_CARD_CSS = """
 <style id="idx-card-css">
@@ -301,6 +337,10 @@ def add_nav(filepath):
     # Remove any old nav shell
     html = re.sub(r'<style id="nav-shell-css">.*?</style>', '', html, flags=re.DOTALL)
     html = re.sub(r'<script id="nav-shell-js">.*?</script>', '', html, flags=re.DOTALL)
+    # Remove previously injected CodeMirror fallback theme (both the current
+    # id-tagged version and the original untagged one) so it can be re-injected
+    html = re.sub(r'<style id="cm-fallback-css">.*?</style>\s*', '', html, flags=re.DOTALL)
+    html = re.sub(r'<style>\s*\.cm-s-inner \{ background: inherit; \}.*?\.cm-s-inner \.CodeMirror-activeline-background \{ background: inherit; \}\s*</style>\s*', '', html, flags=re.DOTALL)
     html = re.sub(r'<!-- NAV_SHELL_START -->.*?<!-- NAV_SHELL_END -->', '', html, flags=re.DOTALL)
     # Remove old app-shell div (match opening to its matching close before </body>)
     html = re.sub(r'<div id="app-shell">.*?</div>\s*(?=</body>)', '', html, flags=re.DOTALL)
@@ -418,6 +458,10 @@ def add_nav(filepath):
     # Keep original head, replace body
     head_m = re.search(r'<head>(.*?)</head>', html, re.DOTALL)
     head = head_m.group(1) if head_m else '<meta charset="UTF-8">'
+
+    # Inject CodeMirror theme CSS if page has code blocks but lacks theme
+    if 'CodeMirror' in body_content and 'cm-s-inner' not in head:
+        head += CM_THEME_CSS
 
     result = f"""<!DOCTYPE html>
 <html>
