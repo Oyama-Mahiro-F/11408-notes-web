@@ -217,10 +217,12 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // Left sidebar scroll position persistence (survives refresh)
+  // Left sidebar scroll position persistence — global key, shared across
+  // all pages (the nav tree is the same on every page), so switching notes
+  // keeps the sidebar where you left it
   var sidePanel = document.querySelector('.nav-sidebar');
   if (sidePanel) {
-    var sideScrollKey = 'sideScroll_' + location.pathname;
+    var sideScrollKey = 'sideScroll_global';
     try {
       var savedSideTop = parseInt(localStorage.getItem(sideScrollKey) || '0', 10);
       if (savedSideTop > 0) sidePanel.scrollTop = savedSideTop;

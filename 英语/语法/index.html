@@ -309,7 +309,7 @@
 </div>
 <div class="nav-section"><a class="l1" href="../index.html"><span class="nav-toggle">▼</span>英语</a>
 <div class="nav-children">
-<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-section"><a class="l2 active" href="index.html"><span class="nav-toggle">▼</span>语法</a>
 <div class="nav-children">
 <div class="nav-item"><a class="l3" href="名词性从句.html">名词性从句</a>
 </div>
@@ -424,10 +424,12 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // Left sidebar scroll position persistence (survives refresh)
+  // Left sidebar scroll position persistence — global key, shared across
+  // all pages (the nav tree is the same on every page), so switching notes
+  // keeps the sidebar where you left it
   var sidePanel = document.querySelector('.nav-sidebar');
   if (sidePanel) {
-    var sideScrollKey = 'sideScroll_' + location.pathname;
+    var sideScrollKey = 'sideScroll_global';
     try {
       var savedSideTop = parseInt(localStorage.getItem(sideScrollKey) || '0', 10);
       if (savedSideTop > 0) sidePanel.scrollTop = savedSideTop;
