@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc 3.10" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>第2讲 一元函数微分学</title>
+  <title>第2讲 一元函数微分学（合并）</title>
   <style>
     /* Default styles provided by pandoc.
     ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -446,15 +446,11 @@
 </div>
 <div class="nav-item"><a class="l3 active" href="第2讲 一元函数微分学.html">第2讲 一元函数微分学</a>
 </div>
-<div class="nav-item"><a class="l3" href="第2讲 一元函数微分学（合并）.html">第2讲 一元函数微分学（合并）</a>
-</div>
-<div class="nav-item"><a class="l3" href="第2讲 一元函数微分学（续）.html">第2讲 一元函数微分学（续）</a>
-</div>
 <div class="nav-item"><a class="l3" href="第3讲 一元函数积分学.html">第3讲 一元函数积分学</a>
 </div>
-<div class="nav-item"><a class="l3" href="第6讲 多元函数微分学.html">第6讲 多元函数微分学</a>
+<div class="nav-item"><a class="l3" href="第4讲 多元函数微分学.html">第4讲 多元函数微分学</a>
 </div>
-<div class="nav-item"><a class="l3" href="第7讲 二重积分.html">第7讲 二重积分</a>
+<div class="nav-item"><a class="l3" href="第5讲 二重积分.html">第5讲 二重积分</a>
 </div>
 </div>
 </div>
@@ -482,7 +478,7 @@
 <main class="nav-content">
 
 <header id="title-block-header">
-<h1 class="title">第2讲 一元函数微分学</h1>
+<h1 class="title">第2讲 一元函数微分学（合并）</h1>
 </header>
 <h3 id="二一元函数微分学">（二）一元函数微分学</h3>
 <blockquote>
@@ -1176,6 +1172,366 @@ class="math inline">\(f&#39;(\xi) = \frac{f(\xi) - f(\eta)}{\xi -
 <p>利用积分中值定理 + 泰勒展开 + 放缩</p>
 </blockquote>
 <hr />
+<h3 id="题型四导数的几何应用">题型四：导数的几何应用</h3>
+<h4 id="一单调性">一、单调性</h4>
+<p>若 <span class="math inline">\(f&#39;(x) &gt; 0\)</span>，<span
+class="math inline">\(x \in I\)</span>，则 <span
+class="math inline">\(f(x)\)</span> 在 <span
+class="math inline">\(I\)</span> 上<strong>单调递增</strong></p>
+<p>若 <span class="math inline">\(f&#39;(x) &lt; 0\)</span>，<span
+class="math inline">\(x \in I\)</span>，则 <span
+class="math inline">\(f(x)\)</span> 在 <span
+class="math inline">\(I\)</span> 上<strong>单调递减</strong></p>
+<blockquote>
+<p><strong>注意</strong>：<span class="math inline">\(f&#39;(x) \geq
+0\)</span> 且 <span class="math inline">\(f&#39;(x) = 0\)</span>
+只在孤立点处成立，仍为单调递增</p>
+</blockquote>
+<h4 id="二极值">二、极值</h4>
+<p><strong>(1) 极值的定义</strong></p>
+<p>若 <span class="math inline">\(\forall x \in U(x_0)\)</span> 有 <span
+class="math inline">\(f(x) &lt; f(x_0)\)</span>（或 <span
+class="math inline">\(f(x) &gt; f(x_0)\)</span>），则称 <span
+class="math inline">\(x_0\)</span> 为极大（或极小）值点，<span
+class="math inline">\(f(x_0)\)</span> 为极大（或极小）值。</p>
+<blockquote>
+<p><strong>口诀</strong>：可导极值点一定是驻点</p>
+</blockquote>
+<p><strong>可疑点</strong>（可能为极值点的位置）： - 驻点（<span
+class="math inline">\(f&#39;(x_0) = 0\)</span>） - 不可导点 - 分段点 -
+无定义点（端点处不取极值，但有可能取到最值）</p>
+<p><strong>求最值</strong>：求所有极值点 + 端点，代入函数值比较大小</p>
+<p><strong>(2) 极值的必要条件</strong></p>
+<p>若 <span class="math inline">\(f(x)\)</span> 在 <span
+class="math inline">\(x_0\)</span> 处可导，且 <span
+class="math inline">\(x_0\)</span> 为极值点，则</p>
+<p><span class="math display">\[
+f&#39;(x_0) = 0 \quad (\text{即 } x_0 \text{ 为驻点})
+\]</span></p>
+<p><strong>(3) 极值的充分条件</strong></p>
+<h6 id="第一充分条件">第一充分条件</h6>
+<p>若 <span class="math inline">\(f(x)\)</span> 在 <span
+class="math inline">\(x = x_0\)</span> 连续，且在 <span
+class="math inline">\(x_0\)</span> 左右邻域内 <span
+class="math inline">\(f&#39;(x)\)</span> 符号相反，则 <span
+class="math inline">\(x_0\)</span> 为极值点。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span
+class="math inline">\(f&#39;(x)\)</span> 的符号变化</th>
+<th style="text-align: center;">极值类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(+ \to
+-\)</span></td>
+<td style="text-align: center;">极大值点</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(- \to
++\)</span></td>
+<td style="text-align: center;">极小值点</td>
+</tr>
+<tr>
+<td style="text-align: center;"><span class="math inline">\(+ \to
++\)</span> 或 <span class="math inline">\(- \to -\)</span></td>
+<td style="text-align: center;">非极值点</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>口诀</strong>：单调性发生改变的临界点就是极值点</p>
+</blockquote>
+<h6 id="第二充分条件">第二充分条件</h6>
+<p>若 <span class="math inline">\(f&#39;(x_0) = 0\)</span> 且 <span
+class="math inline">\(f&#39;&#39;(x_0) \neq 0\)</span>，则 <span
+class="math inline">\(x_0\)</span> 为极值点：</p>
+<ul>
+<li><span class="math inline">\(f&#39;&#39;(x_0) &gt; 0\)</span>：<span
+class="math inline">\(x_0\)</span> 为<strong>极小值</strong>点</li>
+<li><span class="math inline">\(f&#39;&#39;(x_0) &lt; 0\)</span>：<span
+class="math inline">\(x_0\)</span> 为<strong>极大值</strong>点</li>
+</ul>
+<blockquote>
+<p>若 <span class="math inline">\(f&#39;&#39;(x_0) =
+0\)</span>，第二充分条件失效，需回到第一充分条件</p>
+</blockquote>
+<p><strong>极值判断流程</strong>： 1. 找可疑点：驻点 + 不可导点 2.
+判定：用第一或第二充分条件</p>
+<hr />
+<h4 id="三凹凸性与拐点">三、凹凸性与拐点</h4>
+<p><strong>(1) 凹凸性判定</strong></p>
+<p><span class="math display">\[
+f&#39;&#39;(x) &gt; 0 \implies \text{凹（上凹）}
+\]</span></p>
+<p><span class="math display">\[
+f&#39;&#39;(x) &lt; 0 \implies \text{凸（上凸）}
+\]</span></p>
+<blockquote>
+<p><strong>口诀</strong>：大二小凸（<span
+class="math inline">\(f&#39;&#39; &gt; 0\)</span> 凹，<span
+class="math inline">\(f&#39;&#39; &lt; 0\)</span> 凸）</p>
+</blockquote>
+<p><strong>(2) 拐点</strong></p>
+<p>拐点：凹凸性发生改变的<strong>临界点</strong> <span
+class="math inline">\((x_0, f(x_0))\)</span></p>
+<blockquote>
+<p><strong>注意</strong>：拐点是一个点 <span class="math inline">\((x_0,
+f(x_0))\)</span>，不是 <span class="math inline">\(x_0\)</span></p>
+</blockquote>
+<p><strong>可疑点</strong>（可能为拐点的位置）： - <span
+class="math inline">\(f&#39;&#39;(x) = 0\)</span> 的点 - <span
+class="math inline">\(f&#39;&#39;(x)\)</span> 不存在的点 - <span
+class="math inline">\(f(x)\)</span> 无定义的点</p>
+<p><strong>(3) 拐点的必要条件</strong></p>
+<p>若 <span class="math inline">\(f(x)\)</span> 在 <span
+class="math inline">\(x_0\)</span> 处二阶可导，且 <span
+class="math inline">\((x_0, f(x_0))\)</span> 为拐点，则</p>
+<p><span class="math display">\[
+f&#39;&#39;(x_0) = 0
+\]</span></p>
+<blockquote>
+<p><strong>口诀</strong>：可导拐点一定是二阶驻点</p>
+</blockquote>
+<p><strong>(4) 拐点的充分条件</strong></p>
+<h6 id="第一充分条件-1">第一充分条件</h6>
+<p>若 <span class="math inline">\(f(x)\)</span> 在 <span
+class="math inline">\(x_0\)</span> 左右邻域内 <span
+class="math inline">\(f&#39;&#39;(x)\)</span> 符号相反，则 <span
+class="math inline">\((x_0, f(x_0))\)</span> 为拐点。</p>
+<h6 id="第二充分条件-1">第二充分条件</h6>
+<p>若 <span class="math inline">\(f&#39;&#39;(x_0) = 0\)</span> 且 <span
+class="math inline">\(f&#39;&#39;&#39;(x_0) \neq 0\)</span>，则 <span
+class="math inline">\((x_0, f(x_0))\)</span> 是拐点。</p>
+<blockquote>
+<p>若 <span class="math inline">\(f&#39;&#39;&#39;(x_0) =
+0\)</span>，失效，回到第一充分条件</p>
+</blockquote>
+<p><strong>拐点判断流程</strong>： 1. 找可疑点：<span
+class="math inline">\(f&#39;&#39;(x) = 0\)</span> 的点 + <span
+class="math inline">\(f&#39;&#39;(x)\)</span> 不存在的点 2.
+判定：用第一或第二充分条件</p>
+<hr />
+<h4 id="四渐近线">四、渐近线</h4>
+<p><strong>(1) 铅直渐近线</strong></p>
+<p>若 <span class="math inline">\(\lim_{x \to a} f(x) =
+\infty\)</span>，则 <span class="math inline">\(x = a\)</span>
+为铅直渐近线</p>
+<blockquote>
+<p>找 <span class="math inline">\(f(x)\)</span> 的无定义点</p>
+</blockquote>
+<p><strong>(2) 水平渐近线</strong></p>
+<p>若 <span class="math inline">\(\lim_{x \to +\infty} f(x) =
+A\)</span>（或 <span class="math inline">\(x \to -\infty\)</span>），则
+<span class="math inline">\(y = A\)</span> 为水平渐近线</p>
+<p><strong>(3) 斜渐近线</strong></p>
+<p>若 <span class="math inline">\(\lim_{x \to +\infty} f(x) =
+\infty\)</span>，计算：</p>
+<p><span class="math display">\[
+k = \lim_{x \to +\infty} \frac{f(x)}{x}, \quad b = \lim_{x \to +\infty}
+[f(x) - kx]
+\]</span></p>
+<p>若 <span class="math inline">\(k, b\)</span> 均存在且 <span
+class="math inline">\(k \neq 0\)</span>，则 <span
+class="math inline">\(y = kx + b\)</span> 为斜渐近线</p>
+<blockquote>
+<p><strong>重要</strong>：相同趋向（如 <span class="math inline">\(x \to
++\infty\)</span>）下，水平渐近线与斜渐近线不可能同时存在</p>
+<p>若 <span class="math inline">\(\lim_{x \to +\infty} f(x) =
+A\)</span>（有限值），则 <span class="math inline">\(y = A\)</span>
+为水平渐近线，且该方向无斜渐近线</p>
+</blockquote>
+<p><strong>【例22】</strong> 曲线 <span class="math inline">\(y = x
+\ln\left|1 + \frac{1}{x}\right|\)</span> 的渐近线有（ ）条</p>
+<blockquote>
+<p>分析：铅直（<span class="math inline">\(x =
+0\)</span>）、水平/斜（<span class="math inline">\(x \to
+\pm\infty\)</span>）</p>
+</blockquote>
+<hr />
+<h4 id="五曲率数一数二">五、曲率（数一、数二）</h4>
+<p><strong>曲率公式</strong></p>
+<p><span class="math display">\[
+K = \frac{|y&#39;&#39;|}{(1 + y&#39;^2)^{3/2}}
+\]</span></p>
+<p><strong>曲率半径</strong>：<span class="math inline">\(R =
+\frac{1}{K}\)</span></p>
+<p><strong>曲率圆</strong>：在点 <span class="math inline">\((x_0,
+y_0)\)</span> 处，圆心 <span class="math inline">\((x_0 - y&#39;_0
+\frac{1+y&#39;^2_0}{y&#39;&#39;_0},\; y_0 +
+\frac{1+y&#39;^2_0}{y&#39;&#39;_0})\)</span>，半径 <span
+class="math inline">\(R\)</span></p>
+<p>参数方程形式：若曲线由 <span class="math inline">\(x = x(t), y =
+y(t)\)</span> 确定，在 <span class="math inline">\(t = t_0\)</span>
+处</p>
+<p><span class="math display">\[
+K = \frac{|x&#39;(t_0)y&#39;&#39;(t_0) -
+x&#39;&#39;(t_0)y&#39;(t_0)|}{[x&#39;^2(t_0) + y&#39;^2(t_0)]^{3/2}}
+\]</span></p>
+<p><strong>【例21】</strong>（数一、二）曲线 <span
+class="math inline">\(\begin{cases} x = \arctan t \\ y = \ln(1+t^2)
+\end{cases}\)</span> 在 <span class="math inline">\(t=0\)</span>
+对应点处的曲率圆方程。</p>
+<hr />
+<h4 id="典型例题-2">典型例题</h4>
+<p><strong>【例20】</strong> 设 <span
+class="math inline">\(f(t)\)</span> 连续且 <span
+class="math inline">\(f(t) &gt; 0\)</span>，<span
+class="math inline">\(f(-t) = f(t)\)</span>，令</p>
+<p><span class="math display">\[
+F(x) = \int_{-a}^{a} |x - t| f(t)\,dt \quad (-a \leq x \leq a)
+\]</span></p>
+<ol type="1">
+<li><p>证明曲线 <span class="math inline">\(y = F(x)\)</span> 在 <span
+class="math inline">\([-a, a]\)</span> 上是凹的</p></li>
+<li><p>当 <span class="math inline">\(x\)</span> 为何值时，<span
+class="math inline">\(F(x)\)</span> 取得最小值</p></li>
+<li><p>若 <span class="math inline">\(F(x)\)</span> 的最小值可表示为
+<span class="math inline">\(f(a) - a^2 - 1\)</span>，试求 <span
+class="math inline">\(f(t)\)</span></p></li>
+</ol>
+<blockquote>
+<p><strong>解法</strong>： (1) 去绝对值分段积分，求 <span
+class="math inline">\(F&#39;&#39;(x) = 2f(x) &gt; 0\)</span> (2) <span
+class="math inline">\(F&#39;(x) = 0 \Rightarrow x =
+0\)</span>（唯一极值点即最小值点） (3) 代入 <span
+class="math inline">\(F(0)\)</span> 构造微分方程求解 <span
+class="math inline">\(f(t)\)</span></p>
+</blockquote>
+<hr />
+<h3 id="题型五讨论方程根的个数">题型五：讨论方程根的个数</h3>
+<h4 id="解题方法">解题方法</h4>
+<p><strong>问题</strong>：<span class="math inline">\(f(x) = 0\)</span>
+在区间 <span class="math inline">\(I\)</span> 上有几个根？</p>
+<p><strong>方法一</strong>：研究 <span class="math inline">\(y =
+f(x)\)</span> 的零点个数</p>
+<ol type="1">
+<li>求 <span class="math inline">\(f&#39;(x)\)</span>，找单调区间</li>
+<li>在每个单调区间上用零点存在定理讨论</li>
+</ol>
+<blockquote>
+<p><strong>关键</strong>：区间端点代入函数值或求极限</p>
+</blockquote>
+<p><strong>方法二</strong>：将方程变形为 <span
+class="math inline">\(h(x) = k\)</span></p>
+<p>即找 <span class="math inline">\(y = h(x)\)</span> 与 <span
+class="math inline">\(y = k\)</span>（水平线）的交点个数</p>
+<p><strong>步骤</strong>：求 <span class="math inline">\(h(x)\)</span>
+的单调区间 + 端点极值 → 画草图 → 数交点</p>
+<h4 id="典型例题-3">典型例题</h4>
+<p><strong>【例23】</strong> 设 <span class="math inline">\(k\)</span>
+为参数，确定方程 <span class="math inline">\(x^3 + 4x + 1 =
+ke^x\)</span> 根的个数。</p>
+<blockquote>
+<p><strong>方法</strong>：变形为 <span class="math inline">\(k = (x^3 +
+4x + 1)e^{-x}\)</span>，研究 <span class="math inline">\(y = (x^3 + 4x +
+1)e^{-x}\)</span> 的图像</p>
+<p>求导分析单调性和极值，与水平线 <span class="math inline">\(y =
+k\)</span> 的交点： - <span class="math inline">\(k &gt;
+6e^{-2}\)</span>：1个根 - <span class="math inline">\(k =
+6e^{-2}\)</span>：2个根 - <span class="math inline">\(0 &lt; k &lt;
+6e^{-2}\)</span>：3个根 - <span class="math inline">\(-e^{-1} &lt; k
+\leq 0\)</span>：2个根 - <span class="math inline">\(k =
+-e^{-1}\)</span>：1个根 - <span class="math inline">\(k &lt;
+-e^{-1}\)</span>：无根</p>
+</blockquote>
+<hr />
+<h3 id="题型六不等式证明">题型六：不等式证明</h3>
+<h4 id="一函数不等式证明">一、函数不等式证明</h4>
+<p><strong>目标</strong>：证明 <span class="math inline">\(f(x) &gt;
+g(x)\)</span>，<span class="math inline">\(x \in (a,b)\)</span></p>
+<p><strong>步骤</strong></p>
+<ol type="1">
+<li><p><strong>化简</strong>：</p>
+<ul>
+<li>不等式两边有公因子 → 消去公因子</li>
+<li>不等式两边有分母 → 同乘分母</li>
+</ul></li>
+<li><p><strong>构造辅助函数</strong>：令 <span
+class="math inline">\(F(x) = f(x) - g(x)\)</span>，证 <span
+class="math inline">\(F(x) &gt; 0\)</span></p></li>
+<li><p><strong>证明</strong>：</p>
+<ul>
+<li><strong>若 <span class="math inline">\(F(a) = 0\)</span>（或 <span
+class="math inline">\(F(b) = 0\)</span>）</strong>：利用单调性
+<ul>
+<li><span class="math inline">\(F&#39;(x) &gt; 0\)</span> 且 <span
+class="math inline">\(F(a) = 0 \implies F(x) &gt; 0\)</span>（<span
+class="math inline">\(x &gt; a\)</span>）</li>
+</ul></li>
+<li><strong>若 <span class="math inline">\(F(a) = F(b) =
+0\)</span></strong>：利用极值
+<ul>
+<li>求导找极值点，求极值，证最小值 <span class="math inline">\(&gt;
+0\)</span></li>
+</ul></li>
+</ul></li>
+</ol>
+<h4 id="二数值不等式证明">二、数值不等式证明</h4>
+<p><strong>目标</strong>：证明 <span class="math inline">\(f(a,b) &gt;
+g(a,b)\)</span>，<span class="math inline">\(b &gt; a\)</span></p>
+<p><strong>方法</strong>：将其中一个变量固定，转化为函数不等式</p>
+<ul>
+<li>令 <span class="math inline">\(F(x) = f(a,x) - g(a,x)\)</span>，证
+<span class="math inline">\(F(x) &gt; 0\)</span>（<span
+class="math inline">\(x \geq a\)</span>）</li>
+<li>代入 <span class="math inline">\(x = b\)</span> 即得结论</li>
+</ul>
+<p><strong>拉格朗日中值定理辅助</strong>：</p>
+<p>若不等式中出现 <span class="math inline">\(f(b) -
+f(a)\)</span>，利用</p>
+<p><span class="math display">\[
+f(b) - f(a) = f&#39;(\xi)(b-a), \quad \xi \in (a,b)
+\]</span></p>
+<p>再结合 <span class="math inline">\(f&#39;(x)\)</span>
+的单调性放缩</p>
+<p><strong>【例24】</strong> 设 <span
+class="math inline">\(f(x)\)</span> 是 <span
+class="math inline">\([0,1]\)</span> 上二阶可导的正值函数，且 <span
+class="math inline">\(f(0)=1\)</span>，<span
+class="math inline">\([f&#39;(x)]^2 &lt;
+f(x)f&#39;&#39;(x)\)</span>，判断：</p>
+<ol type="1">
+<li><p><span class="math inline">\(f(1) &gt; f(0)\)</span> → ✅</p></li>
+<li><p><span class="math inline">\(f(1) &lt; f(0)\)</span> → ❌</p></li>
+<li><p><span class="math inline">\(f&#39;(1) &gt; f&#39;(0)\)</span> →
+需分析</p></li>
+<li><p><span class="math inline">\(f&#39;(1) &lt; f&#39;(0)\)</span> →
+需分析</p></li>
+</ol>
+<blockquote>
+<p><strong>方法</strong>：构造 <span class="math inline">\(G(x) =
+\frac{f&#39;(x)}{f(x)}\)</span>，利用 <span
+class="math inline">\(G&#39;(x) &gt; 0\)</span>（单调递增）比较大小</p>
+</blockquote>
+<p><strong>【例25】</strong> 设 <span
+class="math inline">\(f(x)\)</span> 在 <span
+class="math inline">\([0,a]\)</span> 上二阶可导，且 <span
+class="math inline">\(|f&#39;&#39;(x)| \leq M\)</span></p>
+<ol type="I">
+<li><p>若 <span class="math inline">\(f(0) = f(a) =
+0\)</span>，证明：<span class="math inline">\(\max|f(x)| \leq
+\frac{Ma^2}{8}\)</span></p></li>
+<li><p>若 <span class="math inline">\(f(x)\)</span> 在 <span
+class="math inline">\((0,a)\)</span> 内取得极值，证明：<span
+class="math inline">\(|f&#39;(0)| + |f&#39;(a)| \leq
+Ma\)</span></p></li>
+</ol>
+<blockquote>
+<p><strong>方法</strong>：在 <span class="math inline">\(x=0\)</span> 和
+<span class="math inline">\(x=a\)</span> 处泰勒展开</p>
+</blockquote>
+<p><strong>【例26】</strong> 设 <span class="math inline">\(x &gt;
+0\)</span>，证明：<span class="math inline">\(\ln(1+x) + \frac{x}{1+x}
+&gt; 1\)</span>（<span class="math inline">\(x &gt; 0\)</span>
+时某不等式）</p>
+<blockquote>
+<p><strong>方法</strong>：构造 <span
+class="math inline">\(F(x)\)</span>，利用单调性 + 多次求导</p>
+</blockquote>
+<hr />
 <h3 id="五核心公式速查表">（五）核心公式速查表</h3>
 <h4 id="导数基本公式">导数基本公式</h4>
 <pre><code>(c)&#39; = 0                     (x^n)&#39; = nx^(n-1)
@@ -1236,6 +1592,31 @@ f&#39;(x)cos x + f(x)sin x = 0 → F(x) = f(x)/cos x</code></pre>
 <a class="toc-h4" href="#中值定理证明题的解题策略">中值定理证明题的解题策略</a>
 <a class="toc-h4" href="#典型例题-1">典型例题</a>
 <a class="toc-h4" href="#不等式证明利用泰勒公式">不等式证明（利用泰勒公式）</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#题型四导数的几何应用"><span class="toc-toggle">▼</span>题型四：导数的几何应用</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一单调性">一、单调性</a>
+<a class="toc-h4" href="#二极值">二、极值</a>
+<a class="toc-h4" href="#三凹凸性与拐点">三、凹凸性与拐点</a>
+<a class="toc-h4" href="#四渐近线">四、渐近线</a>
+<a class="toc-h4" href="#五曲率数一数二">五、曲率（数一、数二）</a>
+<a class="toc-h4" href="#典型例题-2">典型例题</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#题型五讨论方程根的个数"><span class="toc-toggle">▼</span>题型五：讨论方程根的个数</a>
+<div class="toc-children">
+<a class="toc-h4" href="#解题方法">解题方法</a>
+<a class="toc-h4" href="#典型例题-3">典型例题</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#题型六不等式证明"><span class="toc-toggle">▼</span>题型六：不等式证明</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一函数不等式证明">一、函数不等式证明</a>
+<a class="toc-h4" href="#二数值不等式证明">二、数值不等式证明</a>
 </div>
 </div>
 <div class="toc-section collapsed">
