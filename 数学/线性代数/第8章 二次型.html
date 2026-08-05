@@ -1076,13 +1076,78 @@ document.addEventListener('DOMContentLoaded', function(){
       this.closest('.nav-section').classList.toggle('collapsed');
     });
   });
-  // Right TOC toggle
+  // Right TOC toggle (state persisted per page — survives refresh)
+  var tocKey = 'tocState_' + location.pathname;
+  function saveTocState() {
+    var collapsed = [], expanded = [];
+    document.querySelectorAll('.toc-section').forEach(function(sec){
+      var a = sec.querySelector('a');
+      if (!a) return;
+      (sec.classList.contains('collapsed') ? collapsed : expanded).push(a.getAttribute('href'));
+    });
+    try { localStorage.setItem(tocKey, JSON.stringify({collapsed: collapsed, expanded: expanded})); } catch(e) {}
+  }
   document.querySelectorAll('.toc-toggle').forEach(function(el){
     el.addEventListener('click', function(e){
       e.preventDefault(); e.stopPropagation();
       this.closest('.toc-section').classList.toggle('collapsed');
+      saveTocState();
     });
   });
+  // Restore saved state on load
+  try {
+    var saved = JSON.parse(localStorage.getItem(tocKey) || 'null');
+    if (saved) {
+      document.querySelectorAll('.toc-section').forEach(function(sec){
+        var a = sec.querySelector('a');
+        if (!a) return;
+        if (saved.collapsed.indexOf(a.getAttribute('href')) !== -1) sec.classList.add('collapsed');
+        if (saved.expanded.indexOf(a.getAttribute('href')) !== -1) sec.classList.remove('collapsed');
+      });
+    }
+  } catch(e) {}
+
+  // Right TOC scroll position persistence (survives refresh)
+  var tocPanel = document.querySelector('.nav-toc');
+  if (tocPanel) {
+    var tocScrollKey = 'tocScroll_' + location.pathname;
+    try {
+      var savedTop = parseInt(localStorage.getItem(tocScrollKey) || '0', 10);
+      if (savedTop > 0) tocPanel.scrollTop = savedTop;
+    } catch(e) {}
+    var saveTimer = null;
+    tocPanel.addEventListener('scroll', function(){
+      if (saveTimer) return;
+      saveTimer = setTimeout(function(){
+        saveTimer = null;
+        try { localStorage.setItem(tocScrollKey, String(tocPanel.scrollTop)); } catch(e) {}
+      }, 150);
+    });
+    window.addEventListener('beforeunload', function(){
+      try { localStorage.setItem(tocScrollKey, String(tocPanel.scrollTop)); } catch(e) {}
+    });
+  }
+
+  // Left sidebar scroll position persistence (survives refresh)
+  var sidePanel = document.querySelector('.nav-sidebar');
+  if (sidePanel) {
+    var sideScrollKey = 'sideScroll_' + location.pathname;
+    try {
+      var savedSideTop = parseInt(localStorage.getItem(sideScrollKey) || '0', 10);
+      if (savedSideTop > 0) sidePanel.scrollTop = savedSideTop;
+    } catch(e) {}
+    var sideSaveTimer = null;
+    sidePanel.addEventListener('scroll', function(){
+      if (sideSaveTimer) return;
+      sideSaveTimer = setTimeout(function(){
+        sideSaveTimer = null;
+        try { localStorage.setItem(sideScrollKey, String(sidePanel.scrollTop)); } catch(e) {}
+      }, 150);
+    });
+    window.addEventListener('beforeunload', function(){
+      try { localStorage.setItem(sideScrollKey, String(sidePanel.scrollTop)); } catch(e) {}
+    });
+  }
   // Mobile hamburger
   var hb = document.querySelector('.nav-hamburger');
   var sb = document.querySelector('.nav-sidebar');
