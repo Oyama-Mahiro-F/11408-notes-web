@@ -283,9 +283,9 @@
 </div>
 </div>
 </div>
-<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-section"><a class="l1 active" href="index.html"><span class="nav-toggle">▼</span>英语</a>
 <div class="nav-children">
-<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-section"><a class="l2" href="语法/index.html"><span class="nav-toggle">▼</span>语法</a>
 <div class="nav-children">
 <div class="nav-item"><a class="l3" href="语法/名词性从句.html">名词性从句</a>
 </div>
@@ -416,13 +416,7 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){
- if(e.hasError()){
-  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
-  for(var i=0;i<inputs.length;i++){inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}
- }
  u.init();
- });
 });
 </script>
 </body>

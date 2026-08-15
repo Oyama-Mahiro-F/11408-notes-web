@@ -383,6 +383,29 @@ def extract_headings(html):
             headings.append((level, hid, text))
     return headings
 
+def extract_nav_content(html):
+    """Extract the real body content from inside <main class=\"nav-content\">.
+
+    Uses a tag-depth scan so nested <main> elements inside Typora exports or
+    interactive demos do not truncate the saved content at the first </main>.
+    """
+    marker = '<main class="nav-content">'
+    start = html.find(marker)
+    if start == -1:
+        return None
+    start += len(marker)
+    depth = 1
+    pos = start
+    for m in re.finditer(r'<main\b|</main\s*>', html[pos:], re.IGNORECASE):
+        if m.group(0).startswith('</'):
+            depth -= 1
+            if depth == 0:
+                return html[start:pos + m.start()]
+        else:
+            depth += 1
+    return None
+
+
 # ── Main ────────────────────────────────────────────────────────────
 
 def add_nav(filepath):
@@ -393,9 +416,9 @@ def add_nav(filepath):
     # original content from inside <main class="nav-content"> BEFORE stripping
     # the shell, because NAV_SHELL_START/END encloses the content.
     saved_content = None
-    m = re.search(r'<main\s+class="nav-content">(.*?)</main>', html, re.DOTALL)
-    if m:
-        saved_content = m.group(1).strip()
+    content = extract_nav_content(html)
+    if content is not None:
+        saved_content = content.strip()
         # If the *only* thing in nav-content is whitespace, ignore it —
         # the file likely has no real body content (e.g. an index page).
         if saved_content == '':
@@ -530,11 +553,15 @@ def add_nav(filepath):
     if 'CodeMirror' in body_content and 'cm-s-inner' not in head:
         head += CM_THEME_CSS
 
+    # Avoid duplicating the favicon if the exported HTML already has one
+    icon_link = ('<link rel="icon" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><text y=\'.9em\' font-size=\'90\'>📖</text></svg>">\n')
+    if 'rel="icon"' in head or "rel='icon'" in head:
+        icon_link = ''
+
     result = f"""<!DOCTYPE html>
 <html>
 <head>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
-{head}
+{icon_link}{head}
 </head>
 <body>
 {shell}
@@ -543,13 +570,7 @@ def add_nav(filepath):
 <script>
 document.addEventListener('DOMContentLoaded',function(){{
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){{
- if(e.hasError()){{
-  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
-  for(var i=0;i<inputs.length;i++){{inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}}
- }}
  u.init();
- }});
 }});
 </script>
 </body>
@@ -685,13 +706,7 @@ def gen_section_index(dirpath, title, children, depth):
 <script>
 document.addEventListener('DOMContentLoaded',function(){{
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){{
- if(e.hasError()){{
-  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
-  for(var i=0;i<inputs.length;i++){{inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}}
- }}
  u.init();
- }});
 }});
 </script>
 </body>
@@ -825,8 +840,10 @@ def build_search_index(site_dir):
             # Clean CodeMirror measurement artifacts (xxxxxxxxxx) from text
             full_text = re.sub(r'\bx{5,}\b', '', full_text)
 
-            # Store full text for indexing, large snippet for display+scoring
-            snippet = full_text[:10000]
+            # Store full text for indexing and client-side snippet generation
+            # (total text size is modest, so shipping full text enables accurate
+            # scoring and context snippets for matches anywhere in a page)
+            snippet = full_text
 
             if subject not in subjects:
                 subjects[subject] = []
@@ -861,7 +878,9 @@ def build_search_index(site_dir):
 
         index_file = os.path.join(search_dir, f'{subject}.json')
         with open(index_file, 'w', encoding='utf-8') as f:
-            json.dump({'pages': pages_out, 'index': inverted}, f, ensure_ascii=False, indent=2)
+            # Compact JSON: significantly smaller download for GitHub Pages
+            json.dump({'pages': pages_out, 'index': inverted}, f,
+                      ensure_ascii=False, separators=(',', ':'))
 
         print(f'  [search] {subject}: {len(pages_out)} pages, '
               f'{len(inverted)} unique terms -> '
@@ -1060,13 +1079,7 @@ def gen_main_index():
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){
- if(e.hasError()){
-  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
-  for(var i=0;i<inputs.length;i++){inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}
- }
  u.init();
- });
 });
 </script>
 </body>

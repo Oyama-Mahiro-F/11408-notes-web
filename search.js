@@ -12,9 +12,12 @@
     for (var i = 0; i < segments.length; i++) {
       var seg = segments[i];
       if (/[一-鿿]/.test(seg)) {
-        // Chinese: sliding bigram
+        // Chinese: sliding bigram; keep single chars so single-character queries work
         for (var j = 0; j < seg.length - 1; j++) {
           tokens.push(seg.substring(j, j + 2));
+        }
+        if (seg.length === 1) {
+          tokens.push(seg);
         }
       } else if (/[a-zA-Z0-9]+/.test(seg)) {
         tokens.push(seg.toLowerCase());
@@ -37,12 +40,39 @@
     return str.replace(/[+?*.[\](){}^$|\\]/g, '\\$&');
   }
 
+  function isSingleChineseChar(token) {
+    return token.length === 1 && /[\u4e00-\u9fff]/.test(token);
+  }
+
+  // Resolve postings for a token. Single Chinese characters are not stored in the
+  // index as unigrams, so expand them by scanning bigram keys containing that char.
+  function resolvePostings(inverted, token) {
+    if (inverted[token]) return inverted[token];
+    if (!isSingleChineseChar(token)) return null;
+
+    var seen = {};
+    var out = [];
+    for (var key in inverted) {
+      if (key.indexOf(token) !== -1) {
+        var arr = inverted[key];
+        for (var i = 0; i < arr.length; i++) {
+          if (!seen[arr[i]]) {
+            seen[arr[i]] = true;
+            out.push(arr[i]);
+          }
+        }
+      }
+    }
+    return out.length ? out : null;
+  }
+
   // ── SearchEngine ─────────────────────────────────────
   window.SearchEngine = function () {
     this._indexes = {};       // { subject: { pages: [...], index: {...} } }
     this._loaded = false;
     this._loading = false;
     this._loadError = false;
+    this._loadPromise = null;
   };
 
   SearchEngine.prototype.loadIndexes = function (subjectList) {
@@ -86,6 +116,14 @@
     return self._loadPromise;
   };
 
+  SearchEngine.prototype.ensureLoaded = function () {
+    var self = this;
+    if (self._loaded) {
+      return Promise.resolve();
+    }
+    return self.loadIndexes();
+  };
+
   SearchEngine.prototype._loadOneIndex = function (subject) {
     var self = this;
     if (self._indexes[subject]) return Promise.resolve();
@@ -106,6 +144,7 @@
     if (tokens.length === 0) return [];
 
     var results = [];
+    var queryLower = (query || '').trim().toLowerCase();
 
     for (var subj in self._indexes) {
       var idx = self._indexes[subj];
@@ -115,10 +154,12 @@
       // AND semantic: intersect page id sets for all tokens
       var candidateIds = null;
       var allMiss = true;
+      var tokenPostings = {};
       for (var t = 0; t < tokens.length; t++) {
-        var posting = inverted[tokens[t]];
+        var posting = resolvePostings(inverted, tokens[t]);
         if (posting) {
           allMiss = false;
+          tokenPostings[t] = posting;
           if (candidateIds === null) {
             candidateIds = posting.slice();
           } else {
@@ -127,12 +168,14 @@
         }
       }
 
+      var matchedAll = !!(candidateIds && candidateIds.length > 0);
+
       // If no intersection, fall back to OR (union)
       if (!candidateIds || candidateIds.length === 0) {
         candidateIds = [];
         var seen = {};
         for (var u = 0; u < tokens.length; u++) {
-          var p = inverted[tokens[u]];
+          var p = resolvePostings(inverted, tokens[u]);
           if (p) {
             for (var v = 0; v < p.length; v++) {
               if (!seen[p[v]]) {
@@ -148,35 +191,65 @@
       for (var c = 0; c < candidateIds.length; c++) {
         var pid = candidateIds[c];
         var page = pages[pid];
-        var score = 0;
         var titleLower = page.title.toLowerCase();
         var textLower = page.text.toLowerCase();
+        var score = 0;
+        var hitTokens = 0;
+
         for (var k = 0; k < tokens.length; k++) {
           var tok = tokens[k];
-          // Count occurrences in title (×3)
-          score += countMatches(titleLower, tok) * 3;
-          // Count occurrences in text (×1)
-          score += countMatches(textLower, tok);
+          var lowerTok = tok.toLowerCase();
+          var titleHits = countMatches(titleLower, lowerTok);
+          var textHits = countMatches(textLower, lowerTok);
+          if (titleHits > 0 || textHits > 0) hitTokens++;
+          score += titleHits * 3 + textHits;
+
+          // If the inverted index matched this token but the stored text doesn't
+          // (should not happen now that full text is stored), keep a small score.
+          if (titleHits === 0 && textHits === 0 &&
+              tokenPostings[k] && tokenPostings[k].indexOf(pid) !== -1) {
+            score += 0.5;
+          }
         }
+
+        // Coverage boost: prefer pages matching more query terms
+        var coverage = tokens.length ? hitTokens / tokens.length : 0;
+        score += coverage * 8;
+
+        // Exact phrase / near-exact title boost
+        if (queryLower && titleLower.indexOf(queryLower) !== -1) {
+          score += 20;
+        } else if (queryLower && textLower.indexOf(queryLower) !== -1) {
+          score += 6;
+        }
+
+        // Extra boost when all tokens intersect (AND result)
+        if (matchedAll && hitTokens === tokens.length) {
+          score += 5;
+        }
+
         if (score > 0) {
           results.push({
             title: page.title,
             path: page.path,
             subject: page.subject,
             text: page.text,
-            score: score,
+            score: Math.round(score * 10) / 10,
           });
         }
       }
     }
 
-    // Sort by score descending
-    results.sort(function (a, b) { return b.score - a.score; });
+    // Sort by score descending, then title for stable output
+    results.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.title.localeCompare(b.title, 'zh-CN');
+    });
     return results;
   };
 
   SearchEngine.prototype.highlight = function (text, query) {
-    if (!query || !text) return escapeHTML(text);
+    if (!query || !text) return escapeHTML(text || '');
     var tokens = bigramTokenize(query);
     if (tokens.length === 0) return escapeHTML(text);
 
@@ -187,8 +260,44 @@
     return escapeHTML(text).replace(pattern, '<mark>$1</mark>');
   };
 
+  SearchEngine.prototype.snippet = function (text, query, maxLen) {
+    if (!text) return '';
+    maxLen = maxLen || 160;
+    if (!query) return escapeHTML(text.substring(0, maxLen));
+
+    var tokens = bigramTokenize(query);
+    if (tokens.length === 0) return escapeHTML(text.substring(0, maxLen));
+
+    var lowerText = text.toLowerCase();
+    var bestPos = -1;
+    var bestToken = null;
+    for (var i = 0; i < tokens.length; i++) {
+      var pos = lowerText.indexOf(tokens[i].toLowerCase());
+      if (pos !== -1 && (bestPos === -1 || pos < bestPos)) {
+        bestPos = pos;
+        bestToken = tokens[i];
+      }
+    }
+
+    if (bestPos === -1) {
+      return this.highlight(text.substring(0, maxLen), query);
+    }
+
+    var start = Math.max(0, bestPos - 30);
+    var end = Math.min(text.length, start + maxLen);
+    // If we are near the end, extend backwards to keep a full-length snippet
+    if (end - start < maxLen) {
+      start = Math.max(0, end - maxLen);
+    }
+    var prefix = start > 0 ? '…' : '';
+    var suffix = end < text.length ? '…' : '';
+    return prefix + this.highlight(text.substring(start, end), query) + suffix;
+  };
+
   SearchEngine.prototype.isAvailable = function () {
-    return this._loaded || Object.keys(this._indexes).length > 0;
+    // Available only when at least one index is actually in memory.
+    // (A completed load with zero indexes means all fetches failed.)
+    return Object.keys(this._indexes).length > 0;
   };
 
   SearchEngine.prototype.hasError = function () {
@@ -207,14 +316,12 @@
     return result;
   }
 
-  function countMatches(text, token) {
+  function countMatches(lowerText, lowerToken) {
     var count = 0;
     var pos = 0;
-    var lower = text.toLowerCase();
-    var t = token.toLowerCase();
-    while ((pos = lower.indexOf(t, pos)) !== -1) {
+    while ((pos = lowerText.indexOf(lowerToken, pos)) !== -1) {
       count++;
-      pos += t.length;
+      pos += lowerToken.length;
     }
     return count;
   }
@@ -251,6 +358,22 @@
     this._navInput = null;
     this._homeInput = null;
     this._debouncedSearch = debounce(this._doSearch.bind(this), DEBOUNCE_MS);
+  };
+
+  // Ensure indexes are loaded; disable inputs on fatal load error.
+  SearchUI.prototype._ensureEngine = function () {
+    var self = this;
+    return this.engine.ensureLoaded().then(function () {
+      if (self.engine.hasError()) {
+        var inputs = document.querySelectorAll('.nav-search-input,.home-search-input,#search-page-input');
+        for (var i = 0; i < inputs.length; i++) {
+          inputs[i].disabled = true;
+          inputs[i].placeholder = '搜索不可用';
+        }
+        return false;
+      }
+      return true;
+    });
   };
 
   // ── Dropdown panel ───────────────────────────────────
@@ -298,17 +421,7 @@
       var html = '';
       for (var i = 0; i < Math.min(results.length, MAX_DROPDOWN_ITEMS); i++) {
         var r = results[i];
-        // Build breadcrumb from path
-        var parts = r.path.split('/');
-        var subject = parts[0];
-        var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
-        var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
-
-        html += '<a class="search-dropdown-item" href="' + ROOT_BASE + r.path + '#:~:text=' + encodeURIComponent(query) + '">' +
-          '<span class="search-dropdown-title">' + self.engine.highlight(r.title, query) + '</span>' +
-          '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
-          '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), query) + '</span>' +
-          '</a>';
+        html += this._resultItemHtml(r, query, 100);
       }
       if (results.length > MAX_DROPDOWN_ITEMS) {
         html += '<a class="search-dropdown-more" href="search-results.html?q=' +
@@ -332,8 +445,30 @@
     dd.style.display = 'block';
   };
 
+  SearchUI.prototype._resultItemHtml = function (r, query, snippetLen) {
+    var parts = r.path.split('/');
+    var subject = parts[0];
+    var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
+    var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
+
+    return '<a class="search-dropdown-item" href="' + ROOT_BASE + r.path + '#:~:text=' + encodeURIComponent(query) + '">' +
+      '<span class="search-dropdown-title">' + this.engine.highlight(r.title, query) + '</span>' +
+      '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
+      '<span class="search-dropdown-snippet">' + this.engine.snippet(r.text, query, snippetLen) + '</span>' +
+      '</a>';
+  };
+
   SearchUI.prototype._closeDropdown = function () {
     if (this._dropdown) this._dropdown.style.display = 'none';
+  };
+
+  SearchUI.prototype._showLoading = function (anchorEl) {
+    var dd = this._ensureDropdown();
+    dd.querySelector('.search-dropdown-list').innerHTML = '<div class="search-dropdown-empty">搜索中...</div>';
+    var rect = anchorEl.getBoundingClientRect();
+    dd.style.top = (rect.bottom + 4) + 'px';
+    dd.style.left = rect.left + 'px';
+    dd.style.display = 'block';
   };
 
   SearchUI.prototype._doSearch = function (anchorEl, query) {
@@ -342,19 +477,21 @@
       if (this._dropdown) this._dropdown.style.display = 'none';
       return;
     }
+
+    var self = this;
     if (!this.engine.isAvailable()) {
-      // Show loading state
-      var dd = this._ensureDropdown();
-      dd.querySelector('.search-dropdown-list').innerHTML = '<div class="search-dropdown-empty">搜索中...</div>';
-      var rect = anchorEl.getBoundingClientRect();
-      dd.style.top = (rect.bottom + 4) + 'px';
-      dd.style.left = rect.left + 'px';
-      dd.style.display = 'block';
+      this._showLoading(anchorEl);
+      this._ensureEngine().then(function (ok) {
+        if (!ok) return;
+        var results = self.engine.search(q);
+        self._showDropdown(anchorEl, results, q);
+        self._renderFullResults(q, results);
+      });
       return;
     }
+
     var results = this.engine.search(q);
     this._showDropdown(anchorEl, results, q);
-    // Also update search-results.html if on that page
     this._renderFullResults(q, results);
   };
 
@@ -435,31 +572,19 @@
         dropdownList.style.display = 'none';
         return;
       }
-      if (!self.engine.isAvailable()) return;
-      var results = self.engine.search(q);
-      if (results.length === 0) {
-        dropdownList.innerHTML = '<div class="search-dropdown-empty">未找到匹配的笔记</div>';
-      } else {
-        var html = '';
-        for (var i = 0; i < Math.min(results.length, MAX_DROPDOWN_ITEMS); i++) {
-          var r = results[i];
-          var parts = r.path.split('/');
-          var subject = parts[0];
-          var folder = parts.length > 2 ? parts.slice(1, -1).join(' > ') : '';
-          var breadcrumb = (SUBJECT_LABELS[subject] || subject) + (folder ? ' > ' + folder : '');
-          html += '<a class="search-dropdown-item" href="' + ROOT_BASE + r.path + '#:~:text=' + encodeURIComponent(q) + '">' +
-            '<span class="search-dropdown-title">' + self.engine.highlight(r.title, q) + '</span>' +
-            '<span class="search-dropdown-meta">' + escapeHTML(breadcrumb) + '</span>' +
-            '<span class="search-dropdown-snippet">' + self.engine.highlight(r.text.substring(0, 100), q) + '</span>' +
-            '</a>';
-        }
-        if (results.length > MAX_DROPDOWN_ITEMS) {
-          html += '<a class="search-dropdown-more" href="search-results.html?q=' +
-            encodeURIComponent(q) + '">查看全部 ' + results.length + ' 条结果 →</a>';
-        }
-        dropdownList.innerHTML = html;
+      if (!self.engine.isAvailable()) {
+        dropdownList.innerHTML = '<div class="search-dropdown-empty">搜索中...</div>';
+        dropdownList.style.display = 'block';
+        self._ensureEngine().then(function (ok) {
+          if (!ok) {
+            dropdownList.innerHTML = '<div class="search-dropdown-empty">搜索不可用</div>';
+            return;
+          }
+          self._renderHomeResults(dropdownList, q);
+        });
+        return;
       }
-      dropdownList.style.display = 'block';
+      self._renderHomeResults(dropdownList, q);
     }, DEBOUNCE_MS);
 
     input.addEventListener('input', function () {
@@ -472,6 +597,24 @@
         dropdownList.style.display = 'none';
       }
     });
+  };
+
+  SearchUI.prototype._renderHomeResults = function (dropdownList, q) {
+    var results = this.engine.search(q);
+    if (results.length === 0) {
+      dropdownList.innerHTML = '<div class="search-dropdown-empty">未找到匹配的笔记</div>';
+    } else {
+      var html = '';
+      for (var i = 0; i < Math.min(results.length, MAX_DROPDOWN_ITEMS); i++) {
+        html += this._resultItemHtml(results[i], q, 100);
+      }
+      if (results.length > MAX_DROPDOWN_ITEMS) {
+        html += '<a class="search-dropdown-more" href="search-results.html?q=' +
+          encodeURIComponent(q) + '">查看全部 ' + results.length + ' 条结果 →</a>';
+      }
+      dropdownList.innerHTML = html;
+    }
+    dropdownList.style.display = 'block';
   };
 
   // ── Full results page support ────────────────────────
@@ -506,12 +649,34 @@
         '<span class="search-result-path">' + escapeHTML(breadcrumb) + '</span>' +
         '</div>' +
         '<div class="search-result-snippet">' +
-        self.engine.highlight(r.text.substring(0, 200), query) +
+        self.engine.snippet(r.text, query, 200) +
         '</div>' +
         '</div>';
     }
 
     container.innerHTML = html;
+  };
+
+  SearchUI.prototype.searchAndRender = function (query) {
+    var self = this;
+    var container = document.getElementById('search-results-container');
+    if (!container) return;
+
+    var q = (query || '').trim();
+    if (!q) {
+      container.innerHTML = '';
+      return;
+    }
+
+    if (!this.engine.isAvailable()) {
+      container.innerHTML = '<p class="search-results-summary">搜索中...</p>';
+      this._ensureEngine().then(function (ok) {
+        if (ok) self._renderFullResults(q, self.engine.search(q));
+      });
+      return;
+    }
+
+    self._renderFullResults(q, self.engine.search(q));
   };
 
   // ── Init ──────────────────────────────────────────────
@@ -526,11 +691,7 @@
       var input = document.getElementById('search-page-input');
       if (input) {
         input.value = query;
-        var self = this;
-        setTimeout(function () {
-          var results = self.engine.search(query);
-          self._renderFullResults(query, results);
-        }, 100);
+        this.searchAndRender(query);
       }
     }
   };

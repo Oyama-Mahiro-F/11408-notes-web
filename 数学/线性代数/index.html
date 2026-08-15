@@ -227,7 +227,7 @@
 </div>
 </div>
 </div>
-<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-section"><a class="l2 active" href="index.html"><span class="nav-toggle">▼</span>线性代数</a>
 <div class="nav-children">
 <div class="nav-item"><a class="l3" href="第1章 行列式.html">第1章 行列式</a>
 </div>
@@ -247,9 +247,9 @@
 </div>
 </div>
 </div>
-<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-section"><a class="l2" href="../高数/index.html"><span class="nav-toggle">▼</span>高数</a>
 <div class="nav-children">
-<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>基础</a>
+<div class="nav-section"><a class="l3" href="../高数/基础/index.html"><span class="nav-toggle">▼</span>基础</a>
 <div class="nav-children">
 <div class="nav-item"><a class="l3" href="../高数/基础/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
 </div>
@@ -283,9 +283,9 @@
 </div>
 </div>
 </div>
-<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-section"><a class="l1" href="../../英语/index.html"><span class="nav-toggle">▼</span>英语</a>
 <div class="nav-children">
-<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-section"><a class="l2" href="../../英语/语法/index.html"><span class="nav-toggle">▼</span>语法</a>
 <div class="nav-children">
 <div class="nav-item"><a class="l3" href="../../英语/语法/名词性从句.html">名词性从句</a>
 </div>
@@ -465,13 +465,7 @@ document.addEventListener('DOMContentLoaded', function(){
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
- e.loadIndexes().then(function(){
- if(e.hasError()){
-  var inputs=document.querySelectorAll('.nav-search-input,.home-search-input');
-  for(var i=0;i<inputs.length;i++){inputs[i].disabled=true;inputs[i].placeholder='搜索不可用';}
- }
  u.init();
- });
 });
 </script>
 </body>

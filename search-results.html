@@ -94,43 +94,24 @@ body { font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", sans-
 document.addEventListener('DOMContentLoaded', function () {
   var engine = new SearchEngine();
   var ui = new SearchUI(engine);
+  ui.init();
 
-  engine.loadIndexes().then(function () {
-    ui.init();
-
-    // Bind the page input
-    var input = document.getElementById('search-page-input');
-    if (input) {
-      var debounceTimer;
-      input.addEventListener('input', function () {
-        clearTimeout(debounceTimer);
-        var q = input.value.trim();
-        debounceTimer = setTimeout(function () {
-          if (q) {
-            var results = engine.search(q);
-            ui._renderFullResults(q, results);
-          } else {
-            document.getElementById('search-results-container').innerHTML = '';
-          }
-          // Update URL without reload
-          var url = new URL(location);
-          url.searchParams.set('q', q);
-          history.replaceState(null, '', url);
-        }, 300);
-      });
-    }
-
-    // Handle initial query from URL
-    var m = location.search.match(/[?&]q=([^&]+)/);
-    if (m && input) {
-      var query = decodeURIComponent(m[1]);
-      input.value = query;
-      var results = engine.search(query);
-      if (ui._renderFullResults) {
-        ui._renderFullResults(query, results);
-      }
-    }
-  });
+  // Bind the page input
+  var input = document.getElementById('search-page-input');
+  if (input) {
+    var debounceTimer;
+    input.addEventListener('input', function () {
+      clearTimeout(debounceTimer);
+      var q = input.value.trim();
+      debounceTimer = setTimeout(function () {
+        ui.searchAndRender(q);
+        // Update URL without reload
+        var url = new URL(location);
+        url.searchParams.set('q', q);
+        history.replaceState(null, '', url);
+      }, 300);
+    });
+  }
 });
 </script>
 
