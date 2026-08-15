@@ -424,7 +424,7 @@
         html += this._resultItemHtml(r, query, 100);
       }
       if (results.length > MAX_DROPDOWN_ITEMS) {
-        html += '<a class="search-dropdown-more" href="search-results.html?q=' +
+        html += '<a class="search-dropdown-more" href="' + ROOT_BASE + 'search-results.html?q=' +
           encodeURIComponent(query) + '">查看全部 ' + results.length + ' 条结果 →</a>';
       }
       list.innerHTML = html;
@@ -609,7 +609,7 @@
         html += this._resultItemHtml(results[i], q, 100);
       }
       if (results.length > MAX_DROPDOWN_ITEMS) {
-        html += '<a class="search-dropdown-more" href="search-results.html?q=' +
+        html += '<a class="search-dropdown-more" href="' + ROOT_BASE + 'search-results.html?q=' +
           encodeURIComponent(q) + '">查看全部 ' + results.length + ' 条结果 →</a>';
       }
       dropdownList.innerHTML = html;
