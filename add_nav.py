@@ -476,7 +476,7 @@ def add_nav(filepath):
     home_base = '../' * depth + 'index.html' if depth > 0 else 'index.html'
 
     up = '../' * depth if depth > 0 else ''
-    search_js = '../' * depth + 'search.js?v=2' if depth > 0 else 'search.js?v=2'
+    search_js = '../' * depth + 'search.js?v=3' if depth > 0 else 'search.js?v=3'
     search_base = '../' * depth + 'search/' if depth > 0 else 'search/'
     tabs = (
         f'<a class="tab" href="{home_base}">首页</a>'
@@ -588,7 +588,7 @@ def gen_section_index(dirpath, title, children, depth):
     """Generate an index.html for a section directory with card-based layout."""
     home = '../' * depth + 'index.html' if depth > 0 else 'index.html'
     up = '../' * depth if depth > 0 else ''
-    search_js = '../' * depth + 'search.js?v=2' if depth > 0 else 'search.js?v=2'
+    search_js = '../' * depth + 'search.js?v=3' if depth > 0 else 'search.js?v=3'
     search_base = '../' * depth + 'search/' if depth > 0 else 'search/'
     index_rel = os.path.relpath(dirpath, site_root).replace('\\', '/') + '/index.html'
     if index_rel == './index.html':
@@ -1075,7 +1075,7 @@ def gen_main_index():
 })();
 </script>
 <script>var SEARCH_BASE = "search/";</script>
-<script src="search.js?v=2" defer></script>
+<script src="search.js?v=3" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
  var e=new SearchEngine(),u=new SearchUI(e);
