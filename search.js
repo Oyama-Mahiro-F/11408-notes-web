@@ -217,9 +217,12 @@
         score += coverage * 8;
 
         // Exact phrase / near-exact title boost
+        var exactRank = 0;
         if (queryLower && titleLower.indexOf(queryLower) !== -1) {
+          exactRank = 2;  // 完整词条命中标题，最优先
           score += 20;
         } else if (queryLower && textLower.indexOf(queryLower) !== -1) {
+          exactRank = 1;  // 完整词条命中正文
           score += 6;
         }
 
@@ -235,13 +238,15 @@
             subject: page.subject,
             text: page.text,
             score: Math.round(score * 10) / 10,
+            exactRank: exactRank,
           });
         }
       }
     }
 
-    // Sort by score descending, then title for stable output
+    // Sort: exact phrase matches first, then score descending, then title
     results.sort(function (a, b) {
+      if (b.exactRank !== a.exactRank) return b.exactRank - a.exactRank;
       if (b.score !== a.score) return b.score - a.score;
       return a.title.localeCompare(b.title, 'zh-CN');
     });
