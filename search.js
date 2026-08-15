@@ -258,9 +258,11 @@
     var tokens = bigramTokenize(query);
     if (tokens.length === 0) return escapeHTML(text);
 
-    // Build regex from tokens, longest first to avoid partial matches
-    tokens.sort(function (a, b) { return b.length - a.length; });
-    var escaped = tokens.map(escapeRegex);
+    // Build regex from the full query first, then tokens, longest first.
+    // This makes a complete phrase match highlight as one <mark> when present.
+    var patterns = [query].concat(tokens);
+    patterns.sort(function (a, b) { return b.length - a.length; });
+    var escaped = patterns.map(escapeRegex);
     var pattern = new RegExp('(' + escaped.join('|') + ')', 'gi');
     return escapeHTML(text).replace(pattern, '<mark>$1</mark>');
   };
@@ -275,12 +277,18 @@
 
     var lowerText = text.toLowerCase();
     var bestPos = -1;
-    var bestToken = null;
-    for (var i = 0; i < tokens.length; i++) {
-      var pos = lowerText.indexOf(tokens[i].toLowerCase());
-      if (pos !== -1 && (bestPos === -1 || pos < bestPos)) {
-        bestPos = pos;
-        bestToken = tokens[i];
+    // Prefer the complete query phrase so exact matches show around the phrase.
+    var queryLower = query.trim().toLowerCase();
+    if (queryLower) {
+      bestPos = lowerText.indexOf(queryLower);
+    }
+    // If no complete phrase match, fall back to the earliest token occurrence.
+    if (bestPos === -1) {
+      for (var i = 0; i < tokens.length; i++) {
+        var pos = lowerText.indexOf(tokens[i].toLowerCase());
+        if (pos !== -1 && (bestPos === -1 || pos < bestPos)) {
+          bestPos = pos;
+        }
       }
     }
 
