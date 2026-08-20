@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+
+<link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; --title-bar-height:20px; }
+.mac-os-11 { --title-bar-height:28px; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0; padding: 0; height: auto; inset: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; tab-size: 4; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 36px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+.typora-export .task-list-item input { pointer-events: none; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; image-orientation: from-image; }
+button, input, select, textarea { color: inherit; font: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p { position: relative; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 4; }
+p { orphans: 4; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror-linenumber { user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-fences-adv-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li blockquote { margin: 1rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; font-variant-ligatures: no-common-ligatures; }
+  #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  .typora-export #write { break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+  .is-mac table { break-inside: avoid; }
+  .typora-export-show-outline .typora-export-sidebar { display: none; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+#write.first-line-indent p > .md-image:only-child:not(.md-img-error) img { left: -2em; position: relative; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+.MathJax_ref { fill: currentcolor; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.6; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+.md-expand mark .md-meta { opacity: 0.3 !important; }
+mark .md-meta { color: rgb(0, 0, 0); }
+@media print {
+  .typora-export h1, .typora-export h2, .typora-export h3, .typora-export h4, .typora-export h5, .typora-export h6 { break-inside: avoid; }
+}
+.md-diagram-panel .messageText { stroke: none !important; }
+.md-diagram-panel .start-state { fill: var(--node-fill); }
+.md-diagram-panel .edgeLabel rect { opacity: 1 !important; }
+.md-fences.md-fences-math { font-size: 1em; }
+.md-fences-advanced:not(.md-focus) { padding: 0px; white-space: nowrap; border: 0px; }
+.md-fences-advanced:not(.md-focus) { background: inherit; }
+.typora-export-show-outline .typora-export-content { max-width: 1440px; margin: auto; display: flex; flex-direction: row; }
+.typora-export-sidebar { width: 300px; font-size: 0.8rem; margin-top: 80px; margin-right: 18px; }
+.typora-export-show-outline #write { --webkit-flex:2; flex: 2 1 0%; }
+.typora-export-sidebar .outline-content { position: fixed; top: 0px; max-height: 100%; overflow: hidden auto; padding-bottom: 30px; padding-top: 60px; width: 300px; }
+@media screen and (max-width: 1024px) {
+  .typora-export-sidebar, .typora-export-sidebar .outline-content { width: 240px; }
+}
+@media screen and (max-width: 800px) {
+  .typora-export-sidebar { display: none; }
+}
+.outline-content li, .outline-content ul { margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; list-style: none; }
+.outline-content ul { margin-top: 0px; margin-bottom: 0px; }
+.outline-content strong { font-weight: 400; }
+.outline-expander { width: 1rem; height: 1.42857rem; position: relative; display: table-cell; vertical-align: middle; cursor: pointer; padding-left: 4px; }
+.outline-expander::before { content: ""; position: relative; font-family: Ionicons; display: inline-block; font-size: 8px; vertical-align: middle; }
+.outline-item { padding-top: 3px; padding-bottom: 3px; cursor: pointer; }
+.outline-expander:hover::before { content: ""; }
+.outline-h1 > .outline-item { padding-left: 0px; }
+.outline-h2 > .outline-item { padding-left: 1em; }
+.outline-h3 > .outline-item { padding-left: 2em; }
+.outline-h4 > .outline-item { padding-left: 3em; }
+.outline-h5 > .outline-item { padding-left: 4em; }
+.outline-h6 > .outline-item { padding-left: 5em; }
+.outline-label { cursor: pointer; display: table-cell; vertical-align: middle; text-decoration: none; color: inherit; }
+.outline-label:hover { text-decoration: underline; }
+.outline-item:hover { border-color: rgb(245, 245, 245); background-color: var(--item-hover-bg-color); }
+.outline-item:hover { margin-left: -28px; margin-right: -28px; border-left: 28px solid transparent; border-right: 28px solid transparent; }
+.outline-item-single .outline-expander::before, .outline-item-single .outline-expander:hover::before { display: none; }
+.outline-item-open > .outline-item > .outline-expander::before { content: ""; }
+.outline-children { display: none; }
+.info-panel-tab-wrapper { display: none; }
+.outline-item-open > .outline-children { display: block; }
+.typora-export .outline-item { padding-top: 1px; padding-bottom: 1px; }
+.typora-export .outline-item:hover { margin-right: -8px; border-right: 8px solid transparent; }
+.typora-export .outline-expander::before { content: "+"; font-family: inherit; top: -1px; }
+.typora-export .outline-expander:hover::before, .typora-export .outline-item-open > .outline-item > .outline-expander::before { content: "−"; }
+.typora-export-collapse-outline .outline-children { display: none; }
+.typora-export-collapse-outline .outline-item-open > .outline-children, .typora-export-no-collapse-outline .outline-children { display: block; }
+.typora-export-no-collapse-outline .outline-expander::before { content: "" !important; }
+.typora-export-show-outline .outline-item-active > .outline-item .outline-label { font-weight: 700; }
+.md-inline-math-container mjx-container { zoom: 0.95; }
+
+
+:root {
+    --side-bar-bg-color: #fafafa;
+    --control-text-color: #777;
+}
+
+@include-when-export url(https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext);
+
+/* open-sans-regular - latin-ext_latin */
+  /* open-sans-italic - latin-ext_latin */
+    /* open-sans-700 - latin-ext_latin */
+    /* open-sans-700italic - latin-ext_latin */
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    font-family: "Open Sans","Clear Sans", "Helvetica Neue", Helvetica, Arial, 'Segoe UI Emoji', sans-serif;
+    color: rgb(51, 51, 51);
+    line-height: 1.6;
+}
+
+#write {
+    max-width: 860px;
+  	margin: 0 auto;
+  	padding: 30px;
+    padding-bottom: 100px;
+}
+
+@media only screen and (min-width: 1400px) {
+	#write {
+		max-width: 1024px;
+	}
+}
+
+@media only screen and (min-width: 1800px) {
+	#write {
+		max-width: 1200px;
+	}
+}
+
+#write > ul:first-child,
+#write > ol:first-child{
+    margin-top: 30px;
+}
+
+a {
+    color: #4183C4;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+    text-decoration: none;
+}
+h1 tt,
+h1 code {
+    font-size: inherit;
+}
+h2 tt,
+h2 code {
+    font-size: inherit;
+}
+h3 tt,
+h3 code {
+    font-size: inherit;
+}
+h4 tt,
+h4 code {
+    font-size: inherit;
+}
+h5 tt,
+h5 code {
+    font-size: inherit;
+}
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+h1 {
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+h2 {
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+
+/*@media print {
+    .typora-export h1,
+    .typora-export h2 {
+        border-bottom: none;
+        padding-bottom: initial;
+    }
+
+    .typora-export h1::after,
+    .typora-export h2::after {
+        content: "";
+        display: block;
+        height: 100px;
+        margin-top: -96px;
+        border-top: 1px solid #eee;
+    }
+}*/
+
+h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+h4 {
+    font-size: 1.25em;
+}
+h5 {
+    font-size: 1em;
+}
+h6 {
+   font-size: 1em;
+    color: #777;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table{
+    margin: 0.8em 0;
+}
+li>ol,
+li>ul {
+    margin: 0 0;
+}
+hr {
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+li p.first {
+    display: inline-block;
+}
+ul,
+ol {
+    padding-left: 30px;
+}
+ul:first-child,
+ol:first-child {
+    margin-top: 0;
+}
+ul:last-child,
+ol:last-child {
+    margin-bottom: 0;
+}
+blockquote {
+    border-left: 4px solid #dfe2e5;
+    padding: 0 15px;
+    color: #777777;
+}
+blockquote blockquote {
+    padding-right: 0;
+}
+table {
+    padding: 0;
+    word-break: initial;
+}
+table tr {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 0;
+}
+table tr:nth-child(2n),
+thead {
+    background-color: #f8f8f8;
+}
+table th {
+    font-weight: bold;
+    border: 1px solid #dfe2e5;
+    border-bottom: 0;
+    margin: 0;
+    padding: 6px 13px;
+}
+table td {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 6px 13px;
+}
+table th:first-child,
+table td:first-child {
+    margin-top: 0;
+}
+table th:last-child,
+table td:last-child {
+    margin-bottom: 0;
+}
+
+.CodeMirror-lines {
+    padding-left: 4px;
+}
+
+.code-tooltip {
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,.3);
+    border-top: 1px solid #eef2f2;
+}
+
+.md-fences,
+code,
+tt {
+    border: 1px solid #e7eaed;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 0;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+}
+
+code {
+    background-color: #f3f4f4;
+    padding: 0 2px 0 2px;
+}
+
+.md-fences {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+
+
+.md-task-list-item > input {
+  margin-left: -1.3em;
+}
+
+@media print {
+    html {
+        font-size: 13px;
+    }
+    table,
+    pre {
+        page-break-inside: avoid;
+    }
+    pre {
+        word-wrap: break-word;
+    }
+}
+
+.md-fences {
+	background-color: #f8f8f8;
+}
+#write pre.md-meta-block {
+	padding: 1rem;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border: 0;
+    border-radius: 3px;
+    color: #777777;
+    margin-top: 0 !important;
+}
+
+.mathjax-block>.code-tooltip {
+	bottom: .375rem;
+}
+
+.md-mathjax-midline {
+    background: #fafafa;
+}
+
+#write>h3.md-focus:before{
+	left: -1.5625rem;
+	top: .375rem;
+}
+#write>h4.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h5.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h6.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+.md-image>.md-meta {
+    /*border: 1px solid #ddd;*/
+    border-radius: 3px;
+    padding: 2px 0px 0px 4px;
+    font-size: 0.9em;
+    color: inherit;
+}
+
+.md-tag {
+    color: #a7a7a7;
+    opacity: 1;
+}
+
+.md-toc { 
+    margin-top:20px;
+    padding-bottom:20px;
+}
+
+.sidebar-tabs {
+    border-bottom: none;
+}
+
+#typora-quick-open {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+    background-color: #FAFAFA;
+    border-color: #FEFEFE #e5e5e5 #e5e5e5 #eee;
+    border-style: solid;
+    border-width: 1px;
+}
+
+/** focus mode */
+.on-focus-mode blockquote {
+    border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+header, .context-menu, .megamenu-content, footer{
+    font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.file-node-content:hover .file-node-icon,
+.file-node-content:hover .file-node-open-state{
+    visibility: visible;
+}
+
+.mac-seamless-mode #typora-sidebar {
+    background-color: #fafafa;
+    background-color: var(--side-bar-bg-color);
+}
+
+.md-lang {
+    color: #b4654d;
+}
+
+/*.html-for-mac {
+    --item-hover-bg-color: #E6F0FE;
+}*/
+
+#md-notification .btn {
+    border: 0;
+}
+
+.dropdown-menu .divider {
+    border-color: #e5e5e5;
+    opacity: 0.4;
+}
+
+.ty-preferences .window-content {
+    background-color: #fafafa;
+}
+
+.ty-preferences .nav-group-item.active {
+    color: white;
+    background: #999;
+}
+
+.menu-item-container a.menu-style-btn {
+    background-color: #f5f8fa;
+    background-image: linear-gradient( 180deg , hsla(0, 0%, 100%, 0.8), hsla(0, 0%, 100%, 0)); 
+}
+
+
+
+</style><title>第5章 输入输出管理</title>
+
+<style id="cm-fallback-css">
+/* Base reset missing in some Typora exports: without margin:0, browser
+   default pre margins (1em 0) double the code line spacing */
+.CodeMirror pre { border-radius: 0px; border-width: 0px; background: 0px 0px; font-family: inherit; font-size: inherit; margin: 0px; white-space: pre; overflow-wrap: normal; color: inherit; z-index: 2; position: relative; overflow: visible; }
+.cm-s-inner { background: inherit; }
+.cm-s-inner .cm-keyword { color: rgb(119, 0, 136); }
+.cm-s-inner .cm-atom, .cm-s-inner.cm-atom { color: rgb(34, 17, 153); }
+.cm-s-inner .cm-number { color: rgb(17, 102, 68); }
+.cm-s-inner .cm-def { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-variable { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-variable-2 { color: rgb(0, 85, 170); }
+.cm-s-inner .cm-variable-3 { color: rgb(0, 136, 85); }
+.cm-s-inner .cm-string { color: rgb(170, 17, 17); }
+.cm-s-inner .cm-property { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-operator { color: rgb(152, 26, 26); }
+.cm-s-inner .cm-comment, .cm-s-inner.cm-comment { color: rgb(170, 85, 0); }
+.cm-s-inner .cm-string-2 { color: rgb(255, 85, 0); }
+.cm-s-inner .cm-meta { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-qualifier { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-builtin { color: rgb(51, 0, 170); }
+.cm-s-inner .cm-bracket { color: rgb(153, 153, 119); }
+.cm-s-inner .cm-tag { color: rgb(17, 119, 0); }
+.cm-s-inner .cm-attribute { color: rgb(0, 0, 204); }
+.cm-s-inner .cm-header, .cm-s-inner.cm-header { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-quote, .cm-s-inner.cm-quote { color: rgb(0, 153, 0); }
+.cm-s-inner .cm-hr, .cm-s-inner.cm-hr { color: rgb(153, 153, 153); }
+.cm-s-inner .cm-link, .cm-s-inner.cm-link { color: rgb(0, 0, 204); }
+.cm-s-inner .CodeMirror-activeline-background { background: inherit; }
+</style>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+/* Preserve CodeMirror layout (overrides box-sizing: border-box) */
+#app-shell .CodeMirror,
+#app-shell .CodeMirror * { box-sizing: content-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+
+/* ── Search ──────────────────────────────────── */
+.nav-search-wrap { display: flex; align-items: center; margin-left: auto; position: relative; }
+.nav-search-icon { color: rgba(255,255,255,0.75); cursor: pointer; font-size: 1rem; padding: 4px 8px; border-radius: 4px; user-select: none; }
+.nav-search-icon:hover { color: #fff; background: rgba(255,255,255,0.12); }
+.nav-search-input-wrap { display: flex; align-items: center; }
+.nav-search-input { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; width: 180px; outline: none; transition: width 0.2s; }
+.nav-search-input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.5); width: 220px; }
+.nav-search-input::placeholder { color: rgba(255,255,255,0.5); }
+
+/* Home search */
+.home-search-wrap { margin-bottom: 24px; position: relative; }
+.home-search-box { display: flex; align-items: center; background: #fff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 0 16px; max-width: 440px; margin: 0 auto; transition: border-color 0.2s; }
+.home-search-box:focus-within { border-color: var(--accent); box-shadow: 0 2px 12px rgba(63,81,181,0.12); }
+.home-search-icon { font-size: 1.1rem; margin-right: 8px; color: #999; flex-shrink: 0; }
+.home-search-input { flex: 1; border: none; outline: none; font-size: 0.95rem; padding: 12px 0; color: #333; background: transparent; }
+.home-search-input::placeholder { color: #aaa; }
+.home-search-wrap .search-dropdown-list { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); z-index: 200; width: 100%; max-width: 440px; }
+
+/* Dropdown panel */
+.search-dropdown { position: fixed; z-index: 300; background: #fff; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; overflow: hidden; min-width: 260px; }
+.search-dropdown-list { max-height: 400px; overflow-y: auto; }
+.search-dropdown-item { display: block; padding: 12px 16px; text-decoration: none; color: inherit; border-bottom: 1px solid #f0f0f0; transition: background 0.1s; }
+.search-dropdown-item:last-of-type { border-bottom: none; }
+.search-dropdown-item:hover { background: var(--accent-light); }
+.search-dropdown-title { display: block; font-weight: 600; font-size: 0.92rem; color: #222; margin-bottom: 2px; }
+.search-dropdown-title mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-dropdown-meta { display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px; }
+.search-dropdown-snippet { display: block; font-size: 0.8rem; color: #777; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-dropdown-snippet mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-dropdown-empty { padding: 20px 16px; text-align: center; color: #999; font-size: 0.9rem; }
+.search-dropdown-more { display: block; padding: 10px 16px; text-align: center; color: var(--accent); font-size: 0.85rem; text-decoration: none; border-top: 1px solid #f0f0f0; font-weight: 500; }
+.search-dropdown-more:hover { background: var(--accent-light); }
+
+/* Results page */
+.search-results-summary { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 32px; }
+.search-result-item { padding: 20px 0; border-bottom: 1px solid #eee; }
+.search-result-title { font-size: 1.1rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+.search-result-title:hover { text-decoration: underline; }
+.search-result-title mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-result-meta { font-size: 0.8rem; color: #999; margin: 4px 0 8px; display: flex; gap: 12px; align-items: center; }
+.search-result-subject { background: var(--accent-light); color: var(--accent); padding: 1px 8px; border-radius: 8px; font-size: 0.72rem; font-weight: 500; }
+.search-result-snippet { font-size: 0.88rem; color: #555; line-height: 1.6; }
+.search-result-snippet mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+
+@media (max-width: 600px) {
+  .nav-search-input { width: 120px; }
+  .nav-search-input:focus { width: 150px; }
+  .search-dropdown { left: 8px !important; right: 8px !important; max-width: none !important; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../index.html">首页</a><a class="tab active" href="../../../408/">408</a><a class="tab" href="../../../数学/">数学</a><a class="tab" href="../../../英语/">英语</a><a class="tab" href="../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="第2章 进程管理.html">第2章 进程管理</a>
+</div>
+<div class="nav-item"><a class="l3" href="第3章 内存管理.html">第3章 内存管理</a>
+</div>
+<div class="nav-item"><a class="l3" href="第4章 文件管理.html">第4章 文件管理</a>
+</div>
+<div class="nav-item"><a class="l3 active" href="第5章 输入输出管理.html">第5章 输入输出管理</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第4章 指令系统.html">第4章 指令系统</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第5章 中央处理器.html">第5章 中央处理器</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第6章 总线系统.html">第6章 总线系统</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第7章 输入输出系统.html">第7章 输入输出系统</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>基础</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+<div class='typora-export-content'>
+<div id='write'  class=''><h2 align="center">第五章 输入输出管理</h2><blockquote><p><strong><span>408 高频考点提醒</span></strong><span>：</span></p><ul><li><span>I/O 软件层次结构：</span><strong><span>用户层软件 → 设备独立性软件 → 设备驱动程序 → 中断处理程序 → 硬件</span></strong></li><li><span>四种 I/O 控制方式：</span><strong><span>程序查询（忙等）、中断驱动、DMA（数据块、不经过 CPU）、通道（通道程序）</span></strong></li><li><span>缓冲区：单缓冲每块 </span><strong><span>max(C,T)+M</span></strong><span>；双缓冲每块 </span><strong><span>max(C, M+T)</span></strong><span>（王道真题计算）</span></li><li><span>设备分配：DCT / COCT / CHCT / SDT 四张表；</span><strong><span>逻辑设备表 LUT</span></strong><span> 实现设备独立性</span></li><li><strong><span>SPOOLing</span></strong><span>：输入井/输出井 + 缓冲区 + 输入/输出进程；把</span><strong><span>独占设备变成虚拟设备</span></strong><span>（打印机）</span></li><li><span>磁盘访问时间 = </span><strong><span>寻道 + 旋转延迟 + 传输时间</span></strong><span>（寻道占主导；7200rpm → 平均旋转延迟 4.17ms）</span></li><li><span>磁盘调度：FCFS / SSTF / SCAN（电梯）/ C-SCAN / LOOK；</span><strong><span>SSTF 可能饥饿、SCAN 最常用</span></strong><span>；减少旋转延迟：</span><strong><span>扇区交替编号、盘面错位命名</span></strong></li><li><strong><span>SSD</span></strong><span>：无机械部件、无寻道/旋转延迟；不能原地写、</span><strong><span>磨损均衡</span></strong><span>、FTL 转换层</span></li></ul></blockquote><hr /><h3 id='一）io-管理概述'><span>（一）I/O 管理概述</span></h3><h4 id='一io-设备的基本概念与分类511）'><span>一、I/O 设备的基本概念与分类（5.1.1）</span></h4><h5 id='1-设备的分类'><span>1. 设备的分类</span></h5><table>
+    <thead>
+        <tr>
+            <th>分类角度</th>
+            <th>类别</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2"><b><nobr>使用特性</nobr></b></td>
+            <td><b>存储设备</b></td>
+            <td>用于<b>存储信息</b>的外部设备（磁盘、磁带、光盘）</td>
+        </tr>
+        <tr>
+            <td><b>输入/输出设备</b></td>
+            <td>又分<b>输入设备</b>（键盘、鼠标、扫描仪）、<b>输出设备</b>（打印机）、<b>交互式设备</b>（集成输入输出功能，如触控显示器）</td>
+        </tr>
+        <tr>
+            <td rowspan="2"><b><nobr>信息传输单位</nobr></b></td>
+            <td><b>块设备</b></td>
+            <td>以<b>数据块</b>为单位、<b>可寻址</b>、可随机访问（磁盘、SSD）</td>
+        </tr>
+        <tr>
+            <td><b>字符设备</b></td>
+            <td>以<b>字符</b>为单位、<b>不可寻址</b>、只能顺序访问（键盘、打印机）</td>
+        </tr>
+        <tr>
+            <td rowspan="3"><b>共享属性</b></td>
+            <td><b>独占设备</b></td>
+            <td>一个进程独占使用（打印机、磁带机）</td>
+        </tr>
+        <tr>
+            <td><b>共享设备</b></td>
+            <td>可同时供多个进程使用（磁盘）</td>
+        </tr>
+        <tr>
+            <td><b>虚拟设备</b></td>
+            <td>通过 SPOOLing 把独占设备改造成"共享"的设备</td>
+        </tr>
+        <tr>
+            <td><b>速度</b></td>
+            <td>低速（键盘）/ 中速（打印机）/ 高速（磁盘、网络）</td>
+            <td>速度差异大，需要缓冲</td>
+        </tr>
+    </tbody>
+</table><p>&nbsp;</p><blockquote><p><strong><span>考点</span></strong><span>：</span><strong><span>磁盘是块设备、共享设备、存储设备</span></strong><span>；打印机是</span><strong><span>字符设备、独占设备</span></strong><span>（可经 SPOOLing 虚拟化）；触控显示器是</span><strong><span>交互式设备</span></strong><span>。</span></p></blockquote><h5 id='2-设备控制器io-接口）'><span>2. 设备控制器（I/O 接口）</span></h5><p><strong><span>设备控制器（I/O 接口）</span></strong><span>：CPU 与设备之间的</span><strong><span>中间硬件接口</span></strong><span>，用于实现</span><strong><span>设备和计算机之间的数据交换</span></strong><span>。</span></p><p><strong><span>控制器的三个组成部分（教材）</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>组成部分</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><nobr><strong><span>与 CPU 的接口</span></strong></nobr></td><td style='text-align:left;' ><span>有三类信号线：</span><strong><span>数据线</span></strong><span>（传送读/写数据、控制信息和状态信息）、</span><strong><span>地址线</span></strong><span>（传送要访问的 I/O 接口中的</span><strong><span>寄存器编号</span></strong><span>）、</span><strong><span>控制线</span></strong><span>（传送读/写等控制信号）</span></td></tr><tr><td style='text-align:left;' ><strong><span>与设备的接口</span></strong></td><td style='text-align:left;' ><span>一个控制器可连接</span><strong><span>一个或多个设备</span></strong><span>（控制器中有多个设备接口）；每个接口都可传输</span><strong><span>数据、控制、状态</span></strong><span>三种类型的信号</span></td></tr><tr><td style='text-align:left;' ><strong><span>I/O 逻辑</span></strong></td><td style='text-align:left;' ><span>实现对设备的控制：通过一组控制线与 CPU 交互，对从 CPU 收到的 </span><strong><span>I/O 命令进行译码</span></strong><span>；CPU 启动设备时发送</span><strong><span>启动命令 + 地址</span></strong><span>，由 I/O 逻辑译码并对所选设备进行控制</span></td></tr></tbody></table></figure><p><strong><span>控制器的主要功能（教材）</span></strong><span>：</span><strong><span>接受和识别命令、数据交换、标识和报告设备的状态、地址识别、数据缓冲、差错控制</span></strong><span>。</span></p><p><strong><span>I/O 接口的类型（教材）</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>分类角度</span></th><th style='text-align:left;' ><span>类型</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>按数据传送方式</span></strong><span>（外设与接口一侧）</span></td><td style='text-align:left;' ><strong><span>并行接口</span></strong><span> / </span><strong><span>串行接口</span></strong><span>（接口要完成</span><strong><span>数据格式的转换</span></strong><span>）</span></td></tr><tr><td style='text-align:left;' ><strong><span>按主机访问 I/O 设备的控制方式</span></strong></td><td style='text-align:left;' ><strong><span>程序查询接口</span></strong><span> / </span><strong><span>中断接口</span></strong><span> / </span><strong><span>DMA 接口</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>按功能选择的灵活性</span></strong></td><td style='text-align:left;' ><strong><span>可编程接口</span></strong><span>（通过编程改变接口功能）/ </span><strong><span>不可编程接口</span></strong></td></tr></tbody></table></figure><p><strong><span>I/O 端口</span></strong><span>：设备控制器中</span><strong><span>可被 CPU 直接访问</span></strong><span>的寄存器：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>寄存器</span></th><th style='text-align:left;' ><span>作用</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>数据寄存器</span></strong></td><td style='text-align:left;' ><span>缓存从设备送来的</span><strong><span>输入数据</span></strong><span>，或从 CPU 送来的</span><strong><span>输出数据</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>状态寄存器</span></strong></td><td style='text-align:left;' ><span>保存设备的</span><strong><span>执行结果或状态信息</span></strong><span>，供 CPU 读取</span></td></tr><tr><td style='text-align:left;' ><strong><span>控制寄存器</span></strong></td><td style='text-align:left;' ><strong><span>CPU 写入</span></strong><span>，以启动命令或更改设备模式</span></td></tr></tbody></table></figure><p><span>CPU 通过 </span><strong><span>I/O 端口（独立编址）</span></strong><span>或 </span><strong><span>内存映射 I/O</span></strong><span>（寄存器映射到内存地址空间）访问这些寄存器。</span></p><blockquote><p><strong><span>考点</span></strong><span>：控制器结构 = </span><strong><span>CPU 接口（数据/地址/控制线）+ 设备接口（数据/控制/状态信号）+ I/O 逻辑（命令译码）</span></strong><span>；主要功能 = </span><strong><span>接受识别命令、数据交换、状态报告、地址识别、缓冲、差错控制</span></strong><span>；I/O 端口 = 可被 CPU 直接访问的</span><strong><span>三类寄存器</span></strong><span>（数据/状态/控制）。</span>
+<strong><span>易错点</span></strong><span>：地址线传的是</span><strong><span>寄存器编号</span></strong><span>（不是设备地址）；数据线既传数据也传控制/状态信息；程序查询/中断/DMA 接口分别对应三种 I/O 控制方式（见三）。</span></p></blockquote><h4 id='二io-控制方式512）重点）'><span>二、I/O 控制方式（5.1.2）（重点）</span></h4><h5 id='1-程序直接控制方式程序查询方式）'><span>1. 程序直接控制方式（程序查询方式）</span></h5><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">CPU 发出 I/O 请求</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; ▼</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">CPU 不断读取设备状态寄存器（轮询/忙等）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; │ 忙 → 继续轮询；闲 → 传输一个数据字</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; ▼</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">反复直到数据传完</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 161px;"></div><div class="CodeMirror-gutters" style="display: none; height: 161px;"></div></div></div></pre><ul><li><span>特点：CPU </span><strong><span>全程参与</span></strong><span>每字传输；传输期间 CPU </span><strong><span>忙等</span></strong><span>（无法做别的事）</span></li><li><span>优点：实现简单，不需要额外硬件</span></li><li><span>缺点：</span><strong><span>CPU 利用率极低</span></strong><span>（绝大部分时间在等设备）</span></li></ul><h5 id='2-中断驱动方式'><span>2. 中断驱动方式</span></h5><ul><li><span>设备</span><strong><span>就绪后主动发中断</span></strong><span>，CPU 不再轮询，在设备准备期间可以执行其他程序</span></li><li><span>流程：CPU 发 I/O 请求 → 设备准备数据（CPU 并行做别的事）→ 设备就绪发</span><strong><span>中断</span></strong><span> → CPU 响应中断，传输</span><strong><span>一个字</span></strong><span> → 继续下一次传输</span></li><li><span>特点：每传输</span><strong><span>一个数据字</span></strong><span>产生</span><strong><span>一次中断</span></strong><span>；数据仍由 CPU 参与搬运（从控制器数据寄存器取出/放入）</span></li><li><span>优点：CPU 利用率大幅提高（等待时做别的事）</span></li><li><span>缺点：</span><strong><span>中断次数太多</span></strong><span>（每字一次），CPU 被频繁打断</span></li></ul><blockquote><p><strong><span>注意</span></strong><span>：中断驱动方式中，中断处理程序承担了数据搬运，仍然&quot;逐字&quot;进行——传送一块数据需要 n 次中断。</span></p></blockquote><h5 id='3-dma-方式直接存储器存取）'><span>3. DMA 方式（直接存储器存取）</span></h5><p><strong><span>DMA（Direct Memory Access）</span></strong><span>：在</span><strong><span>外设与内存之间直接传输数据块</span></strong><span>，</span><strong><span>不经过 CPU</span></strong><span>。</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">┌──────────────┐ &nbsp; &nbsp; &nbsp; &nbsp;  ┌──────────────────────┐</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  CPU &nbsp; &nbsp; &nbsp; &nbsp; │  init &nbsp; │  DMA controller &nbsp; &nbsp;  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  (setup) &nbsp; &nbsp; │────────►│  (memory addr reg, &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">└──────────────┘ &nbsp; &nbsp; &nbsp; &nbsp;  │ &nbsp; byte count reg, &nbsp;  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  │ &nbsp; control reg) &nbsp; &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  └──────────┬───────────┘</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │ transfer data</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ▼</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  ┌──────────────────────┐</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  │  Memory &lt;-&gt; device &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  │  (no CPU involved) &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  └──────────────────────┘</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 276px;"></div><div class="CodeMirror-gutters" style="display: none; height: 276px;"></div></div></div></pre><blockquote><p><span>图：DMA 方式——CPU 初始化后由 DMA 控制器直接控制内存与外设间的数据块传输。</span></p></blockquote><p><strong><span>DMA 控制器的组成</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>寄存器</span></th><th style='text-align:left;' ><span>作用</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>内存地址寄存器</span></td><td style='text-align:left;' ><span>存放数据在内存中的起始地址</span></td></tr><tr><td style='text-align:left;' ><span>字节计数器</span></td><td style='text-align:left;' ><span>记录待传输的字节数</span></td></tr><tr><td style='text-align:left;' ><span>控制寄存器</span></td><td style='text-align:left;' ><span>传输方向、启动等控制信息</span></td></tr></tbody></table></figure><p><strong><span>工作流程</span></strong><span>：</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">① CPU 初始化 DMA 控制器（源/目的地址、字节数、方向）</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">② DMA 控制器直接控制外设 ↔ 内存的数据块传输（每传完一个字节自动更新地址与计数）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">③ 数据块传完后，DMA 向 CPU 发一次中断</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 69px;"></div><div class="CodeMirror-gutters" style="display: none; height: 69px;"></div></div></div></pre><ul><li><span>特点：</span><strong><span>以数据块为单位</span></strong><span>；数据不经过 CPU（CPU 只在开头初始化、结尾收中断，</span><strong><span>干预 2 次</span></strong><span>）</span></li><li><span>注意：DMA 传输时若占用内存总线，CPU 暂停访问内存（</span><strong><span>周期挪用</span></strong><span>）</span></li></ul><blockquote><p><strong><span>考点</span></strong><span>：DMA 与中断驱动的本质区别——</span><strong><span>中断驱动每字中断一次且数据经 CPU</span></strong><span>；DMA 一次中断传送一块且数据不经 CPU。</span></p></blockquote><h5 id='4-通道控制方式'><span>4. 通道控制方式</span></h5><p><strong><span>通道（Channel）</span></strong><span>：专门负责 I/O 控制的</span><strong><span>处理机（I/O 处理器）</span></strong><span>，执行</span><strong><span>通道程序</span></strong><span>。</span></p><ul><li><span>CPU 只需发出</span><strong><span>一条 I/O 指令</span></strong><span>（指明通道、设备、操作），通道自己执行通道程序控制设备完成</span><strong><span>多块数据的传输</span></strong></li><li><span>数据传送完毕后，通道向 CPU 发中断</span></li><li><span>一个通道可控制</span><strong><span>多台设备</span></strong><span>并行工作</span></li></ul><blockquote><p><strong><span>考点</span></strong><span>：通道控制方式中，</span><strong><span>CPU 干预程度最低</span></strong><span>（发一条指令 + 收一次中断）；通道有自己的指令系统（通道程序），相当于&quot;小 CPU&quot;。</span></p></blockquote><h5 id='5-四种控制方式对比'><span>5. 四种控制方式对比</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>对比项</span></th><th style='text-align:left;' ><span>程序查询</span></th><th style='text-align:left;' ><span>中断驱动</span></th><th style='text-align:left;' ><span>DMA</span></th><th style='text-align:left;' ><span>通道</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>控制单位</span></td><td style='text-align:left;' ><span>一个字</span></td><td style='text-align:left;' ><span>一个字</span></td><td style='text-align:left;' ><strong><span>一个数据块</span></strong></td><td style='text-align:left;' ><strong><span>一组数据块</span></strong><span>（多台设备）</span></td></tr><tr><td style='text-align:left;' ><span>数据流向</span></td><td style='text-align:left;' ><span>CPU 参与</span></td><td style='text-align:left;' ><span>CPU 参与</span></td><td style='text-align:left;' ><strong><span>不经过 CPU</span></strong></td><td style='text-align:left;' ><span>不经过 CPU</span></td></tr><tr><td style='text-align:left;' ><span>CPU 干预</span></td><td style='text-align:left;' ><strong><span>最多</span></strong><span>（全程忙等）</span></td><td style='text-align:left;' ><span>较多（每字中断）</span></td><td style='text-align:left;' ><span>少（初始化+收尾 2 次）</span></td><td style='text-align:left;' ><strong><span>最少</span></strong><span>（一条指令+一次中断）</span></td></tr><tr><td style='text-align:left;' ><span>并行性</span></td><td style='text-align:left;' ><span>无</span></td><td style='text-align:left;' ><span>设备与 CPU 部分并行</span></td><td style='text-align:left;' ><span>较好</span></td><td style='text-align:left;' ><span>最好（多设备并行）</span></td></tr><tr><td style='text-align:left;' ><span>适用</span></td><td style='text-align:left;' ><span>简单低速设备</span></td><td style='text-align:left;' ><span>中低速设备</span></td><td style='text-align:left;' ><span>高速设备（磁盘）</span></td><td style='text-align:left;' ><span>大规模高速 I/O</span></td></tr></tbody></table></figure><h4 id='三io-软件的层次结构513）'><span>三、I/O 软件的层次结构（5.1.3）</span></h4><p><strong><span>I/O 软件</span></strong><span>：操作系统中的设备管理软件，采用</span><strong><span>分层结构</span></strong><span>组织：</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">┌───────────────────────────┐</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  User-level I/O software  │ &nbsp;  用户层软件</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├───────────────────────────┤</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  Device-independent &nbsp; &nbsp; &nbsp; │ &nbsp;  设备独立性软件</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  OS software &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├───────────────────────────┤</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  Device drivers &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │ &nbsp;  设备驱动程序</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├───────────────────────────┤</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  Interrupt handlers &nbsp; &nbsp; &nbsp; │ &nbsp;  中断处理程序</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├───────────────────────────┤</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│  Hardware &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │ &nbsp;  **硬件**</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">└───────────────────────────┘</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 276px;"></div><div class="CodeMirror-gutters" style="display: none; height: 276px;"></div></div></div></pre><blockquote><p><span>图：I/O 软件层次结构（用户层 → 设备独立性软件 → 设备驱动程序 → 中断处理程序 → 硬件）。</span></p></blockquote><figure><table><thead><tr><th style='text-align:left;' ><span>层次</span></th><th style='text-align:left;' ><span>主要功能</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>用户层 I/O 软件</span></strong></td><td style='text-align:left;' ><span>库函数（printf、scanf）、SPOOLing 系统、用户态 I/O 请求</span></td></tr><tr><td style='text-align:left;' ><strong><span>设备独立性软件（设备无关软件）</span></strong></td><td style='text-align:left;' ><span>统一设备接口、设备命名、保护、分配与回收、缓冲管理、错误报告</span></td></tr><tr><td style='text-align:left;' ><strong><span>设备驱动程序</span></strong></td><td style='text-align:left;' ><span>把抽象请求翻译为具体设备的命令，控制设备控制器，</span><strong><span>唯一直接与硬件打交道的软件</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>中断处理程序</span></strong></td><td style='text-align:left;' ><span>处理设备发出的中断，保存/恢复现场</span></td></tr><tr><td style='text-align:left;' ><strong><span>硬件</span></strong></td><td style='text-align:left;' ><span>设备控制器、设备本身</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：设备独立性软件与设备驱动程序的分界——</span><strong><span>驱动程序与具体设备相关</span></strong><span>（换设备就换驱动程序），独立性软件与设备无关（所有设备共用一个接口）。</span>
+<strong><span>易错点</span></strong><span>：I/O 软件层次从上到下，只有</span><strong><span>设备驱动程序</span></strong><span>直接控制硬件；中断处理程序由硬件中断触发。</span></p></blockquote><h4 id='四应用程序-io-接口514）'><span>四、应用程序 I/O 接口（5.1.4）</span></h4><p><span>操作系统向应用程序提供</span><strong><span>统一、抽象的设备访问接口</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>接口类型</span></th><th style='text-align:left;' ><span>服务对象</span></th><th style='text-align:left;' ><span>系统调用</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>字符设备接口</span></strong></td><td style='text-align:left;' ><span>键盘、打印机等</span></td><td style='text-align:left;' ><span>get / put（按字符）</span></td></tr><tr><td style='text-align:left;' ><strong><span>块设备接口</span></strong></td><td style='text-align:left;' ><span>磁盘、SSD</span></td><td style='text-align:left;' ><span>read / write（按块，可随机访问）</span></td></tr><tr><td style='text-align:left;' ><strong><span>网络设备接口</span></strong></td><td style='text-align:left;' ><span>网卡</span></td><td style='text-align:left;' ><span>socket（套接字）</span></td></tr></tbody></table></figure><ul><li><strong><span>阻塞 I/O</span></strong><span>：系统调用未完成前进程挂起等待（如 read 数据没到就阻塞）</span></li><li><strong><span>非阻塞 I/O</span></strong><span>：系统调用立即返回，进程轮询或由中断通知结果</span></li></ul><hr /><h3 id='二）设备独立软件'><span>（二）设备独立软件</span></h3><h4 id='一设备独立性软件521）'><span>一、设备独立性软件（5.2.1）</span></h4><p><strong><span>设备独立性软件</span></strong><span>：也称</span><strong><span>与设备无关的软件</span></strong><span>，是 </span><strong><span>I/O 系统的最高层软件</span></strong><span>，其下层是</span><strong><span>设备驱动程序</span></strong><span>；设备独立性软件包括</span><strong><span>执行所有设备公有操作</span></strong><span>的软件。</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>设备公有功能</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>设备命名与映射</span></strong></td><td style='text-align:left;' ><span>将</span><strong><span>逻辑设备名</span></strong><span>映射到物理设备（经</span><strong><span>逻辑设备表 LUT</span></strong><span>）</span></td></tr><tr><td style='text-align:left;' ><strong><span>设备保护</span></strong></td><td style='text-align:left;' ><span>检查用户对设备的访问权限</span></td></tr><tr><td style='text-align:left;' ><strong><span>提供与设备无关的块大小</span></strong></td><td style='text-align:left;' ><span>屏蔽不同设备的块大小差异，向上提供统一视图</span></td></tr><tr><td style='text-align:left;' ><strong><span>缓冲管理</span></strong></td><td style='text-align:left;' ><span>管理 I/O 数据缓冲区</span></td></tr><tr><td style='text-align:left;' ><strong><span>设备分配与回收</span></strong></td><td style='text-align:left;' ><span>对独占/共享设备的分配与回收</span></td></tr><tr><td style='text-align:left;' ><strong><span>错误报告与处理</span></strong></td><td style='text-align:left;' ><span>报告设备错误并尽量处理</span></td></tr><tr><td style='text-align:left;' ><strong><span>统一驱动程序接口</span></strong></td><td style='text-align:left;' ><span>为所有设备驱动程序提供统一的标准接口</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：设备独立性软件是 </span><strong><span>I/O 最高层软件</span></strong><span>、与设备无关，只负责</span><strong><span>所有设备的公有操作</span></strong><span>；下层</span><strong><span>设备驱动程序</span></strong><span>才与具体设备相关（换设备就换驱动）。</span>
+<strong><span>易错点</span></strong><span>：设备独立性软件 ≠ 设备驱动程序——前者&quot;与设备无关&quot;（设备命名、缓冲、分配等公有操作），后者&quot;与具体设备相关&quot;（发出具体设备的命令）。</span></p></blockquote><h4 id='二高速缓存与缓冲区522）重点）'><span>二、高速缓存与缓冲区（5.2.2）（重点）</span></h4><h5 id='1-磁盘高速缓存'><span>1. 磁盘高速缓存</span></h5><p><strong><span>磁盘高速缓存</span></strong><span>：在</span><strong><span>内存</span></strong><span>中划出一块区域，存放最近访问的磁盘数据副本——读磁盘时先查缓存（命中则省去磁盘访问），写磁盘时先写缓存（延迟写回）。</span></p><p><span>磁盘高速缓存在内存中分为两种形式： </span></p><ul><li><span>一种是在内存中开辟一个单独的空间作为缓存区，大小固定</span></li><li><span>另一种是将未利用的内存空间作为一个缓冲池，供请求分页系统和磁盘I/O时共享</span></li></ul><blockquote><p><strong><span>考点</span></strong><span>：磁盘高速缓存是</span><strong><span>内存中的</span></strong><span>（不是磁盘上的），思想与快表（TLB）一致——利用时间局部性。</span></p></blockquote><h5 id='2-缓冲的作用'><span>2. 缓冲的作用</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>作用</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>缓和</span><strong><span>速度不匹配</span></strong></td><td style='text-align:left;' ><span>内存与外设速度相差悬殊，缓冲区暂存数据</span></td></tr><tr><td style='text-align:left;' ><span>减少对 CPU 的</span><strong><span>中断频率</span></strong></td><td style='text-align:left;' ><span>数据攒够一批再中断一次（数据单元化）</span></td></tr><tr><td style='text-align:left;' ><span>提高 CPU 与外设的</span><strong><span>并行性</span></strong></td><td style='text-align:left;' ><span>CPU 处理数据的同时设备可以输入下一批</span></td></tr><tr><td style='text-align:left;' ><span>解决</span><strong><span>数据粒度不匹配</span></strong></td><td style='text-align:left;' ><span>如按字节输入、按块处理</span></td></tr></tbody></table></figure><h5 id='3-缓冲技术'><span>3. 缓冲技术</span></h5><p><span>引入缓冲区的目的主要如下：</span></p><ul><li><span>缓和CPU与I/O设备间速度不匹配的矛盾</span></li><li><span>减少对CPU的中断频率，放宽对CPU中断响应时间的限制</span></li><li><span>解决基本数据单元大小（数据粒度）不匹配的问题</span></li><li><span>提高CPU和I/O设备之间的并行性。</span></li></ul><figure><table><thead><tr><th style='text-align:left;' ><span>方式</span></th><th style='text-align:left;' ><span>说明</span></th><th style='text-align:left;' ><span>特点</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>单缓冲</span></strong></td><td style='text-align:left;' ><span>内存中一个缓冲区，</span><strong><span>设备与 CPU 互斥</span></strong><span>使用它</span></td><td style='text-align:left;' ><span>实现简单；每块处理时间 = max(C, T) + M</span></td></tr><tr><td style='text-align:left;' ><strong><span>双缓冲</span></strong></td><td style='text-align:left;' ><span>两个缓冲区轮流：设备填 1 号时 CPU 处理 2 号</span></td><td style='text-align:left;' ><span>可设备与 CPU 同时工作；每块 = max(C, M+T)</span></td></tr><tr><td style='text-align:left;' ><strong><span>循环缓冲</span></strong></td><td style='text-align:left;' ><span>多个缓冲区组成循环队列</span></td><td style='text-align:left;' ><span>适合生产者-消费者模式</span></td></tr><tr><td style='text-align:left;' ><strong><span>缓冲池</span></strong></td><td style='text-align:left;' ><span>系统公共缓冲区集合（空闲/输入/输出队列）</span></td><td style='text-align:left;' ><span>共享、利用率高</span></td></tr></tbody></table></figure><p><span>设：设备输入一块数据时间 T、缓冲区数据送入用户区时间 M、CPU 处理时间 C（M、C 串行），则：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>方式</span></th><th style='text-align:left;' ><span>每块总时间</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>无缓冲</span></td><td style='text-align:left;' ><span>T + M + C</span></td><td style='text-align:left;' ><span>完全串行</span></td></tr><tr><td style='text-align:left;' ><span>单缓冲</span></td><td style='text-align:left;' ><strong><span>max(C, T) + M</span></strong></td><td style='text-align:left;' ><span>输入与 CPU 处理可重叠（T 与 C 取大者），M 必须串行</span></td></tr><tr><td style='text-align:left;' ><span>双缓冲</span></td><td style='text-align:left;' ><strong><span>max(C, M + T)</span></strong></td><td style='text-align:left;' ><span>两个缓冲区交替，设备输入与&quot;移送+处理&quot;流水线并行</span></td></tr></tbody></table></figure><p><strong><span>例题</span></strong><span>：从设备输入一块数据 T = 100μs，缓冲区数据送入用户区 M = 10μs，CPU 处理 C = 50μs：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>方式</span></th><th style='text-align:left;' ><span>计算</span></th><th style='text-align:left;' ><span>每块时间</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>无缓冲</span></td><td style='text-align:left;' ><span>100 + 10 + 50</span></td><td style='text-align:left;' ><strong><span>160μs</span></strong></td></tr><tr><td style='text-align:left;' ><span>单缓冲</span></td><td style='text-align:left;' ><span>max(50, 100) + 10</span></td><td style='text-align:left;' ><strong><span>110μs</span></strong></td></tr><tr><td style='text-align:left;' ><span>双缓冲</span></td><td style='text-align:left;' ><span>max(50, 10 + 100)</span></td><td style='text-align:left;' ><strong><span>100μs</span></strong></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：单缓冲中 T 与 C 重叠、M 串行（先移给用户区才能处理，处理完缓冲区才空）；双缓冲中 T 与（M+C）重叠。</span>
+<strong><span>易错点</span></strong><span>：求 n 块总时间 = 第一块（T+M+C）+ (n−1) × 每块时间。</span></p></blockquote><h5 id='4-缓冲区与高速缓存的区别'><span>4. 缓冲区与高速缓存的区别</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>对比项</span></th><th style='text-align:left;' ><span>缓冲区（Buffer）</span></th><th style='text-align:left;' ><span>高速缓存（Cache）</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>目的</span></td><td style='text-align:left;' ><span>缓和速度不匹配、提高并行性</span></td><td style='text-align:left;' ><span>存放最近访问的数据副本（局部性）</span></td></tr><tr><td style='text-align:left;' ><span>数据</span></td><td style='text-align:left;' ><span>暂存待传输的数据</span></td><td style='text-align:left;' ><span>已使用数据的副本</span></td></tr><tr><td style='text-align:left;' ><span>位置</span></td><td style='text-align:left;' ><span>内存、外设等</span></td><td style='text-align:left;' ><span>内存（磁盘高速缓存）、CPU 内部等</span></td></tr></tbody></table></figure><h4 id='二设备分配与回收523）'><span>二、设备分配与回收（5.2.3）</span></h4><h5 id='1-设备分配的数据结构'><span>1. 设备分配的数据结构</span></h5><p><img src="第5章 输入输出管理.assets/image-20260819143747401.png" referrerpolicy="no-referrer" alt="image-20260819143747401"></p><figure><table><thead><tr><th style='text-align:left;' ><span>数据结构</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>设备控制表 DCT</span></strong></td><td style='text-align:left;' ><span>每个设备一张：设备类型、设备标识符、状态（忙/闲）、等待队列指针、重复执行次数</span></td></tr><tr><td style='text-align:left;' ><strong><span>控制器控制表 COCT</span></strong></td><td style='text-align:left;' ><span>每个设备控制器一张：控制器状态、标识符、与通道连接的指针、控制器队列的首尾指针</span></td></tr><tr><td style='text-align:left;' ><strong><span>通道控制表 CHCT</span></strong></td><td style='text-align:left;' ><span>每个通道一张：通道状态、等待队列</span></td></tr><tr><td style='text-align:left;' ><strong><span>系统设备表 SDT</span></strong></td><td style='text-align:left;' ><span>整个系统一张：记录系统中全部设备，每个表项指向对应 DCT</span></td></tr></tbody></table></figure><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">SDT ──► DCT(设备1) ──► COCT(控制器1) ──► CHCT(通道1)</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; │ &nbsp; &nbsp; DCT(设备2) ──► COCT(控制器2)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; └─ ...</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 69px;"></div><div class="CodeMirror-gutters" style="display: none; height: 69px;"></div></div></div></pre><blockquote><p><span>图：设备分配表层次——系统设备表 SDT → 设备控制表 DCT → 控制器控制表 COCT → 通道控制表 CHCT。</span></p></blockquote><h5 id='2-设备分配的原则与算法'><span>2. 设备分配的原则与算法</span></h5><ul><li><p><strong><span>设备固有属性</span></strong><span>：</span></p><ul><li><span>独占设备：一次只能一个进程用</span></li><li><span>共享设备：多个进程可同时用</span></li><li><span>虚拟设备：SPOOLing 改造后</span></li></ul></li><li><p><strong><span>分配算法</span></strong><span>：</span></p><ul><li><span>先来先服务：按请求先后排队</span></li><li><span>优先级高者优先</span></li></ul></li><li><p><strong><span>安全性</span></strong><span>：</span></p><ul><li><strong><span>安全分配方式</span></strong><span>：进程请求设备时</span><strong><span>立即阻塞</span></strong><span>，获得后运行完再释放——简单、</span><strong><span>分配安全（不会死锁）</span></strong><span>；缺点是 CPU 与 I/O 设备</span><strong><span>串行工作</span></strong><span>，进程推进慢</span></li><li><strong><span>不安全分配方式</span></strong><span>：进程发出 I/O 请求后</span><strong><span>仍继续运行</span></strong><span>，需要时再发第二、三个请求；仅当请求的设备</span><strong><span>已被另一进程占用</span></strong><span>时才进入阻塞态——优点：一个进程可</span><strong><span>同时操作多个设备</span></strong><span>，推进迅速；缺点：</span><strong><span>可能造成死锁</span></strong><span>（可配合</span><strong><span>银行家算法</span></strong><span>做安全性检查避免）</span></li></ul></li></ul><blockquote><p><strong><span>易错点</span></strong><span>：会死锁的是</span><strong><span>不安全分配方式</span></strong><span>；安全分配方式&quot;不持有设备再等设备&quot;，</span><strong><span>不会死锁</span></strong><span>。</span></p></blockquote><h5 id='3-设备分配的步骤'><span>3. 设备分配的步骤</span></h5><p><strong><span>分配顺序固定为&quot;设备 → 控制器 → 通道&quot;三步</span></strong><span>，每步模式相同——</span><strong><span>查表：忙则 PCB 挂入等待队列，闲则分配</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>步骤</span></th><th style='text-align:left;' ><span>查找路径</span></th><th style='text-align:left;' ><span>忙则</span></th><th style='text-align:left;' ><span>闲则</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>(1) 分配设备</span></strong></td><td style='text-align:left;' ><span>物理设备名 → 查 </span><strong><span>SDT</span></strong><span> → 查 </span><strong><span>DCT</span></strong></td><td style='text-align:left;' ><span>PCB 挂入</span><strong><span>设备等待队列</span></strong></td><td style='text-align:left;' ><span>设备分配给进程</span></td></tr><tr><td style='text-align:left;' ><strong><span>(2) 分配控制器</span></strong></td><td style='text-align:left;' ><span>DCT → 查 </span><strong><span>COCT</span></strong></td><td style='text-align:left;' ><span>PCB 挂入</span><strong><span>控制器等待队列</span></strong></td><td style='text-align:left;' ><span>控制器分配给进程</span></td></tr><tr><td style='text-align:left;' ><strong><span>(3) 分配通道</span></strong></td><td style='text-align:left;' ><span>COCT → 查 </span><strong><span>CHCT</span></strong></td><td style='text-align:left;' ><span>PCB 挂入</span><strong><span>通道等待队列</span></strong></td><td style='text-align:left;' ><span>通道分配给进程</span></td></tr></tbody></table></figure><blockquote><p><strong><span>注意</span></strong><span>：设备、控制器、通道</span><strong><span>三者全部到手</span></strong><span>，进程才能使用设备；任一层忙碌，进程就挂在该层等待队列中排队。</span></p></blockquote><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">(1) 分配设备： &nbsp; 物理设备名 → 查 SDT → 查 DCT</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">(2) 分配控制器： DCT → 查 COCT</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">(3) 分配通道： &nbsp; COCT → 查 CHCT</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 69px;"></div><div class="CodeMirror-gutters" style="display: none; height: 69px;"></div></div></div></pre><h5 id='4-设备的回收'><span>4. 设备的回收</span></h5><p><span>设备使用完毕后，系统回收设备、控制器、通道，从对应 DCT/COCT/CHCT 中删除分配记录，并</span><strong><span>唤醒等待队列中的下一个进程</span></strong><span>。</span></p><h5 id='5-逻辑设备名到物理设备名的映射教材）'><span>5. 逻辑设备名到物理设备名的映射（教材）</span></h5><p><strong><span>设备独立性</span></strong><span>：用户程序使用</span><strong><span>逻辑设备名</span></strong><span>（如 &quot;printer&quot;），由系统映射到具体</span><strong><span>物理设备</span></strong><span>。</span></p><ul><li><p><strong><span>进程请求方式与设备无关性</span></strong><span>：若进程以</span><strong><span>物理设备名</span></strong><span>提出 I/O 请求，设备分配程序</span><strong><span>不具有设备无关性</span></strong><span>（换设备就要改程序）；要获得设备独立性，进程应使用</span><strong><span>逻辑设备名</span></strong></p></li><li><p><strong><span>同类多台设备的分配</span></strong><span>：系统按逻辑设备名对应的</span><strong><span>设备类型</span></strong><span>，从 </span><strong><span>SDT</span></strong><span> 中找</span><strong><span>第一个该类设备的 DCT</span></strong><span>；若该设备忙，再找第二个、第三个……</span><strong><span>仅当全部该类设备都忙</span></strong><span>时，才把进程 PCB 挂到</span><strong><span>该类设备的等待队列</span></strong><span>上；</span><strong><span>只要有一台同类设备空闲</span></strong><span>，就进入进一步的分配操作（控制器、通道）</span></p></li><li><p><strong><span>逻辑设备表（LUT, Logical Unit Table）</span></strong><span>：把逻辑设备名映射为物理设备名；</span><strong><span>每个表项含 3 项内容：逻辑设备名、物理设备名、设备驱动程序入口地址</span></strong></p></li><li><p><span>LUT 的两种设置方式：</span></p><ol start='' ><li><strong><span>整个系统只设置一张 LUT</span></strong><span>（表项：逻辑设备名 / 物理设备名 / 驱动程序入口地址）——所有用户共用一套映射，同一逻辑名只能对应同一物理设备</span></li><li><strong><span>为每个用户（进程）设置一张 LUT</span></strong><span>（表项：逻辑设备名 / 系统设备指针，指向 SDT 中对应表项）——各用户可用各自的逻辑设备名，互不干扰</span></li></ol></li></ul><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">用户程序:  open("printer")  ← 逻辑设备名</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; ▼</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">查 LUT（逻辑设备名 → 物理设备名 / 设备类型）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; ▼</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">按物理设备名进入设备分配（第 3 点：查 SDT → DCT → COCT → CHCT）</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 161px;"></div><div class="CodeMirror-gutters" style="display: none; height: 161px;"></div></div></div></pre><ul><li><span>优点：</span><strong><span>设备独立性</span></strong><span>——换设备（如换打印机型号）只需修改映射，用户程序不用改；方便共享与分配</span></li></ul><blockquote><p><strong><span>考点</span></strong><span>：用户程序使用</span><strong><span>逻辑设备名</span></strong><span>；系统通过 </span><strong><span>LUT</span></strong><span> 把它转换为物理设备名——这就是&quot;设备独立性（设备无关性）&quot;。</span>
+<strong><span>考点</span></strong><span>：同类设备多台时，系统从 SDT 起</span><strong><span>逐台寻找空闲设备</span></strong><span>，全部忙才把进程挂到该类设备的等待队列——设备无关性的直接体现。</span></p></blockquote><h4 id='三假脱机技术spooling524）重点）'><span>三、假脱机技术（SPOOLing，5.2.4）（重点）</span></h4><p><strong><span>脱机技术</span></strong><span>：脱离主机的控制进行的输入/输出操作（如先用外围控制机把数据预读入磁带，主机不直接操作设备）。</span></p><p><strong><span>SPOOLing（假脱机技术，Simultaneous Peripheral Operations On-Line）</span></strong><span>：用软件模拟脱机技术，把</span><strong><span>独占设备改造为共享的虚拟设备</span></strong><span>。</span></p><p><strong><span>组成</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>组成</span></th><th style='text-align:left;' ><span>位置</span></th><th style='text-align:left;' ><span>作用</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>输入井 / 输出井</span></td><td style='text-align:left;' ><strong><span>外存（磁盘）</span></strong></td><td style='text-align:left;' ><span>保存预输入的数据（缓冲数据的&quot;水池&quot;）</span></td></tr><tr><td style='text-align:left;' ><span>输入缓冲区 / 输出缓冲区</span></td><td style='text-align:left;' ><span>内存</span></td><td style='text-align:left;' ><span>设备与井之间的中转</span></td></tr><tr><td style='text-align:left;' ><span>输入进程 / 输出进程</span></td><td style='text-align:left;' ><span>内存</span></td><td style='text-align:left;' ><span>SPOOLing 管理进程，负责设备与井之间的搬运</span></td></tr></tbody></table></figure><p><strong><span>工作原理（预输入 + 缓输出）</span></strong><span>：</span></p><p><img src="第5章 输入输出管理.assets/image-20260820044414323.png" referrerpolicy="no-referrer" alt="image-20260820044414323"></p><ul><li><strong><span>预输入</span></strong><span>：输入设备空闲时，输入进程提前把数据读入输入井，用户进程需要时直接从井取——</span><strong><span>设备利用率提高</span></strong></li><li><strong><span>缓输出</span></strong><span>：用户进程把输出写到输出井即可返回，输出进程随后把井中的数据送输出设备——</span><strong><span>进程不被慢速设备拖住</span></strong></li><li><strong><span>井管理程序</span></strong><span>：用于控制作业与磁盘井之间信息的交换</span></li></ul><p><strong><span>典型应用——共享打印机</span></strong><span>：多个进程&quot;同时&quot;提交打印任务，SPOOLing 系统把任务排队存入输出井（</span><strong><span>打印队列</span></strong><span>），打印进程逐个打印——逻辑上每个进程都有一台&quot;虚拟打印机&quot;。</span></p><p><img src="第5章 输入输出管理.assets/image-20260820052647007.png" referrerpolicy="no-referrer" alt="image-20260820052647007"></p><p><strong><span>优点</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>优点</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>提高 I/O 速度</span></td><td style='text-align:left;' ><span>进程与井交互（内存/磁盘速度），不与慢速设备直接交互</span></td></tr><tr><td style='text-align:left;' ><span>设备虚拟化</span></td><td style='text-align:left;' ><span>独占设备 → 多个进程可&quot;同时使用&quot;的</span><strong><span>虚拟设备</span></strong></td></tr><tr><td style='text-align:left;' ><span>提高设备利用率</span></td><td style='text-align:left;' ><span>输入输出与用户进程并行进行</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：SPOOLing 依赖</span><strong><span>外存（磁盘）</span></strong><span> 存放井；它是&quot;独占设备共享化（虚拟设备）&quot;的典型实现——打印机问题必考。</span>
+<strong><span>易错点</span></strong><span>：SPOOLing 只是</span><strong><span>逻辑上</span></strong><span>让多个进程同时使用设备，物理上设备仍一次服务一个任务（排队）。</span></p></blockquote><h4 id='四设备驱动程序接口525）'><span>四、设备驱动程序接口（5.2.5）</span></h4><p><strong><span>设备驱动程序</span></strong><span>：直接与设备控制器打交道的软件，是</span><strong><span>唯一知道具体设备命令格式</span></strong><span>的层次。</span></p><ul><li><span>作用：把设备独立性软件的</span><strong><span>抽象请求</span></strong><span>（read、write、控制）翻译为</span><strong><span>具体的设备命令</span></strong><span>（写某寄存器、发某控制字）</span></li><li><strong><span>统一接口</span></strong><span>：所有设备驱动程序向上层提供相同的接口（open/close/read/write），上层无需知道设备差异——</span><strong><span>换设备只需换驱动程序</span></strong><span>，应用程序和 OS 其余部分不变</span></li><li><strong><span>中断处理程序</span></strong><span>：设备发中断后，由中断处理程序响应：保存现场、判断中断原因（传输完成/出错）、调用对应驱动程序的处理例程、恢复现场</span></li></ul><blockquote><p><strong><span>考点</span></strong><span>：设备驱动程序属于</span><strong><span>内核</span></strong><span>，与设备一一对应；&quot;设备无关性&quot;正是靠驱动程序之上的</span><strong><span>统一接口</span></strong><span>实现的。</span></p></blockquote><hr /><h3 id='三）磁盘和固态硬盘'><span>（三）磁盘和固态硬盘</span></h3><h4 id='一磁盘结构531）'><span>一、磁盘结构（5.3.1）</span></h4><figure><table><thead><tr><th style='text-align:left;' ><span>概念</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>盘面（Platter）</span></strong></td><td style='text-align:left;' ><span>磁盘的磁记录表面，每个盘片有上下两个盘面</span></td></tr><tr><td style='text-align:left;' ><strong><span>磁道（Track）</span></strong></td><td style='text-align:left;' ><span>盘面上同心圆记录轨道，由外向里编号</span></td></tr><tr><td style='text-align:left;' ><strong><span>扇区（Sector）</span></strong></td><td style='text-align:left;' ><span>磁道等分为若干扇区，是</span><strong><span>磁盘读写的基本单位</span></strong><span>（通常 512B），由</span><strong><span>头部、数据区域和尾部</span></strong><span>组成</span></td></tr><tr><td style='text-align:left;' ><strong><span>柱面（Cylinder）</span></strong></td><td style='text-align:left;' ><span>所有盘面上相同半径磁道的集合</span></td></tr><tr><td style='text-align:left;' ><strong><span>磁头（Head）</span></strong></td><td style='text-align:left;' ><span>每个盘面一个读写磁头，可移动到不同磁道</span></td></tr></tbody></table></figure><p><img src="第5章 输入输出管理.assets/image-20260820071626343.png" referrerpolicy="no-referrer" alt="image-20260820071626343"></p><blockquote><p><span>图：磁盘结构——盘面/磁道/扇区/柱面。</span></p></blockquote><p><strong><span>磁盘容量</span></strong><span> = 磁头数 × 磁道数 × 扇区数 × 每扇区字节数</span></p><p><strong><span>磁盘访问时间（重点）</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>组成</span></th><th style='text-align:left;' ><span>说明</span></th><th style='text-align:left;' ><span>量级</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>寻道时间</span></strong></td><td style='text-align:left;' ><span>磁头移动到目标磁道的时间</span></td><td style='text-align:left;' ><strong><span>最大</span></strong><span>（毫秒级，主要开销）</span></td></tr><tr><td style='text-align:left;' ><strong><span>旋转延迟</span></strong></td><td style='text-align:left;' ><span>目标扇区转到磁头下的时间（平均 = 转半圈）</span></td><td style='text-align:left;' ><span>毫秒级</span></td></tr><tr><td style='text-align:left;' ><strong><span>传输时间</span></strong></td><td style='text-align:left;' ><span>数据从磁盘读出的时间</span></td><td style='text-align:left;' ><span>最小（微秒级）</span></td></tr></tbody></table></figure><p><strong><span>例题</span></strong><span>：磁盘转速 7200 rpm：</span></p><ul><li><span>旋转一周时间 = 60 / 7200 = </span><strong><span>8.33ms</span></strong></li><li><strong><span>平均旋转延迟</span></strong><span> = 8.33 / 2 = </span><strong><span>4.17ms</span></strong></li><li><span>若每磁道 100 个扇区，传输 1 个扇区 ≈ 8.33 / 100 = 0.083ms</span></li></ul><blockquote><p><strong><span>考点</span></strong><span>：磁盘访问时间中</span><strong><span>寻道时间占主导</span></strong><span>——磁盘调度算法就是优化寻道顺序。</span>
+<strong><span>易错点</span></strong><span>：平均旋转延迟 = 转半圈的时间（不是一整圈）。</span></p></blockquote><h4 id='二磁盘的管理532）'><span>二、磁盘的管理（5.3.2）</span></h4><figure><table><thead><tr><th style='text-align:left;' ><span>步骤</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>低级格式化（物理格式化）</span></strong></td><td style='text-align:left;' ><span>把磁盘划分为磁道、扇区，在扇区写入管理信息（头/尾、校验信息）</span></td></tr><tr><td style='text-align:left;' ><strong><span>磁盘分区</span></strong></td><td style='text-align:left;' ><span>把磁盘划分为若干分区（卷），每个分区可安装不同文件系统</span></td></tr><tr><td style='text-align:left;' ><strong><span>逻辑格式化（建立文件系统）</span></strong></td><td style='text-align:left;' ><span>在分区上建立文件系统（引导块、超级块、索引节点区、数据区）</span></td></tr><tr><td style='text-align:left;' ><strong><span>引导块</span></strong></td><td style='text-align:left;' ><span>磁盘 0 号扇区/块存放引导程序（自举），开机时 BIOS 读取执行</span></td></tr><tr><td style='text-align:left;' ><strong><span>坏块处理</span></strong></td><td style='text-align:left;' ><span>磁盘坏块由格式化时标记或系统动态替换（备用块）</span></td></tr></tbody></table></figure><h4 id='三磁盘调度算法533）重点）'><span>三、磁盘调度算法（5.3.3）（重点）</span></h4><p><strong><span>目标</span></strong><span>：减少</span><strong><span>平均寻道时间</span></strong><span>。</span></p><h5 id='1-先来先服务fcfs）'><span>1. 先来先服务（FCFS）</span></h5><ul><li><span>按请求到达顺序服务——公平、实现简单，但</span><strong><span>寻道距离大、效率低</span></strong></li></ul><h5 id='2-最短寻道时间优先sstf）'><span>2. 最短寻道时间优先（SSTF）</span></h5><ul><li><span>每次选择</span><strong><span>离当前磁头最近</span></strong><span>的磁道——平均寻道最短，但</span><strong><span>可能饥饿</span></strong><span>（远处请求长期得不到服务）</span></li></ul><h5 id='3-扫描算法scan电梯算法）'><span>3. 扫描算法（SCAN，电梯算法）</span></h5><ul><li><span>磁头</span><strong><span>单向移动</span></strong><span>，沿途服务所有请求，到</span><strong><span>端点</span></strong><span>（最内/最外磁道）后反向，再来回扫描</span></li><li><span>避免饥饿，但端点附近等待时间不均匀</span></li></ul><h5 id='4-循环扫描算法c-scan）'><span>4. 循环扫描算法（C-SCAN）</span></h5><ul><li><span>只</span><strong><span>单向</span></strong><span>服务，到达端点后</span><strong><span>立即回卷</span></strong><span>到另一端重新扫描</span></li><li><span>各磁道等待时间更</span><strong><span>均匀</span></strong><span>；代价是回卷不服务</span></li></ul><h5 id='5-look--c-look'><span>5. LOOK / C-LOOK</span></h5><ul><li><span>不走到端点——到</span><strong><span>最远请求</span></strong><span>处即转向（LOOK）/ 回卷（C-LOOK）；比 SCAN/C-SCAN 寻道距离更短</span></li></ul><p><strong><span>例题</span></strong><span>：磁道号范围 0~199，磁头初始在 </span><strong><span>100</span></strong><span>，请求队列 55, 58, 39, 18, 90, 160, 150, 38, 184：</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">磁道:  0 ── 18 ── 38 ── 39 ── 55 ── 58 ── 90 ── [100] ── 150 ── 160 ── 184 ── 199</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  (磁头初始位置)</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 46px;"></div><div class="CodeMirror-gutters" style="display: none; height: 46px;"></div></div></div></pre><figure><table><thead><tr><th style='text-align:left;' ><span>算法</span></th><th style='text-align:left;' ><span>服务顺序</span></th><th style='text-align:left;' ><span>总寻道长度</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>FCFS</span></td><td style='text-align:left;' ><span>55, 58, 39, 18, 90, 160, 150, 38, 184</span></td><td style='text-align:left;' ><span>45+3+19+21+72+70+10+112+146 = </span><strong><span>498</span></strong></td></tr><tr><td style='text-align:left;' ><span>SSTF</span></td><td style='text-align:left;' ><span>90, 58, 55, 39, 38, 18, 150, 160, 184</span></td><td style='text-align:left;' ><span>10+32+3+16+1+20+132+10+24 = </span><strong><span>248</span></strong></td></tr><tr><td style='text-align:left;' ><span>SCAN（向增大方向）</span></td><td style='text-align:left;' ><span>150, 160, 184, 90, 58, 55, 39, 38, 18</span></td><td style='text-align:left;' ><span>50+10+24+94+32+3+16+1+20 = </span><strong><span>250</span></strong></td></tr><tr><td style='text-align:left;' ><span>C-SCAN（增大方向，184 后回卷到 0）</span></td><td style='text-align:left;' ><span>150, 160, 184, 0, 18, 38, 39, 55, 58, 90</span></td><td style='text-align:left;' ><span>50+10+24+184+18+20+1+16+3+32 = </span><strong><span>358</span></strong></td></tr><tr><td style='text-align:left;' ><span>C-LOOK（增大方向，184 后直接跳到 18）</span></td><td style='text-align:left;' ><span>150, 160, 184, 18, 38, 39, 55, 58, 90</span></td><td style='text-align:left;' ><span>50+10+24+166+20+1+16+3+32 = </span><strong><span>322</span></strong></td></tr></tbody></table></figure><p><strong><span>结论</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>算法</span></th><th style='text-align:left;' ><span>优点</span></th><th style='text-align:left;' ><span>缺点</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>FCFS</span></td><td style='text-align:left;' ><span>公平、实现简单</span></td><td style='text-align:left;' ><span>寻道距离大、效率低</span></td></tr><tr><td style='text-align:left;' ><span>SSTF</span></td><td style='text-align:left;' ><strong><span>平均寻道最短</span></strong></td><td style='text-align:left;' ><span>可能</span><strong><span>饥饿</span></strong></td></tr><tr><td style='text-align:left;' ><span>SCAN / C-SCAN</span></td><td style='text-align:left;' ><span>无饥饿、效率高</span></td><td style='text-align:left;' ><span>端点等待不均匀（C-SCAN 改善均匀性）</span></td></tr><tr><td style='text-align:left;' ><span>LOOK / C-LOOK</span></td><td style='text-align:left;' ><span>比 SCAN/C-SCAN 少走&quot;空道&quot;</span></td><td style='text-align:left;' ><span>实现稍复杂</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：SSTF 是&quot;贪心&quot;策略（本次最优），SCAN 系列是实际系统最常用的（兼顾效率与公平）。</span>
+<strong><span>易错点</span></strong><span>：SCAN 沿当前移动方向</span><strong><span>先服务途中遇到的请求</span></strong><span>，到端点（或 LOOK 的最远请求）才转向——不能中途转向。</span></p></blockquote><h5 id='6-减少延迟时间的方法'><span>6. 减少延迟时间的方法</span></h5><p><span>磁盘访问时间 = 寻道 + </span><strong><span>旋转延迟</span></strong><span> + 传输：调度算法优化</span><strong><span>寻道时间</span></strong><span>；交替编号与错位命名优化</span><strong><span>旋转延迟</span></strong><span>——磁头读完一个扇区后需要短暂</span><strong><span>处理时间</span></strong><span>，期间磁盘仍在旋转。</span></p><p><strong><span>(1) 盘面扇区的交替编号</span></strong><span>：若逻辑相邻的块在物理上也相邻（按 0、1、2…连续编号），读完一块后磁头已转过下一块的位置，要等几乎一整圈才能读下一块——读连续逻辑块时旋转延迟很长。改进：把逻辑相邻扇区</span><strong><span>隔一个编号</span></strong><span>（物理排列如 0、2、4、6、1、3、5、7），读连续逻辑块时，处理完一块后磁头</span><strong><span>刚好对准下一块</span></strong><span>，旋转等待最少。</span></p><p><strong><span>(2) 磁盘盘面的错位命名</span></strong><span>：所有盘面</span><strong><span>同步转动</span></strong><span>，同一柱面上逻辑块按盘面号连续存放（0 号盘 0~7 扇区 → 1 号盘 0~7 扇区 → 2 号盘……）。读完 0 号盘 7 号扇区后需要处理时间，此时磁头已</span><strong><span>划过</span></strong><span> 1 号盘 0 号扇区，必须再等一整圈。改进：把</span><strong><span>相邻盘面的扇区错位命名</span></strong><span>（1 号盘 0 号扇区在物理位置上与 0 号盘 0 号扇区错开），处理完 0 号盘 7 号扇区时，磁头</span><strong><span>正好对准</span></strong><span> 1 号盘 0 号扇区。</span></p><blockquote><p><strong><span>考点</span></strong><span>：交替编号（同一盘面扇区间隔编号）与错位命名（相邻盘面错位）都是为抵消&quot;</span><strong><span>读后处理时间</span></strong><span>&quot;造成的</span><strong><span>旋转延迟</span></strong><span>，避免磁头空转等圈。</span></p></blockquote><h4 id='四固态硬盘ssd534）'><span>四、固态硬盘（SSD，5.3.4）</span></h4><p><strong><span>SSD（Solid State Drive，固态硬盘）</span></strong><span>：由</span><strong><span>闪存（Flash）芯片</span></strong><span>阵列构成，没有机械部件。</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>特性</span></th><th style='text-align:left;' ><span>机械磁盘（HDD）</span></th><th style='text-align:left;' ><span>固态硬盘（SSD）</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>机械部件</span></td><td style='text-align:left;' ><span>有（盘片旋转、磁头移动）</span></td><td style='text-align:left;' ><strong><span>无</span></strong></td></tr><tr><td style='text-align:left;' ><span>寻道时间/旋转延迟</span></td><td style='text-align:left;' ><span>有（毫秒级）</span></td><td style='text-align:left;' ><strong><span>没有</span></strong><span>（直接定位）</span></td></tr><tr><td style='text-align:left;' ><span>随机访问</span></td><td style='text-align:left;' ><span>慢（要寻道）</span></td><td style='text-align:left;' ><strong><span>快</span></strong><span>（与顺序访问接近）</span></td></tr><tr><td style='text-align:left;' ><span>写入方式</span></td><td style='text-align:left;' ><span>可原地覆盖写</span></td><td style='text-align:left;' ><strong><span>不能原地写</span></strong><span>：先擦除（以块为单位）再写入（以页为单位）</span></td></tr><tr><td style='text-align:left;' ><span>寿命</span></td><td style='text-align:left;' ><span>长</span></td><td style='text-align:left;' ><span>擦写次数有限（</span><strong><span>磨损均衡</span></strong><span> wear leveling 均摊损耗）</span></td></tr><tr><td style='text-align:left;' ><span>其他</span></td><td style='text-align:left;' ><span>怕震动</span></td><td style='text-align:left;' ><span>抗震、功耗低、静音</span></td></tr></tbody></table></figure><p><strong><span>FTL（闪存转换层，Flash Translation Layer）</span></strong><span>：SSD 固件中的一层，完成</span><strong><span>逻辑块地址 → 物理页</span></strong><span>的映射、垃圾回收（回收无效页所在块）、磨损均衡。</span></p><blockquote><p><strong><span>考点</span></strong><span>：SSD 相比磁盘最大的优势——</span><strong><span>无寻道时间和旋转延迟</span></strong><span>，随机访问性能接近顺序访问；缺点——</span><strong><span>不能原地覆盖写</span></strong><span>（先擦后写）、寿命受擦写次数限制（用磨损均衡解决）。</span></p></blockquote><h4 id='五提高磁盘-io-速度的方法'><span>五、提高磁盘 I/O 速度的方法</span></h4><figure><table><thead><tr><th style='text-align:left;' ><span>方法</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>磁盘高速缓存</span></strong></td><td style='text-align:left;' ><span>内存中暂存磁盘数据副本（见 5.2.2），减少实际访问磁盘的次数</span></td></tr><tr><td style='text-align:left;' ><strong><span>调整磁盘请求顺序</span></strong></td><td style='text-align:left;' ><span>磁盘调度算法（FCFS / SSTF / SCAN…）优化寻道顺序</span></td></tr><tr><td style='text-align:left;' ><strong><span>提前读</span></strong></td><td style='text-align:left;' ><span>读某块时把顺序上可能用到的后续块一并读入（顺序局部性）</span></td></tr><tr><td style='text-align:left;' ><strong><span>延迟写</span></strong></td><td style='text-align:left;' ><span>写操作先在缓存中暂存，推迟真正写盘，可合并多次写</span></td></tr><tr><td style='text-align:left;' ><strong><span>优化物理块的分布</span></strong></td><td style='text-align:left;' ><span>扇区交替编号、盘面错位命名等，减少旋转延迟</span></td></tr><tr><td style='text-align:left;' ><strong><span>虚拟盘（RAM 盘）</span></strong></td><td style='text-align:left;' ><span>用内存模拟磁盘，速度快、无机械延迟，但</span><strong><span>断电数据丢失</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>磁盘阵列 RAID</span></strong></td><td style='text-align:left;' ><span>多块磁盘并行读写 + 冗余（RAID 0 条带提速、RAID 1 镜像、RAID 5 校验）</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：前六种都是</span><strong><span>软件</span></strong><span>手段；RAID 通过</span><strong><span>多盘并行</span></strong><span>提高吞吐、以冗余提高可靠性。&quot;提前读 / 延迟写&quot;都依赖</span><strong><span>磁盘高速缓存</span></strong><span>。</span></p></blockquote><hr /><h3 id='四）本章总结'><span>（四）本章总结</span></h3><p><strong><span>知识结构图</span></strong><span>：</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="" style="break-inside: unset;"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">第五章 输入输出管理</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├─（一）I/O 管理概述（5.1）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 软件层次：用户层 → 设备独立性软件 → 设备驱动程序 → 中断处理程序 → 硬件（驱动唯一直接控制硬件）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 设备分类：块/字符；独占/共享/虚拟（磁盘=块+共享；打印机=字符+独占，可 SPOOLing 虚拟化）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 设备控制器：数据/状态/控制三组寄存器；端口独立编址 / 内存映射 I/O</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 控制方式：程序查询(忙等) → 中断驱动(每字中断) → DMA(每块,不经CPU,干预2次) → 通道(通道程序,干预最少)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; └─ 应用接口：字符(get/put) / 块(read/write) / 网络(socket)；阻塞与非阻塞</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├─（二）设备独立软件（5.2）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 缓冲：单缓冲 max(C,T)+M；双缓冲 max(C,M+T)；循环缓冲、缓冲池；磁盘高速缓存(内存中)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 设备分配：SDT→DCT→COCT→CHCT（设备→控制器→通道三步，忙则 PCB 挂等待队列）；安全/不安全分配；LUT(3项表项,整系统或每用户一张)→设备独立性(同类设备逐台找空闲)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ SPOOLing：输入/输出井(外存) + 缓冲区 + 输入/输出进程；预输入/缓输出；独占→虚拟设备(打印机)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; └─ 设备驱动：统一接口，换设备只换驱动程序</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">└─（三）磁盘和固态硬盘（5.3）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├─ 磁盘结构：盘面/磁道/扇区(512B)/柱面；容量 = 磁头数×磁道数×扇区数×每扇区字节数</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├─ 访问时间 = 寻道(占主导) + 旋转延迟(平均半圈, 7200rpm→4.17ms) + 传输</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├─ 磁盘管理：低级格式化→分区→逻辑格式化；引导块(0号扇区)、坏块处理</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├─ 调度：FCFS / SSTF(可能饥饿) / SCAN / C-SCAN / LOOK / C-LOOK（例题 498/248/250/358/322）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├─ 减少延迟：扇区交替编号、盘面错位命名；提高I/O速度：缓存、调序、提前读、延迟写、优化分布、虚拟盘、RAID</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  └─ SSD：无寻道/旋转延迟、随机访问快、不能原地写(先擦后写)、磨损均衡、FTL</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 461px;"></div><div class="CodeMirror-gutters" style="display: none; height: 461px;"></div></div></div></pre><p><strong><span>高频考点速记</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>考点</span></th><th style='text-align:left;' ><span>一句话记忆</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>I/O 层次</span></td><td style='text-align:left;' ><span>用户层 → 设备独立性 → 驱动程序 → 中断处理 → 硬件</span></td></tr><tr><td style='text-align:left;' ><span>设备驱动程序</span></td><td style='text-align:left;' ><span>唯一直接控制硬件的软件层；换设备只换驱动；属</span><strong><span>内核</span></strong></td></tr><tr><td style='text-align:left;' ><span>设备分类</span></td><td style='text-align:left;' ><strong><span>磁盘=块设备+共享设备</span></strong><span>；打印机=字符设备+独占设备（可 SPOOLing 虚拟化）</span></td></tr><tr><td style='text-align:left;' ><span>设备控制器</span></td><td style='text-align:left;' ><strong><span>数据/状态/控制</span></strong><span>三组寄存器；端口独立编址或内存映射 I/O</span></td></tr><tr><td style='text-align:left;' ><span>程序查询</span></td><td style='text-align:left;' ><span>CPU 忙等轮询，全程参与，利用率最低</span></td></tr><tr><td style='text-align:left;' ><span>中断驱动</span></td><td style='text-align:left;' ><span>每字中断一次（一块 n 次）；数据仍经 CPU 搬运</span></td></tr><tr><td style='text-align:left;' ><span>DMA</span></td><td style='text-align:left;' ><span>数据块不经 CPU；初始化+收尾共 2 次干预</span></td></tr><tr><td style='text-align:left;' ><span>通道</span></td><td style='text-align:left;' ><span>执行通道程序；CPU 只发一条指令；可控制多设备，</span><strong><span>干预最少</span></strong></td></tr><tr><td style='text-align:left;' ><span>缓冲作用</span></td><td style='text-align:left;' ><span>速度匹配、减少中断、提高并行、粒度匹配</span></td></tr><tr><td style='text-align:left;' ><span>单缓冲</span></td><td style='text-align:left;' ><span>每块 = max(C, T) + M（例题 </span><strong><span>110μs</span></strong><span>）</span></td></tr><tr><td style='text-align:left;' ><span>双缓冲</span></td><td style='text-align:left;' ><span>每块 = max(C, M + T)（例题 </span><strong><span>100μs</span></strong><span>）</span></td></tr><tr><td style='text-align:left;' ><span>缓冲易错点</span></td><td style='text-align:left;' ><strong><span>n 块总时间 = 第一块(T+M+C) + (n−1)×每块时间</span></strong></td></tr><tr><td style='text-align:left;' ><span>磁盘高速缓存</span></td><td style='text-align:left;' ><span>内存中存放磁盘数据副本（时间局部性）</span></td></tr><tr><td style='text-align:left;' ><span>设备分配表</span></td><td style='text-align:left;' ><span>SDT→DCT→COCT→CHCT 三步分配（设备→控制器→通道），忙则 PCB 挂等待队列</span></td></tr><tr><td style='text-align:left;' ><span>分配安全性</span></td><td style='text-align:left;' ><span>安全分配：请求即阻塞、串行、不死锁；不安全分配：边运行边等、可能死锁（配银行家算法避免）</span></td></tr><tr><td style='text-align:left;' ><span>设备独立性</span></td><td style='text-align:left;' ><span>逻辑设备名 + LUT（表项含驱动入口）；同类设备从 SDT 逐台找空闲，全忙才挂等待队列</span></td></tr><tr><td style='text-align:left;' ><span>SPOOLing</span></td><td style='text-align:left;' ><span>井(外存)+缓冲区+输入输出进程；预输入、缓输出</span></td></tr><tr><td style='text-align:left;' ><span>SPOOLing 本质</span></td><td style='text-align:left;' ><span>独占设备 → 虚拟设备（共享打印机）；</span><strong><span>逻辑并行、物理排队</span></strong></td></tr><tr><td style='text-align:left;' ><span>磁盘访问时间</span></td><td style='text-align:left;' ><span>寻道 + 旋转延迟(平均半圈) + 传输；寻道占主导</span></td></tr><tr><td style='text-align:left;' ><span>平均旋转延迟</span></td><td style='text-align:left;' ><span>7200rpm → 转一圈 8.33ms → 平均 4.17ms</span></td></tr><tr><td style='text-align:left;' ><span>磁盘管理</span></td><td style='text-align:left;' ><span>低级格式化→分区→逻辑格式化；引导块(0号扇区)、坏块处理</span></td></tr><tr><td style='text-align:left;' ><span>减少延迟时间</span></td><td style='text-align:left;' ><span>扇区交替编号、盘面错位命名——抵消&quot;读后处理时间&quot;的旋转等待</span></td></tr><tr><td style='text-align:left;' ><span>提高磁盘 I/O 速度</span></td><td style='text-align:left;' ><span>缓存、调序、提前读、延迟写、优化分布、虚拟盘、RAID</span></td></tr><tr><td style='text-align:left;' ><span>FCFS</span></td><td style='text-align:left;' ><span>按到达顺序，简单公平但效率低</span></td></tr><tr><td style='text-align:left;' ><span>SSTF</span></td><td style='text-align:left;' ><strong><span>贪心(本次最优)</span></strong><span>，总寻道最短；可能饥饿</span></td></tr><tr><td style='text-align:left;' ><span>SCAN</span></td><td style='text-align:left;' ><span>电梯算法：单向到端点再反向，无饥饿；实际系统</span><strong><span>最常用</span></strong></td></tr><tr><td style='text-align:left;' ><span>C-SCAN</span></td><td style='text-align:left;' ><span>单向服务 + 回卷，等待时间均匀</span></td></tr><tr><td style='text-align:left;' ><span>LOOK/C-LOOK</span></td><td style='text-align:left;' ><span>不到端点，到最远请求即转向/回卷</span></td></tr><tr><td style='text-align:left;' ><span>调度易错点</span></td><td style='text-align:left;' ><span>SCAN 沿当前方向先服务途中请求，</span><strong><span>不能中途转向</span></strong><span>；例题 498/248/250/358/322</span></td></tr><tr><td style='text-align:left;' ><span>SSD 优势</span></td><td style='text-align:left;' ><span>无寻道/旋转延迟，随机访问快</span></td></tr><tr><td style='text-align:left;' ><span>SSD 劣势</span></td><td style='text-align:left;' ><span>不能原地写（先擦后写）、寿命有限</span></td></tr><tr><td style='text-align:left;' ><span>磨损均衡</span></td><td style='text-align:left;' ><span>均摊擦写次数，延长 SSD 寿命</span></td></tr><tr><td style='text-align:left;' ><span>阻塞 vs 非阻塞</span></td><td style='text-align:left;' ><span>阻塞挂起等待；非阻塞立即返回</span></td></tr></tbody></table></figure></div></div>
+
+</main>
+<aside class="nav-toc">
+<div class="toc-label">目录</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#一）io-管理概述"><span class="toc-toggle">▼</span>（一）I/O 管理概述</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一io-设备的基本概念与分类511）">一、I/O 设备的基本概念与分类（5.1.1）</a>
+<a class="toc-h4" href="#二io-控制方式512）重点）">二、I/O 控制方式（5.1.2）（重点）</a>
+<a class="toc-h4" href="#三io-软件的层次结构513）">三、I/O 软件的层次结构（5.1.3）</a>
+<a class="toc-h4" href="#四应用程序-io-接口514）">四、应用程序 I/O 接口（5.1.4）</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#二）设备独立软件"><span class="toc-toggle">▼</span>（二）设备独立软件</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一设备独立性软件521）">一、设备独立性软件（5.2.1）</a>
+<a class="toc-h4" href="#二高速缓存与缓冲区522）重点）">二、高速缓存与缓冲区（5.2.2）（重点）</a>
+<a class="toc-h4" href="#二设备分配与回收523）">二、设备分配与回收（5.2.3）</a>
+<a class="toc-h4" href="#三假脱机技术spooling524）重点）">三、假脱机技术（SPOOLing，5.2.4）（重点）</a>
+<a class="toc-h4" href="#四设备驱动程序接口525）">四、设备驱动程序接口（5.2.5）</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#三）磁盘和固态硬盘"><span class="toc-toggle">▼</span>（三）磁盘和固态硬盘</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一磁盘结构531）">一、磁盘结构（5.3.1）</a>
+<a class="toc-h4" href="#二磁盘的管理532）">二、磁盘的管理（5.3.2）</a>
+<a class="toc-h4" href="#三磁盘调度算法533）重点）">三、磁盘调度算法（5.3.3）（重点）</a>
+<a class="toc-h4" href="#四固态硬盘ssd534）">四、固态硬盘（SSD，5.3.4）</a>
+<a class="toc-h4" href="#五提高磁盘-io-速度的方法">五、提高磁盘 I/O 速度的方法</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#四）本章总结">（四）本章总结</a>
+</div>
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle (state persisted per page — survives refresh)
+  var tocKey = 'tocState_' + location.pathname;
+  function saveTocState() {
+    var collapsed = [], expanded = [];
+    document.querySelectorAll('.toc-section').forEach(function(sec){
+      var a = sec.querySelector('a');
+      if (!a) return;
+      (sec.classList.contains('collapsed') ? collapsed : expanded).push(a.getAttribute('href'));
+    });
+    try { localStorage.setItem(tocKey, JSON.stringify({collapsed: collapsed, expanded: expanded})); } catch(e) {}
+  }
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+      saveTocState();
+    });
+  });
+  // Restore saved state on load
+  try {
+    var saved = JSON.parse(localStorage.getItem(tocKey) || 'null');
+    if (saved) {
+      document.querySelectorAll('.toc-section').forEach(function(sec){
+        var a = sec.querySelector('a');
+        if (!a) return;
+        if (saved.collapsed.indexOf(a.getAttribute('href')) !== -1) sec.classList.add('collapsed');
+        if (saved.expanded.indexOf(a.getAttribute('href')) !== -1) sec.classList.remove('collapsed');
+      });
+    }
+  } catch(e) {}
+
+  // Right TOC scroll position persistence (survives refresh)
+  var tocPanel = document.querySelector('.nav-toc');
+  if (tocPanel) {
+    var tocScrollKey = 'tocScroll_' + location.pathname;
+    try {
+      var savedTop = parseInt(localStorage.getItem(tocScrollKey) || '0', 10);
+      if (savedTop > 0) tocPanel.scrollTop = savedTop;
+    } catch(e) {}
+    var saveTimer = null;
+    tocPanel.addEventListener('scroll', function(){
+      if (saveTimer) return;
+      saveTimer = setTimeout(function(){
+        saveTimer = null;
+        try { localStorage.setItem(tocScrollKey, String(tocPanel.scrollTop)); } catch(e) {}
+      }, 150);
+    });
+    window.addEventListener('beforeunload', function(){
+      try { localStorage.setItem(tocScrollKey, String(tocPanel.scrollTop)); } catch(e) {}
+    });
+  }
+
+  // Left sidebar scroll position persistence — global key, shared across
+  // all pages (the nav tree is the same on every page), so switching notes
+  // keeps the sidebar where you left it
+  var sidePanel = document.querySelector('.nav-sidebar');
+  if (sidePanel) {
+    var sideScrollKey = 'sideScroll_global';
+    try {
+      var savedSideTop = parseInt(localStorage.getItem(sideScrollKey) || '0', 10);
+      if (savedSideTop > 0) sidePanel.scrollTop = savedSideTop;
+    } catch(e) {}
+    var sideSaveTimer = null;
+    sidePanel.addEventListener('scroll', function(){
+      if (sideSaveTimer) return;
+      sideSaveTimer = setTimeout(function(){
+        sideSaveTimer = null;
+        try { localStorage.setItem(sideScrollKey, String(sidePanel.scrollTop)); } catch(e) {}
+      }, 150);
+    });
+    window.addEventListener('beforeunload', function(){
+      try { localStorage.setItem(sideScrollKey, String(sidePanel.scrollTop)); } catch(e) {}
+    });
+  }
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+<script>var SEARCH_BASE = "../../../search/";</script>
+<script src="../../../search.js?v=4" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ var e=new SearchEngine(),u=new SearchUI(e);
+ u.init();
+});
+</script>
+</body>
+</html>
