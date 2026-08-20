@@ -33,6 +33,7 @@ jobs:
           done
           cp index.html _site/ 2>/dev/null || true
           cp search.js _site/ 2>/dev/null || true
+          cp zoom.js _site/ 2>/dev/null || true
           cp search-results.html _site/ 2>/dev/null || true
           if [ -d "search" ]; then cp -r search _site/; fi
           touch _site/.nojekyll

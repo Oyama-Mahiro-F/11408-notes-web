@@ -151,6 +151,23 @@ SHELL_CSS = """
   .nav-search-input:focus { width: 150px; }
   .search-dropdown { left: 8px !important; right: 8px !important; max-width: none !important; }
 }
+
+/* ── Lightbox: 点击图片放大查看（配合 zoom.js）── */
+.dsz-lock { overflow: hidden !important; }
+#app-shell .nav-content img { cursor: zoom-in; }
+.dsz-overlay { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.88); align-items: center; justify-content: center; }
+.dsz-overlay.dsz-on { display: flex; }
+.dsz-stage { position: absolute; inset: 0; overflow: hidden; }
+.dsz-img { position: absolute; cursor: grab; user-select: none; -webkit-user-select: none; max-width: none !important; z-index: 1; transition: opacity 0.15s; }
+.dsz-img:active { cursor: grabbing; }
+.dsz-btn { position: absolute; z-index: 5; border: none; background: rgba(255,255,255,0.12); color: #fff; font-size: 1.5rem; line-height: 1; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.dsz-btn:hover { background: rgba(255,255,255,0.28); }
+.dsz-close { top: 16px; right: 16px; font-size: 1.1rem; }
+.dsz-prev { left: 16px; top: 50%; transform: translateY(-50%); }
+.dsz-next { right: 16px; top: 50%; transform: translateY(-50%); }
+.dsz-counter { position: absolute; left: 18px; bottom: 16px; color: rgba(255,255,255,0.72); font-size: 0.85rem; z-index: 5; font-variant-numeric: tabular-nums; user-select: none; }
+.dsz-caption { position: absolute; left: 50%; transform: translateX(-50%); bottom: 16px; max-width: 70%; text-align: center; color: rgba(255,255,255,0.85); font-size: 0.9rem; z-index: 5; pointer-events: none; }
+.dsz-hint { position: absolute; right: 18px; bottom: 16px; color: rgba(255,255,255,0.45); font-size: 0.75rem; z-index: 5; pointer-events: none; user-select: none; }
 </style>
 """
 
@@ -478,6 +495,7 @@ def add_nav(filepath):
     up = '../' * depth if depth > 0 else ''
     search_js = '../' * depth + 'search.js?v=4' if depth > 0 else 'search.js?v=4'
     search_base = '../' * depth + 'search/' if depth > 0 else 'search/'
+    zoom_js = '../' * depth + 'zoom.js?v=2' if depth > 0 else 'zoom.js?v=2'
     tabs = (
         f'<a class="tab" href="{home_base}">首页</a>'
         f'<a class="tab{" active" if active_tab == "408" else ""}" href="{up}408/">408</a>'
@@ -567,6 +585,7 @@ def add_nav(filepath):
 {shell}
 <script>var SEARCH_BASE = "{search_base}";</script>
 <script src="{search_js}" defer></script>
+<script src="{zoom_js}" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){{
  var e=new SearchEngine(),u=new SearchUI(e);
@@ -590,6 +609,7 @@ def gen_section_index(dirpath, title, children, depth):
     up = '../' * depth if depth > 0 else ''
     search_js = '../' * depth + 'search.js?v=4' if depth > 0 else 'search.js?v=4'
     search_base = '../' * depth + 'search/' if depth > 0 else 'search/'
+    zoom_js = '../' * depth + 'zoom.js?v=2' if depth > 0 else 'zoom.js?v=2'
     index_rel = os.path.relpath(dirpath, site_root).replace('\\', '/') + '/index.html'
     if index_rel == './index.html':
         index_rel = 'index.html'
@@ -703,6 +723,7 @@ def gen_section_index(dirpath, title, children, depth):
 {SHELL_JS}
 <script>var SEARCH_BASE = "{search_base}";</script>
 <script src="{search_js}" defer></script>
+<script src="{zoom_js}" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded',function(){{
  var e=new SearchEngine(),u=new SearchUI(e);
