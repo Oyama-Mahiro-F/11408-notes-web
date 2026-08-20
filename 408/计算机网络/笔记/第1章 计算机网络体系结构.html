@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+
+<link href='https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; --title-bar-height:20px; }
+.mac-os-11 { --title-bar-height:28px; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0; padding: 0; height: auto; inset: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; tab-size: 4; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 36px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+.typora-export .task-list-item input { pointer-events: none; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; image-orientation: from-image; }
+button, input, select, textarea { color: inherit; font: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p { position: relative; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 4; }
+p { orphans: 4; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror-linenumber { user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-fences-adv-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li blockquote { margin: 1rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; font-variant-ligatures: no-common-ligatures; }
+  #write { margin-top: 0px; padding-top: 0px; border-color: transparent !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  .typora-export #write { break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+  .is-mac table { break-inside: avoid; }
+  .typora-export-show-outline .typora-export-sidebar { display: none; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+#write.first-line-indent p > .md-image:only-child:not(.md-img-error) img { left: -2em; position: relative; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+.MathJax_ref { fill: currentcolor; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.6; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+.md-expand mark .md-meta { opacity: 0.3 !important; }
+mark .md-meta { color: rgb(0, 0, 0); }
+@media print {
+  .typora-export h1, .typora-export h2, .typora-export h3, .typora-export h4, .typora-export h5, .typora-export h6 { break-inside: avoid; }
+}
+.md-diagram-panel .messageText { stroke: none !important; }
+.md-diagram-panel .start-state { fill: var(--node-fill); }
+.md-diagram-panel .edgeLabel rect { opacity: 1 !important; }
+.md-fences.md-fences-math { font-size: 1em; }
+.md-fences-advanced:not(.md-focus) { padding: 0px; white-space: nowrap; border: 0px; }
+.md-fences-advanced:not(.md-focus) { background: inherit; }
+.typora-export-show-outline .typora-export-content { max-width: 1440px; margin: auto; display: flex; flex-direction: row; }
+.typora-export-sidebar { width: 300px; font-size: 0.8rem; margin-top: 80px; margin-right: 18px; }
+.typora-export-show-outline #write { --webkit-flex:2; flex: 2 1 0%; }
+.typora-export-sidebar .outline-content { position: fixed; top: 0px; max-height: 100%; overflow: hidden auto; padding-bottom: 30px; padding-top: 60px; width: 300px; }
+@media screen and (max-width: 1024px) {
+  .typora-export-sidebar, .typora-export-sidebar .outline-content { width: 240px; }
+}
+@media screen and (max-width: 800px) {
+  .typora-export-sidebar { display: none; }
+}
+.outline-content li, .outline-content ul { margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; list-style: none; }
+.outline-content ul { margin-top: 0px; margin-bottom: 0px; }
+.outline-content strong { font-weight: 400; }
+.outline-expander { width: 1rem; height: 1.42857rem; position: relative; display: table-cell; vertical-align: middle; cursor: pointer; padding-left: 4px; }
+.outline-expander::before { content: ""; position: relative; font-family: Ionicons; display: inline-block; font-size: 8px; vertical-align: middle; }
+.outline-item { padding-top: 3px; padding-bottom: 3px; cursor: pointer; }
+.outline-expander:hover::before { content: ""; }
+.outline-h1 > .outline-item { padding-left: 0px; }
+.outline-h2 > .outline-item { padding-left: 1em; }
+.outline-h3 > .outline-item { padding-left: 2em; }
+.outline-h4 > .outline-item { padding-left: 3em; }
+.outline-h5 > .outline-item { padding-left: 4em; }
+.outline-h6 > .outline-item { padding-left: 5em; }
+.outline-label { cursor: pointer; display: table-cell; vertical-align: middle; text-decoration: none; color: inherit; }
+.outline-label:hover { text-decoration: underline; }
+.outline-item:hover { border-color: rgb(245, 245, 245); background-color: var(--item-hover-bg-color); }
+.outline-item:hover { margin-left: -28px; margin-right: -28px; border-left: 28px solid transparent; border-right: 28px solid transparent; }
+.outline-item-single .outline-expander::before, .outline-item-single .outline-expander:hover::before { display: none; }
+.outline-item-open > .outline-item > .outline-expander::before { content: ""; }
+.outline-children { display: none; }
+.info-panel-tab-wrapper { display: none; }
+.outline-item-open > .outline-children { display: block; }
+.typora-export .outline-item { padding-top: 1px; padding-bottom: 1px; }
+.typora-export .outline-item:hover { margin-right: -8px; border-right: 8px solid transparent; }
+.typora-export .outline-expander::before { content: "+"; font-family: inherit; top: -1px; }
+.typora-export .outline-expander:hover::before, .typora-export .outline-item-open > .outline-item > .outline-expander::before { content: "−"; }
+.typora-export-collapse-outline .outline-children { display: none; }
+.typora-export-collapse-outline .outline-item-open > .outline-children, .typora-export-no-collapse-outline .outline-children { display: block; }
+.typora-export-no-collapse-outline .outline-expander::before { content: "" !important; }
+.typora-export-show-outline .outline-item-active > .outline-item .outline-label { font-weight: 700; }
+.md-inline-math-container mjx-container { zoom: 0.95; }
+
+
+.CodeMirror { height: auto; }
+.CodeMirror.cm-s-inner { background: inherit; }
+.CodeMirror-scroll { overflow: auto hidden; z-index: 3; }
+.CodeMirror-gutter-filler, .CodeMirror-scrollbar-filler { background-color: rgb(255, 255, 255); }
+.CodeMirror-gutters { border-right: 1px solid rgb(221, 221, 221); background: inherit; white-space: nowrap; }
+.CodeMirror-linenumber { padding: 0px 3px 0px 5px; text-align: right; color: rgb(153, 153, 153); }
+.cm-s-inner .cm-keyword { color: rgb(119, 0, 136); }
+.cm-s-inner .cm-atom, .cm-s-inner.cm-atom { color: rgb(34, 17, 153); }
+.cm-s-inner .cm-number { color: rgb(17, 102, 68); }
+.cm-s-inner .cm-def { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-variable { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-variable-2 { color: rgb(0, 85, 170); }
+.cm-s-inner .cm-variable-3 { color: rgb(0, 136, 85); }
+.cm-s-inner .cm-string { color: rgb(170, 17, 17); }
+.cm-s-inner .cm-property { color: rgb(0, 0, 0); }
+.cm-s-inner .cm-operator { color: rgb(152, 26, 26); }
+.cm-s-inner .cm-comment, .cm-s-inner.cm-comment { color: rgb(170, 85, 0); }
+.cm-s-inner .cm-string-2 { color: rgb(255, 85, 0); }
+.cm-s-inner .cm-meta { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-qualifier { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-builtin { color: rgb(51, 0, 170); }
+.cm-s-inner .cm-bracket { color: rgb(153, 153, 119); }
+.cm-s-inner .cm-tag { color: rgb(17, 119, 0); }
+.cm-s-inner .cm-attribute { color: rgb(0, 0, 204); }
+.cm-s-inner .cm-header, .cm-s-inner.cm-header { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-quote, .cm-s-inner.cm-quote { color: rgb(0, 153, 0); }
+.cm-s-inner .cm-hr, .cm-s-inner.cm-hr { color: rgb(153, 153, 153); }
+.cm-s-inner .cm-link, .cm-s-inner.cm-link { color: rgb(0, 0, 204); }
+.cm-negative { color: rgb(221, 68, 68); }
+.cm-positive { color: rgb(34, 153, 34); }
+.cm-header, .cm-strong { font-weight: 700; }
+.cm-del { text-decoration: line-through; }
+.cm-em { font-style: italic; }
+.cm-link { text-decoration: underline; }
+.cm-error { color: red; }
+.cm-invalidchar { color: red; }
+.cm-constant { color: rgb(38, 139, 210); }
+.cm-defined { color: rgb(181, 137, 0); }
+div.CodeMirror span.CodeMirror-matchingbracket { color: rgb(0, 255, 0); }
+div.CodeMirror span.CodeMirror-nonmatchingbracket { color: rgb(255, 34, 34); }
+.cm-s-inner .CodeMirror-activeline-background { background: inherit; }
+.CodeMirror { position: relative; overflow: hidden; }
+.CodeMirror-scroll { height: 100%; outline: 0px; position: relative; box-sizing: content-box; background: inherit; }
+.CodeMirror-sizer { position: relative; }
+.CodeMirror-gutter-filler, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-vscrollbar { position: absolute; z-index: 6; display: none; outline: 0px; }
+.CodeMirror-vscrollbar { right: 0px; top: 0px; overflow: hidden; }
+.CodeMirror-hscrollbar { bottom: 0px; left: 0px; overflow: auto hidden; }
+.CodeMirror-scrollbar-filler { right: 0px; bottom: 0px; }
+.CodeMirror-gutter-filler { left: 0px; bottom: 0px; }
+.CodeMirror-gutters { position: absolute; left: 0px; top: 0px; padding-bottom: 10px; z-index: 3; overflow-y: hidden; }
+.CodeMirror-gutter { white-space: normal; height: 100%; box-sizing: content-box; padding-bottom: 30px; margin-bottom: -32px; display: inline-block; }
+.CodeMirror-gutter-wrapper { position: absolute; z-index: 4; background: 0px 0px !important; border: none !important; }
+.CodeMirror-gutter-background { position: absolute; top: 0px; bottom: 0px; z-index: 4; }
+.CodeMirror-gutter-elt { position: absolute; cursor: default; z-index: 4; }
+.CodeMirror-lines { cursor: text; }
+.CodeMirror pre { border-radius: 0px; border-width: 0px; background: 0px 0px; font-family: inherit; font-size: inherit; margin: 0px; white-space: pre; overflow-wrap: normal; color: inherit; z-index: 2; position: relative; overflow: visible; }
+.CodeMirror-wrap pre { overflow-wrap: break-word; white-space: pre-wrap; word-break: normal; }
+.CodeMirror-code pre { border-right: 30px solid transparent; width: fit-content; }
+.CodeMirror-wrap .CodeMirror-code pre { border-right: none; width: auto; }
+.CodeMirror-linebackground { position: absolute; inset: 0px; z-index: 0; }
+.CodeMirror-linewidget { position: relative; z-index: 2; overflow: auto; }
+.CodeMirror-wrap .CodeMirror-scroll { overflow-x: hidden; }
+.CodeMirror-measure { position: absolute; width: 100%; height: 0px; overflow: hidden; visibility: hidden; }
+.CodeMirror-measure pre { position: static; }
+.CodeMirror div.CodeMirror-cursor { position: absolute; visibility: hidden; border-right: none; width: 0px; }
+.CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+.CodeMirror-focused div.CodeMirror-cursor { visibility: inherit; }
+.cm-searching { background: rgba(255, 255, 0, 0.4); }
+span.cm-underlined { text-decoration: underline; }
+span.cm-strikethrough { text-decoration: line-through; }
+.cm-tw-syntaxerror { color: rgb(255, 255, 255); background-color: rgb(153, 0, 0); }
+.cm-tw-deleted { text-decoration: line-through; }
+.cm-tw-header5 { font-weight: 700; }
+.cm-tw-listitem:first-child { padding-left: 10px; }
+.cm-tw-box { border-style: solid; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-color: inherit; border-top-width: 0px !important; }
+.cm-tw-underline { text-decoration: underline; }
+@media print {
+  .CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+}
+
+
+:root {
+    --side-bar-bg-color: #fafafa;
+    --control-text-color: #777;
+}
+
+@include-when-export url(https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext);
+
+/* open-sans-regular - latin-ext_latin */
+  /* open-sans-italic - latin-ext_latin */
+    /* open-sans-700 - latin-ext_latin */
+    /* open-sans-700italic - latin-ext_latin */
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    font-family: "Open Sans","Clear Sans", "Helvetica Neue", Helvetica, Arial, 'Segoe UI Emoji', sans-serif;
+    color: rgb(51, 51, 51);
+    line-height: 1.6;
+}
+
+#write {
+    max-width: 860px;
+  	margin: 0 auto;
+  	padding: 30px;
+    padding-bottom: 100px;
+}
+
+@media only screen and (min-width: 1400px) {
+	#write {
+		max-width: 1024px;
+	}
+}
+
+@media only screen and (min-width: 1800px) {
+	#write {
+		max-width: 1200px;
+	}
+}
+
+#write > ul:first-child,
+#write > ol:first-child{
+    margin-top: 30px;
+}
+
+a {
+    color: #4183C4;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+    text-decoration: none;
+}
+h1 tt,
+h1 code {
+    font-size: inherit;
+}
+h2 tt,
+h2 code {
+    font-size: inherit;
+}
+h3 tt,
+h3 code {
+    font-size: inherit;
+}
+h4 tt,
+h4 code {
+    font-size: inherit;
+}
+h5 tt,
+h5 code {
+    font-size: inherit;
+}
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+h1 {
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+h2 {
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+
+/*@media print {
+    .typora-export h1,
+    .typora-export h2 {
+        border-bottom: none;
+        padding-bottom: initial;
+    }
+
+    .typora-export h1::after,
+    .typora-export h2::after {
+        content: "";
+        display: block;
+        height: 100px;
+        margin-top: -96px;
+        border-top: 1px solid #eee;
+    }
+}*/
+
+h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+h4 {
+    font-size: 1.25em;
+}
+h5 {
+    font-size: 1em;
+}
+h6 {
+   font-size: 1em;
+    color: #777;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table{
+    margin: 0.8em 0;
+}
+li>ol,
+li>ul {
+    margin: 0 0;
+}
+hr {
+    height: 2px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+}
+
+li p.first {
+    display: inline-block;
+}
+ul,
+ol {
+    padding-left: 30px;
+}
+ul:first-child,
+ol:first-child {
+    margin-top: 0;
+}
+ul:last-child,
+ol:last-child {
+    margin-bottom: 0;
+}
+blockquote {
+    border-left: 4px solid #dfe2e5;
+    padding: 0 15px;
+    color: #777777;
+}
+blockquote blockquote {
+    padding-right: 0;
+}
+table {
+    padding: 0;
+    word-break: initial;
+}
+table tr {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 0;
+}
+table tr:nth-child(2n),
+thead {
+    background-color: #f8f8f8;
+}
+table th {
+    font-weight: bold;
+    border: 1px solid #dfe2e5;
+    border-bottom: 0;
+    margin: 0;
+    padding: 6px 13px;
+}
+table td {
+    border: 1px solid #dfe2e5;
+    margin: 0;
+    padding: 6px 13px;
+}
+table th:first-child,
+table td:first-child {
+    margin-top: 0;
+}
+table th:last-child,
+table td:last-child {
+    margin-bottom: 0;
+}
+
+.CodeMirror-lines {
+    padding-left: 4px;
+}
+
+.code-tooltip {
+    box-shadow: 0 1px 1px 0 rgba(0,28,36,.3);
+    border-top: 1px solid #eef2f2;
+}
+
+.md-fences,
+code,
+tt {
+    border: 1px solid #e7eaed;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 0;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+}
+
+code {
+    background-color: #f3f4f4;
+    padding: 0 2px 0 2px;
+}
+
+.md-fences {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+
+
+.md-task-list-item > input {
+  margin-left: -1.3em;
+}
+
+@media print {
+    html {
+        font-size: 13px;
+    }
+    table,
+    pre {
+        page-break-inside: avoid;
+    }
+    pre {
+        word-wrap: break-word;
+    }
+}
+
+.md-fences {
+	background-color: #f8f8f8;
+}
+#write pre.md-meta-block {
+	padding: 1rem;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border: 0;
+    border-radius: 3px;
+    color: #777777;
+    margin-top: 0 !important;
+}
+
+.mathjax-block>.code-tooltip {
+	bottom: .375rem;
+}
+
+.md-mathjax-midline {
+    background: #fafafa;
+}
+
+#write>h3.md-focus:before{
+	left: -1.5625rem;
+	top: .375rem;
+}
+#write>h4.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h5.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h6.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+.md-image>.md-meta {
+    /*border: 1px solid #ddd;*/
+    border-radius: 3px;
+    padding: 2px 0px 0px 4px;
+    font-size: 0.9em;
+    color: inherit;
+}
+
+.md-tag {
+    color: #a7a7a7;
+    opacity: 1;
+}
+
+.md-toc { 
+    margin-top:20px;
+    padding-bottom:20px;
+}
+
+.sidebar-tabs {
+    border-bottom: none;
+}
+
+#typora-quick-open {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+    background-color: #FAFAFA;
+    border-color: #FEFEFE #e5e5e5 #e5e5e5 #eee;
+    border-style: solid;
+    border-width: 1px;
+}
+
+/** focus mode */
+.on-focus-mode blockquote {
+    border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+header, .context-menu, .megamenu-content, footer{
+    font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+.file-node-content:hover .file-node-icon,
+.file-node-content:hover .file-node-open-state{
+    visibility: visible;
+}
+
+.mac-seamless-mode #typora-sidebar {
+    background-color: #fafafa;
+    background-color: var(--side-bar-bg-color);
+}
+
+.md-lang {
+    color: #b4654d;
+}
+
+/*.html-for-mac {
+    --item-hover-bg-color: #E6F0FE;
+}*/
+
+#md-notification .btn {
+    border: 0;
+}
+
+.dropdown-menu .divider {
+    border-color: #e5e5e5;
+    opacity: 0.4;
+}
+
+.ty-preferences .window-content {
+    background-color: #fafafa;
+}
+
+.ty-preferences .nav-group-item.active {
+    color: white;
+    background: #999;
+}
+
+.menu-item-container a.menu-style-btn {
+    background-color: #f5f8fa;
+    background-image: linear-gradient( 180deg , hsla(0, 0%, 100%, 0.8), hsla(0, 0%, 100%, 0)); 
+}
+
+
+
+mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+  min-height: 1px;
+  min-width: 1px;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line], svg[data-table] > g > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame], svg[data-table] > g > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed, svg[data-table] > g > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted, svg[data-table] > g > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > g > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
+  stroke-width: 3;
+}
+
+g[data-mml-node="xypic"] path {
+  stroke-width: inherit;
+}
+
+.MathJax g[data-mml-node="xypic"] path {
+  stroke-width: inherit;
+}
+mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
+							stroke-width: 0;
+						}
+</style><title>第1章 计算机网络体系结构</title>
+
+</head>
+<body>
+<!-- NAV_SHELL_START -->
+
+<style id="nav-shell-css">
+:root { --header-h: 48px; --sidebar-w: 250px; --toc-w: 200px; --accent: #3f51b5; --accent-light: #e8eaf6; }
+#app-shell { display: flex; flex-direction: column; height: 100vh; }
+#app-shell * { box-sizing: border-box; }
+/* Preserve CodeMirror layout (overrides box-sizing: border-box) */
+#app-shell .CodeMirror,
+#app-shell .CodeMirror * { box-sizing: content-box; }
+
+.nav-header { height: var(--header-h); background: var(--accent); color: #fff; display: flex; align-items: center; padding: 0 16px; flex-shrink: 0; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+.nav-header .logo { font-weight: 700; font-size: 1rem; margin-right: 20px; }
+.nav-header a.tab { color: rgba(255,255,255,0.75); text-decoration: none; padding: 0 18px; font-size: 0.9rem; height: 100%; display: flex; align-items: center; border-bottom: 3px solid transparent; }
+.nav-header a.tab:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav-header a.tab.active { color: #fff; border-bottom-color: #fff; font-weight: 600; }
+
+.nav-body { display: flex; flex: 1; margin-top: var(--header-h); height: calc(100vh - var(--header-h)); }
+
+.nav-sidebar { width: var(--sidebar-w); background: #fafafa; border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 8px 0; }
+.nav-sidebar .nav-section > a { font-weight: 600; color: #333; }
+.nav-sidebar a { display: flex; align-items: center; padding: 5px 12px; color: #555; text-decoration: none; font-size: 0.85rem; border-left: 3px solid transparent; }
+.nav-sidebar a:hover { background: var(--accent-light); color: #333; }
+.nav-sidebar a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 600; }
+.nav-sidebar a.l2 { padding-left: 24px; font-size: 0.82rem; }
+.nav-sidebar a.l3 { padding-left: 40px; font-size: 0.8rem; }
+.nav-sidebar .nav-toggle { font-size: 0.6rem; margin-right: 4px; min-width: 12px; text-align: center; cursor: pointer; user-select: none; }
+.nav-sidebar .nav-section.collapsed > .nav-children { display: none; }
+.nav-sidebar .nav-section.collapsed > a .nav-toggle { transform: rotate(-90deg); }
+
+.nav-content { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.nav-content #write { margin: 0 auto; max-width: 800px; }
+
+.nav-toc { width: var(--toc-w); border-left: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0; padding: 16px 12px; font-size: 0.82rem; background: #fafafa; }
+.nav-toc .toc-label { font-size: 0.75rem; color: #999; font-weight: 600; margin-bottom: 8px; }
+.nav-toc a { display: flex; align-items: center; color: #666; text-decoration: none; padding: 3px 0 3px 8px; border-left: 2px solid transparent; }
+.nav-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+.nav-toc a.toc-h4 { padding-left: 20px; font-size: 0.78rem; }
+.nav-toc .toc-toggle { font-size: 0.55rem; margin-right: 4px; min-width: 10px; cursor: pointer; user-select: none; transition: transform 0.15s; }
+.nav-toc .toc-section.collapsed .toc-toggle { transform: rotate(-90deg); }
+.nav-toc .toc-section:not(.collapsed) .toc-toggle { transform: rotate(0deg); }
+.nav-toc .toc-section.collapsed .toc-children { display: none; }
+
+/* hide old TOC */
+.content .toc, #write > .toc, .toc { display: none !important; }
+
+.nav-hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 4px 6px; margin-right: 10px; }
+@media (max-width: 900px) {
+  .nav-hamburger { display: block; }
+  .nav-sidebar { position: fixed; top: var(--header-h); left: 0; bottom: 0; z-index: 90; transform: translateX(-100%); transition: transform 0.2s; }
+  .nav-sidebar.open { transform: translateX(0); box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+  .nav-toc { display: none; }
+}
+
+/* ── Search ──────────────────────────────────── */
+.nav-search-wrap { display: flex; align-items: center; margin-left: auto; position: relative; }
+.nav-search-icon { color: rgba(255,255,255,0.75); cursor: pointer; font-size: 1rem; padding: 4px 8px; border-radius: 4px; user-select: none; }
+.nav-search-icon:hover { color: #fff; background: rgba(255,255,255,0.12); }
+.nav-search-input-wrap { display: flex; align-items: center; }
+.nav-search-input { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; width: 180px; outline: none; transition: width 0.2s; }
+.nav-search-input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.5); width: 220px; }
+.nav-search-input::placeholder { color: rgba(255,255,255,0.5); }
+
+/* Home search */
+.home-search-wrap { margin-bottom: 24px; position: relative; }
+.home-search-box { display: flex; align-items: center; background: #fff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 0 16px; max-width: 440px; margin: 0 auto; transition: border-color 0.2s; }
+.home-search-box:focus-within { border-color: var(--accent); box-shadow: 0 2px 12px rgba(63,81,181,0.12); }
+.home-search-icon { font-size: 1.1rem; margin-right: 8px; color: #999; flex-shrink: 0; }
+.home-search-input { flex: 1; border: none; outline: none; font-size: 0.95rem; padding: 12px 0; color: #333; background: transparent; }
+.home-search-input::placeholder { color: #aaa; }
+.home-search-wrap .search-dropdown-list { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); z-index: 200; width: 100%; max-width: 440px; }
+
+/* Dropdown panel */
+.search-dropdown { position: fixed; z-index: 300; background: #fff; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; overflow: hidden; min-width: 260px; }
+.search-dropdown-list { max-height: 400px; overflow-y: auto; }
+.search-dropdown-item { display: block; padding: 12px 16px; text-decoration: none; color: inherit; border-bottom: 1px solid #f0f0f0; transition: background 0.1s; }
+.search-dropdown-item:last-of-type { border-bottom: none; }
+.search-dropdown-item:hover { background: var(--accent-light); }
+.search-dropdown-title { display: block; font-weight: 600; font-size: 0.92rem; color: #222; margin-bottom: 2px; }
+.search-dropdown-title mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-dropdown-meta { display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px; }
+.search-dropdown-snippet { display: block; font-size: 0.8rem; color: #777; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.search-dropdown-snippet mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-dropdown-empty { padding: 20px 16px; text-align: center; color: #999; font-size: 0.9rem; }
+.search-dropdown-more { display: block; padding: 10px 16px; text-align: center; color: var(--accent); font-size: 0.85rem; text-decoration: none; border-top: 1px solid #f0f0f0; font-weight: 500; }
+.search-dropdown-more:hover { background: var(--accent-light); }
+
+/* Results page */
+.search-results-summary { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 32px; }
+.search-result-item { padding: 20px 0; border-bottom: 1px solid #eee; }
+.search-result-title { font-size: 1.1rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+.search-result-title:hover { text-decoration: underline; }
+.search-result-title mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+.search-result-meta { font-size: 0.8rem; color: #999; margin: 4px 0 8px; display: flex; gap: 12px; align-items: center; }
+.search-result-subject { background: var(--accent-light); color: var(--accent); padding: 1px 8px; border-radius: 8px; font-size: 0.72rem; font-weight: 500; }
+.search-result-snippet { font-size: 0.88rem; color: #555; line-height: 1.6; }
+.search-result-snippet mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
+
+@media (max-width: 600px) {
+  .nav-search-input { width: 120px; }
+  .nav-search-input:focus { width: 150px; }
+  .search-dropdown { left: 8px !important; right: 8px !important; max-width: none !important; }
+}
+</style>
+
+<div id="app-shell">
+<div class="nav-header">
+<button class="nav-hamburger">&#9776;</button>
+<span class="logo">2026考研笔记</span>
+<a class="tab" href="../../../index.html">首页</a><a class="tab active" href="../../../408/">408</a><a class="tab" href="../../../数学/">数学</a><a class="tab" href="../../../英语/">英语</a><a class="tab" href="../../../政治/">政治</a>
+</div>
+<div class="nav-body">
+<aside class="nav-sidebar">
+<div style="padding:4px 12px;font-size:0.75rem;color:#999;font-weight:600">导航</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>408</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>操作系统</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../操作系统/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../操作系统/笔记/第2章 进程管理.html">第2章 进程管理</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../操作系统/笔记/第3章 内存管理.html">第3章 内存管理</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../操作系统/笔记/第4章 文件管理.html">第4章 文件管理</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../操作系统/笔记/第5章 输入输出管理.html">第5章 输入输出管理</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>数据结构</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第1章 绪论.html">第1章 绪论</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第2章 线性表.html">第2章 线性表</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第3章 栈.html">第3章 栈</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第4章 队列.html">第4章 队列</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第5章 树.html">第5章 树</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第6章 图.html">第6章 图</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第7章 查找.html">第7章 查找</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第8章 排序.html">第8章 排序</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第9章 数组.html">第9章 数组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../数据结构/笔记/第10章 串.html">第10章 串</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机组成原理</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第1章 计算机系统概述.html">第1章 计算机系统概述</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第2章 数据的表示和计算.html">第2章 数据的表示和计算</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第3章 存储器层次结构.html">第3章 存储器层次结构</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第4章 指令系统.html">第4章 指令系统</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第5章 中央处理器.html">第5章 中央处理器</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第6章 总线系统.html">第6章 总线系统</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../计算机组成原理/笔记/第7章 输入输出系统.html">第7章 输入输出系统</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>计算机网络</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>笔记</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3 active" href="第1章 计算机网络体系结构.html">第1章 计算机网络体系结构</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>数学</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>概率与统计</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第1章 随机事件和概率.html">第1章 随机事件和概率</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第2章 三大概型.html">第2章 三大概型</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第3章 随机变量及其分布.html">第3章 随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第4章 常见随机变量分布.html">第4章 常见随机变量分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第5章 二维随机变量及其分布.html">第5章 二维随机变量及其分布</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/概率与统计/第6章 随机变量的数字特征.html">第6章 随机变量的数字特征</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>线性代数</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第1章 行列式.html">第1章 行列式</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第2章 矩阵.html">第2章 矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第3章 向量.html">第3章 向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第4章 线性方程组.html">第4章 线性方程组</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第5章 矩阵的特征值和特征向量.html">第5章 矩阵的特征值和特征向量</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第6章 相似矩阵.html">第6章 相似矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第7章 实对称矩阵.html">第7章 实对称矩阵</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/线性代数/第8章 二次型.html">第8章 二次型</a>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>高数</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l3" href="#"><span class="nav-toggle">▼</span>基础</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第1章 函数的极限与连续.html">第1章 函数的极限与连续</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第2章 一元函数微分学.html">第2章 一元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第3章 不定积分.html">第3章 不定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第4章 定积分.html">第4章 定积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第5章 微分方程.html">第5章 微分方程</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第6章 向量代数与空间解析几何.html">第6章 向量代数与空间解析几何</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第7章 多元函数微分学.html">第7章 多元函数微分学</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第8章 二重积分.html">第8章 二重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第9章 三重积分.html">第9章 三重积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第10章 无穷级数.html">第10章 无穷级数</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第11章 曲线积分.html">第11章 曲线积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/第12章 曲面积分.html">第12章 曲面积分</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../数学/高数/基础/公式总结.html">公式总结</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="nav-section"><a class="l1" href="#"><span class="nav-toggle">▼</span>英语</a>
+<div class="nav-children">
+<div class="nav-section"><a class="l2" href="#"><span class="nav-toggle">▼</span>语法</a>
+<div class="nav-children">
+<div class="nav-item"><a class="l3" href="../../../英语/语法/名词性从句.html">名词性从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../英语/语法/定语从句.html">定语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../英语/语法/状语从句.html">状语从句</a>
+</div>
+<div class="nav-item"><a class="l3" href="../../../英语/语法/虚拟语气.html">虚拟语气</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="nav-content">
+<div class='typora-export-content'>
+<div id='write'  class=''><h2 align="center">第一章 计算机网络体系结构</h2><blockquote><p><strong><span>408 高频考点提醒</span></strong><span>：</span></p><ul><li><span>计算机网络是</span><strong><span>互连的、自治的</span></strong><span>计算机集合；最基本功能是</span><strong><span>数据通信</span></strong><span>；三要素：</span><strong><span>计算机、通信链路、网络协议</span></strong><span>（协议是核心）</span></li><li><span>组成：</span><strong><span>边缘部分</span></strong><span>（用户直接使用，C/S 与 P2P）+ </span><strong><span>核心部分</span></strong><span>（路由器 + 网络，为边缘服务）；</span><strong><span>通信子网 = OSI 低三层、资源子网 = 高三层</span></strong></li><li><span>分类：按范围 </span><strong><span>WAN / MAN / LAN / PAN</span></strong><span>；按拓扑总线/星/环/网状；按交换方式</span><strong><span>电路交换 / 报文交换 / 分组交换</span></strong><span>（存储转发）</span></li><li><span>协议三要素：</span><strong><span>语法</span></strong><span>（格式）、</span><strong><span>语义</span></strong><span>（动作）、</span><strong><span>时序（同步）</span></strong><span>（顺序）；</span><strong><span>协议是水平的，服务是垂直的</span></strong></li><li><span>OSI 七层：</span><strong><span>物链网传会表应</span></strong><span>；</span><strong><span>传输层端到端、网络层点到点</span></strong><span>；OSI 只是理论标准，未成为事实标准</span></li><li><span>TCP/IP 四层：应用/传输/网际/网络接口；网际层核心是 </span><strong><span>IP（沙漏模型，IP over everything）</span></strong></li><li><span>408 考试默认用</span><strong><span>五层模型</span></strong><span>：应用层、传输层、网络层、数据链路层、物理层</span></li><li><strong><span>发送时延 = 数据长度 ÷ 发送速率</span></strong><span>（由发送端决定，与距离无关）；</span><strong><span>传播时延 = 信道长度 ÷ 传播速率</span></strong><span>（电磁波约 </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="7.147ex" height="2.005ex" role="img" focusable="false" viewBox="0 -864 3159 886" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.05ex;"><defs><path id="MJX-20-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-20-TEX-N-D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path><path id="MJX-20-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-20-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-20-TEX-N-38" d="M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-20-TEX-N-32"></use></g><g data-mml-node="mo" transform="translate(722.2,0)"><use data-c="D7" xlink:href="#MJX-20-TEX-N-D7"></use></g><g data-mml-node="msup" transform="translate(1722.4,0)"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-20-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-20-TEX-N-30" transform="translate(500,0)"></use></g><g data-mml-node="mn" transform="translate(1033,393.1) scale(0.707)"><use data-c="38" xlink:href="#MJX-20-TEX-N-38"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>2</mn><mo>×</mo><msup><mn>10</mn><mn>8</mn></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">2\times10^8</script><span> m/s，由链路决定）</span></li><li><strong><span>时延带宽积 = 传播时延 × 带宽</span></strong><span>，单位是 </span><strong><span>bit</span></strong><span>；RTT = 发送数据到收到确认的时延</span></li><li><span>速率换算以 </span><strong><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="3.25ex" height="2.003ex" role="img" focusable="false" viewBox="0 -863.3 1436.6 885.3" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.05ex;"><defs><path id="MJX-14-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-14-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-14-TEX-N-33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-14-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-14-TEX-N-30" transform="translate(500,0)"></use></g><g data-mml-node="mn" transform="translate(1033,393.1) scale(0.707)"><use data-c="33" xlink:href="#MJX-14-TEX-N-33"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>10</mn><mn>3</mn></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">10^3</script></strong><span> 为底（bit），存储容量换算以 </span><strong><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="2.919ex" height="1.887ex" role="img" focusable="false" viewBox="0 -833.9 1290.1 833.9" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-16-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-16-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-16-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-16-TEX-N-32"></use></g><g data-mml-node="TeXAtom" transform="translate(533,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-16-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-16-TEX-N-30" transform="translate(500,0)"></use></g></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>2</mn><mrow data-mjx-texclass="ORD"><mn>10</mn></mrow></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">2^{10}</script></strong><span> 为底（Byte）——两者勿混</span></li></ul></blockquote><hr /><h3 id='一）计算机网络概述'><span>（一）计算机网络概述</span></h3><h4 id='一计算机网络的概念与功能'><span>一、计算机网络的概念与功能</span></h4><h5 id='1-概念定义）'><span>1. 概念（定义）</span></h5><p><strong><span>计算机网络</span></strong><span>：将分散的、具有独立功能的</span><strong><span>计算机系统</span></strong><span>，通过</span><strong><span>通信设备与线路</span></strong><span>连接起来，由功能完善的</span><strong><span>软件</span></strong><span>实现</span><strong><span>资源共享和信息传递</span></strong><span>的系统。</span></p><p><span>其本质特征是：</span><strong><span>互连的、自治的计算机集合</span></strong><span>——</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>关键词</span></th><th style='text-align:left;' ><span>含义</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>互连</span></strong></td><td style='text-align:left;' ><span>通过通信链路、交换设备等连接起来，能互相通信</span></td></tr><tr><td style='text-align:left;' ><strong><span>自治</span></strong></td><td style='text-align:left;' ><span>每台计算机</span><strong><span>独立运行</span></strong><span>，无主从之分，不依赖其他计算机也能工作</span></td></tr><tr><td style='text-align:left;' ><strong><span>集合</span></strong></td><td style='text-align:left;' ><span>若干计算机组成的整体，而非单台机器</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：定义抓三个关键词——</span><strong><span>互连、自治、集合</span></strong><span>。&quot;自治&quot;是把计算机网络与&quot;多处理器系统（共享内存、由操作系统统一调度）&quot;区分开的关键。</span></p></blockquote><h5 id='2-主要功能'><span>2. 主要功能</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>功能</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>数据通信</span></strong></td><td style='text-align:left;' ><span>传送数据与信息，是</span><strong><span>最基本、最重要</span></strong><span>的功能</span></td></tr><tr><td style='text-align:left;' ><strong><span>资源共享</span></strong></td><td style='text-align:left;' ><strong><span>硬件</span></strong><span>（打印机、磁盘）、</span><strong><span>软件</span></strong><span>、</span><strong><span>数据</span></strong><span>共享——互连网络的最终目的</span></td></tr><tr><td style='text-align:left;' ><strong><span>分布式处理</span></strong></td><td style='text-align:left;' ><span>多台计算机承担</span><strong><span>同一任务的不同部分</span></strong><span>，协同完成（如 Hadoop）</span></td></tr><tr><td style='text-align:left;' ><strong><span>提高可靠性</span></strong></td><td style='text-align:left;' ><span>某台计算机故障时，可由</span><strong><span>替代机</span></strong><span>继续工作</span></td></tr><tr><td style='text-align:left;' ><strong><span>负载均衡</span></strong></td><td style='text-align:left;' ><span>把任务分配给各计算机，合理分担负载、提高利用率</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：计算机网络最基本的功能是</span><strong><span>数据通信</span></strong><span>；最终目的是</span><strong><span>资源共享</span></strong><span>。</span></p></blockquote><h5 id='3-三要素组成要素）'><span>3. 三要素（组成要素）</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>要素</span></th><th style='text-align:left;' ><span>内容</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>计算机</span></strong></td><td style='text-align:left;' ><span>端系统（主机），是网络的主体</span></td></tr><tr><td style='text-align:left;' ><strong><span>通信链路与设备</span></strong></td><td style='text-align:left;' ><span>双绞线、光纤等线路，路由器、交换机等设备</span></td></tr><tr><td style='text-align:left;' ><strong><span>网络协议</span></strong></td><td style='text-align:left;' ><span>通信双方必须遵守的</span><strong><span>规则</span></strong><span>，是计算机网络运行的</span><strong><span>核心</span></strong></td></tr></tbody></table></figure><blockquote><p><strong><span>注意</span></strong><span>：三要素缺一不可。没有协议，通信双方无法&quot;听懂&quot;对方——协议是网络的核心。</span></p></blockquote><h4 id='二计算机网络的组成'><span>二、计算机网络的组成</span></h4><h5 id='1-从组成角度硬件软件协议'><span>1. 从组成角度：硬件、软件、协议</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>部分</span></th><th style='text-align:left;' ><span>内容</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>硬件</span></strong></td><td style='text-align:left;' ><span>主机（端系统）、通信链路（线路）、交换设备（路由器、交换机等）</span></td></tr><tr><td style='text-align:left;' ><strong><span>软件</span></strong></td><td style='text-align:left;' ><span>网络操作系统、网络应用软件、网络管理软件等</span></td></tr><tr><td style='text-align:left;' ><strong><span>协议</span></strong></td><td style='text-align:left;' ><span>计算机网络的核心，规定通信双方如何交换信息</span></td></tr></tbody></table></figure><h5 id='2-从工作方式角度边缘部分与核心部分'><span>2. 从工作方式角度：边缘部分与核心部分</span></h5><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">边缘部分（主机）：用户直接使用，进行通信和资源共享</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; ▼</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">核心部分（路由器 + 网络）：为边缘部分提供转发服务</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 92px;"></div><div class="CodeMirror-gutters" style="display: none; height: 92px;"></div></div></div></pre><figure><table><thead><tr><th style='text-align:left;' ><span>部分</span></th><th style='text-align:left;' ><span>组成</span></th><th style='text-align:left;' ><span>特点</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>边缘部分</span></strong></td><td style='text-align:left;' ><span>连接在因特网上的</span><strong><span>主机</span></strong><span>（端系统）</span></td><td style='text-align:left;' ><span>由</span><strong><span>用户直接使用</span></strong><span>，用于</span><strong><span>通信和资源共享</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>核心部分</span></strong></td><td style='text-align:left;' ><strong><span>路由器 + 网络</span></strong></td><td style='text-align:left;' ><span>为</span><strong><span>边缘部分服务</span></strong><span>（转发分组、路由选择），用户感知不到</span></td></tr></tbody></table></figure><p><img src="assets/image-20260304210423358.png" referrerpolicy="no-referrer" alt="image-20260304210423358"></p><p><strong><span>边缘部分的两大工作方式（C/S 与 P2P）</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>对比项</span></th><th style='text-align:left;' ><span>C/S 方式（客户/服务器）</span></th><th style='text-align:left;' ><span>P2P 方式（对等）</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>角色</span></td><td style='text-align:left;' ><span>客户</span><strong><span>主动</span></strong><span>请求，服务器</span><strong><span>被动</span></strong><span>服务，地位</span><strong><span>不对等</span></strong></td><td style='text-align:left;' ><span>对等实体，</span><strong><span>既是客户又是服务器</span></strong></td></tr><tr><td style='text-align:left;' ><span>服务器压力</span></td><td style='text-align:left;' ><span>服务器承担主要负载，易成为</span><strong><span>瓶颈</span></strong></td><td style='text-align:left;' ><strong><span>无中心服务器</span></strong><span>，负载分散到各主机</span></td></tr><tr><td style='text-align:left;' ><span>典型应用</span></td><td style='text-align:left;' ><span>Web、FTP、电子邮件</span></td><td style='text-align:left;' ><span>BT 下载、Skype、PPlive</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：边缘部分解决&quot;主机之间通信与资源共享&quot;问题，核心部分解决&quot;数据如何转发&quot;问题。C/S 中服务器是被动等待请求的一方。</span></p></blockquote><h5 id='3-从功能角度通信子网与资源子网'><span>3. 从功能角度：通信子网与资源子网</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>子网</span></th><th style='text-align:left;' ><span>职责</span></th><th style='text-align:left;' ><span>对应 OSI 层</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>通信子网</span></strong></td><td style='text-align:left;' ><span>负责</span><strong><span>数据通信</span></strong><span>（数据的传输、交换与路由）</span></td><td style='text-align:left;' ><span>低三层：物理层、数据链路层、网络层</span></td></tr><tr><td style='text-align:left;' ><strong><span>资源子网</span></strong></td><td style='text-align:left;' ><span>负责</span><strong><span>资源共享与数据处理</span></strong></td><td style='text-align:left;' ><span>高三层：会话层、表示层、应用层</span></td></tr></tbody></table></figure><blockquote><p><strong><span>注意</span></strong><span>：通信子网 = 低三层（数据通信），资源子网 = 高三层（资源共享/处理）——传输层属于&quot;承上启下&quot;的边界层。</span></p></blockquote><h4 id='三计算机网络的分类'><span>三、计算机网络的分类</span></h4><h5 id='1-按覆盖范围分布范围）'><span>1. 按覆盖范围（分布范围）</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>类型</span></th><th style='text-align:left;' ><span>全称</span></th><th style='text-align:left;' ><span>覆盖范围与特点</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>广域网 WAN</span></strong></td><td style='text-align:left;' ><span>Wide Area Network</span></td><td style='text-align:left;' ><span>跨国家、跨地区，覆盖范围</span><strong><span>最广</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>城域网 MAN</span></strong></td><td style='text-align:left;' ><span>Metropolitan Area Network</span></td><td style='text-align:left;' ><span>覆盖一个城市范围</span></td></tr><tr><td style='text-align:left;' ><strong><span>局域网 LAN</span></strong></td><td style='text-align:left;' ><span>Local Area Network</span></td><td style='text-align:left;' ><span>覆盖校园、企业等小范围，</span><strong><span>速率高、时延小</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>个人区域网 PAN</span></strong></td><td style='text-align:left;' ><span>Personal Area Network</span></td><td style='text-align:left;' ><span>个人设备互联（蓝牙、无线 USB 等）</span></td></tr></tbody></table></figure><h5 id='2-按拓扑结构'><span>2. 按拓扑结构</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>拓扑</span></th><th style='text-align:left;' ><span>特点</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>总线型</span></strong></td><td style='text-align:left;' ><span>所有节点共享一条总线，</span><strong><span>成本低</span></strong><span>、易扩展；但总线故障全网瘫痪，冲突多</span></td></tr><tr><td style='text-align:left;' ><strong><span>星型</span></strong></td><td style='text-align:left;' ><span>各节点连到</span><strong><span>中心节点</span></strong><span>（如交换机），集中控制、易管理；中心节点故障则</span><strong><span>全网瘫痪</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>环型</span></strong></td><td style='text-align:left;' ><span>节点首尾相连成环，数据沿环单向传输；任一节点故障影响全网</span></td></tr><tr><td style='text-align:left;' ><strong><span>网状型</span></strong></td><td style='text-align:left;' ><span>节点之间多条路径冗余，</span><strong><span>可靠性高、时延小</span></strong><span>；常用于</span><strong><span>广域网</span></strong><span>（代价是造价高）</span></td></tr></tbody></table></figure><h5 id='3-按交换方式重点）'><span>3. 按交换方式（重点）</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>交换方式</span></th><th style='text-align:left;' ><span>主要特点</span></th><th style='text-align:left;' ><span>优点</span></th><th style='text-align:left;' ><span>缺点</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>电路交换</span></strong></td><td style='text-align:left;' ><span>建立专用物理通路；通话期间独占资源。建立连接 → 传输数据 → 释放连接</span></td><td style='text-align:left;' ><span>1. 传输时延小</span><br><span>2. 有序传输</span><br><span>3. 没有冲突</span><br><span>4. 实时性强</span></td><td style='text-align:left;' ><span>1. 建立连接时间长</span><br><span>2. 线路利用率低</span><br><span>3. 缺乏灵活性</span><br><span>4. 不同终端难以互通</span></td></tr><tr><td style='text-align:left;' ><strong><span>报文交换</span></strong></td><td style='text-align:left;' ><span>以</span><strong><span>报文</span></strong><span>为单位；采用</span><strong><span>存储转发</span></strong><span>机制</span></td><td style='text-align:left;' ><span>1. 无需建立连接</span><br><span>2. 线路利用率高</span><br><span>3. 可动态分配线路</span><br><span>4. 支持多目标服务</span></td><td style='text-align:left;' ><span>1. 引起转发时延（存储转发过程）</span><br><span>2. 节点需要大容量缓冲区</span><br><span>3. 对报文大小有限制</span></td></tr><tr><td style='text-align:left;' ><nobr><strong><span>分组交换</span></strong></nobr></td><td style='text-align:left;' ><span>将报文拆分为</span><strong><span>分组</span></strong><span>；采用</span><strong><span>存储转发</span></strong><span>机制</span></td><td style='text-align:left;' ><span>1. 无需建立连接</span><br><span>2. 线路利用率极高</span><br><span>3. 简化存储管理（分组定长）</span><br><span>4. 减少出错概率和重传数据量</span></td><td style='text-align:left;' ><span>1. 引起转发时延</span><br><span>2. 需要传输额外的信息（首部开销）</span><br><span>3. 可能出现失序、丢失或重复分组</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：分组交换是</span><strong><span>因特网采用</span></strong><span>的交换方式；电路交换</span><strong><span>预先分配资源</span></strong><span>、实时性好但利用率低；报文/分组交换</span><strong><span>动态分配线路</span></strong><span>、利用率高但有转发时延。注意：报文交换以&quot;报文&quot;为单位（大），分组交换把报文切小（定长，便于存储管理）。</span></p></blockquote><h5 id='4-按使用者公用网与专用网'><span>4. 按使用者：公用网与专用网</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>类型</span></th><th style='text-align:left;' ><span>特点</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>公用网（公众网）</span></strong></td><td style='text-align:left;' ><span>任何单位和个人按需付费即可使用，如因特网</span></td></tr><tr><td style='text-align:left;' ><strong><span>专用网</span></strong></td><td style='text-align:left;' ><span>军队、铁路、银行等为本部门专门建造的网络，</span><strong><span>保密性强</span></strong><span>，不对外服务</span></td></tr></tbody></table></figure><h5 id='5-按传输技术'><span>5. 按传输技术</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>类型</span></th><th style='text-align:left;' ><span>特点</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>广播式网络</span></strong></td><td style='text-align:left;' ><span>所有主机</span><strong><span>共享一条信道</span></strong><span>，任意主机发送，其余均可收到（按地址判断是否接收）</span></td></tr><tr><td style='text-align:left;' ><strong><span>点对点网络</span></strong></td><td style='text-align:left;' ><span>每条链路连接一对节点，数据经</span><strong><span>分组存储转发</span></strong><span>逐跳传递</span></td></tr></tbody></table></figure><hr /><h3 id='二）计算机网络体系结构与参考模型'><span>（二）计算机网络体系结构与参考模型</span></h3><p><strong><span>体系结构与实现</span></strong><span>：网络的</span><strong><span>体系结构</span></strong><span>是计算机网络的</span><strong><span>各层及其协议的集合</span></strong><span>，是对网络及其功能实现的</span><strong><span>精确定义</span></strong><span>；</span><strong><span>实现</span></strong><span>是在遵循体系结构的前提下，用何种软件、硬件实现的问题。</span></p><blockquote><p><strong><span>考点</span></strong><span>：</span><strong><span>体系结构是抽象的，实现是具体的</span></strong><span>——体系结构只规定&quot;做什么&quot;，不规定&quot;怎么做&quot;，同一体系结构可有多种实现。</span></p></blockquote><h4 id='一分层与协议的基本概念'><span>一、分层与协议的基本概念</span></h4><h5 id='1-分层的基本原则'><span>1. 分层的基本原则</span></h5><ul><li><span>各层功能</span><strong><span>相对独立</span></strong><span>，每层实现一种相对独立的功能，每层只关心本层的协议</span></li><li><span>层间</span><strong><span>界面自然清晰</span></strong><span>，交流尽量少</span></li><li><span>下层为相邻上层提供</span><strong><span>服务</span></strong><span>，上层通过</span><strong><span>接口</span></strong><span>使用下层功能（下层对上层透明）</span></li><li><span>分层把复杂问题</span><strong><span>分解</span></strong><span>为若干较小问题，便于设计、实现与标准化</span></li></ul><p><img src="assets/image-20260305191747466-17731293149623.png" referrerpolicy="no-referrer" alt="image-20260305191747466-17731293149623"></p><blockquote><p><strong><span>考点</span></strong><span>：</span><strong><span>协议是&quot;水平&quot;的</span></strong><span>（对等实体之间），</span><strong><span>服务是&quot;垂直&quot;的</span></strong><span>（相邻层之间）——协议控制对等层通信，服务描述相邻层之间下对上提供的功能。</span></p></blockquote><h5 id='2-协议及其三要素'><span>2. 协议及其三要素</span></h5><p><strong><span>协议（Protocol）</span></strong><span>：控制</span><strong><span>对等实体</span></strong><span>（同一层次的两个通信节点）之间通信的</span><strong><span>规则的集合</span></strong><span>。</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>要素</span></th><th style='text-align:left;' ><span>含义</span></th><th style='text-align:left;' ><span>典型例子</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>语法</span></strong></td><td style='text-align:left;' ><span>规定数据与控制信息的</span><strong><span>格式、结构</span></strong></td><td style='text-align:left;' ><span>TCP 报文段的结构（各字段的位置与长度）由语法决定</span></td></tr><tr><td style='text-align:left;' ><strong><span>语义</span></strong></td><td style='text-align:left;' ><span>规定需要发出何种信息、完成何种动作以及做出何种应答</span></td><td style='text-align:left;' ><span>TCP 连接建立过程中</span><strong><span>每次握手执行的操作</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>时序（同步）</span></strong></td><td style='text-align:left;' ><span>规定各操作的</span><strong><span>条件</span></strong><span>及事件发生的</span><strong><span>先后顺序</span></strong></td><td style='text-align:left;' ><span>TCP 连接过程中</span><strong><span>三次握手</span></strong><span>的时序关系</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：协议三要素是高频概念题——&quot;规定格式的是</span><strong><span>语法</span></strong><span>，规定动作的是</span><strong><span>语义</span></strong><span>，规定顺序的是</span><strong><span>时序</span></strong><span>&quot;。同步（时序）是三者中最容易漏答的一个。</span></p></blockquote><h5 id='3-服务与接口'><span>3. 服务与接口</span></h5><p><strong><span>服务</span></strong><span>：下层为</span><strong><span>紧邻的上层</span></strong><span>提供的</span><strong><span>功能调用</span></strong><span>，是垂直方向的。</span><strong><span>服务访问点（SAP, Service Access Point）</span></strong><span>：相邻两层之间交换信息的</span><strong><span>连接点</span></strong><span>（接口），例如 TCP 的</span><strong><span>端口号</span></strong><span>就是传输层的服务访问点。</span></p><p><strong><span>服务的分类</span></strong><span>：</span></p><table>
+    <thead>
+        <tr>
+            <th>分类标准</th>
+            <th>服务类型</th>
+            <th>定义与特点</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2"><b><nobr>连接状态</nobr></b></td>
+            <td><b>面向连接服务</b></td>
+            <td>传输前必须先发出建立连接请求，成功后才能传输，结束后释放连接（如 TCP）</td>
+        </tr>
+        <tr>
+            <td><b>无连接服务</b></td>
+            <td>不需要预先建立连接，直接传输，每个分组独立选择路由（如 UDP）</td>
+        </tr>
+        <tr>
+            <td rowspan="2"><b><nobr>可靠性程度</nobr></b></td>
+            <td><b>可靠服务</b></td>
+            <td>网络具有纠错、检错和确认机制，确保数据正确到达接收方</td>
+        </tr>
+        <tr>
+            <td><b>不可靠服务</b></td>
+            <td>尽力而为（Best Effort）地传输，不保证可靠，由高层处理</td>
+        </tr>
+        <tr>
+            <td rowspan="2"><b><nobr>确认机制</nobr></b></td>
+            <td><b>有确认服务</b></td>
+            <td>接收方收到数据后必须发回确认，发送方收到确认后才认为发送成功</td>
+        </tr>
+        <tr>
+            <td><b>无确认服务</b></td>
+            <td>接收方收到后不发确认，用于实时性要求高但对错误不敏感的场景</td>
+        </tr>
+        <tr>
+            <td rowspan="2"><b><nobr>功能层次</nobr></b></td>
+            <td><b>通信子网服务</b></td>
+            <td>物理层、数据链路层、网络层负责数据通信任务</td>
+        </tr>
+        <tr>
+            <td><b>资源子网服务</b></td>
+            <td>会话层、表示层、应用层负责数据处理和资源共享</td>
+        </tr>
+    </tbody>
+</table><p><strong><span>协议与服务的关系</span></strong><span>：</span></p><ul><li><span>协议是</span><strong><span>水平</span></strong><span>的（对等实体之间）；服务是</span><strong><span>垂直</span></strong><span>的（相邻层之间）</span></li><li><span>本层协议使用下层提供的服务，并通过接口向相邻上层提供服务</span></li><li><span>只有</span><strong><span>被上层看得见的功能</span></strong><span>才是服务（实现细节对上层透明，上层只关心接口）</span></li></ul><blockquote><p><strong><span>易错点</span></strong><span>：① &quot;服务&quot;关心</span><strong><span>功能</span></strong><span>不关心</span><strong><span>实现</span></strong><span>——同一服务可由不同协议实现，同一协议也可提供不同服务；② 服务仅在同一系统的</span><strong><span>相邻层</span></strong><span>之间提供（垂直），不是对等实体之间。</span></p></blockquote><h5 id='4-三个重要概念pdusdupci'><span>4. 三个重要概念：PDU、SDU、PCI</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>概念</span></th><th style='text-align:left;' ><span>全称</span></th><th style='text-align:left;' ><span>含义</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>PDU</span></strong></td><td style='text-align:left;' ><span>Protocol Data Unit，协议数据单元</span></td><td style='text-align:left;' ><span>对等层之间传送的数据单元</span></td></tr><tr><td style='text-align:left;' ><strong><span>SDU</span></strong></td><td style='text-align:left;' ><span>Service Data Unit，服务数据单元</span></td><td style='text-align:left;' ><span>为完成</span><strong><span>上一层所要求的功能</span></strong><span>而提供的数据（用户数据部分）</span></td></tr><tr><td style='text-align:left;' ><strong><span>PCI</span></strong></td><td style='text-align:left;' ><span>Protocol Control Information，协议控制信息</span></td><td style='text-align:left;' ><span>控制协议操作的信息，包括协议号、序列号、确认号、窗口大小等</span></td></tr></tbody></table></figure><p><strong><span>关系</span></strong><span>：本层 PDU = 本层 SDU + 本层 PCI（加首部/尾部封装）。</span></p><blockquote><p><strong><span>注意</span></strong><span>：第 N 层的 PDU 对第 N−1 层来说就是其 SDU——&quot;上一层的 PDU 是下一层的 SDU&quot;这一递推关系是选择题常客。</span></p></blockquote><h4 id='二osi-七层参考模型'><span>二、OSI 七层参考模型</span></h4><p><img src="第1章 计算机网络体系结构.assets/cac32b298b4548fcbca0168e1751357e.png" referrerpolicy="no-referrer" alt="cac32b298b4548fcbca0168e1751357e"></p><h5 id='1-七层结构与各层核心功能'><span>1. 七层结构与各层核心功能</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>层次</span></th><th style='text-align:left;' ><span>层名</span></th><th style='text-align:left;' ><span>核心功能</span></th><th style='text-align:left;' ><span>传输单位</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>7</span></td><td style='text-align:left;' ><strong><span>应用层</span></strong></td><td style='text-align:left;' ><span>用户与网络的</span><strong><span>界面</span></strong><span>；提供各种网络服务，典型协议 FTP、SMTP、HTTP</span></td><td style='text-align:left;' ><span>报文</span></td></tr><tr><td style='text-align:left;' ><span>6</span></td><td style='text-align:left;' ><strong><span>表示层</span></strong></td><td style='text-align:left;' ><strong><span>数据格式变换</span></strong><span>、加密解密、压缩恢复（语法转换）</span></td><td style='text-align:left;' ><span>报文</span></td></tr><tr><td style='text-align:left;' ><span>5</span></td><td style='text-align:left;' ><strong><span>会话层</span></strong></td><td style='text-align:left;' ><span>建立、管理、</span><strong><span>终止会话</span></strong><span>；设置</span><strong><span>校验点</span></strong><span>（同步点）便于断点续传</span></td><td style='text-align:left;' ><span>报文</span></td></tr><tr><td style='text-align:left;' ><span>4</span></td><td style='text-align:left;' ><strong><span>传输层</span></strong></td><td style='text-align:left;' ><strong><span>主机进程间</span></strong><span>的通信（</span><strong><span>端到端</span></strong><span>）；可靠/不可靠传输；</span><strong><span>复用与分用</span></strong></td><td style='text-align:left;' ><span>报文段</span></td></tr><tr><td style='text-align:left;' ><span>3</span></td><td style='text-align:left;' ><strong><span>网络层</span></strong></td><td style='text-align:left;' ><strong><span>路由选择</span></strong><span>、</span><strong><span>拥塞控制</span></strong><span>；实现</span><strong><span>异构网络互联</span></strong></td><td style='text-align:left;' ><span>分组（数据报）</span></td></tr><tr><td style='text-align:left;' ><span>2</span></td><td style='text-align:left;' ><strong><span>数据链路层</span></strong></td><td style='text-align:left;' ><strong><span>成帧</span></strong><span>、</span><strong><span>差错控制</span></strong><span>、</span><strong><span>流量控制</span></strong><span>；MAC 寻址</span></td><td style='text-align:left;' ><span>帧</span></td></tr><tr><td style='text-align:left;' ><span>1</span></td><td style='text-align:left;' ><strong><span>物理层</span></strong></td><td style='text-align:left;' ><span>实现</span><strong><span>比特流的透明传输</span></strong><span>；定义接口的机械、电气、功能和规程特性</span></td><td style='text-align:left;' ><span>比特</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：顺口溜记忆七层——</span><strong><span>&quot;物链网传会表应&quot;</span></strong><span>（物理、数据链路、网络、传输、会话、表示、应用）。</span>
+<strong><span>易错点</span></strong><span>：</span><strong><span>传输层 = 端到端</span></strong><span>（主机</span><strong><span>进程</span></strong><span>之间）；</span><strong><span>网络层及以下 = 点到点</span></strong><span>（相邻节点之间）——&quot;端&quot;指主机，点指路由器等中间节点。</span></p></blockquote><h5 id='2-对等层通信的概念'><span>2. 对等层通信的概念</span></h5><p><span>对等层通信指</span><strong><span>同一层次的两个节点</span></strong><span>之间的逻辑通信：</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">发送方 应用层 ──应用层协议──► 接收方 应用层</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">发送方 传输层 ──传输层协议──► 接收方 传输层</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">发送方 网络层 ──网络层协议──► 接收方 网络层</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">发送方 数据链路层 ──链路层协议──► 接收方 数据链路层</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">发送方 物理层 ────比特流经信道实际传输────► 接收方 物理层</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 115px;"></div><div class="CodeMirror-gutters" style="display: none; height: 115px;"></div></div></div></pre><blockquote><p><span>图：对等层之间通过&quot;协议&quot;逻辑通信（水平方向），实际数据逐层向下封装，经物理层在信道上传输，接收方再逐层解封装向上交付。</span></p></blockquote><ul><li><strong><span>逻辑通信</span></strong><span>：对等实体间看似&quot;直接&quot;通信，实际上数据要经过下方各层（垂直方向）传递</span></li><li><span>物理层是</span><strong><span>唯一实际传输</span></strong><span>的层次；其余各层都是&quot;虚通信&quot;</span></li><li><span>OSI 七层模型是</span><strong><span>法律上的国际标准（ISO 7498）</span></strong><span>：层次划分理论完整，但</span><strong><span>层次过多、实现复杂</span></strong><span>，未成为事实上的标准</span></li></ul><h4 id='三tcpip-模型'><span>三、TCP/IP 模型</span></h4><h5 id='1-四层结构与主要协议'><span>1. 四层结构与主要协议</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>层次</span></th><th style='text-align:left;' ><span>主要功能</span></th><th style='text-align:left;' ><span>主要协议</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>应用层</span></strong></td><td style='text-align:left;' ><span>面向用户的各种应用服务</span></td><td style='text-align:left;' ><span>HTTP、FTP、SMTP、DNS、TELNET 等</span></td></tr><tr><td style='text-align:left;' ><strong><span>传输层</span></strong></td><td style='text-align:left;' ><span>进程间端到端通信</span></td><td style='text-align:left;' ><strong><span>TCP</span></strong><span>（可靠、面向连接）、</span><strong><span>UDP</span></strong><span>（不可靠、无连接）</span></td></tr><tr><td style='text-align:left;' ><strong><span>网际层</span></strong></td><td style='text-align:left;' ><span>分组转发与路由选择</span></td><td style='text-align:left;' ><strong><span>IP</span></strong><span>、ICMP、ARP、RARP 等</span></td></tr><tr><td style='text-align:left;' ><strong><span>网络接口层</span></strong></td><td style='text-align:left;' ><span>与具体网络技术对接</span></td><td style='text-align:left;' ><span>以太网、PPP 等</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：TCP/IP 的</span><strong><span>应用层相当于 OSI 的应用层 + 表示层 + 会话层</span></strong><span>；</span><strong><span>网络接口层相当于 OSI 的数据链路层 + 物理层</span></strong><span>，但 TCP/IP 未定义该层的具体内容（与具体网络有关）。</span></p></blockquote><h5 id='2-tcpip-四层与-osi-七层的对比'><span>2. TCP/IP 四层与 OSI 七层的对比</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>OSI 七层</span></th><th style='text-align:left;' ><span>TCP/IP 四层</span></th><th style='text-align:left;' ><span>对应说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>应用层</span></td><td style='text-align:left;' ><strong><span>应用层</span></strong></td><td style='text-align:left;' ><span>TCP/IP 未细分这三层，会话管理、数据表示等功能并入应用层</span></td></tr><tr><td style='text-align:left;' ><span>表示层</span></td><td style='text-align:left;' >&nbsp;</td><td style='text-align:left;' >&nbsp;</td></tr><tr><td style='text-align:left;' ><span>会话层</span></td><td style='text-align:left;' >&nbsp;</td><td style='text-align:left;' >&nbsp;</td></tr><tr><td style='text-align:left;' ><span>传输层</span></td><td style='text-align:left;' ><strong><span>传输层</span></strong></td><td style='text-align:left;' ><span>一一对应（TCP / UDP）</span></td></tr><tr><td style='text-align:left;' ><span>网络层</span></td><td style='text-align:left;' ><strong><span>网际层</span></strong></td><td style='text-align:left;' ><span>一一对应，核心是 IP 协议</span></td></tr><tr><td style='text-align:left;' ><span>数据链路层</span></td><td style='text-align:left;' ><strong><span>网络接口层</span></strong></td><td style='text-align:left;' ><span>合并，且未定义具体内容（以太网、PPP 等均可）</span></td></tr><tr><td style='text-align:left;' ><span>物理层</span></td><td style='text-align:left;' >&nbsp;</td><td style='text-align:left;' >&nbsp;</td></tr></tbody></table></figure><h5 id='3-设计思想沙漏模型）'><span>3. 设计思想（沙漏模型）</span></h5><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp;  ── 众多应用层协议 ──（HTTP, FTP, SMTP, DNS...）</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 网际层 IP &nbsp; ← 唯一的核心，最窄处（瓶颈）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; │</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">  ── 众多网络技术 ──（以太网, PPP, ATM, 无线...）</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 115px;"></div><div class="CodeMirror-gutters" style="display: none; height: 115px;"></div></div></div></pre><blockquote><p><span>图：TCP/IP 沙漏模型——网际层只有 IP 协议，上下层技术均可替换，体现了&quot;IP over everything&quot;的设计思想。</span></p></blockquote><blockquote><p><strong><span>考点</span></strong><span>：TCP/IP 体系结构的核心设计思想是</span><strong><span>&quot;IP over everything&quot;</span></strong><span>——IP 层屏蔽了底层网络技术的差异（网络接口层可以是以太网、PPP 等任何技术），所以 IP 可以运行于任何网络上，这也是&quot;沙漏模型&quot;名称的由来。</span></p></blockquote><h4 id='四五层模型408-最常用）'><span>四、五层模型（408 最常用）</span></h4><p><strong><span>五层模型</span></strong><span>综合 OSI 与 TCP/IP 的优点：既保留了 OSI 清晰的层次划分，又借鉴了 TCP/IP 的实用性，是</span><strong><span>408 考试默认使用的模型</span></strong><span>。</span></p><h5 id='1-五层结构与各层协议设备对照'><span>1. 五层结构与各层协议、设备对照</span></h5><figure><table><thead><tr><th style='text-align:left;' ><span>层次</span></th><th style='text-align:left;' ><span>核心功能</span></th><th style='text-align:left;' ><span>典型协议</span></th><th style='text-align:left;' ><span>典型设备</span></th><th style='text-align:left;' ><span>传输单位</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>应用层</span></strong></td><td style='text-align:left;' ><span>提供应用服务，用户与网络的界面</span></td><td style='text-align:left;' ><span>HTTP、FTP、SMTP、DNS</span></td><td style='text-align:left;' ><span>—（网关可处理高层协议转换）</span></td><td style='text-align:left;' ><span>报文</span></td></tr><tr><td style='text-align:left;' ><strong><span>传输层</span></strong></td><td style='text-align:left;' ><span>进程间端到端通信，复用分用</span></td><td style='text-align:left;' ><span>TCP、UDP</span></td><td style='text-align:left;' ><span>—</span></td><td style='text-align:left;' ><span>报文段</span></td></tr><tr><td style='text-align:left;' ><strong><span>网络层</span></strong></td><td style='text-align:left;' ><span>路由选择、分组转发、拥塞控制</span></td><td style='text-align:left;' ><span>IP、ICMP、ARP</span></td><td style='text-align:left;' ><strong><span>路由器</span></strong></td><td style='text-align:left;' ><span>分组（数据报）</span></td></tr><tr><td style='text-align:left;' ><strong><span>数据链路层</span></strong></td><td style='text-align:left;' ><span>成帧、差错控制、流量控制、介质访问</span></td><td style='text-align:left;' ><span>以太网协议（CSMA/CD）、PPP</span></td><td style='text-align:left;' ><strong><span>交换机、网桥</span></strong></td><td style='text-align:left;' ><span>帧</span></td></tr><tr><td style='text-align:left;' ><strong><span>物理层</span></strong></td><td style='text-align:left;' ><span>比特流透明传输，接口特性</span></td><td style='text-align:left;' ><span>曼彻斯特编码、NRZ 等</span></td><td style='text-align:left;' ><strong><span>中继器、集线器</span></strong></td><td style='text-align:left;' ><span>比特</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：</span><strong><span>设备与层次对应</span></strong><span>——中继器/集线器（物理层）、网桥/交换机（数据链路层）、路由器（网络层）；</span><strong><span>网关</span></strong><span>是&quot;网络层以上&quot;的设备（可进行协议转换，最高可到应用层）。</span>
+<strong><span>易错点</span></strong><span>：集线器与交换机都&quot;连接主机&quot;，但集线器在</span><strong><span>物理层</span></strong><span>（转发比特，冲突域不隔离）、交换机在</span><strong><span>数据链路层</span></strong><span>（转发帧，隔离冲突域）——功能层次不同，考察&quot;工作在哪个层次&quot;时不可混答。</span></p></blockquote><p><img src="assets/image-20260305214840937.png" referrerpolicy="no-referrer" alt="image-20260305214840937"></p><h5 id='2-数据的封装与解封装'><span>2. 数据的封装与解封装</span></h5><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang=""><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">发送端逐层封装（每层添加本层首部，即 PCI）：</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">应用层报文（Message）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">  ──► 传输层加 TCP/UDP 首部 → 报文段（Segment）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">  ──► 网络层加 IP 首部 → 数据报（Datagram）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">  ──► 数据链路层加帧首部 + 帧尾部 → 帧（Frame）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">  ──► 物理层转为比特流（Bits）发送到信道</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">接收端逐层解封装（去掉本层首部），还原出应用层数据</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 161px;"></div><div class="CodeMirror-gutters" style="display: none; height: 161px;"></div></div></div></pre><blockquote><p><span>图：数据封装（发送端从上到下加首部）与解封装（接收端从下到上去首部）过程。</span></p></blockquote><figure><table><thead><tr><th style='text-align:left;' ><span>步骤</span></th><th style='text-align:left;' ><span>封装动作</span></th><th style='text-align:left;' ><span>形成的数据单元</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>应用层 → 传输层</span></td><td style='text-align:left;' ><span>加 TCP/UDP 首部</span></td><td style='text-align:left;' ><span>报文段</span></td></tr><tr><td style='text-align:left;' ><span>传输层 → 网络层</span></td><td style='text-align:left;' ><span>加 IP 首部</span></td><td style='text-align:left;' ><span>数据报</span></td></tr><tr><td style='text-align:left;' ><span>网络层 → 数据链路层</span></td><td style='text-align:left;' ><span>加帧首部与帧尾部</span></td><td style='text-align:left;' ><span>帧</span></td></tr><tr><td style='text-align:left;' ><span>数据链路层 → 物理层</span></td><td style='text-align:left;' ><span>转换成比特流</span></td><td style='text-align:left;' ><span>比特</span></td></tr></tbody></table></figure><blockquote><p><strong><span>考点</span></strong><span>：封装 = 逐层</span><strong><span>添加首部（PCI）</span></strong><span>形成各层 PDU；物理层最终把数据转为</span><strong><span>比特流</span></strong><span>。上一层的 PDU 作为下一层的 SDU，加上本层 PCI 后成为本层 PDU。</span></p></blockquote><h5 id='3-各层小结'><span>3. 各层小结</span></h5><ul><li><strong><span>数据链路层</span></strong><span>处理</span><strong><span>帧</span></strong><span>：以太网帧、PPP 帧；</span><strong><span>CSMA/CD</span></strong><span> 是以太网的介质访问控制协议</span></li><li><strong><span>物理层</span></strong><span>：负责比特流的透明传输，典型编码是</span><strong><span>曼彻斯特编码</span></strong><span>（自带时钟信号，用于以太网）</span></li><li><span>各层对等实体之间用</span><strong><span>协议</span></strong><span>通信（水平），相邻层之间用</span><strong><span>接口（SAP）</span></strong><span>通信（垂直）</span></li></ul><blockquote><p><strong><span>注意</span></strong><span>：408 题目中&quot;TCP/IP 模型&quot;与&quot;五层模型&quot;常常混用（网络接口层 ≈ 数据链路层 + 物理层）；OSI 七层只作为概念考查。答题时若无特殊说明，默认按</span><strong><span>五层模型</span></strong><span>回答。</span></p></blockquote><hr /><h3 id='三）计算机网络性能指标'><span>（三）计算机网络性能指标</span></h3><h4 id='一速率带宽与吞吐量'><span>一、速率、带宽与吞吐量</span></h4><figure><table><thead><tr><th style='text-align:left;' ><span>指标</span></th><th style='text-align:left;' ><span>定义</span></th><th style='text-align:left;' ><span>单位与要点</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>速率（比特率、数据率）</span></strong></td><td style='text-align:left;' ><span>数据的传送速率，即单位时间内传送的</span><strong><span>比特数</span></strong></td><td style='text-align:left;' ><span>b/s、kb/s、Mb/s、Gb/s；换算以 </span><strong><span>10</span><sup><span>3</span></sup></strong><span> 为底</span></td></tr><tr><td style='text-align:left;' ><strong><span>带宽（Bandwidth）</span></strong></td><td style='text-align:left;' ><span>网络中通信线路传送数据的能力，即单位时间内能通过的</span><strong><span>最高数据率</span></strong></td><td style='text-align:left;' ><span>单位同速率，表示线路的&quot;额定上限&quot;</span></td></tr><tr><td style='text-align:left;' ><strong><span>吞吐量（Throughput）</span></strong></td><td style='text-align:left;' ><span>单位时间内</span><strong><span>实际通过</span></strong><span>某个网络（或信道、接口）的数据量</span></td><td style='text-align:left;' ><span>受带宽或额定速率的限制，是</span><strong><span>实测值</span></strong></td></tr></tbody></table></figure><blockquote><p><strong><span>易错点</span></strong><span>：</span><strong><span>速率（带宽）单位换算以 </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="3.25ex" height="2.003ex" role="img" focusable="false" viewBox="0 -863.3 1436.6 885.3" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.05ex;"><defs><path id="MJX-14-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-14-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-14-TEX-N-33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-14-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-14-TEX-N-30" transform="translate(500,0)"></use></g><g data-mml-node="mn" transform="translate(1033,393.1) scale(0.707)"><use data-c="33" xlink:href="#MJX-14-TEX-N-33"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>10</mn><mn>3</mn></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">10^3</script><span> 为底</span></strong><span>（1 Mbit/s = </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="3.25ex" height="2.005ex" role="img" focusable="false" viewBox="0 -864 1436.6 886" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.05ex;"><defs><path id="MJX-15-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-15-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-15-TEX-N-36" d="M42 313Q42 476 123 571T303 666Q372 666 402 630T432 550Q432 525 418 510T379 495Q356 495 341 509T326 548Q326 592 373 601Q351 623 311 626Q240 626 194 566Q147 500 147 364L148 360Q153 366 156 373Q197 433 263 433H267Q313 433 348 414Q372 400 396 374T435 317Q456 268 456 210V192Q456 169 451 149Q440 90 387 34T253 -22Q225 -22 199 -14T143 16T92 75T56 172T42 313ZM257 397Q227 397 205 380T171 335T154 278T148 216Q148 133 160 97T198 39Q222 21 251 21Q302 21 329 59Q342 77 347 104T352 209Q352 289 347 316T329 361Q302 397 257 397Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-15-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-15-TEX-N-30" transform="translate(500,0)"></use></g><g data-mml-node="mn" transform="translate(1033,393.1) scale(0.707)"><use data-c="36" xlink:href="#MJX-15-TEX-N-36"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>10</mn><mn>6</mn></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">10^6</script><span> bit/s），而</span><strong><span>存储容量换算以 </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="2.919ex" height="1.887ex" role="img" focusable="false" viewBox="0 -833.9 1290.1 833.9" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-16-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-16-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-16-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-16-TEX-N-32"></use></g><g data-mml-node="TeXAtom" transform="translate(533,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-16-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-16-TEX-N-30" transform="translate(500,0)"></use></g></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>2</mn><mrow data-mjx-texclass="ORD"><mn>10</mn></mrow></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">2^{10}</script><span> 为底</span></strong><span>（1 MB = </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="2.919ex" height="1.887ex" role="img" focusable="false" viewBox="0 -833.9 1290.1 833.9" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-17-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-17-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-17-TEX-N-32"></use></g><g data-mml-node="TeXAtom" transform="translate(533,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-17-TEX-N-32"></use><use data-c="30" xlink:href="#MJX-17-TEX-N-30" transform="translate(500,0)"></use></g></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mn>2</mn><mrow data-mjx-texclass="ORD"><mn>20</mn></mrow></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">2^{20}</script><span> B）——bit 用十进制、Byte 用二进制，选择题常在此设坑。</span></p></blockquote><h4 id='二时延重点）'><span>二、时延（重点）</span></h4><p><strong><span>时延（Delay）</span></strong><span>：数据（一个报文或分组）从网络一端传到另一端所需的时间。</span><strong><span>总时延 = 发送时延 + 传播时延 + 处理时延 + 排队时延</span></strong><span>。</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>时延</span></th><th style='text-align:left;' ><span>公式</span></th><th style='text-align:left;' ><span>由谁决定</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>发送时延（传输时延）</span></strong></td><td style='text-align:left;' ><span>数据长度 ÷ 发送速率（信道带宽）</span></td><td style='text-align:left;' ><strong><span>发送端</span></strong><span>（数据块长度、发送速率）</span></td><td style='text-align:left;' ><span>数据进入信道所需时间；</span><strong><span>与传输距离无关</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>传播时延</span></strong></td><td style='text-align:left;' ><span>信道长度 ÷ 电磁波传播速率</span></td><td style='text-align:left;' ><strong><span>链路</span></strong><span>（信道长度、介质类型）</span></td><td style='text-align:left;' ><span>电磁波在信道中传播所需时间；</span><strong><span>与数据长度无关</span></strong></td></tr><tr><td style='text-align:left;' ><strong><span>处理时延</span></strong></td><td style='text-align:left;' ><span>节点分析首部、查找路由表等耗时</span></td><td style='text-align:left;' ><strong><span>节点设备</span></strong><span>（路由器等）</span></td><td style='text-align:left;' ><span>分组在节点被分析、处理的时间</span></td></tr><tr><td style='text-align:left;' ><strong><span>排队时延</span></strong></td><td style='text-align:left;' ><span>分组在输入/输出队列中等待的时间</span></td><td style='text-align:left;' ><strong><span>节点设备</span></strong><span>（队列长度、流量大小）</span></td><td style='text-align:left;' ><span>受网络当前流量影响，可</span><strong><span>随时变化</span></strong></td></tr></tbody></table></figure><ul><li><span>电磁波传播速率：真空中约 </span><strong><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="7.147ex" height="2.005ex" role="img" focusable="false" viewBox="0 -864 3159 886" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.05ex;"><defs><path id="MJX-18-TEX-N-33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path><path id="MJX-18-TEX-N-D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path><path id="MJX-18-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-18-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-18-TEX-N-38" d="M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><use data-c="33" xlink:href="#MJX-18-TEX-N-33"></use></g><g data-mml-node="mo" transform="translate(722.2,0)"><use data-c="D7" xlink:href="#MJX-18-TEX-N-D7"></use></g><g data-mml-node="msup" transform="translate(1722.4,0)"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-18-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-18-TEX-N-30" transform="translate(500,0)"></use></g><g data-mml-node="mn" transform="translate(1033,393.1) scale(0.707)"><use data-c="38" xlink:href="#MJX-18-TEX-N-38"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>3</mn><mo>×</mo><msup><mn>10</mn><mn>8</mn></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">3\times10^8</script><span> m/s</span></strong><span>（光速）；</span><strong><span>铜缆、光纤中约 </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="7.147ex" height="2.005ex" role="img" focusable="false" viewBox="0 -864 3159 886" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.05ex;"><defs><path id="MJX-20-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-20-TEX-N-D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path><path id="MJX-20-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-20-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-20-TEX-N-38" d="M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-20-TEX-N-32"></use></g><g data-mml-node="mo" transform="translate(722.2,0)"><use data-c="D7" xlink:href="#MJX-20-TEX-N-D7"></use></g><g data-mml-node="msup" transform="translate(1722.4,0)"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-20-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-20-TEX-N-30" transform="translate(500,0)"></use></g><g data-mml-node="mn" transform="translate(1033,393.1) scale(0.707)"><use data-c="38" xlink:href="#MJX-20-TEX-N-38"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>2</mn><mo>×</mo><msup><mn>10</mn><mn>8</mn></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">2\times10^8</script><span> m/s</span></strong></li><li><span>发送时延 = 数据长度 / 发送速率；传播时延 = 信道长度 / 传播速率</span></li></ul><blockquote><p><strong><span>考点</span></strong><span>：</span><strong><span>发送时延只取决于数据长度和发送速率，与距离无关</span></strong><span>；</span><strong><span>传播时延只取决于信道长度和介质，与数据长度无关</span></strong><span>——&quot;发送时延看发送端，传播时延看链路&quot;。</span>
+<strong><span>注意</span></strong><span>：同一数据在中间节点逐跳转发时，每跳都要重新产生发送时延，但传播时延只与信道总长度有关。</span></p></blockquote><h4 id='三时延带宽积往返时延-rtt-与信道利用率'><span>三、时延带宽积、往返时延 RTT 与信道利用率</span></h4><figure><table><thead><tr><th style='text-align:left;' ><span>指标</span></th><th style='text-align:left;' ><span>定义/公式</span></th><th style='text-align:left;' ><span>说明</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>时延带宽积</span></strong></td><td style='text-align:left;' ><strong><span>传播时延 × 带宽</span></strong><span>（单位：bit）</span></td><td style='text-align:left;' ><span>表示</span><strong><span>以比特为单位的链路容量</span></strong><span>——链路中最多&quot;同时容纳&quot;多少比特</span></td></tr><tr><td style='text-align:left;' ><strong><span>往返时延 RTT</span></strong></td><td style='text-align:left;' ><span>从发送端</span><strong><span>发送数据开始</span></strong><span>，到</span><strong><span>收到接收端确认</span></strong><span>为止的总时间</span></td><td style='text-align:left;' ><span>包括往返传播时延 + 中间各节点的处理/排队时延</span></td></tr><tr><td style='text-align:left;' ><strong><span>信道利用率</span></strong></td><td style='text-align:left;' ><span>有数据通过的时间 ÷ 总时间</span></td><td style='text-align:left;' ><span>分为</span><strong><span>信道利用率</span></strong><span>与</span><strong><span>网络利用率</span></strong><span>；利用率过高会引起时延</span><strong><span>急剧增大</span></strong></td></tr></tbody></table></figure><blockquote><p><strong><span>注意</span></strong><span>：时延带宽积的单位是 </span><strong><span>bit</span></strong><span>（不是秒）——它回答&quot;链路上最多能有多少比特在飞行&quot;；</span><strong><span>利用率过高 → 时延急剧增大</span></strong><span>（排队时延爆炸），这是网络接近拥塞的信号。</span></p></blockquote><h4 id='四例题时延与时延带宽积的综合计算）'><span>四、例题（时延与时延带宽积的综合计算）</span></h4><p><strong><span>题目</span></strong><span>：主机 A 向主机 B 发送 </span><strong><span>1KB</span></strong><span> 数据，链路带宽 </span><strong><span>100Mbps</span></strong><span>，信道长度 </span><strong><span>2000km</span></strong><span>，电磁波传播速率 </span><strong><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="7.147ex" height="2.005ex" role="img" focusable="false" viewBox="0 -864 3159 886" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.05ex;"><defs><path id="MJX-20-TEX-N-32" d="M109 429Q82 429 66 447T50 491Q50 562 103 614T235 666Q326 666 387 610T449 465Q449 422 429 383T381 315T301 241Q265 210 201 149L142 93L218 92Q375 92 385 97Q392 99 409 186V189H449V186Q448 183 436 95T421 3V0H50V19V31Q50 38 56 46T86 81Q115 113 136 137Q145 147 170 174T204 211T233 244T261 278T284 308T305 340T320 369T333 401T340 431T343 464Q343 527 309 573T212 619Q179 619 154 602T119 569T109 550Q109 549 114 549Q132 549 151 535T170 489Q170 464 154 447T109 429Z"></path><path id="MJX-20-TEX-N-D7" d="M630 29Q630 9 609 9Q604 9 587 25T493 118L389 222L284 117Q178 13 175 11Q171 9 168 9Q160 9 154 15T147 29Q147 36 161 51T255 146L359 250L255 354Q174 435 161 449T147 471Q147 480 153 485T168 490Q173 490 175 489Q178 487 284 383L389 278L493 382Q570 459 587 475T609 491Q630 491 630 471Q630 464 620 453T522 355L418 250L522 145Q606 61 618 48T630 29Z"></path><path id="MJX-20-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-20-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path><path id="MJX-20-TEX-N-38" d="M70 417T70 494T124 618T248 666Q319 666 374 624T429 515Q429 485 418 459T392 417T361 389T335 371T324 363L338 354Q352 344 366 334T382 323Q457 264 457 174Q457 95 399 37T249 -22Q159 -22 101 29T43 155Q43 263 172 335L154 348Q133 361 127 368Q70 417 70 494ZM286 386L292 390Q298 394 301 396T311 403T323 413T334 425T345 438T355 454T364 471T369 491T371 513Q371 556 342 586T275 624Q268 625 242 625Q201 625 165 599T128 534Q128 511 141 492T167 463T217 431Q224 426 228 424L286 386ZM250 21Q308 21 350 55T392 137Q392 154 387 169T375 194T353 216T330 234T301 253T274 270Q260 279 244 289T218 306L210 311Q204 311 181 294T133 239T107 157Q107 98 150 60T250 21Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mn"><use data-c="32" xlink:href="#MJX-20-TEX-N-32"></use></g><g data-mml-node="mo" transform="translate(722.2,0)"><use data-c="D7" xlink:href="#MJX-20-TEX-N-D7"></use></g><g data-mml-node="msup" transform="translate(1722.4,0)"><g data-mml-node="mn"><use data-c="31" xlink:href="#MJX-20-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-20-TEX-N-30" transform="translate(500,0)"></use></g><g data-mml-node="mn" transform="translate(1033,393.1) scale(0.707)"><use data-c="38" xlink:href="#MJX-20-TEX-N-38"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mn>2</mn><mo>×</mo><msup><mn>10</mn><mn>8</mn></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">2\times10^8</script><span> m/s</span></strong><span>。求：发送时延、传播时延与时延带宽积。</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>指标</span></th><th style='text-align:left;' ><span>计算过程</span></th><th style='text-align:left;' ><span>结果</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>数据长度</span></td><td style='text-align:left;' ><span>1KB = 8 × 1024 = 8192 bit</span></td><td style='text-align:left;' ><strong><span>8192 bit</span></strong></td></tr><tr><td style='text-align:left;' ><span>发送时延</span></td><td style='text-align:left;' ><span>8192 bit ÷ 100Mbps = 8192 ÷ 10</span><sup><span>8</span></sup><span> s</span></td><td style='text-align:left;' ><strong><span>0.08192 ms</span></strong></td></tr><tr><td style='text-align:left;' ><span>传播时延</span></td><td style='text-align:left;' ><span>2000km ÷ (2×10</span><sup><span>8</span></sup><span> m/s) = 2×10</span><sup><span>6</span></sup><span> ÷ 2×10</span><sup><span>8</span></sup><span> s</span></td><td style='text-align:left;' ><strong><span>10 ms</span></strong></td></tr><tr><td style='text-align:left;' ><span>时延带宽积</span></td><td style='text-align:left;' ><span>传播时延 × 带宽 = 0.01 s × 10</span><sup><span>8</span></sup><span> bit/s</span></td><td style='text-align:left;' ><strong><span>1×10</span><sup><span>6</span></sup><span> bit = 1 Mbit</span></strong></td></tr></tbody></table></figure><p><strong><span>结论</span></strong><span>：</span></p><ul><li><span>发送时延 </span><strong><span>0.08192ms</span></strong><span> 远小于传播时延 </span><strong><span>10ms</span></strong><span>——</span><strong><span>短数据经长链路时，传播时延占主导</span></strong></li><li><span>时延带宽积 </span><strong><span>1Mbit = 125KB</span></strong><span>：即该链路中最多同时&quot;容纳&quot;125KB 的数据</span></li><li><span>若数据长度增大（如发送 100MB），发送时延将占主导；两类时延谁占主导</span><strong><span>取决于数据长度与链路长度的相对大小</span></strong></li></ul><blockquote><p><strong><span>注意</span></strong><span>：本题未给出排队时延与处理时延，故总时延 = 发送时延 + 传播时延；实际网络中计算总时延必须把四类时延</span><strong><span>全部计入</span></strong><span>。</span></p></blockquote><hr /><h3 id='四）本章总结'><span>（四）本章总结</span></h3><p><strong><span>知识结构图</span></strong><span>：</span></p><pre class="md-fences md-end-block ty-contain-cm modeLoaded" spellcheck="false" lang="" style="break-inside: unset;"><div class="CodeMirror cm-s-inner cm-s-null-scroll CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.51562px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">第一章 计算机网络体系结构</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├─（一）计算机网络概述</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 概念与功能：互连+自治的计算机集合；数据通信(最基本)/资源共享/分布式处理/可靠性/负载均衡</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 三要素：计算机、通信链路与设备、网络协议（核心）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 组成：硬件/软件/协议；边缘部分(C/S、P2P) + 核心部分(路由器+网络)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; │ &nbsp; └─ 功能组成：通信子网(低三层) + 资源子网(高三层)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; └─ 分类：WAN/MAN/LAN/PAN；总线/星/环/网状；电路/报文/分组交换；公用网/专用网；广播式/点对点</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">├─（二）体系结构与参考模型</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 体系结构是抽象的，实现是具体的</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ 分层与协议：三要素(语法/语义/时序)；协议水平、服务垂直；服务分类(连接/确认)；SAP；PDU=SDU+PCI</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ OSI 七层：物链网传会表应；传输层端到端 vs 网络层点到点（理论标准）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; ├─ TCP/IP 四层：应用/传输/网际/网络接口；核心 IP（沙漏模型）</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">│ &nbsp; └─ 五层模型（408 默认）：应用/传输/网络/链路/物理；封装=逐层加首部</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">└─（三）性能指标</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├─ 速率/带宽/吞吐量：bit 换算 10^3、Byte 换算 2^10</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├─ 时延：发送(数据长度/速率)+传播(距离/传播速率 2×10^8 m/s)+处理+排队(逐跳重产生发送时延)</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  ├─ 时延带宽积=传播时延×带宽(bit)；RTT；信道利用率过高→时延剧增</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp;  └─ 例题：1KB/100Mbps→0.08192ms；2000km→10ms；时延带宽积=1Mbit</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 415px;"></div><div class="CodeMirror-gutters" style="display: none; height: 415px;"></div></div></div></pre><p><strong><span>高频考点速记</span></strong><span>：</span></p><figure><table><thead><tr><th style='text-align:left;' ><span>考点</span></th><th style='text-align:left;' ><span>一句话记忆</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><span>网络定义</span></td><td style='text-align:left;' ><strong><span>互连的、自治的</span></strong><span>计算机集合</span></td></tr><tr><td style='text-align:left;' ><span>三要素</span></td><td style='text-align:left;' ><strong><span>计算机、通信链路、网络协议</span></strong><span>（协议是核心）</span></td></tr><tr><td style='text-align:left;' ><span>最基本功能</span></td><td style='text-align:left;' ><strong><span>数据通信</span></strong></td></tr><tr><td style='text-align:left;' ><span>五大功能</span></td><td style='text-align:left;' ><span>数据通信 / 资源共享 / 分布式处理 / 提高可靠性 / 负载均衡</span></td></tr><tr><td style='text-align:left;' ><span>边缘 vs 核心</span></td><td style='text-align:left;' ><span>边缘 = </span><strong><span>用户直接使用</span></strong><span>（C/S、P2P）；核心 = </span><strong><span>路由器 + 网络</span></strong><span>为边缘服务</span></td></tr><tr><td style='text-align:left;' ><span>C/S vs P2P</span></td><td style='text-align:left;' ><span>C/S 地位</span><strong><span>不对等</span></strong><span>（服务器易成瓶颈）；P2P </span><strong><span>对等</span></strong><span>、无中心服务器</span></td></tr><tr><td style='text-align:left;' ><span>通信子网 vs 资源子网</span></td><td style='text-align:left;' ><span>通信子网 = </span><strong><span>低三层</span></strong><span>（数据通信）；资源子网 = </span><strong><span>高三层</span></strong><span>（数据处理）</span></td></tr><tr><td style='text-align:left;' ><span>按范围分类</span></td><td style='text-align:left;' ><strong><span>WAN &gt; MAN &gt; LAN &gt; PAN</span></strong></td></tr><tr><td style='text-align:left;' ><span>拓扑结构</span></td><td style='text-align:left;' ><span>总线/星/环/网状；</span><strong><span>网状可靠性最高</span></strong><span>（广域网常用）</span></td></tr><tr><td style='text-align:left;' ><span>交换方式</span></td><td style='text-align:left;' ><span>电路（独占资源、时延小）/ 报文（存储转发）/ 分组（存储转发 + 定长，因特网采用）</span></td></tr><tr><td style='text-align:left;' ><span>公用网 vs 专用网</span></td><td style='text-align:left;' ><span>公用网 = 因特网（付费）；专用网 = 军队/银行等（保密）</span></td></tr><tr><td style='text-align:left;' ><span>广播式 vs 点对点</span></td><td style='text-align:left;' ><span>广播式</span><strong><span>共享一条信道</span></strong><span>；点对点逐跳</span><strong><span>存储转发</span></strong></td></tr><tr><td style='text-align:left;' ><span>体系结构 vs 实现</span></td><td style='text-align:left;' ><strong><span>体系结构是抽象的，实现是具体的</span></strong></td></tr><tr><td style='text-align:left;' ><span>协议三要素</span></td><td style='text-align:left;' ><strong><span>语法</span></strong><span>（格式）、</span><strong><span>语义</span></strong><span>（动作）、</span><strong><span>时序/同步</span></strong><span>（顺序）</span></td></tr><tr><td style='text-align:left;' ><span>协议 vs 服务</span></td><td style='text-align:left;' ><span>协议</span><strong><span>水平</span></strong><span>（对等实体）；服务</span><strong><span>垂直</span></strong><span>（相邻层）；同一服务可由</span><strong><span>不同协议实现</span></strong></td></tr><tr><td style='text-align:left;' ><span>服务分类</span></td><td style='text-align:left;' ><strong><span>面向连接（TCP）</span></strong><span> vs </span><strong><span>无连接（UDP）</span></strong><span>；可靠 vs 不可靠；有确认 vs 无确认</span></td></tr><tr><td style='text-align:left;' ><span>SAP</span></td><td style='text-align:left;' ><span>服务访问点 = 相邻层交换信息的接口（如 TCP </span><strong><span>端口号</span></strong><span>）</span></td></tr><tr><td style='text-align:left;' ><span>PDU 关系</span></td><td style='text-align:left;' ><strong><span>PDU = SDU + PCI</span></strong><span>；上一层 PDU = 下一层 SDU</span></td></tr><tr><td style='text-align:left;' ><span>OSI 七层</span></td><td style='text-align:left;' ><strong><span>物链网传会表应</span></strong><span>（理论标准，未成事实标准）</span></td></tr><tr><td style='text-align:left;' ><span>端到端 vs 点到点</span></td><td style='text-align:left;' ><span>传输层</span><strong><span>端到端</span></strong><span>（进程间）；网络层及以下</span><strong><span>点到点</span></strong><span>（节点间）</span></td></tr><tr><td style='text-align:left;' ><span>OSI vs TCP/IP</span></td><td style='text-align:left;' ><span>TCP/IP 合并：会表应 → 应用层；链路 + 物理 → 网络接口层</span></td></tr><tr><td style='text-align:left;' ><span>沙漏模型</span></td><td style='text-align:left;' ><span>网际层只有 </span><strong><span>IP</span></strong><span>（IP over everything），上下层技术可替换</span></td></tr><tr><td style='text-align:left;' ><span>五层模型</span></td><td style='text-align:left;' ><span>应用/传输/网络/链路/物理——</span><strong><span>408 默认模型</span></strong></td></tr><tr><td style='text-align:left;' ><span>设备与层次</span></td><td style='text-align:left;' ><span>路由器 = 网络层；交换机/网桥 = 链路层；中继器/集线器 = 物理层；</span><strong><span>网关 = 网络层以上</span></strong></td></tr><tr><td style='text-align:left;' ><span>封装过程</span></td><td style='text-align:left;' ><span>逐层</span><strong><span>加首部（PCI）</span></strong><span>；报文 → 报文段 → 数据报 → 帧 → 比特流</span></td></tr><tr><td style='text-align:left;' ><span>速率换算</span></td><td style='text-align:left;' ><strong><span>bit 十进制（10³）、Byte 二进制（2¹⁰）</span></strong></td></tr><tr><td style='text-align:left;' ><span>发送时延</span></td><td style='text-align:left;' ><strong><span>数据长度 ÷ 发送速率</span></strong><span>（由发送端决定，与距离无关）</span></td></tr><tr><td style='text-align:left;' ><span>传播时延</span></td><td style='text-align:left;' ><strong><span>信道长度 ÷ 传播速率</span></strong><span>（铜缆/光纤约 2×10⁸ m/s，由链路决定）</span></td></tr><tr><td style='text-align:left;' ><span>四类时延</span></td><td style='text-align:left;' ><span>发送 + 传播 + </span><strong><span>处理 + 排队</span></strong><span> = 总时延</span></td></tr><tr><td style='text-align:left;' ><span>时延主导</span></td><td style='text-align:left;' ><span>短数据 + 长链路 → </span><strong><span>传播时延主导</span></strong><span>（0.08192ms vs 10ms）</span></td></tr><tr><td style='text-align:left;' ><span>时延带宽积</span></td><td style='text-align:left;' ><strong><span>传播时延 × 带宽</span></strong><span>，单位 </span><strong><span>bit</span></strong><span>（链路容量）</span></td></tr><tr><td style='text-align:left;' ><span>信道利用率</span></td><td style='text-align:left;' ><span>过高 → 时延</span><strong><span>急剧增大</span></strong><span>（接近拥塞）</span></td></tr></tbody></table></figure></div></div>
+
+</main>
+<aside class="nav-toc">
+<div class="toc-label">目录</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#一）计算机网络概述"><span class="toc-toggle">▼</span>（一）计算机网络概述</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一计算机网络的概念与功能">一、计算机网络的概念与功能</a>
+<a class="toc-h4" href="#二计算机网络的组成">二、计算机网络的组成</a>
+<a class="toc-h4" href="#三计算机网络的分类">三、计算机网络的分类</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#二）计算机网络体系结构与参考模型"><span class="toc-toggle">▼</span>（二）计算机网络体系结构与参考模型</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一分层与协议的基本概念">一、分层与协议的基本概念</a>
+<a class="toc-h4" href="#二osi-七层参考模型">二、OSI 七层参考模型</a>
+<a class="toc-h4" href="#三tcpip-模型">三、TCP/IP 模型</a>
+<a class="toc-h4" href="#四五层模型408-最常用）">四、五层模型（408 最常用）</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#三）计算机网络性能指标"><span class="toc-toggle">▼</span>（三）计算机网络性能指标</a>
+<div class="toc-children">
+<a class="toc-h4" href="#一速率带宽与吞吐量">一、速率、带宽与吞吐量</a>
+<a class="toc-h4" href="#二时延重点）">二、时延（重点）</a>
+<a class="toc-h4" href="#三时延带宽积往返时延-rtt-与信道利用率">三、时延带宽积、往返时延 RTT 与信道利用率</a>
+<a class="toc-h4" href="#四例题时延与时延带宽积的综合计算）">四、例题（时延与时延带宽积的综合计算）</a>
+</div>
+</div>
+<div class="toc-section collapsed">
+<a class="toc-h3" href="#四）本章总结">（四）本章总结</a>
+</div>
+</aside>
+</div>
+</div>
+
+<script id="nav-shell-js">
+document.addEventListener('DOMContentLoaded', function(){
+  // Left nav toggle
+  document.querySelectorAll('.nav-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.nav-section').classList.toggle('collapsed');
+    });
+  });
+  // Right TOC toggle (state persisted per page — survives refresh)
+  var tocKey = 'tocState_' + location.pathname;
+  function saveTocState() {
+    var collapsed = [], expanded = [];
+    document.querySelectorAll('.toc-section').forEach(function(sec){
+      var a = sec.querySelector('a');
+      if (!a) return;
+      (sec.classList.contains('collapsed') ? collapsed : expanded).push(a.getAttribute('href'));
+    });
+    try { localStorage.setItem(tocKey, JSON.stringify({collapsed: collapsed, expanded: expanded})); } catch(e) {}
+  }
+  document.querySelectorAll('.toc-toggle').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault(); e.stopPropagation();
+      this.closest('.toc-section').classList.toggle('collapsed');
+      saveTocState();
+    });
+  });
+  // Restore saved state on load
+  try {
+    var saved = JSON.parse(localStorage.getItem(tocKey) || 'null');
+    if (saved) {
+      document.querySelectorAll('.toc-section').forEach(function(sec){
+        var a = sec.querySelector('a');
+        if (!a) return;
+        if (saved.collapsed.indexOf(a.getAttribute('href')) !== -1) sec.classList.add('collapsed');
+        if (saved.expanded.indexOf(a.getAttribute('href')) !== -1) sec.classList.remove('collapsed');
+      });
+    }
+  } catch(e) {}
+
+  // Right TOC scroll position persistence (survives refresh)
+  var tocPanel = document.querySelector('.nav-toc');
+  if (tocPanel) {
+    var tocScrollKey = 'tocScroll_' + location.pathname;
+    try {
+      var savedTop = parseInt(localStorage.getItem(tocScrollKey) || '0', 10);
+      if (savedTop > 0) tocPanel.scrollTop = savedTop;
+    } catch(e) {}
+    var saveTimer = null;
+    tocPanel.addEventListener('scroll', function(){
+      if (saveTimer) return;
+      saveTimer = setTimeout(function(){
+        saveTimer = null;
+        try { localStorage.setItem(tocScrollKey, String(tocPanel.scrollTop)); } catch(e) {}
+      }, 150);
+    });
+    window.addEventListener('beforeunload', function(){
+      try { localStorage.setItem(tocScrollKey, String(tocPanel.scrollTop)); } catch(e) {}
+    });
+  }
+
+  // Left sidebar scroll position persistence — global key, shared across
+  // all pages (the nav tree is the same on every page), so switching notes
+  // keeps the sidebar where you left it
+  var sidePanel = document.querySelector('.nav-sidebar');
+  if (sidePanel) {
+    var sideScrollKey = 'sideScroll_global';
+    try {
+      var savedSideTop = parseInt(localStorage.getItem(sideScrollKey) || '0', 10);
+      if (savedSideTop > 0) sidePanel.scrollTop = savedSideTop;
+    } catch(e) {}
+    var sideSaveTimer = null;
+    sidePanel.addEventListener('scroll', function(){
+      if (sideSaveTimer) return;
+      sideSaveTimer = setTimeout(function(){
+        sideSaveTimer = null;
+        try { localStorage.setItem(sideScrollKey, String(sidePanel.scrollTop)); } catch(e) {}
+      }, 150);
+    });
+    window.addEventListener('beforeunload', function(){
+      try { localStorage.setItem(sideScrollKey, String(sidePanel.scrollTop)); } catch(e) {}
+    });
+  }
+  // Mobile hamburger
+  var hb = document.querySelector('.nav-hamburger');
+  var sb = document.querySelector('.nav-sidebar');
+  if (hb && sb) {
+    hb.addEventListener('click', function(){ sb.classList.toggle('open'); });
+    sb.addEventListener('click', function(e){ if (e.target.tagName === 'A') sb.classList.remove('open'); });
+  }
+});
+</script>
+
+<!-- NAV_SHELL_END -->
+<script>var SEARCH_BASE = "../../../search/";</script>
+<script src="../../../search.js?v=4" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ var e=new SearchEngine(),u=new SearchUI(e);
+ u.init();
+});
+</script>
+</body>
+</html>
