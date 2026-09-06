@@ -190,8 +190,7 @@ def build_manifest(mds):
             continue
         subjects.append({"name": subj, "icon": icon,
                          "children": to_nodes(tree[subj])})
-    return {"generated": datetime.now().isoformat(timespec="seconds"),
-            "subjects": subjects}
+    return {"subjects": subjects}
 
 
 def to_nodes(d):
@@ -213,14 +212,14 @@ def main():
     if not SRC.exists():
         print(f"源目录不存在: {SRC}")
         sys.exit(1)
+    mds = collect_mds()
+    print(f"共收录 {len(mds)} 个 md 文件")
+    mm_stash = stash_mindmaps()          # 必须 wipe 前暂存（大纲源即仓库自身）
     # 清空旧内容（保留代码/配置）
     for sub in INCLUDE:
         tgt = HERE / sub
         if tgt.exists():
             shutil.rmtree(tgt)
-    mds = collect_mds()
-    print(f"共收录 {len(mds)} 个 md 文件")
-    mm_stash = stash_mindmaps()
     for src, rel in mds:
         copy_md(src, rel)
     mm_rels = restore_mindmaps(mm_stash)
