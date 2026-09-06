@@ -1,3 +1,4 @@
 @echo off
-D:\python\python.exe "%~dp0push.py"
+cd /d "%~dp0"
+python push.py
 pause

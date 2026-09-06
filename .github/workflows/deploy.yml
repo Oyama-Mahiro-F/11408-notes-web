@@ -27,15 +27,12 @@ jobs:
       - name: Prepare site files
         run: |
           mkdir -p _site
-          # 只复制网页相关的目录和文件
-          for dir in 408 数学 英语 政治; do
+          # 只复制网页相关的目录和文件（md 直渲染版）
+          for dir in 408 数学 英语 政治 vendor css js search; do
             if [ -d "$dir" ]; then cp -r "$dir" _site/; fi
           done
           cp index.html _site/ 2>/dev/null || true
-          cp search.js _site/ 2>/dev/null || true
-          cp zoom.js _site/ 2>/dev/null || true
-          cp search-results.html _site/ 2>/dev/null || true
-          if [ -d "search" ]; then cp -r search _site/; fi
+          cp manifest.json _site/ 2>/dev/null || true
           touch _site/.nojekyll
           echo "Site files prepared."
 

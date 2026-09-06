@@ -1,101 +1,49 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026考研笔记资料库</title>
-<style>
-  :root { --bg: #f0f2f5; --card-bg: #fff; --text: #333; --muted: #666; --accent: #3f51b5; }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-  .container { text-align: center; padding: 40px 20px; }
-  h1 { font-size: 2.2rem; margin-bottom: 8px; }
-  .subtitle { color: var(--muted); margin-bottom: 48px; font-size: 1.1rem; }
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 500px; margin: 0 auto; }
-  .subject-card { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--card-bg); border: 2px solid #e0e0e0; border-radius: 16px; padding: 40px 20px; text-decoration: none; color: var(--text); transition: all 0.2s; min-height: 160px; }
-  .subject-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(63,81,181,0.15); transform: translateY(-2px); }
-  .subject-card .icon { font-size: 2.5rem; margin-bottom: 12px; }
-  .subject-card .label { font-size: 1.3rem; font-weight: 700; }
-  .subject-card .hint { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
-  .countdown-wrap { margin: 16px 0 40px; }
-  .countdown-label { font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; }
-  .countdown-row { display: flex; justify-content: center; gap: 12px; }
-  .countdown-item { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px 14px; min-width: 72px; text-align: center; }
-  .countdown-item .num { font-size: 2rem; font-weight: 700; color: #e53935; line-height: 1.2; }
-  .countdown-item .unit { font-size: 0.75rem; color: #999; margin-top: 4px; }
-  .footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 48px; }
-.home-search-wrap { margin-bottom: 32px; position: relative; }
-.home-search-box { display: flex; align-items: center; background: #fff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 0 16px; max-width: 440px; margin: 0 auto; transition: border-color 0.2s; }
-.home-search-box:focus-within { border-color: var(--accent); box-shadow: 0 2px 12px rgba(63,81,181,0.12); }
-.home-search-icon { font-size: 1.1rem; margin-right: 8px; color: #999; flex-shrink: 0; }
-.home-search-input { flex: 1; border: none; outline: none; font-size: 0.95rem; padding: 12px 0; color: #333; background: transparent; }
-.home-search-input::placeholder { color: #aaa; }
-.home-search-wrap .search-dropdown-list { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); z-index: 200; width: 100%; max-width: 440px; background: #fff; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; overflow: hidden; }
-.search-dropdown-item { display: block; padding: 12px 16px; text-decoration: none; color: inherit; border-bottom: 1px solid #f0f0f0; transition: background 0.1s; text-align: left; }
-.search-dropdown-item:last-of-type { border-bottom: none; }
-.search-dropdown-item:hover { background: var(--accent-light); }
-.search-dropdown-title { display: block; font-weight: 600; font-size: 0.92rem; color: #222; margin-bottom: 2px; }
-.search-dropdown-title mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
-.search-dropdown-meta { display: block; font-size: 0.75rem; color: #999; margin-bottom: 3px; }
-.search-dropdown-snippet { display: block; font-size: 0.8rem; color: #777; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.search-dropdown-snippet mark { background: #fff3b0; color: #333; padding: 1px 2px; border-radius: 2px; }
-.search-dropdown-empty { padding: 20px 16px; text-align: center; color: #999; font-size: 0.9rem; }
-.search-dropdown-more { display: block; padding: 10px 16px; text-align: center; color: var(--accent); font-size: 0.85rem; text-decoration: none; border-top: 1px solid #f0f0f0; font-weight: 500; }
-.search-dropdown-more:hover { background: var(--accent-light); }
-</style>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/hljs-github.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="container">
-  <h1>2026考研笔记资料库</h1>
-  <p class="subtitle">11408 及公共课复习笔记</p>
-  <div class="countdown-wrap">
-    <p class="countdown-label">距离 2026 考研（12.20）</p>
-    <div class="countdown-row" id="countdown"></div>
+<header class="topbar">
+  <button class="menu-btn" id="menu-btn" title="目录">☰</button>
+  <a class="brand" href="#/home">📖 2026考研笔记</a>
+  <nav class="tabs" id="tabs"></nav>
+  <div class="nav-search" id="nav-search">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="nav-search-input" placeholder="搜索笔记... (Ctrl+K)" autocomplete="off">
+    <div class="dropdown" id="nav-search-dd"></div>
   </div>
-  <div class="home-search-wrap">
-    <div class="home-search-box">
-      <span class="home-search-icon">🔍</span>
-      <input type="text" class="home-search-input" placeholder="搜索笔记关键词...">
+</header>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head" id="sidebar-head">
+      <span class="sidebar-title">📚 笔记目录</span>
+      <button class="sidebar-collapse" id="sidebar-collapse" title="收起目录">«</button>
     </div>
-    <div class="search-dropdown-list" style="display:none"></div>
-  </div>
-  <div class="grid2">
-    <a class="subject-card" href="408/"><span class="icon">💻</span><span class="label">408</span></a>
-    <a class="subject-card" href="数学/"><span class="icon">📐</span><span class="label">数学</span></a>
-    <a class="subject-card" href="英语/"><span class="icon">📖</span><span class="label">英语</span></a>
-    <a class="subject-card" href="政治/"><span class="icon">📋</span><span class="label">政治</span></a>
-  </div>
-  <p class="footer">Generated with Typora &middot; Hosted on GitHub Pages</p>
+    <div class="tree" id="tree"><div class="tree-loading">加载目录...</div></div>
+  </aside>
+  <div class="sidebar-mask" id="sidebar-mask"></div>
+  <main class="content" id="content">
+    <div class="loading">加载中...</div>
+  </main>
+  <aside class="toc collapsed" id="toc">
+    <div class="toc-head" id="toc-head"><span class="toc-arrow">▸</span><span class="toc-label">目录</span></div>
+    <nav class="toc-list" id="toc-list"></nav>
+  </aside>
 </div>
-<script>
-(function() {
-  var exam = new Date(2026, 11, 20, 8, 30, 0);
-  var el = document.getElementById('countdown');
-  function update() {
-    var diff = exam - new Date();
-    if (diff <= 0) { el.innerHTML = "<p style='font-size:1.2rem;color:#e53935;font-weight:700'>考研加油！</p>"; return; }
-    var days = Math.floor(diff / 86400000);
-    var hrs = Math.floor((diff % 86400000) / 3600000);
-    var mins = Math.floor((diff % 3600000) / 60000);
-    var secs = Math.floor((diff % 60000) / 1000);
-    el.innerHTML =
-      '<div class="countdown-item"><div class="num">' + days + '</div><div class="unit">天</div></div>' +
-      '<div class="countdown-item"><div class="num">' + hrs + '</div><div class="unit">时</div></div>' +
-      '<div class="countdown-item"><div class="num">' + mins + '</div><div class="unit">分</div></div>' +
-      '<div class="countdown-item"><div class="num">' + secs + '</div><div class="unit">秒</div></div>';
-  }
-  update();
-  setInterval(update, 1000);
-})();
-</script>
-<script>var SEARCH_BASE = "search/";</script>
-<script src="search.js?v=4" defer></script>
-<script>
-document.addEventListener('DOMContentLoaded',function(){
- var e=new SearchEngine(),u=new SearchUI(e);
- u.init();
-});
-</script>
+<script src="vendor/marked.min.js"></script>
+<script src="vendor/katex/katex.min.js"></script>
+<script src="vendor/highlight.min.js"></script>
+<script src="vendor/d3.min.js"></script>
+<script src="vendor/markmap-lib.iife.js"></script>
+<script src="vendor/markmap-view.iife.js"></script>
+<script src="js/search.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

@@ -25,3 +25,9 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+
+# md-site dev
+css/.DS_Store
+node_modules/
+_shots/
+_edge_profile/
