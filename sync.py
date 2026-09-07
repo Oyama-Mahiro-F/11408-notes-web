@@ -8,6 +8,7 @@ site2 同步脚本：把 考研/ 下的 Markdown 笔记同步到 site2/（基于
 用法：python sync.py
 """
 import json
+import os
 import re
 import shutil
 import sys
@@ -112,37 +113,8 @@ def copy_md(md_src: Path, rel: str):
     for name in dirs:
         src_dir = md_src.parent / name
         dst_dir = dst.parent / name
-        if dst_dir.exists():
-            shutil.rmtree(dst_dir)
-        shutil.copytree(src_dir, dst_dir)
-
-
-MINDMAP_SUBJECTS = ["操作系统", "数据结构", "计算机组成原理", "计算机网络"]
-
-
-def stash_mindmaps():
-    """wipe 前暂存大纲：优先取仓库内已有文件（大纲源即仓库自身），
-    首次迁移时回退到旧 site 目录。返回 {科目: 文本}"""
-    out = {}
-    for subj in MINDMAP_SUBJECTS:
-        p = HERE / "408" / subj / "思维导图大纲.md"
-        if p.exists():
-            out[subj] = p.read_text("utf-8", errors="ignore")
-            continue
-        legacy = HERE.parent / "site" / "408" / subj / "思维导图大纲.md"
-        if legacy.exists():
-            out[subj] = legacy.read_text("utf-8", errors="ignore")
-    return out
-
-
-def restore_mindmaps(stash):
-    for subj, text in stash.items():
-        text = re.sub(r"\.html\)", ".md)", text)   # 幂等：已改写过则无操作
-        dst = HERE / "408" / subj / "思维导图大纲.md"
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        dst.write_text(text, "utf-8")
-    print(f"  思维导图大纲 {len(stash)} 份（wipe 前暂存恢复）")
-    return [f"408/{s}/思维导图大纲.md" for s in stash]
+        if src_dir.is_dir():
+            shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
 
 
 def strip_md(text: str) -> str:
@@ -208,21 +180,44 @@ def to_nodes(d):
     return nodes
 
 
+def cleanup_stale():
+    """删除源里已不存在的残留文件/空目录（思维导图大纲是仓库内源文件，跳过）"""
+    print('[清理] 扫描残留文件...')
+    deleted = 0
+    for sub in INCLUDE:
+        site_dir = HERE / sub
+        src_dir = SRC / sub
+        if not site_dir.is_dir():
+            continue
+        for root, dirs, files in os.walk(site_dir, topdown=False):
+            rel_root = Path(root).relative_to(site_dir)
+            for f in files:
+                if f == '思维导图大纲.md':
+                    continue
+                if not (src_dir / rel_root / f).exists():
+                    (Path(root) / f).unlink()
+                    deleted += 1
+            if not dirs and not files:
+                try:
+                    os.rmdir(root)
+                except OSError:
+                    pass
+    print('  残留 %d 个。' % deleted)
+    print()
+
+
 def main():
     if not SRC.exists():
         print(f"源目录不存在: {SRC}")
         sys.exit(1)
     mds = collect_mds()
     print(f"共收录 {len(mds)} 个 md 文件")
-    mm_stash = stash_mindmaps()          # 必须 wipe 前暂存（大纲源即仓库自身）
-    # 清空旧内容（保留代码/配置）
-    for sub in INCLUDE:
-        tgt = HERE / sub
-        if tgt.exists():
-            shutil.rmtree(tgt)
     for src, rel in mds:
         copy_md(src, rel)
-    mm_rels = restore_mindmaps(mm_stash)
+    # 思维导图大纲是仓库内源文件（不在考研/源里），清点后并入索引与目录树
+    mm_rels = ['408/%s/思维导图大纲.md' % s for s in INCLUDE['408']['dirs']
+               if (HERE / '408' / s / '思维导图大纲.md').exists()]
+    cleanup_stale()
     pages = [(rel, Path(rel).stem) for _, rel in mds] + \
             [(rel, Path(rel).stem) for rel in mm_rels]
     print("生成搜索索引:")
