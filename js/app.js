@@ -11,6 +11,14 @@
   var expanded = {};          // 目录树展开状态: key(path prefix) -> true
   var currentPath = null;
   var spyHeadings = [];
+  var scrollMem = {};         // 路由 key -> 离开时的滚动位置
+  var prevRouteKey = null;
+  var pendingRestore = 0;     // 待恢复的滚动位置（内容渲染完成后生效）
+
+  function restoreScroll() {
+    window.scrollTo(0, pendingRestore || 0);
+    pendingRestore = 0;
+  }
 
   /* ================= 工具 ================= */
   function enc(path) { return path.split('/').map(encodeURIComponent).join('/'); }
@@ -407,7 +415,11 @@
     var cmd = parts[1] || 'home';
     var arg = parts.slice(2).join('/');
     try { arg = decodeURIComponent(arg); } catch (e) {}
-    window.scrollTo(0, 0);
+    // 滚动位置记忆：离开时保存，重访同一页时恢复（含浏览器后退）
+    if (prevRouteKey !== null) scrollMem[prevRouteKey] = window.pageYOffset;
+    var key = (cmd || 'home') + (arg ? ':' + arg : '');
+    pendingRestore = (key in scrollMem) ? scrollMem[key] : 0;
+    prevRouteKey = key;
     tocList.innerHTML = ''; tocEl.style.display = 'none';
     if (cmd === 'p' && arg) return showPage(arg);
     if (cmd === 'd' && arg) return showIndex(arg);
@@ -432,11 +444,13 @@
     }).then(function (text) {
       var body = content.querySelector('.md-body');
       body.innerHTML = '';
-      if (/思维导图大纲/.test(rel)) return renderMindmap(stem, text, body);
+      if (/思维导图大纲/.test(rel)) { renderMindmap(stem, text, body); restoreScroll(); return; }
       renderMarkdown(text, body);
+      restoreScroll();
     }).catch(function (e) {
       content.querySelector('.md-body').innerHTML =
         '<div class="empty-state"><p>😢 笔记加载失败：' + esc(String(e)) + '</p><p style="margin-top:8px;font-size:.85rem">' + esc(rel) + '</p></div>';
+      restoreScroll();
     });
   }
 
@@ -509,6 +523,7 @@
       '<div class="idx-subtitle">' +
       (folders.length ? folders.length + ' 个目录 · ' : '') + total + ' 个章节</div>' +
       '<div class="idx-grid">' + cards + '</div></div>';
+    restoreScroll();
   }
 
   /* ================= 首页 ================= */
@@ -532,6 +547,7 @@
       '<div class="subject-grid">' + cards + '</div>' +
       '<p class="footer">基于 Markdown 文件渲染 · sync.py 同步 · 本地部署</p></div>';
     SearchUI.bind($('#home-search-input'), $('#home-search-dd'));
+    restoreScroll();
     countdown();
   }
 
@@ -565,12 +581,14 @@
           '<div class="sr-path">' + crumb + '</div>' +
           '<div class="sr-snippet">' + r.snippet + '</div></a>';
       }).join('');
+      restoreScroll();
     });
   }
 
   function showEmpty(name) {
     setActiveTab(name);
     content.innerHTML = '<div class="panel"><div class="empty-state"><p style="font-size:2rem">📋</p><p>' + esc(name) + '笔记整理中，敬请期待</p></div></div>';
+    restoreScroll();
   }
 
   /* ================= 启动 ================= */
