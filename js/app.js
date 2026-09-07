@@ -386,8 +386,8 @@
     sidebar.classList.add('collapsed');
   });
 
-  /* TOC 收起/展开（默认收起，状态跨页面保持） */
-  var tocOpen = false;
+  /* TOC 收起/展开（默认展开，状态跨页面保持） */
+  var tocOpen = true;
   tocEl.addEventListener('click', function (ev) {
     if (tocEl.classList.contains('collapsed')) {
       tocOpen = true;
@@ -410,6 +410,7 @@
     window.scrollTo(0, 0);
     tocList.innerHTML = ''; tocEl.style.display = 'none';
     if (cmd === 'p' && arg) return showPage(arg);
+    if (cmd === 'd' && arg) return showIndex(arg);
     if (cmd === 'search' && arg) return showSearch(arg);
     if (cmd === 'empty') return showEmpty(arg);
     setActiveTab('home');
@@ -439,6 +440,77 @@
     });
   }
 
+  /* ================= 目录索引页（照搬旧站 idx 逻辑） ================= */
+  function nodeForDir(dir) {
+    if (!manifest) return null;
+    var parts = dir.split('/');
+    var list = manifest.subjects, node = null;
+    for (var i = 0; i < parts.length; i++) {
+      node = (list || []).filter(function (n) { return n.name === parts[i]; })[0];
+      if (!node) return null;
+      list = node.children;
+    }
+    return node;
+  }
+  function countPages(node) {
+    if (node.path) return 1;
+    return (node.children || []).reduce(function (s, c) { return s + countPages(c); }, 0);
+  }
+  function subjectIcon(path) {
+    var p = path.split('/');
+    if (p[0] === '408') return { '操作系统': '💿', '数据结构': '🌲', '计算机组成原理': '⚙️', '计算机网络': '🌐' }[p[1]] || '💻';
+    if (p[0] === '数学') return '📐';
+    if (p[0] === '英语') return '📖';
+    return '📄';
+  }
+  function highlightTreeDir(dir) {
+    expandTo(dir + '/x');
+    renderTree();
+    Array.prototype.forEach.call(treeEl.querySelectorAll('.node-row'), function (row) {
+      var key = row.getAttribute('data-key');
+      row.classList.toggle('active', !row.getAttribute('data-path') && key === dir);
+    });
+  }
+
+  function showIndex(dir) {
+    currentPath = null;
+    var node = nodeForDir(dir);
+    if (!node || node.path) return showEmpty(dir);
+    var parts = dir.split('/');
+    var name = parts[parts.length - 1];
+    document.title = name + ' - 2026考研笔记';
+    setActiveTab(parts[0]);
+    highlightTreeDir(dir);
+    closeSidebarMobile();
+    var total = countPages(node);
+    var bc = ['<a href="#/home">首页</a>'], acc = [];
+    for (var i = 0; i < parts.length - 1; i++) {
+      acc.push(parts[i]);
+      bc.push('<a href="#/d/' + encodeURIComponent(acc.join('/')) + '">' + esc(parts[i]) + '</a>');
+    }
+    var folders = (node.children || []).filter(function (c) { return !c.path; });
+    var files = (node.children || []).filter(function (c) { return c.path; });
+    var cards = '';
+    folders.forEach(function (c) {
+      cards += '<a class="idx-card" href="#/d/' + encodeURIComponent(dir + '/' + c.name) + '">' +
+        '<span class="card-icon">' + folderIcon(c.name).trim() + '</span>' +
+        '<span class="card-body"><span class="card-title">' + esc(c.name) + '</span>' +
+        '<span class="card-desc">' + countPages(c) + ' 个章节</span></span></a>';
+    });
+    files.forEach(function (c) {
+      cards += '<a class="idx-card" href="#/p/' + encodeURIComponent(c.path) + '">' +
+        '<span class="card-icon">' + subjectIcon(c.path) + '</span>' +
+        '<span class="card-body"><span class="card-title">' + esc(c.name) + '</span>' +
+        '<span class="card-desc">点击查看</span></span></a>';
+    });
+    content.innerHTML = '<div class="idx-wrap">' +
+      '<div class="idx-breadcrumb">' + bc.join(' <span>/</span> ') + '</div>' +
+      '<h1 class="idx-title">' + esc(name) + '</h1>' +
+      '<div class="idx-subtitle">' +
+      (folders.length ? folders.length + ' 个目录 · ' : '') + total + ' 个章节</div>' +
+      '<div class="idx-grid">' + cards + '</div></div>';
+  }
+
   /* ================= 首页 ================= */
   function showHome() {
     currentPath = null;
@@ -447,8 +519,8 @@
     var cards = '';
     var meta = { '408': ['💻', '数据结构·组成·OS·网络'], '数学': ['📐', '高数·线代·概率'], '英语': ['📖', '词汇·语法'], '政治': ['📋', '笔记整理中'] };
     ['408', '数学', '英语', '政治'].forEach(function (s) {
-      var first = firstFileOf(s);
-      cards += '<a class="subject-card" ' + (first ? 'href="#/p/' + encodeURIComponent(first) + '"' : 'href="#/empty/' + s + '"') + '>' +
+      var href = s === '政治' ? '#/empty/' + s : '#/d/' + encodeURIComponent(s);
+      cards += '<a class="subject-card" href="' + href + '">' +
         '<span class="icon">' + meta[s][0] + '</span><span class="label">' + s + '</span><span class="hint">' + meta[s][1] + '</span></a>';
     });
     content.innerHTML =
@@ -461,19 +533,6 @@
       '<p class="footer">基于 Markdown 文件渲染 · sync.py 同步 · 本地部署</p></div>';
     SearchUI.bind($('#home-search-input'), $('#home-search-dd'));
     countdown();
-  }
-
-  function firstFileOf(subj) {
-    if (!manifest) return null;
-    var s = manifest.subjects.filter(function (x) { return x.name === subj; })[0];
-    if (!s) return null;
-    var stack = [s];
-    while (stack.length) {
-      var n = stack.shift();
-      if (n.path) return n.path;
-      (n.children || []).forEach(function (c) { stack.push(c); });
-    }
-    return null;
   }
 
   function countdown() {
@@ -517,24 +576,11 @@
   /* ================= 启动 ================= */
   function buildTabs() {
     var html = '<a data-tab="home" href="#/home">首页</a>';
-    ['408', '数学', '英语', '政治'].forEach(function (s) {
-      html += '<a data-tab="' + s + '">' + s + '</a>';
+    ['408', '数学', '英语'].forEach(function (s) {
+      html += '<a data-tab="' + s + '" href="#/d/' + encodeURIComponent(s) + '">' + s + '</a>';
     });
+    html += '<a data-tab="政治" href="#/empty/政治">政治</a>';
     tabsEl.innerHTML = html;
-    Array.prototype.forEach.call(tabsEl.querySelectorAll('a'), function (a) {
-      a.onclick = function (ev) {
-        var tab = a.getAttribute('data-tab');
-        if (tab === 'home') return;             // href 生效
-        ev.preventDefault();
-        setActiveTab(tab);
-        expanded[tab] = true;
-        renderTree();
-        markActive(currentPath);
-        var row = treeEl.querySelector('.node-row[data-key="' + tab + '"]');
-        if (row) row.scrollIntoView({ block: 'nearest' });
-        if (window.innerWidth <= 860) { sidebar.classList.add('open'); mask.classList.add('open'); }
-      };
-    });
   }
 
   fetch('manifest.json').then(function (r) { return r.json(); }).then(function (m) {
