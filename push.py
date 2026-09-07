@@ -42,6 +42,22 @@ def run(cmd, timeout=None, check=True):
     return r.returncode, out
 
 
+def check_is_repo():
+    """首检：当前目录必须是 git 仓库（防止误跑 site2 里的副本）"""
+    print('[预检] 检查 Git 仓库...')
+    rc, out = run(['git', 'rev-parse', '--is-inside-work-tree'], check=False)
+    if rc == 0 and 'true' in out:
+        print('  [OK] Git 仓库正常')
+        print()
+        return True
+    print('  [错误] 当前目录不是 Git 仓库！')
+    print('  常见原因：双击了 site2 里的 push.bat —— 那是 QA 工作区副本，不是部署入口。')
+    print('  请运行：D:\\university_learning\\site\\push.bat')
+    print()
+    pause()
+    return False
+
+
 def fix_safe_directory():
     """修复 git dubious ownership 问题"""
     print('[预检] 检查目录权限...')
@@ -113,6 +129,8 @@ def main():
     print('=' * 52)
     print()
 
+    if not check_is_repo():
+        return
     fix_safe_directory()
     check_git_user()
     if not check_git_remote():
