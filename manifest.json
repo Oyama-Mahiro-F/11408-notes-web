@@ -543,6 +543,17 @@
    "icon": "📖",
    "children": [
     {
+     "name": "写作",
+     "path": null,
+     "children": [
+      {
+       "name": "论述型作文-用词训练",
+       "path": "英语/写作/论述型作文-用词训练.md",
+       "children": []
+      }
+     ]
+    },
+    {
      "name": "单词",
      "path": null,
      "children": [

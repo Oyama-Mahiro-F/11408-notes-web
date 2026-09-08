@@ -29,7 +29,7 @@ INCLUDE = {
         "extra_files": [],
     },
     "英语": {
-        "dirs": ["单词", "语法"],
+        "dirs": ["单词", "语法", "写作"],
         "extra_files": [],
     },
 }

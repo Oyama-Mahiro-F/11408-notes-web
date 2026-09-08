@@ -532,7 +532,7 @@
     document.title = '2026考研笔记资料库';
     markActive(null);
     var cards = '';
-    var meta = { '408': ['💻', '数据结构·组成·OS·网络'], '数学': ['📐', '高数·线代·概率'], '英语': ['📖', '词汇·语法'], '政治': ['📋', '笔记整理中'] };
+    var meta = { '408': ['💻', '数据结构·组成·OS·网络'], '数学': ['📐', '高数·线代·概率'], '英语': ['📖', '词汇·语法·写作'], '政治': ['📋', '笔记整理中'] };
     ['408', '数学', '英语', '政治'].forEach(function (s) {
       var href = s === '政治' ? '#/empty/' + s : '#/d/' + encodeURIComponent(s);
       cards += '<a class="subject-card" href="' + href + '">' +
