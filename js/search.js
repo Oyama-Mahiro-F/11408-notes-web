@@ -35,21 +35,37 @@ var SearchUI = (function () {
   }
 
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-  function mark(text, tokens) {
-    var out = esc(text);
-    tokens.forEach(function (t) {
-      out = out.replace(new RegExp(t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'),
-        function (m) { return '<mark>' + m + '</mark>'; });
-    });
+
+  /* 高亮词表：完整搜索词优先，其余分词按长度降序去重（整词优先整段标出） */
+  function buildTerms(q, tokens) {
+    var seen = {}, out = [];
+    [q].concat(tokens || []).sort(function (a, b) { return (b || '').length - (a || '').length; })
+      .forEach(function (t) {
+        t = (t || '').trim();
+        if (!t || seen[t]) return;
+        seen[t] = 1; out.push(t);
+      });
     return out;
   }
 
-  function snippet(text, tokens) {
+  function mark(text, terms) {
+    var out = esc(text);
+    var parts = [];
+    (terms || []).forEach(function (t) {
+      parts.push(t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    });
+    if (!parts.length) return out;
+    return out.replace(new RegExp('(' + parts.join('|') + ')', 'gi'), '<mark>$1</mark>');
+  }
+
+  function snippet(text, tokens, q) {
+    var lt = text.toLowerCase();
     var pos = -1;
-    for (var i = 0; i < tokens.length && pos < 0; i++) pos = text.indexOf(tokens[i]);
+    if (q) pos = lt.indexOf(q.toLowerCase());            // 锚点优先定位在完整搜索词上
+    for (var i = 0; i < tokens.length && pos < 0; i++) pos = lt.indexOf(tokens[i].toLowerCase());
     if (pos < 0) pos = 0;
     var start = Math.max(0, pos - 30), end = Math.min(text.length, pos + 110);
-    return (start > 0 ? '...' : '') + mark(text.slice(start, end), tokens) + (end < text.length ? '...' : '');
+    return (start > 0 ? '...' : '') + mark(text.slice(start, end), buildTerms(q, tokens)) + (end < text.length ? '...' : '');
   }
 
   function searchAll(q, cb) {
@@ -72,7 +88,7 @@ var SearchUI = (function () {
           if (inText) score += 8;     // 正文整词命中加权
           if (score <= 0) return;
           var r = { title: p.title, path: p.path, score: score,
-            snippet: snippet(p.text, tokens), whole: inTitle || inText };
+            snippet: snippet(p.text, tokens, q), whole: inTitle || inText };
           (r.whole ? whole : part).push(r);
         });
       });
@@ -97,11 +113,11 @@ var SearchUI = (function () {
             dd.innerHTML = '<div class="dd-empty">没有找到与“' + esc(q) + '”相关的笔记</div>';
             dd.style.display = 'block'; return;
           }
-          var tokens = tokenize(q);
+          var terms = buildTerms(q, tokenize(q));
           var html = rs.slice(0, 7).map(function (r) {
             var crumb = r.path.split('/').slice(0, -1).join(' &gt; ');
             return '<a class="dd-item" href="#/p/' + encodeURIComponent(r.path) + '">' +
-              '<span class="dd-title">' + mark(r.title, tokens) + '</span>' +
+              '<span class="dd-title">' + mark(r.title, terms) + '</span>' +
               '<span class="dd-crumb">' + crumb + '</span>' +
               '<span class="dd-snippet">' + r.snippet + '</span></a>';
           }).join('');
