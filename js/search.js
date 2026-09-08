@@ -53,10 +53,12 @@ var SearchUI = (function () {
   }
 
   function searchAll(q, cb) {
+    q = (q || '').trim();
     fetchAll().then(function () {
       var tokens = tokenize(q);
       if (!tokens.length) return cb([]);
-      var results = [];
+      var ql = q.toLowerCase();
+      var whole = [], part = [];   // 整体匹配层 / 分词匹配层
       Object.keys(indexes).forEach(function (subj) {
         indexes[subj].pages.forEach(function (p) {
           var title = p.title.toLowerCase(), text = p.text.toLowerCase();
@@ -64,17 +66,20 @@ var SearchUI = (function () {
           tokens.forEach(function (t) {
             score += countOf(title, t) * 4 + Math.min(countOf(text, t), 20);
           });
-          var ql = q.toLowerCase();
-          if (title.indexOf(ql) !== -1) score += 15;   // 标题整词命中加权
-          if (text.indexOf(ql) !== -1) score += 8;
-          if (score > 0) {
-            results.push({ title: p.title, path: p.path, score: score,
-              snippet: snippet(p.text, tokens) });
-          }
+          var inTitle = title.indexOf(ql) !== -1;
+          var inText = text.indexOf(ql) !== -1;
+          if (inTitle) score += 15;   // 标题整词命中加权
+          if (inText) score += 8;     // 正文整词命中加权
+          if (score <= 0) return;
+          var r = { title: p.title, path: p.path, score: score,
+            snippet: snippet(p.text, tokens), whole: inTitle || inText };
+          (r.whole ? whole : part).push(r);
         });
       });
-      results.sort(function (a, b) { return b.score - a.score; });
-      cb(results);
+      var byScore = function (a, b) { return b.score - a.score; };
+      whole.sort(byScore);
+      part.sort(byScore);
+      cb(whole.concat(part));    // 整体匹配全部置顶，之后才是分词部分匹配
     });
   }
 
