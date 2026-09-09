@@ -18,25 +18,14 @@ from datetime import datetime
 HERE = Path(__file__).resolve().parent
 SRC = HERE.parent / "考研"          # D:/university_learning/考研
 
-# 收录规则：(科目根, [允许的相对子目录或 None=全部]，排除关键字)
-INCLUDE = {
-    "408": {
-        "dirs": ["操作系统", "数据结构", "计算机组成原理", "计算机网络"],
-        "extra_files": [],           # 数据结构/作业.md 由 rule 特判
-    },
-    "数学": {
-        "dirs": ["高数", "线性代数", "概率与统计"],
-        "extra_files": [],
-    },
-    "英语": {
-        "dirs": ["单词", "语法", "写作"],
-        "extra_files": [],
-    },
-}
-# 任何目录/文件名含这些关键字即排除
-EXCLUDE_PAT = ("参考", "校对报告", "课件", "合订版", "~$", "AGENTS")
-# 单文件白名单（在排除规则之后仍然收录）
-WHITELIST = {"作业.md"}
+# 收录规则：镜像 考研/ 下的一级学科目录（408/数学/英语/政治…）全部子结构
+# - 考研/ 根目录直属的 md 忽略（培养方案/规则文档等非笔记文件）
+# - 试卷 目录不收录；目录/文件名命中 EXCLUDE_PAT 的排除
+EXCLUDE_PAT = ("参考", "校对报告", "校对总报告", "课件", "合订版", "~$", "AGENTS", "试卷")
+SKIP_TOP = {"试卷"}
+# site 仓库内非内容目录（残留清理时不进这些目录）
+NON_CONTENT_DIRS = {"vendor", "css", "js", "search", "node_modules",
+                    "_shots", "_edge_profile", "docs", ".github"}
 
 SUBJECT_META = [
     ("408", "408", "💻"),
@@ -50,8 +39,6 @@ HTMLIMG_RE = re.compile(r"<img[^>]+src=[\"']([^\"']+)[\"']", re.I)
 
 
 def excluded(name: str) -> bool:
-    if name in WHITELIST:
-        return False
     return any(p in name for p in EXCLUDE_PAT)
 
 
@@ -60,32 +47,23 @@ def natural_key(s: str):
 
 
 def collect_mds():
-    """返回 [(src_md_path, rel_path_str)]"""
+    """镜像 考研/ 学科目录树：返回 [(src_md_path, rel_path_str)]
+    根目录直属 md 忽略；试卷与命中排除项不收录"""
     out = []
-    for subj, rule in INCLUDE.items():
-        root = SRC / subj
-        if not root.exists():
+    for root, dirs, files in os.walk(SRC):
+        rel_root = Path(root).relative_to(SRC)
+        if str(rel_root) == '.':
+            # 根目录：忽略直属 md，只下钻学科目录
+            dirs[:] = [d for d in dirs
+                       if not d.startswith('.') and d not in SKIP_TOP]
             continue
-        for d in rule["dirs"]:
-            base = root / d
-            if not base.exists():
+        dirs[:] = [d for d in dirs
+                   if not d.startswith('.') and not excluded(d)]
+        for f in files:
+            if not f.endswith('.md') or excluded(f):
                 continue
-            for p in base.rglob("*.md"):
-                rel_parts = p.relative_to(SRC).parts
-                # 排除路径中任一段命中关键字（作业.md 白名单除外）
-                if any(excluded(part) for part in rel_parts[:-1]):
-                    continue
-                if excluded(p.name):
-                    continue
-                out.append((p, "/".join(rel_parts)))
-        for f in rule["extra_files"]:
-            p = root / f
-            if p.exists():
-                out.append((p, "/".join([subj, f])))
-    # 特判：408/数据结构/作业.md
-    hw = SRC / "408" / "数据结构" / "作业.md"
-    if hw.exists() and not any(str(s) == str(hw) for s, _ in out):
-        out.append((hw, "408/数据结构/作业.md"))
+            rel = (rel_root / f).as_posix()
+            out.append((Path(root) / f, rel))
     out.sort(key=lambda t: natural_key(t[1]))
     return out
 
@@ -180,23 +158,40 @@ def to_nodes(d):
     return nodes
 
 
-def cleanup_stale():
-    """删除源里已不存在的残留文件/空目录（思维导图大纲是仓库内源文件，跳过）"""
+def mirror_files():
+    """源目录镜像全集（含图片等全部文件）——残留清理的 keep 基准"""
+    keep = set()
+    for root, dirs, files in os.walk(SRC):
+        rel_root = Path(root).relative_to(SRC)
+        if str(rel_root) == '.':
+            dirs[:] = [d for d in dirs
+                       if not d.startswith('.') and d not in SKIP_TOP]
+            continue
+        dirs[:] = [d for d in dirs
+                   if not d.startswith('.') and not excluded(d)]
+        for f in files:
+            if excluded(f):
+                continue
+            keep.add((rel_root / f).as_posix())
+    return keep
+
+
+def cleanup_stale(keep):
+    """删除镜像集合之外的残留文件/空目录（思维导图大纲是仓库内源文件，跳过）"""
     print('[清理] 扫描残留文件...')
     deleted = 0
-    for sub in INCLUDE:
-        site_dir = HERE / sub
-        src_dir = SRC / sub
-        if not site_dir.is_dir():
-            continue
+    roots = [d for d in HERE.iterdir()
+             if d.is_dir() and not d.name.startswith('.')
+             and d.name not in NON_CONTENT_DIRS]
+    for site_dir in roots:
         for root, dirs, files in os.walk(site_dir, topdown=False):
-            rel_root = Path(root).relative_to(site_dir)
+            rel_root = Path(root).relative_to(HERE)
             for f in files:
-                if f == '思维导图大纲.md':
+                rel = (rel_root / f).as_posix()
+                if rel in keep or f == '思维导图大纲.md':
                     continue
-                if not (src_dir / rel_root / f).exists():
-                    (Path(root) / f).unlink()
-                    deleted += 1
+                (Path(root) / f).unlink()
+                deleted += 1
             if not dirs and not files:
                 try:
                     os.rmdir(root)
@@ -215,9 +210,11 @@ def main():
     for src, rel in mds:
         copy_md(src, rel)
     # 思维导图大纲是仓库内源文件（不在考研/源里），清点后并入索引与目录树
-    mm_rels = ['408/%s/思维导图大纲.md' % s for s in INCLUDE['408']['dirs']
+    subj_408 = {rel.split('/')[1] for _, rel in mds if rel.startswith('408/')}
+    mm_rels = ['408/%s/思维导图大纲.md' % s for s in sorted(subj_408)
                if (HERE / '408' / s / '思维导图大纲.md').exists()]
-    cleanup_stale()
+    keep = mirror_files() | {rel for _, rel in mds} | set(mm_rels)
+    cleanup_stale(keep)
     pages = [(rel, Path(rel).stem) for _, rel in mds] + \
             [(rel, Path(rel).stem) for rel in mm_rels]
     print("生成搜索索引:")
