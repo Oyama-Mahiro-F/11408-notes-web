@@ -447,6 +447,7 @@
       if (/思维导图大纲/.test(rel)) { renderMindmap(stem, text, body); restoreScroll(); return; }
       renderMarkdown(text, body);
       restoreScroll();
+      try { SearchUI.highlightBody(body); } catch (e) {}
     }).catch(function (e) {
       content.querySelector('.md-body').innerHTML =
         '<div class="empty-state"><p>😢 笔记加载失败：' + esc(String(e)) + '</p><p style="margin-top:8px;font-size:.85rem">' + esc(rel) + '</p></div>';

@@ -70,6 +70,7 @@ var SearchUI = (function () {
 
   function searchAll(q, cb) {
     q = (q || '').trim();
+    try { sessionStorage.setItem('site:q', q); } catch (e) {}   // 正文高亮用
     fetchAll().then(function () {
       var tokens = tokenize(q);
       if (!tokens.length) return cb([]);
@@ -140,6 +141,89 @@ var SearchUI = (function () {
     });
   }
 
+  /* ---------- 正文命中高亮（搜索后进入笔记时标注术语） ---------- */
+  function escRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  function currentQ() {
+    try { return sessionStorage.getItem('site:q') || ''; } catch (e) { return ''; }
+  }
+
+  function currentTerms() {
+    var q = currentQ();
+    return q ? buildTerms(q, tokenize(q)) : [];
+  }
+
+  var CHIP_ID = 'q-chip';
+
+  function removeChip() {
+    var c = document.getElementById(CHIP_ID);
+    if (c) c.remove();
+  }
+
+  function clearHighlight() {
+    try { sessionStorage.removeItem('site:q'); } catch (e) {}
+    document.querySelectorAll('.md-body mark.search-hit').forEach(function (mk) {
+      var parent = mk.parentNode;
+      while (mk.firstChild) parent.insertBefore(mk.firstChild, mk);
+      parent.removeChild(mk);
+      parent.normalize();
+    });
+    removeChip();
+  }
+
+  function showChip(q, hits) {
+    removeChip();
+    if (!hits) return;
+    var chip = document.createElement('div');
+    chip.id = CHIP_ID;
+    chip.innerHTML = '🟡 已标注 “' + esc(q) + '” ' + hits + ' 处 <span class="q-chip-x">✕ 清除</span>';
+    chip.querySelector('.q-chip-x').onclick = function (ev) {
+      ev.stopPropagation();
+      clearHighlight();
+    };
+    document.body.appendChild(chip);
+  }
+
+  function highlightBody(root) {
+    root.querySelectorAll('mark.search-hit').forEach(function (mk) {
+      var parent = mk.parentNode;
+      while (mk.firstChild) parent.insertBefore(mk.firstChild, mk);
+      parent.removeChild(mk);
+    });
+    removeChip();
+    var terms = currentTerms();
+    if (!terms.length) return;
+    var re = new RegExp('(' + terms.map(escRe).join('|') + ')', 'gi');
+    var reTest = new RegExp('(' + terms.map(escRe).join('|') + ')', 'i');
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        var p = n.parentNode;
+        if (!p || p.nodeName === 'SCRIPT' || p.nodeName === 'STYLE') return NodeFilter.FILTER_REJECT;
+        if (p.closest && p.closest('pre, code, .katex, .hljs, mark.search-hit')) return NodeFilter.FILTER_REJECT;
+        if (!n.nodeValue || !reTest.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      var frag = document.createDocumentFragment();
+      var s = n.nodeValue, last = 0, m;
+      re.lastIndex = 0;
+      while ((m = re.exec(s)) !== null) {
+        if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+        var mk = document.createElement('mark');
+        mk.className = 'search-hit';
+        mk.textContent = m[0];
+        frag.appendChild(mk);
+        last = m.index + m[0].length;
+      }
+      if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+      if (frag.childNodes.length) n.parentNode.replaceChild(frag, n);
+    });
+    showChip(currentQ(), nodes.length);
+  }
+
   function init() {
     bind(document.getElementById('nav-search-input'), document.getElementById('nav-search-dd'));
     document.addEventListener('keydown', function (ev) {
@@ -151,5 +235,7 @@ var SearchUI = (function () {
     });
   }
 
-  return { init: init, bind: bind, searchAll: searchAll };
+  return { init: init, bind: bind, searchAll: searchAll,
+           highlightBody: highlightBody, clearHighlight: clearHighlight,
+           currentQ: currentQ };
 })();
