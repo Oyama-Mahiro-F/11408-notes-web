@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-site2 同步脚本：把 考研/ 下的 Markdown 笔记同步到 site2/（基于 md 的笔记网站）
-- 拷贝 .md 文件及其引用的 *.assets 图片目录
-- 生成 manifest.json（前端目录树）
-- 生成 search/{408,数学,英语}.json（客户端搜索索引，纯文本 + bigram 由前端处理）
+笔记站同步脚本：镜像 考研/ 学科目录树 → site（基于 md 的笔记网站）
+- 镜像收录学科目录下全部 md（根目录直属 md 忽略；试卷/参考/课件等排除）
+- 拷贝 .md 及其引用的图片目录；残留清理以「源镜像全集」为基准
+- 生成 manifest.json（目录树）与 search/{科目}.json（搜索索引）
 
 用法：python sync.py
 """
@@ -13,7 +13,6 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from datetime import datetime
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE.parent / "考研"          # D:/university_learning/考研
@@ -96,7 +95,6 @@ def copy_md(md_src: Path, rel: str):
 
 
 def strip_md(text: str) -> str:
-    text = re.sub(r"<[^>]+>", " ", text)                 # html 标签
     text = IMG_RE.sub(" ", text)                          # 图片
     text = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", text)  # 链接留文字
     text = re.sub(r"[#>*`~_|]{1,}", " ", text)            # markdown 符号
@@ -111,8 +109,6 @@ def build_search(pages):
     idx = {}
     for rel, title in pages:
         subj = rel.split("/")[0]
-        if subj not in INCLUDE:
-            continue
         text = strip_md((HERE / rel).read_text("utf-8", errors="ignore"))
         idx.setdefault(subj, {"pages": []})
         idx[subj]["pages"].append({"title": title, "path": rel, "text": text})

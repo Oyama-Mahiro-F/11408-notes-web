@@ -5,6 +5,11 @@
    "icon": "💻",
    "children": [
     {
+     "name": "客观题知识漏洞",
+     "path": "408/客观题知识漏洞.md",
+     "children": []
+    },
+    {
      "name": "操作系统",
      "path": null,
      "children": [
@@ -223,6 +228,11 @@
    "name": "数学",
    "icon": "📐",
    "children": [
+    {
+     "name": "题目",
+     "path": "数学/题目.md",
+     "children": []
+    },
     {
      "name": "概率与统计",
      "path": null,
