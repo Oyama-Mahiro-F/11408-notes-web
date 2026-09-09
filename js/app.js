@@ -447,7 +447,13 @@
       if (/思维导图大纲/.test(rel)) { renderMindmap(stem, text, body); restoreScroll(); return; }
       renderMarkdown(text, body);
       restoreScroll();
-      try { SearchUI.highlightBody(body); } catch (e) {}
+      try {
+        SearchUI.highlightBody(body);
+        if (sessionStorage.getItem('site:jump') === '1') {
+          sessionStorage.removeItem('site:jump');
+          SearchUI.jumpToFirstHit(body);   // 从搜索结果点入：滚到命中词位置
+        }
+      } catch (e) {}
     }).catch(function (e) {
       content.querySelector('.md-body').innerHTML =
         '<div class="empty-state"><p>😢 笔记加载失败：' + esc(String(e)) + '</p><p style="margin-top:8px;font-size:.85rem">' + esc(rel) + '</p></div>';

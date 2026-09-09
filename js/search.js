@@ -225,6 +225,14 @@ var SearchUI = (function () {
   }
 
   function init() {
+    // 点击搜索结果时记下跳转意图 → 目标页渲染后滚到命中词位置
+    document.addEventListener('click', function (ev) {
+      var a = ev.target.closest ? ev.target.closest('.dd-item, .sr-item') : null;
+      if (!a) return;
+      try {
+        if (sessionStorage.getItem('site:q')) sessionStorage.setItem('site:jump', '1');
+      } catch (e) {}
+    });
     bind(document.getElementById('nav-search-input'), document.getElementById('nav-search-dd'));
     document.addEventListener('keydown', function (ev) {
       if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k') {
@@ -235,7 +243,18 @@ var SearchUI = (function () {
     });
   }
 
+  function jumpToFirstHit(root) {
+    var mk = root.querySelector('mark.search-hit');
+    if (!mk) return;
+    var go = function () {
+      var top = mk.getBoundingClientRect().top + window.pageYOffset - 90;
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    };
+    go();
+    setTimeout(go, 400);   // 公式/图片加载后再校正一次
+  }
+
   return { init: init, bind: bind, searchAll: searchAll,
            highlightBody: highlightBody, clearHighlight: clearHighlight,
-           currentQ: currentQ };
+           currentQ: currentQ, jumpToFirstHit: jumpToFirstHit };
 })();
