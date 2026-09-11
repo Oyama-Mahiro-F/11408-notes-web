@@ -25,6 +25,8 @@ SKIP_TOP = {"试卷"}
 # site 仓库内非内容目录（残留清理时不进这些目录）
 NON_CONTENT_DIRS = {"vendor", "css", "js", "search", "node_modules",
                     "_shots", "_edge_profile", "docs", ".github"}
+# 仓库内源文件（不在考研/源里，同步时保留并并入目录树与搜索索引）
+EXTRA_FILES = {"思维导图大纲.md", "复习自查.md"}
 
 SUBJECT_META = [
     ("408", "408", "💻"),
@@ -172,8 +174,22 @@ def mirror_files():
     return keep
 
 
+def collect_extras():
+    """扫描仓库内自建文件（EXTRA_FILES，任意深度），返回相对路径列表"""
+    rels = set()
+    for subj, _, _ in SUBJECT_META:
+        base = HERE / subj
+        if not base.is_dir():
+            continue
+        for root, dirs, files in os.walk(base):
+            for f in files:
+                if f in EXTRA_FILES:
+                    rels.add((Path(root) / f).relative_to(HERE).as_posix())
+    return sorted(rels)
+
+
 def cleanup_stale(keep):
-    """删除镜像集合之外的残留文件/空目录（思维导图大纲是仓库内源文件，跳过）"""
+    """删除镜像集合之外的残留文件/空目录（仓库内源文件 EXTRA_FILES 跳过）"""
     print('[清理] 扫描残留文件...')
     deleted = 0
     roots = [d for d in HERE.iterdir()
@@ -184,7 +200,7 @@ def cleanup_stale(keep):
             rel_root = Path(root).relative_to(HERE)
             for f in files:
                 rel = (rel_root / f).as_posix()
-                if rel in keep or f == '思维导图大纲.md':
+                if rel in keep or f in EXTRA_FILES:
                     continue
                 (Path(root) / f).unlink()
                 deleted += 1
@@ -205,14 +221,14 @@ def main():
     print(f"共收录 {len(mds)} 个 md 文件")
     for src, rel in mds:
         copy_md(src, rel)
-    # 思维导图大纲是仓库内源文件（不在考研/源里），清点后并入索引与目录树
-    subj_408 = {rel.split('/')[1] for _, rel in mds if rel.startswith('408/')}
-    mm_rels = ['408/%s/思维导图大纲.md' % s for s in sorted(subj_408)
-               if (HERE / '408' / s / '思维导图大纲.md').exists()]
-    keep = mirror_files() | {rel for _, rel in mds} | set(mm_rels)
+    # 复习自查/思维导图大纲等是仓库内源文件（不在考研/源里），并入索引与目录树
+    # 源目录里已有同名笔记的以源为准，不再按仓库自建文件重复收录
+    synced_rels = {rel for _, rel in mds}
+    extras = [rel for rel in collect_extras() if rel not in synced_rels]
+    keep = mirror_files() | synced_rels | set(extras)
     cleanup_stale(keep)
     pages = [(rel, Path(rel).stem) for _, rel in mds] + \
-            [(rel, Path(rel).stem) for rel in mm_rels]
+            [(rel, Path(rel).stem) for rel in extras]
     print("生成搜索索引:")
     build_search(pages)
     manifest = build_manifest([(None, rel) for rel, _ in pages])

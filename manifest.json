@@ -9,6 +9,11 @@
      "path": null,
      "children": [
       {
+       "name": "复习自查",
+       "path": "408/操作系统/复习自查.md",
+       "children": []
+      },
+      {
        "name": "思维导图大纲",
        "path": "408/操作系统/思维导图大纲.md",
        "children": []
@@ -53,6 +58,11 @@
       {
        "name": "作业",
        "path": "408/数据结构/作业.md",
+       "children": []
+      },
+      {
+       "name": "复习自查",
+       "path": "408/数据结构/复习自查.md",
        "children": []
       },
       {
@@ -128,6 +138,11 @@
      "path": null,
      "children": [
       {
+       "name": "复习自查",
+       "path": "408/计算机组成原理/复习自查.md",
+       "children": []
+      },
+      {
        "name": "思维导图大纲",
        "path": "408/计算机组成原理/思维导图大纲.md",
        "children": []
@@ -179,6 +194,11 @@
      "name": "计算机网络",
      "path": null,
      "children": [
+      {
+       "name": "复习自查",
+       "path": "408/计算机网络/复习自查.md",
+       "children": []
+      },
       {
        "name": "思维导图大纲",
        "path": "408/计算机网络/思维导图大纲.md",

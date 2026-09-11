@@ -293,6 +293,7 @@
     if (/作业/.test(name)) return '✏️ ';
     if (/公式/.test(name)) return '📐 ';
     if (/思维导图/.test(name)) return '🧠 ';
+    if (/复习自查/.test(name)) return '✅ ';
     if (/教案|教材/.test(name)) return '📘 ';
     return '📄 ';
   }
