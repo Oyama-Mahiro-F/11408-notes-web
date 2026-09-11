@@ -5,11 +5,6 @@
    "icon": "💻",
    "children": [
     {
-     "name": "客观题知识漏洞",
-     "path": "408/客观题知识漏洞.md",
-     "children": []
-    },
-    {
      "name": "操作系统",
      "path": null,
      "children": [
@@ -58,6 +53,11 @@
       {
        "name": "作业",
        "path": "408/数据结构/作业.md",
+       "children": []
+      },
+      {
+       "name": "客观题知识漏洞",
+       "path": "408/数据结构/客观题知识漏洞.md",
        "children": []
       },
       {
@@ -229,11 +229,6 @@
    "icon": "📐",
    "children": [
     {
-     "name": "题目",
-     "path": "数学/题目.md",
-     "children": []
-    },
-    {
      "name": "概率与统计",
      "path": null,
      "children": [
@@ -393,6 +388,11 @@
       {
        "name": "第8章 二次型",
        "path": "数学/线性代数/第8章 二次型.md",
+       "children": []
+      },
+      {
+       "name": "线代",
+       "path": "数学/线性代数/线代.md",
        "children": []
       },
       {
@@ -571,6 +571,11 @@
      "name": "写作",
      "path": null,
      "children": [
+      {
+       "name": "论述型作文-亮点句式名词性从句",
+       "path": "英语/写作/论述型作文-亮点句式名词性从句.md",
+       "children": []
+      },
       {
        "name": "论述型作文-亮点句式定语从句",
        "path": "英语/写作/论述型作文-亮点句式定语从句.md",
