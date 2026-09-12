@@ -439,7 +439,7 @@
     if (!treeEl.querySelector('.node-row[data-path]')) renderTree();
     markActive(rel);
     content.innerHTML = '<div class="md-body"><div class="loading">加载中...</div></div>';
-    fetch(enc(rel)).then(function (r) {
+    fetch(enc(rel), { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.text();
     }).then(function (text) {
@@ -609,7 +609,7 @@
     tabsEl.innerHTML = html;
   }
 
-  fetch('manifest.json').then(function (r) { return r.json(); }).then(function (m) {
+  fetch('manifest.json', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (m) {
     manifest = m;
     renderTree();
     buildTabs();

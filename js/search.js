@@ -8,7 +8,7 @@ var SearchUI = (function () {
     if (loading) return loading;
     var subs = ['408', '数学', '英语'];
     loading = Promise.all(subs.map(function (s) {
-      return fetch('search/' + encodeURIComponent(s) + '.json')
+      return fetch('search/' + encodeURIComponent(s) + '.json', { cache: 'no-cache' })
         .then(function (r) { return r.json(); })
         .then(function (d) { indexes[s] = d; });
     }));

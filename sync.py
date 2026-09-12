@@ -220,6 +220,15 @@ def main():
     mds = collect_mds()
     print(f"共收录 {len(mds)} 个 md 文件")
     for src, rel in mds:
+        # 仓库自建文件（复习自查/思维导图大纲）若已被源目录同名文件取代，给出提示防误覆盖
+        if rel.split('/')[-1] in EXTRA_FILES:
+            dst = HERE / rel
+            if dst.exists():
+                try:
+                    if dst.read_text('utf-8', errors='ignore') != src.read_text('utf-8', errors='ignore'):
+                        print(f'  [提示] {rel} 源目录与站内版本不同，以源为准覆盖')
+                except OSError:
+                    pass
         copy_md(src, rel)
     # 复习自查/思维导图大纲等是仓库内源文件（不在考研/源里），并入索引与目录树
     # 源目录里已有同名笔记的以源为准，不再按仓库自建文件重复收录
