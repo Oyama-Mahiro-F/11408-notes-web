@@ -468,6 +468,17 @@
        "children": []
       },
       {
+       "name": "专题",
+       "path": null,
+       "children": [
+        {
+         "name": "专题1 数列的极限",
+         "path": "数学/高数/专题/专题1 数列的极限.md",
+         "children": []
+        }
+       ]
+      },
+      {
        "name": "基础",
        "path": null,
        "children": [
