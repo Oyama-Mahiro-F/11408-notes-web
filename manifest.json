@@ -744,6 +744,11 @@
    "icon": "📋",
    "children": [
     {
+     "name": "背诵",
+     "path": "政治/背诵.md",
+     "children": []
+    },
+    {
      "name": "马克思主义原理",
      "path": null,
      "children": [
