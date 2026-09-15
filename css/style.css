@@ -188,6 +188,9 @@ body {
 .subject-card .icon { font-size: 2.2rem; margin-bottom: 10px; }
 .subject-card .label { font-size: 1.2rem; font-weight: 700; }
 .subject-card .hint { font-size: .75rem; color: var(--muted); margin-top: 5px; }
+/* 无笔记的科目（占位卡）：保持可见但弱化，不误导点击 */
+.subject-card.empty { opacity: .55; background: transparent; }
+.subject-card.empty:hover { border-color: var(--border); box-shadow: none; transform: none; }
 .footer { color: var(--muted); font-size: .8rem; margin-top: 44px; }
 
 /* ---------- 搜索结果 / 空状态 / 错误 ---------- */

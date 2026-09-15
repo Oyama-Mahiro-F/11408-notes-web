@@ -3,14 +3,21 @@ var SearchUI = (function () {
   'use strict';
   var indexes = {};            // subject -> {pages:[...]}
   var loading = null;
+  var subs = [];               // 参与搜索的科目，由 app.js 依 manifest.json 注入
+
+  /* 科目清单来自 manifest.json（而非写死），新增科目自动进搜索 */
+  function setSubjects(list) {
+    subs = (list || []).slice();
+    indexes = {}; loading = null;
+  }
 
   function fetchAll() {
     if (loading) return loading;
-    var subs = ['408', '数学', '英语'];
     loading = Promise.all(subs.map(function (s) {
       return fetch('search/' + encodeURIComponent(s) + '.json', { cache: 'no-cache' })
-        .then(function (r) { return r.json(); })
-        .then(function (d) { indexes[s] = d; });
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (d) { indexes[s] = d; })
+        .catch(function () { indexes[s] = { pages: [] }; });
     }));
     return loading;
   }
@@ -254,7 +261,7 @@ var SearchUI = (function () {
     setTimeout(go, 400);   // 公式/图片加载后再校正一次
   }
 
-  return { init: init, bind: bind, searchAll: searchAll,
+  return { init: init, bind: bind, searchAll: searchAll, setSubjects: setSubjects,
            highlightBody: highlightBody, clearHighlight: clearHighlight,
            currentQ: currentQ, jumpToFirstHit: jumpToFirstHit };
 })();

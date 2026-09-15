@@ -32,8 +32,11 @@ SUBJECT_META = [
     ("408", "408", "💻"),
     ("数学", "数学", "📐"),
     ("英语", "英语", "📖"),
-    ("政治", "政治", "📋"),   # 无 md，仅首页卡片占位
+    ("政治", "政治", "📋"),
 ]
+
+# 归一化换行的文本类型（.assets 里的 html/svg 交互资源也在内，二进制资源绝不触碰）
+TEXT_EXT = {".md", ".html", ".htm", ".css", ".js", ".svg", ".json", ".txt"}
 
 IMG_RE = re.compile(r"!\[[^\]]*\]\(([^)\s][^)]*?)\)")
 HTMLIMG_RE = re.compile(r"<img[^>]+src=[\"']([^\"']+)[\"']", re.I)
@@ -69,10 +72,25 @@ def collect_mds():
     return out
 
 
+def normalize_eol(path: Path):
+    """把文本文件统一为 LF 换行。
+
+    源目录在 Windows 下是 CRLF，原样拷入会让仓库每次同步都产生整文件假 diff；
+    二进制资源（png/jpg/woff…）本体可能含 0x0D0A，一律跳过，绝不改写。
+    """
+    if path.suffix.lower() not in TEXT_EXT:
+        return
+    data = path.read_bytes()
+    fixed = data.replace(b"\r\n", b"\n")
+    if fixed != data:
+        path.write_bytes(fixed)
+
+
 def copy_md(md_src: Path, rel: str):
     dst = HERE / rel
     dst.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(md_src, dst)
+    normalize_eol(dst)          # 保留 mtime，只统一换行符
     text = md_src.read_text("utf-8", errors="ignore")
     # 收集引用到的任意本地资源目录（X.assets / assets 均可）
     dirs = set()
@@ -94,6 +112,9 @@ def copy_md(md_src: Path, rel: str):
         dst_dir = dst.parent / name
         if src_dir.is_dir():
             shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
+            for f in dst_dir.rglob("*"):
+                if f.is_file():
+                    normalize_eol(f)    # .assets 内的 html/svg 也统一换行
 
 
 def strip_md(text: str) -> str:
@@ -184,7 +205,9 @@ def collect_extras():
         for root, dirs, files in os.walk(base):
             for f in files:
                 if f in EXTRA_FILES:
-                    rels.add((Path(root) / f).relative_to(HERE).as_posix())
+                    p = Path(root) / f
+                    normalize_eol(p)        # 仓库自建文件同样统一 LF
+                    rels.add(p.relative_to(HERE).as_posix())
     return sorted(rels)
 
 

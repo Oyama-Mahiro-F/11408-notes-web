@@ -1,0 +1,24 @@
+# 统一换行符：仓库内文本一律 LF，避免 sync.py 从 Windwos 源目录带入 CRLF 造成整文件假 diff
+* text=auto eol=lf
+
+# Windows 批处理必须保留 CRLF，否则 cmd 解析异常
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二进制资源：不做换行转换，diff 直接标记为 binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.bmp binary
+*.svg text eol=lf
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+*.pdf binary
+*.zip binary
+*.mp4 binary

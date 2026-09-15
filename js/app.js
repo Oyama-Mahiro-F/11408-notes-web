@@ -535,16 +535,29 @@
   }
 
   /* ================= 首页 ================= */
+  function countPagesOf(node) {
+    if (!node) return 0;
+    if (node.path) return 1;
+    return (node.children || []).reduce(function (s, c) { return s + countPagesOf(c); }, 0);
+  }
+  function subjectHref(name, n) {
+    return n ? '#/d/' + encodeURIComponent(name) : '#/empty/' + encodeURIComponent(name);
+  }
+  function subjectOf(name) {
+    return (manifest.subjects || []).filter(function (n) { return n.name === name; })[0] || null;
+  }
+
   function showHome() {
     currentPath = null;
     document.title = '2026考研笔记资料库';
     markActive(null);
     var cards = '';
-    var meta = { '408': ['💻', '数据结构·组成·OS·网络'], '数学': ['📐', '高数·线代·概率'], '英语': ['📖', '词汇·语法·写作'], '政治': ['📋', '笔记整理中'] };
-    ['408', '数学', '英语', '政治'].forEach(function (s) {
-      var href = s === '政治' ? '#/empty/' + s : '#/d/' + encodeURIComponent(s);
-      cards += '<a class="subject-card" href="' + href + '">' +
-        '<span class="icon">' + meta[s][0] + '</span><span class="label">' + s + '</span><span class="hint">' + meta[s][1] + '</span></a>';
+    manifest.subjects.forEach(function (s) {
+      var n = countPagesOf(s);
+      var hint = n ? s.icon + ' 共 ' + n + ' 篇笔记' : '笔记整理中';
+      cards += '<a class="subject-card' + (n ? '' : ' empty') + '" href="' + subjectHref(s.name, n) + '">' +
+        '<span class="icon">' + s.icon + '</span><span class="label">' + esc(s.name) + '</span>' +
+        '<span class="hint">' + esc(hint) + '</span></a>';
     });
     content.innerHTML =
       '<div class="home">' +
@@ -602,10 +615,9 @@
   /* ================= 启动 ================= */
   function buildTabs() {
     var html = '<a data-tab="home" href="#/home">首页</a>';
-    ['408', '数学', '英语'].forEach(function (s) {
-      html += '<a data-tab="' + s + '" href="#/d/' + encodeURIComponent(s) + '">' + s + '</a>';
+    manifest.subjects.forEach(function (s) {
+      html += '<a data-tab="' + esc(s.name) + '" href="' + subjectHref(s.name, true) + '">' + esc(s.name) + '</a>';
     });
-    html += '<a data-tab="政治" href="#/empty/政治">政治</a>';
     tabsEl.innerHTML = html;
   }
 
@@ -613,6 +625,7 @@
     manifest = m;
     renderTree();
     buildTabs();
+    SearchUI.setSubjects((m.subjects || []).map(function (s) { return s.name; }));
     SearchUI.init();
     initLightbox();
     route();

@@ -1,17 +1,3 @@
-# Prevent stale dirs from being re-added
-site/
-!site/search.js
-!site/search-results.html
-!site/search/
-考研/
-
-# Non-HTML folders
-2.1/
-2.2/
-3.1/
-3.2/
-job_hunting/
-
 # IDE files
 .idea/
 *.iml
@@ -24,10 +10,12 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
-
+css/.DS_Store
 
 # md-site dev
-css/.DS_Store
 node_modules/
 _shots/
 _edge_profile/
+
+# agent 工作区（j-space 台账等本地状态）
+.jspace/
