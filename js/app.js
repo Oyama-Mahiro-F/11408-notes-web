@@ -187,6 +187,39 @@
 
   function tocIsOpen(id) { return !!(tocUser[id] || tocAuto[id]); }
 
+  /* 取标题纯文本：KaTeX 会同时输出 MathML 与 HTML 两份，直接 textContent 会把公式读两遍、
+     还会把 annotation 里的 TeX 源码（"\cdot"、"1^\infty"）一起读出来。做法：只留 MathML 一份，
+     去掉 annotation；再把 MathML 的二维结构改写成线性写法：分数 → "分子/分母"、上下标 → "x^2"、"a_n" */
+  function headingText(h) {
+    var clone = h.cloneNode(true);
+    Array.prototype.forEach.call(clone.querySelectorAll('.katex-html'), function (n) {
+      n.parentNode.removeChild(n);
+    });
+    Array.prototype.forEach.call(clone.querySelectorAll('annotation'), function (n) {
+      n.parentNode.removeChild(n);
+    });
+    Array.prototype.forEach.call(clone.querySelectorAll('mfrac'), function (f) {
+      var num = f.children[0], den = f.children[1];
+      if (!num || !den) return;
+      f.textContent = num.textContent + '/' + den.textContent;
+    });
+    Array.prototype.forEach.call(clone.querySelectorAll('msqrt'), function (r) {
+      r.textContent = '√(' + r.textContent + ')';
+    });
+    Array.prototype.forEach.call(clone.querySelectorAll('msub'), function (n) {
+      if (n.children.length >= 2) n.textContent = n.children[0].textContent + '_' + n.children[1].textContent;
+    });
+    Array.prototype.forEach.call(clone.querySelectorAll('msup'), function (n) {
+      if (n.children.length >= 2) n.textContent = n.children[0].textContent + '^' + n.children[1].textContent;
+    });
+    Array.prototype.forEach.call(clone.querySelectorAll('msubsup'), function (n) {
+      if (n.children.length >= 3) {
+        n.textContent = n.children[0].textContent + '_' + n.children[1].textContent + '^' + n.children[2].textContent;
+      }
+    });
+    return (clone.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
   function buildToc(bodyEl) {
     spyHeadings = [];
     tocNodes = {}; tocUser = {}; tocAuto = {};
@@ -196,7 +229,7 @@
     Array.prototype.forEach.call(heads, function (h, i) {
       h.id = 'sec-' + i;
       var n = { id: h.id, lv: +h.tagName[1],
-        text: (h.textContent.trim() || '（无标题）').slice(0, 60),
+        text: (headingText(h) || '（无标题）').slice(0, 60),
         el: h, children: [], parent: null };
       tocNodes[n.id] = n;
       while (stack.length > 1 && stack[stack.length - 1].lv >= n.lv) stack.pop();
