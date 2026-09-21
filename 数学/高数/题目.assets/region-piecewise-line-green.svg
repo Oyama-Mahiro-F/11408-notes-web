@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="360" viewBox="0 0 680 360">
+  <rect width="680" height="360" fill="#ffffff"/>
+  <defs>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 z" fill="#222"/>
+    </marker>
+    <marker id="arrBlue" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 z" fill="#1f6fb2"/>
+    </marker>
+    <marker id="arrRed" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 z" fill="#c0392b"/>
+    </marker>
+    <marker id="arrGreen" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 z" fill="#2e7d32"/>
+    </marker>
+  </defs>
+
+  <!-- 区域 D -->
+  <polygon points="110.0,300.0 300.0,110.0 490.0,300.0" fill="#cfe3f7" fill-opacity="0.85" stroke="none"/>
+
+  <!-- 坐标轴 -->
+  <line x1="110.0" y1="300.0" x2="547.0" y2="300.0" stroke="#222" stroke-width="1.4" marker-end="url(#arr)"/>
+  <line x1="110.0" y1="300.0" x2="110.0" y2="68.2" stroke="#222" stroke-width="1.4" marker-end="url(#arr)"/>
+  <text x="553.0" y="316.0" font-size="15" font-family="Times New Roman, serif" font-style="italic">x</text>
+  <text x="88.0" y="72.2" font-size="15" font-family="Times New Roman, serif" font-style="italic">y</text>
+  <text x="92.0" y="318.0" font-size="13" font-family="Times New Roman, serif">O</text>
+
+  <!-- 刻度 1,2 -->
+  <g stroke="#222" stroke-width="1.2">
+    <line x1="300.0" y1="295.0" x2="300.0" y2="305.0"/>
+    <line x1="490.0" y1="295.0" x2="490.0" y2="305.0"/>
+    <line x1="105.0" y1="110.0" x2="115.0" y2="110.0"/>
+  </g>
+  <text x="296.0" y="320.0" font-size="12" font-family="Times New Roman, serif">1</text>
+  <text x="486.0" y="320.0" font-size="12" font-family="Times New Roman, serif">2</text>
+  <text x="92.0" y="114.0" font-size="12" font-family="Times New Roman, serif">1</text>
+
+  <!-- 曲线 L = A->C->B（沿 x 增长） -->
+  <line x1="110.0" y1="300.0" x2="300.0" y2="110.0" stroke="#1f6fb2" stroke-width="2.6" marker-end="url(#arrBlue)"/>
+  <line x1="300.0" y1="110.0" x2="490.0" y2="300.0" stroke="#1f6fb2" stroke-width="2.6" marker-end="url(#arrBlue)"/>
+  <text x="189.8" y="208.2" font-size="13" fill="#1f6fb2" font-family="Times New Roman, serif">y = x</text>
+  <text x="395.0" y="193.0" font-size="13" fill="#1f6fb2" font-family="Times New Roman, serif">y = 2 &#8722; x</text>
+
+  <!-- 补线段 BA（顺时针闭合，x 递减） -->
+  <line x1="490.0" y1="308.0" x2="124.0" y2="308.0" stroke="#2e7d32" stroke-width="2.2" stroke-dasharray="7 4" marker-end="url(#arrGreen)"/>
+  <text x="330.4" y="326.0" font-size="13" fill="#2e7d32" font-family="Times New Roman, serif">B &#8594; A&#65288;&#34917;&#32447;&#65292;y = 0&#65289;</text>
+
+  <!-- 顶点与标注 -->
+  <circle cx="110.0" cy="300.0" r="4" fill="#111"/>
+  <circle cx="300.0" cy="110.0" r="4" fill="#111"/>
+  <circle cx="490.0" cy="300.0" r="4" fill="#111"/>
+  <text x="84.0" y="320.0" font-size="14" font-family="Times New Roman, serif">A(0, 0)</text>
+  <text x="286.0" y="98.0" font-size="14" font-family="Times New Roman, serif">C(1, 1)</text>
+  <text x="496.0" y="320.0" font-size="14" font-family="Times New Roman, serif">B(2, 0)</text>
+
+  <!-- 题给积分方向 -->
+  <text x="227.8" y="98.6" font-size="13.5" font-family="Times New Roman, serif">● 题给方向：A → C → B（x 增长）</text>
+  <!-- 闭路方向 -->
+  <text x="227.8" y="118.6" font-size="13.5" fill="#c0392b" font-family="Times New Roman, serif">● 闭路 ACBA：顺时针（负向）⟹ 格林公式取负号</text>
+  <!-- 区域 D -->
+  <text x="288.6" y="243.0" font-size="15" font-family="Times New Roman, serif" font-style="italic">D</text>
+  <text x="303.8" y="261.0" font-size="12.5" font-family="Times New Roman, serif">|D| = 1</text>
+</svg>
