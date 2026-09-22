@@ -31,6 +31,9 @@ body {
 .tabs a {
   color: #dbe0f5; text-decoration: none; padding: 6px 14px; border-radius: 8px;
   font-size: .95rem; cursor: pointer; white-space: nowrap;
+  /* 固定行高：中文走了「微软雅黑」回退、数字走 Arial，两者度量不同，
+     若不锁死行高，纯数字标签(408)的行盒会比中文标签高 2px。 */
+  line-height: 20px;
 }
 .tabs a:hover { background: rgba(255,255,255,.12); color: #fff; }
 .tabs a.active { background: rgba(255,255,255,.2); color: #fff; font-weight: 600; }
