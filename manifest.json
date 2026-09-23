@@ -273,6 +273,11 @@
      "path": null,
      "children": [
       {
+       "name": "概率论",
+       "path": "数学/概率与统计/概率论.md",
+       "children": []
+      },
+      {
        "name": "第1章 随机事件和概率",
        "path": "数学/概率与统计/第1章 随机事件和概率.md",
        "children": []
