@@ -29,6 +29,21 @@
      这样矩阵里的 \\ 、_ 、& 和表格里的 | 都不会被 markdown 解析器破坏。 */
   var mathStore = [];
 
+  /* markdown 目标地址规范化：本地路径逐段 encodeURIComponent（空格 → %20）。
+     源文件名普遍带空格甚至括号（"第5章 树.assets/…"），marked(v12)/CommonMark 不接受
+     裸空格，会把整段链接当纯文本吐出来；已编码的路径先解码再编码，避免 %2520。 */
+  function encodeDest(raw) {
+    var dest = (raw || '').trim();
+    var title = '';
+    var tm = dest.match(/\s+(["'])([^"']*)\1$/);        // 兼容 `路径 "标题"` 写法
+    if (tm) { title = dest.slice(tm.index); dest = dest.slice(0, tm.index); }
+    dest = dest.replace(/^<|>$/g, '');
+    if (/^(?:[a-z][a-z0-9+.\-]*:|\/|#)/i.test(dest)) return dest + title;   // 外链/绝对路径/锚点
+    var plain = dest;
+    try { plain = decodeURIComponent(dest); } catch (e) {}
+    return plain.split('/').map(encodeURIComponent).join('/') + title;
+  }
+
   function stashMath(text) {
     mathStore = [];
     // 1. 围栏代码块（吞掉行首缩进，避免占位符被当成缩进代码块）
@@ -40,29 +55,29 @@
     text = text.replace(/`[^`\n]+`/g, function (m) {
       codes.push(m); return 'ZZCODE' + (codes.length - 1) + 'ZZ';
     });
-    // 3. 图片地址预编码（源文件路径带空格，marked 解析不了）
-    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function (m, alt, dest) {
-      dest = dest.trim().replace(/^<|>$/g, '');
-      var safe = dest.split('/').map(encodeURIComponent).join('/');
-      return '![' + alt + '](' + safe + ')';
-    });
-    // 4. 块级公式 $$...$$
+    // 3. 块级公式 $$...$$
     text = text.replace(/\$\$([\s\S]+?)\$\$/g, function (m, tex) {
       mathStore.push({ tex: tex.trim(), display: true });
       return '\nZZMATH' + (mathStore.length - 1) + 'ZZ\n';
     });
-    // 5. 行内公式 $...$
+    // 4. 行内公式 $...$
     text = text.replace(/\$(?!\s)([^$\n]+?)(?<!\s)\$/g, function (m, tex) {
       mathStore.push({ tex: tex, display: false });
       return 'ZZMATH' + (mathStore.length - 1) + 'ZZ';
     });
-    // 6. \(...\) 与 \[...\]
+    // 5. \(...\) 与 \[...\]
     text = text.replace(/\\\([\s\S]+?\\\)/g, function (m, tex) {
       mathStore.push({ tex: tex, display: false }); return 'ZZMATH' + (mathStore.length - 1) + 'ZZ';
     });
     text = text.replace(/\\\[([\s\S]+?)\\\]/g, function (m, tex) {
       mathStore.push({ tex: tex.trim(), display: true }); return '\nZZMATH' + (mathStore.length - 1) + 'ZZ\n';
     });
+    // 6. 图片与链接的地址预编码（放在公式摘除之后，避免误伤公式里的 []()）。
+    //    括号目标用一层嵌套括号匹配，兼容 "ascii-art-image (2).png" 这类文件名。
+    text = text.replace(/(!?)\[([^\]\n]*)\]\(([^\n()]*(?:\([^\n()]*\)[^\n()]*)*)\)/g,
+      function (m, bang, label, dest) {
+        return bang + '[' + label + '](' + encodeDest(dest) + ')';
+      });
     return { text: text, codes: codes };
   }
 
@@ -113,6 +128,14 @@
     Array.prototype.forEach.call(bodyEl.querySelectorAll('img'), function (img) {
       var src = img.getAttribute('src') || '';
       if (!/^(https?:|data:|\/)/.test(src)) img.src = new URL(src, location.origin + location.pathname.replace(/index\.html$/, '') + base).href;
+    });
+    // 附件链接 rebase：演示 HTML 等相对资源同样要以 md 所在目录为基准，
+    // 否则会按站点根目录解析而 404。`.md` 链接交给下面的站内路由处理，保持相对不动。
+    Array.prototype.forEach.call(bodyEl.querySelectorAll('a[href]'), function (a) {
+      var href = a.getAttribute('href') || '';
+      if (/^(https?:|mailto:|#|\/)/i.test(href) || /\.md($|[?#])/i.test(href)) return;
+      a.href = new URL(href, location.origin + location.pathname.replace(/index\.html$/, '') + base).href;
+      if (/\.html?($|[?#])/i.test(href)) { a.target = '_blank'; a.rel = 'noopener'; }
     });
     // 标题 id + TOC
     buildToc(bodyEl);
