@@ -618,7 +618,7 @@
     content.innerHTML =
       '<div class="home">' +
       '<h1>2026考研笔记资料库</h1><p class="subtitle">Markdown 直渲染 · KaTeX 公式</p>' +
-      '<p class="countdown-label">距离 2026 考研（12.20）</p><div class="countdown-row" id="countdown"></div>' +
+      '<p class="countdown-label">距离 2026 考研（12.19）</p><div class="countdown-row" id="countdown"></div>' +
       '<div class="home-search"><div class="box"><span>🔍</span><input id="home-search-input" placeholder="搜索笔记关键词..." autocomplete="off"></div>' +
       '<div class="dropdown" id="home-search-dd"></div></div>' +
       '<div class="subject-grid">' + cards + '</div>' +
@@ -630,7 +630,7 @@
 
   function countdown() {
     var el = $('#countdown'); if (!el) return;
-    var exam = new Date(2026, 11, 20, 8, 30, 0);
+    var exam = new Date(2026, 11, 19, 8, 30, 0);
     function tick() {
       if (!document.getElementById('countdown')) { clearInterval(t); return; }
       var diff = exam - new Date();
