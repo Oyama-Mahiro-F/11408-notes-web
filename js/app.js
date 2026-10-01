@@ -453,13 +453,26 @@
 
   /* TOC 收起/展开（默认展开，状态跨页面保持） */
   var tocOpen = true;
+  function setTocCollapsed(v) {
+    tocOpen = !v;
+    tocEl.classList.toggle('collapsed', v);
+  }
+  // 收起后细条上仍有明确的「展开」按钮（«），不依赖点击整条
+  $('#toc-collapse').addEventListener('click', function (ev) {
+    ev.stopPropagation();
+    setTocCollapsed(true);
+  });
+  $('#toc-expand').addEventListener('click', function (ev) {
+    ev.stopPropagation();
+    setTocCollapsed(false);
+  });
   tocEl.addEventListener('click', function (ev) {
     if (tocEl.classList.contains('collapsed')) {
       tocOpen = true;
       tocEl.classList.remove('collapsed');
       return;
     }
-    if (ev.target.closest && ev.target.closest('#toc-head')) {
+    if (ev.target.closest && ev.target.closest('#toc-head') && !ev.target.closest('.toc-btn')) {
       tocOpen = false;
       tocEl.classList.add('collapsed');
     }
