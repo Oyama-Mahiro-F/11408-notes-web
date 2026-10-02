@@ -267,6 +267,8 @@
     tocList.appendChild(renderTocChildren(root, true));
     applyTocState();
     $('#toc').style.display = spyHeadings.length ? '' : 'none';
+    // 窄屏的顶栏「📑 目录」按钮只在有页内目录时出现
+    document.body.classList.toggle('has-toc', spyHeadings.length > 0);
   }
 
   function renderTocChildren(node, isRoot) {
@@ -314,6 +316,7 @@
     var t = document.getElementById(id);
     if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - 66, behavior: 'smooth' });
     applyTocState();
+    if (tocDrawerMode()) closeTocDrawer();      // 抽屉模式下选完即收起，不挡正文
   });
 
   var spyTick = false;
@@ -437,6 +440,7 @@
   }
   $('#menu-btn').onclick = function () {
     sidebar.classList.toggle('open'); mask.classList.toggle('open');
+    closeTocDrawer();                          // 两个抽屉不同时展开
   };
   mask.onclick = closeSidebarMobile;
 
@@ -478,6 +482,38 @@
     }
   });
 
+  /* 窄屏（≤1100px）：目录变成抽屉 —— 顶栏「📑 目录」滑出，遮罩 / ✕ / Esc 关闭 */
+  var tocMask = $('#toc-mask'), tocToggle = $('#toc-toggle');
+  function tocDrawerMode() {
+    return window.matchMedia('(max-width: 1100px)').matches;
+  }
+  function openTocDrawer() {
+    closeSidebarMobile();                      // 两个抽屉不同时展开
+    tocEl.classList.add('open');
+    tocMask.classList.add('open');
+    tocToggle.setAttribute('aria-expanded', 'true');
+  }
+  function closeTocDrawer() {
+    if (!tocEl.classList.contains('open')) return;
+    tocEl.classList.remove('open');
+    tocMask.classList.remove('open');
+    tocToggle.setAttribute('aria-expanded', 'false');
+  }
+  tocToggle.addEventListener('click', function () {
+    if (tocEl.classList.contains('open')) closeTocDrawer(); else openTocDrawer();
+  });
+  $('#toc-close').addEventListener('click', function (ev) {
+    ev.stopPropagation();
+    closeTocDrawer();
+  });
+  tocMask.addEventListener('click', closeTocDrawer);
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') closeTocDrawer();
+  });
+  window.addEventListener('resize', function () {
+    if (!tocDrawerMode()) closeTocDrawer();    // 拉宽回到桌面端：抽屉状态作废
+  });
+
   /* ================= 路由 ================= */
   function route() {
     var raw = location.hash.slice(1);
@@ -491,6 +527,8 @@
     pendingRestore = (key in scrollMem) ? scrollMem[key] : 0;
     prevRouteKey = key;
     tocList.innerHTML = ''; tocEl.style.display = 'none';
+    document.body.classList.remove('has-toc');
+    closeTocDrawer();                          // 换页时收起目录抽屉
     if (cmd === 'p' && arg) return showPage(arg);
     if (cmd === 'd' && arg) return showIndex(arg);
     if (cmd === 'search' && arg) return showSearch(arg);

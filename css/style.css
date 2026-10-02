@@ -259,11 +259,59 @@ body {
 #lightbox img { max-width: 94vw; max-height: 94vh; border-radius: 6px; box-shadow: 0 8px 40px rgba(0,0,0,.5); }
 
 /* ---------- 响应式 ---------- */
-@media (max-width: 1100px) { .toc { display: none; } }
+/* 顶栏「页内目录」按钮 / 抽屉与桌面端共用的默认值（桌面端不显示，用右侧常驻 TOC） */
+.toc-toggle {
+  display: none; align-items: center; gap: 5px; flex: 0 0 auto;
+  border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.14);
+  color: #fff; border-radius: 9px; padding: 6px 11px; font-size: .85rem;
+  line-height: 1; cursor: pointer; white-space: nowrap;
+}
+.toc-toggle:hover { background: rgba(255,255,255,.28); }
+.toc-close {
+  display: none; align-items: center; justify-content: center;
+  width: 30px; height: 30px; margin-left: auto; padding: 0; flex: 0 0 auto;
+  border: none; background: none; color: #888; font-size: 1rem;
+  line-height: 1; cursor: pointer; border-radius: 6px;
+}
+.toc-close:hover { background: var(--accent-light); color: var(--accent); }
+.toc-mask { display: none; }
+
+/* 窄屏（≤1100px）：右侧目录不再直接隐藏，而是收进抽屉 —— 顶栏点「📑 目录」滑出，
+   遮罩 / ✕ / Esc 关闭；点条目跳转后自动收起 */
+@media (max-width: 1100px) {
+  .toc {
+    position: fixed; top: var(--topbar-h); right: 0; bottom: 0; left: auto;
+    width: min(320px, 88vw); flex-basis: auto; height: auto;
+    z-index: 98; padding: 12px 10px 30px; cursor: default;
+    box-shadow: -6px 0 26px rgba(0,0,0,.16);
+    transform: translateX(105%); visibility: hidden;
+    transition: transform .22s ease, visibility 0s linear .22s;
+  }
+  .toc.open { transform: translateX(0); visibility: visible; transition: transform .22s ease; }
+  /* 抽屉模式下忽略「收起成细条」的状态，一律按完整面板呈现 */
+  .toc.collapsed { width: min(320px, 88vw); flex-basis: auto; padding: 12px 10px 30px; cursor: default; }
+  .toc.collapsed .toc-head { flex-direction: row; align-items: center; gap: 8px; padding: 6px 8px 10px; }
+  .toc.collapsed .toc-label { writing-mode: horizontal-tb; letter-spacing: normal; font-size: .95rem; }
+  .toc.collapsed .toc-arrow { display: inline-block; }
+  .toc.collapsed .toc-list { display: block; }
+  .toc-collapse, .toc-expand { display: none !important; }
+  .toc-close { display: inline-flex; }
+  .toc-mask.open { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.25); z-index: 97; }
+  body.has-toc .toc-toggle { display: inline-flex; }
+  /* 抽屉是触摸场景：加大行高与字号 */
+  .toc-head { font-size: .95rem; }
+  .toc-row { padding: 10px 12px; font-size: .95rem; }
+  .toc-caret { flex-basis: 16px; width: 16px; font-size: .78rem; }
+  .toc-node[data-lv="3"] > .toc-row { padding-left: 16px; }
+  .toc-node[data-lv="4"] > .toc-row { padding-left: 30px; }
+  .toc-node[data-lv="5"] > .toc-row, .toc-node[data-lv="6"] > .toc-row { padding-left: 44px; font-size: .9rem; }
+}
 @media (max-width: 860px) {
   .menu-btn { display: block; }
   .tabs { position: fixed; top: var(--topbar-h); left: 0; right: 0; background: #3f51b5; padding: 6px 10px; z-index: 99; }
   .nav-search { width: 160px; }
+  /* 顶栏下面还压着一条 tab 栏，抽屉与左树一样从它下方开始 */
+  .toc { top: calc(var(--topbar-h) + 42px); }
   .sidebar {
     position: fixed; left: 0; top: calc(var(--topbar-h) + 42px); z-index: 98;
     transform: translateX(-100%); transition: transform .2s; box-shadow: 4px 0 16px rgba(0,0,0,.1);
@@ -274,4 +322,9 @@ body {
   .sidebar-mask.open { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.25); z-index: 97; }
   .content { padding: 16px 12px 60px; }
   .md-body { padding: 20px 18px; }
+}
+@media (max-width: 560px) {
+  .toc-toggle-text { display: none; }      /* 小屏只留 📑 图标，避免顶栏溢出 */
+  .toc-toggle { padding: 7px 9px; }
+  .nav-search { width: 130px; }
 }

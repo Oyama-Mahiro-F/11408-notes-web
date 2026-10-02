@@ -19,6 +19,7 @@
     <input type="text" id="nav-search-input" placeholder="搜索笔记... (Ctrl+K)" autocomplete="off">
     <div class="dropdown" id="nav-search-dd"></div>
   </div>
+  <button class="toc-toggle" id="toc-toggle" type="button" title="页内目录" aria-label="打开页内目录" aria-expanded="false"><span class="toc-toggle-icon">📑</span><span class="toc-toggle-text">目录</span></button>
 </header>
 <div class="layout">
   <aside class="sidebar" id="sidebar">
@@ -33,9 +34,10 @@
     <div class="loading">加载中...</div>
   </main>
   <aside class="toc" id="toc">
-    <div class="toc-head" id="toc-head"><span class="toc-arrow">▸</span><span class="toc-label">目录</span><button class="toc-btn toc-collapse" id="toc-collapse" type="button" title="收起目录" aria-label="收起目录">»</button><button class="toc-btn toc-expand" id="toc-expand" type="button" title="展开目录" aria-label="展开目录">«</button></div>
+    <div class="toc-head" id="toc-head"><span class="toc-arrow">▸</span><span class="toc-label">目录</span><button class="toc-btn toc-collapse" id="toc-collapse" type="button" title="收起目录" aria-label="收起目录">»</button><button class="toc-btn toc-expand" id="toc-expand" type="button" title="展开目录" aria-label="展开目录">«</button><button class="toc-close" id="toc-close" type="button" title="关闭" aria-label="关闭目录">✕</button></div>
     <nav class="toc-list" id="toc-list"></nav>
   </aside>
+  <div class="toc-mask" id="toc-mask"></div>
 </div>
 <script src="vendor/marked.min.js"></script>
 <script src="vendor/katex/katex.min.js"></script>
