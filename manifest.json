@@ -273,6 +273,11 @@
      "path": null,
      "children": [
       {
+       "name": "复习自查",
+       "path": "数学/概率与统计/复习自查.md",
+       "children": []
+      },
+      {
        "name": "概率论",
        "path": "数学/概率与统计/概率论.md",
        "children": []
@@ -406,6 +411,11 @@
        "children": []
       },
       {
+       "name": "复习自查",
+       "path": "数学/线性代数/复习自查.md",
+       "children": []
+      },
+      {
        "name": "线代",
        "path": "数学/线性代数/线代.md",
        "children": []
@@ -508,6 +518,11 @@
      "name": "高数",
      "path": null,
      "children": [
+      {
+       "name": "复习自查",
+       "path": "数学/高数/复习自查.md",
+       "children": []
+      },
       {
        "name": "大题",
        "path": "数学/高数/大题.md",
