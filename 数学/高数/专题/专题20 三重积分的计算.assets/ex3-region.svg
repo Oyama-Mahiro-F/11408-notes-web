@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="440" viewBox="0 0 560 440" style="background-color:#FFFFFF">
+<rect width="100%%" height="100%%" fill="#FFFFFF"/>
+<polygon points="122.78,341.73 431.48,341.73 122.78,109.95" fill="#cfe2f3" fill-opacity="0.92"/>
+<line x1="122.78" y1="109.95" x2="431.48" y2="341.73" stroke="#1f77b4" stroke-width="2.2"/>
+<line x1="63.83" y1="341.73" x2="455.06" y2="341.73" stroke="#000000" stroke-width="1.4"/>
+<polygon points="455.06,341.73 445.06,336.73 445.06,346.73" fill="#000000"/>
+<text x="457.06" y="359.73" font-size="14" font-family="Arial" font-style="italic" fill="#222" text-anchor="middle">x</text>
+<line x1="122.78" y1="378.62" x2="122.78" y2="92.25" stroke="#000000" stroke-width="1.4"/>
+<polygon points="122.78,92.25 117.78,102.25 127.78,102.25" fill="#000000"/>
+<text x="106.78" y="94.25" font-size="14" font-family="Arial" font-style="italic" fill="#222" text-anchor="middle">z</text>
+<text x="431.48" y="365.34" font-size="11" font-family="Arial, Helvetica, sans-serif" fill="#222222" text-anchor="middle" font-weight="normal">&#960;/2</text>
+<text x="91.34" y="109.95" font-size="11" font-family="Arial, Helvetica, sans-serif" fill="#222222" text-anchor="middle" font-weight="normal">&#960;/2</text>
+<text x="93.30" y="332.88" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#222222" text-anchor="middle" font-weight="normal">O</text>
+<text x="288.92" y="202.23" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#1f77b4" text-anchor="middle" font-weight="normal">x + z = &#960;/2</text>
+<text x="205.32" y="279.76" font-size="17" font-family="Arial, Helvetica, sans-serif" fill="#1a4a6e" text-anchor="middle" font-weight="bold">&#937;</text>
+<text x="348.78" y="191.23" font-size="12" font-family="Arial, Helvetica, sans-serif" fill="#555555" text-anchor="middle" font-weight="normal">0 &#8804; y &#8804; &#8730;x</text>
+</svg>
