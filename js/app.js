@@ -162,7 +162,9 @@
       var result = transformer.transform(text);
       var mm = window.markmap.Markmap.create(document.getElementById('mm-svg'), {
         maxWidth: 300, duration: 250, spacingHorizontal: 90,
-        spacingVertical: 8, initialExpandLevel: 2
+        // markmap 把 H1 记为 depth 1：2 会让章节点一进来就是折叠的（只看到标题）。
+        // 3 = 展开到「章/节」层（H1 + 各章），知识块与 📖/🧭 链接点一下章节点即展开。
+        spacingVertical: 8, initialExpandLevel: 3
       }, result.root);
       document.getElementById('mm-fit').onclick = function () { mm.fit(); };
     } catch (e) {
