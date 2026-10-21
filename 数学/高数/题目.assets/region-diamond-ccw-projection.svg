@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="480" style="background-color: #FFFFFF">
+<rect width="100%" height="100%" fill="#FFFFFF"/>
+<line x1="280" y1="50" x2="280" y2="440" stroke="#000000" stroke-width="1.5"/>
+<polygon points="280,50 275,60 285,60" fill="#000000"/>
+<line x1="70" y1="240" x2="500" y2="240" stroke="#000000" stroke-width="1.5"/>
+<polygon points="500,240 490,235 490,245" fill="#000000"/>
+<polygon points="460,240 280,60 100,240 280,420" stroke="#1f77b4" stroke-width="2" fill="#cfe2f3" fill-opacity="0.35"/>
+<polygon points="363.6,143.6 377,150 370,157" fill="#d62728"/>
+<polygon points="183.6,156.4 190,143 197,150" fill="#d62728"/>
+<polygon points="196.4,336.4 183,330 190,323" fill="#d62728"/>
+<polygon points="376.4,323.6 370,340 363,333" fill="#d62728"/>
+<circle cx="460" cy="240" r="3" fill="#1f77b4"/>
+<circle cx="100" cy="240" r="3" fill="#1f77b4"/>
+<circle cx="280" cy="60" r="3" fill="#1f77b4"/>
+<circle cx="280" cy="420" r="3" fill="#1f77b4"/>
+<text x="300" y="458" font-size="12" font-family="Arial" fill="#000000" text-anchor="middle">x</text>
+<text x="292" y="70" font-size="12" font-family="Arial" fill="#000000">y</text>
+<text x="266" y="258" font-size="12" font-family="Arial" fill="#000000" text-anchor="middle">O</text>
+<text x="478" y="258" font-size="11" font-family="Arial" fill="#1f77b4" text-anchor="middle">(1,0)</text>
+<text x="84" y="258" font-size="11" font-family="Arial" fill="#1f77b4" text-anchor="middle">(-1,0)</text>
+<text x="296" y="56" font-size="11" font-family="Arial" fill="#1f77b4" text-anchor="start">(0,1)</text>
+<text x="296" y="436" font-size="11" font-family="Arial" fill="#1f77b4" text-anchor="start">(0,-1)</text>
+<text x="336" y="300" font-size="13" font-family="Arial" fill="#000000" text-anchor="middle">D</text>
+<text x="214" y="318" font-size="11" font-family="Arial" fill="#000000" text-anchor="middle">area = 2</text>
+<text x="404" y="112" font-size="12" font-family="Arial" fill="#000000" text-anchor="start">|x|+|y|=1</text>
+<text x="420" y="196" font-size="12" font-family="Arial" fill="#d62728" text-anchor="start">CCW</text>
+<text x="62" y="30" font-size="12" font-family="Arial" fill="#000000" text-anchor="start">Sigma: z = 2 - x - y  over  D</text>
+</svg>
