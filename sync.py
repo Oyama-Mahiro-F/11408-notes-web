@@ -24,7 +24,8 @@ EXCLUDE_PAT = ("参考", "校对报告", "校对总报告", "课件", "合订版
 SKIP_TOP = {"试卷"}
 # site 仓库内非内容目录（残留清理时不进这些目录）
 NON_CONTENT_DIRS = {"vendor", "css", "js", "search", "node_modules",
-                    "_shots", "_edge_profile", "docs", ".github"}
+                    "_shots", "_edge_profile", "docs", ".github",
+                    "appdata"}   # appdata：复习 App 的数据目录，由 extractor 维护
 # 仓库内源文件（不在考研/源里，同步时保留并并入目录树与搜索索引）
 EXTRA_FILES = {"思维导图大纲.md", "复习自查.md"}
 
