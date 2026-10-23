@@ -113,6 +113,87 @@
     });
   }
 
+  /* ---- Obsidian 兼容修复：** 紧贴中文标点时，CommonMark 的 flanking 规则不成立，
+     marked 会把 ** 原样输出（页面上看到字面的 **）。作者在 Obsidian 里看到的是粗体，
+     这里在渲染后把 marked 漏掉的 **粗体** / ***粗斜体*** 补成标签；只处理“没被解析掉的
+     残留”，代码块、行内代码、KaTeX 公式一律不碰。 ---- */
+  var MD_BLOCK_SEL = 'p, li, td, th, h1, h2, h3, h4, h5, h6, dt, dd, caption, figcaption';
+  var MD_SKIP_SEL = 'pre, code, script, style, svg, .katex, .hljs, .math-block, .math-inline, .mm-svg';
+
+  /* 收集块内直属的行内文本节点（跳过代码/公式，嵌套块交给它自己处理） */
+  function inlineTextNodes(block) {
+    var out = [];
+    (function walk(node) {
+      for (var c = node.firstChild; c; c = c.nextSibling) {
+        if (c.nodeType === 3) { out.push(c); continue; }
+        if (c.nodeType !== 1) continue;
+        if (c.matches && c.matches(MD_SKIP_SEL)) continue;
+        if (c.matches && c.matches(MD_BLOCK_SEL)) continue;
+        walk(c);
+      }
+    })(block);
+    return out;
+  }
+
+  function lastTextNode(n) { while (n && n.nodeType !== 3) n = n.lastChild; return n; }
+  function firstTextNode(n) { while (n && n.nodeType !== 3) n = n.firstChild; return n; }
+
+  /* 在拼接后的文本里找第一对残留标记；返回 开标记位置 / 闭标记位置 / 标记长度 */
+  function findLooseStrong(text) {
+    var m3 = /\*\*\*([^*]{1,200}?)\*\*\*/.exec(text);
+    if (m3) return { open: m3.index, close: m3.index + 3 + m3[1].length, len: 3 };
+    var m2 = /\*\*([^*]{1,300}?)\*\*/.exec(text);
+    if (m2) return { open: m2.index, close: m2.index + 2 + m2[1].length, len: 2 };
+    return null;
+  }
+
+  /* 删掉加粗范围两侧残留的标记字符（* 或 **） */
+  function trimEmphasisMarkers(strong, len) {
+    var marker = new Array(len + 1).join('*');
+    var prev = lastTextNode(strong.previousSibling);
+    if (prev && prev.nodeValue.slice(-len) === marker) {
+      prev.deleteData(prev.nodeValue.length - len, len);
+    }
+    var next = firstTextNode(strong.nextSibling);
+    if (next && next.nodeValue.slice(0, len) === marker) {
+      next.deleteData(0, len);
+    }
+  }
+
+  function repairEmphasis(rootEl) {
+    var blocks = rootEl.querySelectorAll(MD_BLOCK_SEL);
+    Array.prototype.forEach.call(blocks, function (block) {
+      for (var guard = 0; guard < 40; guard++) {
+        var nodes = inlineTextNodes(block);
+        if (!nodes.length) return;
+        var text = '', pos = [];
+        for (var i = 0; i < nodes.length; i++) {
+          var v = nodes[i].nodeValue || '';
+          for (var k = 0; k < v.length; k++) pos.push([nodes[i], k]);
+          text += v;
+        }
+        var pair = findLooseStrong(text);
+        if (!pair) return;
+        var start = pos[pair.open + pair.len], end = pos[pair.close];
+        if (!start || !end) return;
+        var range = document.createRange();
+        range.setStart(start[0], start[1]);
+        range.setEnd(end[0], end[1]);
+        var frag = range.extractContents();
+        if (!frag.textContent.trim()) return;      // 空内容：不是粗体，别乱改
+        var strong = document.createElement('strong');
+        strong.appendChild(frag);
+        range.insertNode(strong);
+        trimEmphasisMarkers(strong, pair.len);
+        if (pair.len === 3) {                      // ***x*** = 粗体 + 斜体
+          var em = document.createElement('em');
+          while (strong.firstChild) em.appendChild(strong.firstChild);
+          strong.appendChild(em);
+        }
+      }
+    });
+  }
+
   function renderMarkdown(raw, bodyEl) {
     var st = stashMath(raw);
     var html = marked.parse(st.text);
@@ -123,6 +204,8 @@
     bodyEl.innerHTML = html;
     // 还原公式
     renderMath(bodyEl);
+    // 修复 CJK 标点紧贴 ** 导致 marked（严格 CommonMark）没解析掉的粗体
+    repairEmphasis(bodyEl);
     // 图片路径 rebase（相对 md 文件所在目录）
     var base = enc(currentPath.replace(/[^/]*$/, ''));
     Array.prototype.forEach.call(bodyEl.querySelectorAll('img'), function (img) {
