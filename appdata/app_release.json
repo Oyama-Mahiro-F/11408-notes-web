@@ -1,7 +1,7 @@
 {
- "version": "1.8",
- "vcode": 8,
- "t": 1793135292509,
- "apk": "https://github.com/Oyama-Mahiro-F/kaoyan-review-app/releases/download/v1.8/kaoyan-review.apk",
- "notes": "单词艾宾浩斯曲线+生词本；408随机速记（科目-章节范围选择）；检查更新升级为数据+代码双通道并按版本号发版；全新启动图标"
+ "version": "1.9",
+ "vcode": 9,
+ "t": 1793136106244,
+ "apk": "https://github.com/Oyama-Mahiro-F/kaoyan-review-app/releases/download/v1.9/kaoyan-review.apk",
+ "notes": "知识速记卡改为先回想再揭示：点任何评分按钮先展示一句话记忆，再点一次确认评分"
 }

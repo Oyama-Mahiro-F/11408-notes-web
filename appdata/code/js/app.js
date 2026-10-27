@@ -382,13 +382,20 @@
       page.innerHTML = '<div class="qcount" style="margin-bottom:6px">' + esc(dk.chapter) + ' · ' + (i + 1) + ' / ' + queue.length + '</div>' +
         '<div class="flip-wrap"><div class="flip" id="kc"><div class="face">' +
         '<span class="label">' + esc(dk.subject) + '</span><div class="front-main">' + mdInline(it.c.front) + '</div>' +
-        '<div class="tap-hint">点击看一句话记忆</div></div>' +
+        '<div class="tap-hint">先回想一句话记忆，点击任意处查看</div></div>' +
         '<div class="face back"><span class="label right">答案</span><div class="mdview" style="margin-top:30px;font-size:15px;text-align:center">' + mdInline(it.c.back) + '</div></div></div></div>' +
-        '<div class="ratebar"><button class="red" onclick="window.__rk(\'bad\')">❌ 想不起</button>' +
+        '<div class="ratebar locked" id="kcrate"><button class="red" onclick="window.__rk(\'bad\')">❌ 想不起</button>' +
         '<button class="amber" onclick="window.__rk(\'fuzzy\')">⚠️ 模糊</button>' +
         '<button class="green" onclick="window.__rk(\'good\')">✅ 记得</button></div>';
-      var f = $('#kc'); f.onclick = function () { f.classList.toggle('flipped'); };
-      window.__rk = function (r) { S.rate(P.cards, it.id, r); S.bumpLog('cards'); i++; draw(); };
+      var f = $('#kc'), bar = $('#kcrate');
+      function flip() {
+        if (!f.classList.contains('flipped')) { f.classList.add('flipped'); bar.classList.remove('locked'); }
+      }
+      f.onclick = flip;
+      window.__rk = function (r) {
+        if (!f.classList.contains('flipped')) { flip(); return; }   // 未揭示：先展示内容
+        S.rate(P.cards, it.id, r); S.bumpLog('cards'); i++; draw();
+      };
     }
     draw();
   }
