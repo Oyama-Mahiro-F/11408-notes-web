@@ -266,7 +266,7 @@
         var k = k408Stats();
         return '<section class="block"><h3 class="sec">🎲 408 随机速记<span class="hint">四科 ' + k.total + ' 个知识点 · 到期 ' + k.due + '</span></h3>' +
           '<div class="row"><button class="primary" onclick="location.hash=\'#/cards/k408\'">随机开刷</button>' +
-          '<span class="muted">混排打乱 · 每轮 ' + P.settings.dailyCards + ' 个 · 先回想再揭示</span></div></section>';
+          '<span class="muted">科目·章节范围可选 · 混排打乱 · 先回想再揭示</span></div></section>';
       })() +
       '<section class="block"><h3 class="sec">🃏 知识速记卡<span class="hint">52 套 · ' + totalCards + ' 张</span></h3>' +
       '<div class="row"><button class="primary" onclick="location.hash=\'#/cards/decks\'">选卡组</button>' +
@@ -393,7 +393,7 @@
     draw();
   }
 
-  /* ---------- 408 随机速记（四科混排打乱；先回想，点任意按钮揭示内容再评分） ---------- */
+  /* ---------- 408 随机速记（科目-章节范围选择 + 混排打乱；先回想，点任意按钮揭示内容再评分） ---------- */
   function shuffle(arr) {
     for (var i = arr.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
@@ -401,38 +401,102 @@
     }
     return arr;
   }
-  function k408Pool() {
+  var K408_ALL = function () { return { sub: '全部', chap: '全部' }; };
+  function k408Pool(scope) {
+    scope = scope || K408_ALL();
     var due = [], rest = [];
     (D.cards ? D.cards.decks : []).forEach(function (dk, di) {
       if ((dk.file || '').indexOf('408/') !== 0) return;   // 只取 408 四科速记表
+      var sub = dk.file.split('/')[1] || '';
+      if (scope.sub !== '全部' && sub !== scope.sub) return;
+      if (scope.chap !== '全部' && dk.chapter !== scope.chap) return;
       dk.cards.forEach(function (c, ci) {
         var id = di + '#' + ci, e = P.cards[id];
-        var it = { id: id, c: c, src: (dk.file.split('/')[1] || '') + ' · ' + dk.chapter };
+        var it = { id: id, c: c, src: sub + ' · ' + dk.chapter };
         if (e && S.isDue(e)) due.push(it); else rest.push(it);
       });
     });
     return { due: due, rest: rest };
   }
-  function k408Stats() {
-    var p = k408Pool();
+  function k408Stats(scope) {
+    var p = k408Pool(scope);
     return { total: p.due.length + p.rest.length, due: p.due.length };
   }
+  function k408Chapters(sub) {
+    var chaps = [];
+    (D.cards ? D.cards.decks : []).forEach(function (dk) {
+      if ((dk.file || '').indexOf('408/') !== 0) return;
+      if (dk.file.split('/')[1] !== sub) return;
+      if (chaps.indexOf(dk.chapter) < 0) chaps.push(dk.chapter);
+    });
+    return chaps.sort(function (a, b) { return a.localeCompare(b, 'zh', { numeric: true }); });
+  }
+
+  /* 范围选择页：科目 chips → 章节 chips（选具体科目后出现），选择持久化 */
   function renderK408() {
     setTopBack('背卡');
-    var p = k408Pool();
+    var scope = P.settings.k408Scope || K408_ALL();
+    P.settings.k408Scope = scope;
+    var subs = ['全部'];
+    (D.cards ? D.cards.decks : []).forEach(function (dk) {
+      if ((dk.file || '').indexOf('408/') !== 0) return;
+      var s = dk.file.split('/')[1];
+      if (subs.indexOf(s) < 0) subs.push(s);
+    });
+    var subChips = subs.map(function (s) {
+      var st = k408Stats({ sub: s, chap: '全部' });
+      return '<button class="' + (scope.sub === s ? 'on' : '') + '" data-ksub="' + esc(s) + '">' + esc(s) + ' ' + st.total + '</button>';
+    }).join('');
+    var chapHtml;
+    if (scope.sub !== '全部') {
+      var chapChips = '<button class="' + (scope.chap === '全部' ? 'on' : '') + '" data-kchap="全部">全部章节</button>' +
+        k408Chapters(scope.sub).map(function (c) {
+          var st = k408Stats({ sub: scope.sub, chap: c });
+          return '<button class="' + (scope.chap === c ? 'on' : '') + '" data-kchap="' + esc(c) + '">' + esc(c) + ' ' + st.total + '</button>';
+        }).join('');
+      chapHtml = '<div class="muted" style="margin:12px 0 6px">章节</div><div class="subtabs" style="flex-wrap:wrap">' + chapChips + '</div>';
+    } else {
+      chapHtml = '<div class="muted" style="margin-top:10px">↑ 选具体科目后可再选章节</div>';
+    }
+    var st = k408Stats(scope);
+    page.innerHTML =
+      '<section class="block"><h3 class="sec">🎲 408 随机速记<span class="hint">先回想再揭示 · 不会/模糊重现更早</span></h3>' +
+      '<div class="muted" style="margin-bottom:6px">科目</div><div class="subtabs">' + subChips + '</div>' + chapHtml +
+      '<div class="row" style="margin-top:14px"><button class="primary" id="k408go">开始刷题</button>' +
+      '<span class="muted">当前范围 ' + st.total + ' 个 · 到期 ' + st.due + ' · 每轮 ' + P.settings.dailyCards + '</span></div></section>';
+    page.querySelectorAll('[data-ksub]').forEach(function (b) {
+      b.onclick = function () {
+        P.settings.k408Scope = { sub: b.dataset.ksub, chap: '全部' };
+        S.saveP();
+        renderK408();
+      };
+    });
+    page.querySelectorAll('[data-kchap]').forEach(function (b) {
+      b.onclick = function () {
+        scope.chap = b.dataset.kchap;
+        S.saveP();
+        renderK408();
+      };
+    });
+    $('#k408go').onclick = function () { runK408Session(scope); };
+    window.__kAgain = renderK408;
+  }
+
+  function runK408Session(scope) {
+    var p = k408Pool(scope);
     var n = P.settings.dailyCards;
     shuffle(p.rest);
     var queue = p.due.slice(0, n);                    // 到期重现优先
     if (queue.length < n) queue = queue.concat(p.rest.slice(0, n - queue.length));
     shuffle(queue);                                   // 整轮再打乱
-    if (!queue.length) { page.innerHTML = '<div class="empty">没有可用的 408 知识点</div>'; return; }
+    if (!queue.length) { page.innerHTML = '<div class="empty">当前范围没有可刷的知识点<br><button class="ghost" style="margin-top:10px" onclick="window.__kAgain()">换个范围</button></div>'; return; }
     var i = 0;
     function draw() {
       if (i >= queue.length) {
         S.bumpLog('cards', queue.length);
         page.innerHTML = '<div class="empty">本轮完成！共 ' + queue.length + ' 个知识点 🎉<br>' +
-          '<button class="primary" style="margin-top:10px" onclick="window.__kAgain()">再来一轮</button> ' +
-          '<button class="ghost" style="margin-top:10px" onclick="location.hash=\'#/cards\'">返回背卡</button></div>';
+          '<button class="primary" style="margin-top:10px" onclick="window.__kAgain2()">再来一轮</button> ' +
+          '<button class="ghost" style="margin-top:10px" onclick="window.__kAgain()">换范围 / 返回</button></div>';
         return;
       }
       var it = queue[i];
@@ -461,7 +525,7 @@
       };
     }
     draw();
-    window.__kAgain = renderK408;
+    window.__kAgain2 = function () { runK408Session(scope); };      // 同范围重新抽卡打乱
   }
 
   /* ---------- 自查问答 ---------- */
