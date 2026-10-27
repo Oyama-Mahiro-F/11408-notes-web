@@ -1,0 +1,10 @@
+{
+ "version": "2026-10-28",
+ "t": 1793127774454,
+ "files": {
+  "js/app.js": "caf82e5d0052",
+  "js/render.js": "ba85c2856b6b",
+  "js/store.js": "9777db4f653b",
+  "css/app.css": "94f564ea9392"
+ }
+}

@@ -1,13 +1,14 @@
 {
- "version": "2026-10-24",
+ "version": "2026-10-28",
+ "t": 1793127774340,
  "files": {
   "words.json": {
    "sha": "eafded7e2f49",
    "size": 142765
   },
   "politics.json": {
-   "sha": "359b48ca2c78",
-   "size": 122647
+   "sha": "5127b489f768",
+   "size": 124961
   },
   "quiz.json": {
    "sha": "69c93410f4a0",
@@ -22,16 +23,16 @@
    "size": 216809
   },
   "notes.json": {
-   "sha": "3ee14fec2117",
-   "size": 5622971
+   "sha": "b917d8ef367a",
+   "size": 5633602
   },
   "manifest.json": {
    "sha": "61a3aa701ea8",
    "size": 35440
   },
   "search.json": {
-   "sha": "aa7499d40a67",
-   "size": 4820595
+   "sha": "beeefa734346",
+   "size": 4827641
   }
  }
 }
