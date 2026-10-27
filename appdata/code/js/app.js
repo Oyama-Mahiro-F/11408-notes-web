@@ -868,7 +868,8 @@
       return '<span class="tag ' + (m.from === 'refresh' ? 'g' : 'gray') + '" style="margin:2px">' + f.replace('.json', '') + (m.from === 'refresh' ? ' ⟳' : '') + '</span>';
     }).join(' ');
     var ci = S.codeInfo();
-    var codeDesc = ci.ov ? '在线更新版 ' + ci.ov.version : (ci.build ? '内置 v' + ci.build.v : '开发模式（浏览器直跑）');
+    var codeDesc = ci.ov ? '在线代码 ' + (ci.ov.version || 'v' + ci.ov.vcode) + '（覆盖生效中）'
+      : (ci.build ? '内置 v' + ci.build.v + (ci.build.vs ? '（' + ci.build.vs + '）' : '') : '开发模式（浏览器直跑）');
     page.innerHTML =
       '<section class="block"><h3 class="sec">每日任务量</h3>' +
       '<div class="set-row"><span class="lab">每日单词量（复习 + 新词）</span><input type="number" id="set-w" min="5" max="200" value="' + P.settings.dailyWords + '"></div>' +
@@ -879,8 +880,9 @@
       '<div style="margin-bottom:8px">' + metas + '</div>' +
       '<div class="set-row"><span class="lab">应用代码</span><span class="muted" style="font-size:12.5px">' + codeDesc + '</span>' +
       '<button class="ghost" id="btn-code-reset" style="padding:4px 10px;font-size:12px">恢复内置</button></div>' +
+      '<div class="set-row"><span class="lab">最新版本</span><span class="muted" id="rel-stat" style="font-size:12.5px">查询中…</span></div>' +
       '<div class="row" style="margin-top:8px"><button class="primary" id="btn-update">检查更新</button><span class="muted" id="upd-stat"></span></div>' +
-      '<p class="muted" style="margin-bottom:0">更新源：GitHub Pages + jsDelivr（自动择新）。笔记或应用代码变更后：电脑跑 extract_data.py → push.bat，这里点一下即可同步数据与代码，无需重装 APK。</p></section>' +
+      '<p class="muted" style="margin-bottom:0">数据与代码按清单增量更新；应用新版本按 versionCode 发布在 GitHub Releases，检测到新版后可在此直接下载 APK。</p></section>' +
       '<section class="block"><h3 class="sec">进度备份</h3>' +
       '<div class="row wrap"><button id="btn-export">导出进度（JSON）</button>' +
       '<button id="btn-import">导入进度</button><input type="file" id="file-import" accept=".json" style="display:none">' +
@@ -905,7 +907,9 @@
         }
         if (r.updated) { el.textContent = '数据已更新到 ' + r.version + '（' + r.files.length + ' 个文件）'; toast('数据已更新 ✓'); nav(); return; }
         if (r.err) { el.textContent = '检查失败（网络不通？）'; return; }
-        el.textContent = '已是最新（' + (r.version || (r.code && r.code.version) || '?') + '）';
+        var msg = '已是最新（' + (r.version || (r.code && r.code.version) || '?') + '）';
+        if (r.newVersion && r.release) msg += '；新版本 v' + r.release.version + ' 可下载（见"最新版本"行）';
+        el.textContent = msg;
       }).catch(function (e) { el.textContent = '检查失败：' + e.message; });
     };
     $('#btn-code-reset').onclick = function () {
@@ -913,6 +917,31 @@
       toast('已恢复内置代码，重启中…');
       setTimeout(function () { location.reload(); }, 700);
     };
+    // 最新版本（GitHub Release）自动查询
+    S.releaseCheck().then(function (r) {
+      var el = $('#rel-stat');
+      if (!el) return;
+      if (r.newer && r.release) {
+        el.innerHTML = '<span class="tag g">新版本 v' + esc(r.release.version) + '</span> ';
+        var btn = document.createElement('button');
+        btn.className = 'primary';
+        btn.style.cssText = 'padding:5px 12px;font-size:13px';
+        btn.textContent = '下载 APK';
+        btn.onclick = function () { location.href = r.release.apk; };   // WebView → 系统浏览器下载
+        el.appendChild(btn);
+        if (r.release.notes) {
+          var tip = document.createElement('div');
+          tip.className = 'muted';
+          tip.style.cssText = 'font-size:11.5px;margin-top:4px;width:100%';
+          tip.textContent = r.release.notes;
+          el.appendChild(tip);
+        }
+      } else if (r.release) {
+        el.textContent = '已是最新（v' + r.release.version + '）';
+      } else {
+        el.textContent = '暂查不到（未发布过 Release？）';
+      }
+    });
     $('#btn-export').onclick = function () {
       var blob = new Blob([JSON.stringify(P)], { type: 'application/json' });
       var a = document.createElement('a');

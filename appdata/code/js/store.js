@@ -133,19 +133,19 @@
     }).catch(function () { return { updated: false, err: true }; });
   }
 
-  /* 应用代码覆盖：app_index.json（带 t）比「内置 BUILD.t / 当前覆盖 t」新 →
-     下载 appdata/code/ 下全部代码文件存 localStorage，重启后由 boot.js 启用 */
+  /* 应用代码覆盖：按版本号 —— app_index.vcode 大于本地（内置 BUILD.v / 当前覆盖 vcode）才拉取。
+     同版本号的改动不覆盖（发版请递增 versionCode），避免意外回退。 */
   var CODE_LS = 'kaoyan_code_v1';
   function currentCodeOv() {
     try { return JSON.parse(localStorage.getItem(CODE_LS) || 'null'); } catch (e) { return null; }
   }
+  function buildV() { return parseInt(window.BUILD && window.BUILD.v) || 0; }
   function codeUpdate(log) {
     return fetchIndexAny('appdata/app_index.json').then(function (idx) {
       if (!idx) return { codeUpdated: false, err: true };
-      var buildT = (window.BUILD && window.BUILD.t) || 0;
       var ov = currentCodeOv();
-      var baseT = Math.max(buildT, (ov && ov.t) || 0);
-      if (!(idx.t > baseT)) return { codeUpdated: false, version: idx.version };
+      var localV = Math.max(buildV(), (ov && ov.vcode) || 0);
+      if (!((idx.vcode || 0) > localV)) return { codeUpdated: false, version: idx.version || ('v' + (idx.vcode || '?')) };
       var names = Object.keys(idx.files || {});
       var base = idx._base;
       return Promise.all(names.map(function (f) {
@@ -153,21 +153,30 @@
           return { f: f, text: text };
         });
       })).then(function (arr) {
-        var out = { t: idx.t, version: idx.version, files: {} };
+        var out = { t: idx.t, version: idx.version, vcode: idx.vcode, files: {} };
         arr.forEach(function (x) { out.files[x.f] = x.text; });
         localStorage.setItem(CODE_LS, JSON.stringify(out));
-        if (log) log('应用代码已更新 ' + arr.length + ' 个文件');
-        return { codeUpdated: true, count: arr.length, version: idx.version };
+        if (log) log('应用代码已更新到 v' + (idx.version || idx.vcode));
+        return { codeUpdated: true, count: arr.length, version: idx.version, vcode: idx.vcode };
       });
     }).catch(function () { return { codeUpdated: false, err: true }; });
   }
 
+  /* 新版本 APK 检测：app_release.json（GitHub Release 元数据）vcode 大于内置 → 提示下载 */
+  function releaseCheck() {
+    return fetchIndexAny('appdata/app_release.json').then(function (r) {
+      if (!r || !r.vcode) return { none: true };
+      return { release: r, newer: r.vcode > buildV() };
+    }).catch(function () { return { none: true, err: true }; });
+  }
+
   function checkUpdate(log) {
-    return Promise.all([dataUpdate(log), codeUpdate(log)]).then(function (rs) {
-      var d = rs[0], c = rs[1];
+    return Promise.all([dataUpdate(log), codeUpdate(log), releaseCheck()]).then(function (rs) {
+      var d = rs[0], c = rs[1], r = rs[2];
       return {
         updated: !!(d && d.updated), version: d && d.version, files: d && d.files,
         codeUpdated: !!(c && c.codeUpdated), code: c,
+        release: (r && r.release) || null, newVersion: !!(r && r.newer),
         err: !!(d && d.err && c && c.err)
       };
     });
@@ -281,7 +290,7 @@
   window.Store = {
     D: D, P: P,
     boot: boot, ensureLazy: ensureLazy,
-    checkUpdate: checkUpdate, codeInfo: codeInfo, CDN_BASES: CDN_BASES,
+    checkUpdate: checkUpdate, releaseCheck: releaseCheck, codeInfo: codeInfo, CDN_BASES: CDN_BASES,
     rate: rate, rateWord: rateWord, EB_STAGES: EB_STAGES, ebStage: ebStage, ebDone: ebDone,
     isDue: isDue, saveP: saveP, loadP: loadP,
     todayStr: todayStr, addDays: addDays,

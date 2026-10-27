@@ -1,10 +1,11 @@
 {
- "version": "2026-10-28",
- "t": 1793128536957,
+ "version": "1.8",
+ "t": 1793135292309,
  "files": {
-  "js/app.js": "833492325a9a",
+  "js/app.js": "f7b037670d20",
   "js/render.js": "ba85c2856b6b",
-  "js/store.js": "9777db4f653b",
+  "js/store.js": "9d83e75fd073",
   "css/app.css": "94f564ea9392"
- }
+ },
+ "vcode": 8
 }
