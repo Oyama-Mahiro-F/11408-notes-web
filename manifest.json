@@ -431,6 +431,17 @@
        "children": []
       },
       {
+       "name": "专题",
+       "path": null,
+       "children": [
+        {
+         "name": "专题1 抽象型行列式",
+         "path": "数学/线性代数/专题/专题1 抽象型行列式.md",
+         "children": []
+        }
+       ]
+      },
+      {
        "name": "基础",
        "path": null,
        "children": [
