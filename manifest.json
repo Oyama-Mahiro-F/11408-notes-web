@@ -333,6 +333,22 @@
        "children": []
       },
       {
+       "name": "专题",
+       "path": null,
+       "children": [
+        {
+         "name": "专题1 概率公式的应用",
+         "path": "数学/概率与统计/专题/专题1 概率公式的应用.md",
+         "children": []
+        },
+        {
+         "name": "专题2 条件概率和独立性",
+         "path": "数学/概率与统计/专题/专题2 条件概率和独立性.md",
+         "children": []
+        }
+       ]
+      },
+      {
        "name": "强化",
        "path": null,
        "children": [
