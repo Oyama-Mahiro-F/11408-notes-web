@@ -117,7 +117,7 @@
      marked 会把 ** 原样输出（页面上看到字面的 **）。作者在 Obsidian 里看到的是粗体，
      这里在渲染后把 marked 漏掉的 **粗体** / ***粗斜体*** 补成标签；只处理“没被解析掉的
      残留”，代码块、行内代码、KaTeX 公式一律不碰。 ---- */
-  var MD_BLOCK_SEL = 'p, li, td, th, h1, h2, h3, h4, h5, h6, dt, dd, caption, figcaption';
+  var MD_BLOCK_SEL = 'p, li, td, th, h1, h2, h3, h4, h5, h6, dt, dd, caption, figcaption, summary, details';
   var MD_SKIP_SEL = 'pre, code, script, style, svg, .katex, .hljs, .math-block, .math-inline, .mm-svg';
 
   /* 收集块内直属的行内文本节点（跳过代码/公式，嵌套块交给它自己处理） */

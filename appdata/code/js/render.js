@@ -77,8 +77,9 @@
     });
   }
 
-  /* CJK 紧贴 ** 的粗体修复（Obsidian 兼容，与站点同款精简版） */
-  var MD_BLOCK_SEL = 'p, li, td, th, h1, h2, h3, h4, h5, h6, dt, dd';
+  /* CJK 紧贴 ** 的粗体修复（Obsidian 兼容，与站点同款）。
+     正则允许跨软换行（①②分段间配对）、上限与站点一致；块选择器补 summary/details。 */
+  var MD_BLOCK_SEL = 'p, li, td, th, h1, h2, h3, h4, h5, h6, dt, dd, summary, details';
   var MD_SKIP_SEL = 'pre, code, script, style, svg, .katex, .hljs, .math-block, .math-inline';
   function inlineTextNodes(block) {
     var out = [];
@@ -104,8 +105,8 @@
           for (var k = 0; k < v.length; k++) pos.push([nd, k]);
           text += v;
         });
-        var m3 = /\*\*\*([^*]{1,120}?)\*\*\*/.exec(text);
-        var m2 = !m3 && /\*\*([^*\n]{1,200}?)\*\*/.exec(text);
+        var m3 = /\*\*\*([^*]{1,200}?)\*\*\*/.exec(text);
+        var m2 = !m3 && /\*\*([^*]{1,300}?)\*\*/.exec(text);
         var m = m3 || m2;
         if (!m) return;
         var len = m3 ? 3 : 2;

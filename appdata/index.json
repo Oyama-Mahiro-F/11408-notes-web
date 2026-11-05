@@ -1,6 +1,6 @@
 {
- "version": "2026-10-28",
- "t": 1793136105957,
+ "version": "2026-11-06",
+ "t": 1793901355648,
  "files": {
   "words.json": {
    "sha": "eafded7e2f49",
@@ -11,28 +11,28 @@
    "size": 124961
   },
   "quiz.json": {
-   "sha": "69c93410f4a0",
-   "size": 206051
+   "sha": "f9f320faf97f",
+   "size": 229654
   },
   "cards.json": {
-   "sha": "23d476ebf5cf",
-   "size": 194760
+   "sha": "2d803197d2d4",
+   "size": 256862
   },
   "selfcheck.json": {
    "sha": "9edad878ed40",
    "size": 216809
   },
   "notes.json": {
-   "sha": "b917d8ef367a",
-   "size": 5633602
+   "sha": "fdd78d5beccd",
+   "size": 6172245
   },
   "manifest.json": {
-   "sha": "61a3aa701ea8",
-   "size": 35440
+   "sha": "886a651113dc",
+   "size": 36529
   },
   "search.json": {
-   "sha": "beeefa734346",
-   "size": 4827641
+   "sha": "d47ed107a7eb",
+   "size": 5299589
   }
  }
 }
