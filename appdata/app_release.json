@@ -1,7 +1,7 @@
 {
- "version": "1.10",
- "vcode": 10,
- "t": 1793901356123,
- "apk": "https://github.com/Oyama-Mahiro-F/kaoyan-review-app/releases/download/v1.10/kaoyan-review.apk",
- "notes": "修复加粗渲染：repairEmphasis 允许跨软换行配对并纳入 summary/details（政治①②分段加粗、引号词加粗不再漏星号）；计网漏洞笔记 1~16/1~254 波浪线改全角避免误判删除线"
+ "version": "1.11",
+ "vcode": 11,
+ "t": 1794164705306,
+ "apk": "https://github.com/Oyama-Mahiro-F/kaoyan-review-app/releases/download/v1.11/kaoyan-review.apk",
+ "notes": "408 随机速记章节支持多选：勾选多章混合刷（不选=全部章节），选择持久化，兼容旧单选格式"
 }

@@ -1,11 +1,11 @@
 {
- "version": "1.10",
- "t": 1793901355819,
+ "version": "1.11",
+ "t": 1794164705109,
  "files": {
-  "js/app.js": "8a02a1af38f4",
+  "js/app.js": "c85a8e45ea63",
   "js/render.js": "e5e9cd631460",
   "js/store.js": "9d83e75fd073",
   "css/app.css": "94f564ea9392"
  },
- "vcode": 10
+ "vcode": 11
 }

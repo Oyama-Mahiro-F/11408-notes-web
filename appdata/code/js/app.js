@@ -408,15 +408,23 @@
     }
     return arr;
   }
-  var K408_ALL = function () { return { sub: '全部', chap: '全部' }; };
+  var K408_ALL = function () { return { sub: '全部', chaps: [] }; };
+  function k408Scope() {
+    var s = P.settings.k408Scope;
+    if (!s || !s.sub) return K408_ALL();
+    // 兼容旧单选格式 {sub, chap}
+    var chaps = Array.isArray(s.chaps) ? s.chaps.slice() : (s.chap && s.chap !== '全部' ? [s.chap] : []);
+    return { sub: s.sub, chaps: chaps };
+  }
   function k408Pool(scope) {
     scope = scope || K408_ALL();
+    var multi = scope.sub !== '全部' && scope.chaps && scope.chaps.length > 0;
     var due = [], rest = [];
     (D.cards ? D.cards.decks : []).forEach(function (dk, di) {
       if ((dk.file || '').indexOf('408/') !== 0) return;   // 只取 408 四科速记表
       var sub = dk.file.split('/')[1] || '';
       if (scope.sub !== '全部' && sub !== scope.sub) return;
-      if (scope.chap !== '全部' && dk.chapter !== scope.chap) return;
+      if (multi && scope.chaps.indexOf(dk.chapter) < 0) return;
       dk.cards.forEach(function (c, ci) {
         var id = di + '#' + ci, e = P.cards[id];
         var it = { id: id, c: c, src: sub + ' · ' + dk.chapter };
@@ -439,10 +447,10 @@
     return chaps.sort(function (a, b) { return a.localeCompare(b, 'zh', { numeric: true }); });
   }
 
-  /* 范围选择页：科目 chips → 章节 chips（选具体科目后出现），选择持久化 */
+  /* 范围选择页：科目 chips → 章节 chips（多选，不选 = 全部），选择持久化 */
   function renderK408() {
     setTopBack('背卡');
-    var scope = P.settings.k408Scope || K408_ALL();
+    var scope = k408Scope();
     P.settings.k408Scope = scope;
     var subs = ['全部'];
     (D.cards ? D.cards.decks : []).forEach(function (dk) {
@@ -451,36 +459,44 @@
       if (subs.indexOf(s) < 0) subs.push(s);
     });
     var subChips = subs.map(function (s) {
-      var st = k408Stats({ sub: s, chap: '全部' });
+      var st = k408Stats({ sub: s, chaps: [] });
       return '<button class="' + (scope.sub === s ? 'on' : '') + '" data-ksub="' + esc(s) + '">' + esc(s) + ' ' + st.total + '</button>';
     }).join('');
     var chapHtml;
     if (scope.sub !== '全部') {
-      var chapChips = '<button class="' + (scope.chap === '全部' ? 'on' : '') + '" data-kchap="全部">全部章节</button>' +
+      var chapChips = '<button class="' + (scope.chaps.length === 0 ? 'on' : '') + '" data-kchap="全部">全部章节</button>' +
         k408Chapters(scope.sub).map(function (c) {
-          var st = k408Stats({ sub: scope.sub, chap: c });
-          return '<button class="' + (scope.chap === c ? 'on' : '') + '" data-kchap="' + esc(c) + '">' + esc(c) + ' ' + st.total + '</button>';
+          var st = k408Stats({ sub: scope.sub, chaps: [c] });
+          var on = scope.chaps.indexOf(c) >= 0;
+          return '<button class="' + (on ? 'on' : '') + '" data-kchap="' + esc(c) + '">' + esc(c) + ' ' + st.total + '</button>';
         }).join('');
-      chapHtml = '<div class="muted" style="margin:12px 0 6px">章节</div><div class="subtabs" style="flex-wrap:wrap">' + chapChips + '</div>';
+      chapHtml = '<div class="muted" style="margin:12px 0 6px">章节（可多选；不选 = 全部章节）</div><div class="subtabs" style="flex-wrap:wrap">' + chapChips + '</div>';
     } else {
-      chapHtml = '<div class="muted" style="margin-top:10px">↑ 选具体科目后可再选章节</div>';
+      chapHtml = '<div class="muted" style="margin-top:10px">↑ 选具体科目后可再选章节（可多选）</div>';
     }
     var st = k408Stats(scope);
+    var scopeDesc = scope.sub === '全部' ? '四科全部'
+      : (scope.chaps.length ? scope.sub + ' · 已选 ' + scope.chaps.length + ' 章' : scope.sub + ' · 全部章节');
     page.innerHTML =
       '<section class="block"><h3 class="sec">🎲 408 随机速记<span class="hint">先回想再揭示 · 不会/模糊重现更早</span></h3>' +
       '<div class="muted" style="margin-bottom:6px">科目</div><div class="subtabs">' + subChips + '</div>' + chapHtml +
       '<div class="row" style="margin-top:14px"><button class="primary" id="k408go">开始刷题</button>' +
-      '<span class="muted">当前范围 ' + st.total + ' 个 · 到期 ' + st.due + ' · 每轮 ' + P.settings.dailyCards + '</span></div></section>';
+      '<span class="muted">' + esc(scopeDesc) + ' · ' + st.total + ' 个 · 到期 ' + st.due + ' · 每轮 ' + P.settings.dailyCards + '</span></div></section>';
     page.querySelectorAll('[data-ksub]').forEach(function (b) {
       b.onclick = function () {
-        P.settings.k408Scope = { sub: b.dataset.ksub, chap: '全部' };
+        P.settings.k408Scope = { sub: b.dataset.ksub, chaps: [] };
         S.saveP();
         renderK408();
       };
     });
     page.querySelectorAll('[data-kchap]').forEach(function (b) {
       b.onclick = function () {
-        scope.chap = b.dataset.kchap;
+        if (b.dataset.kchap === '全部') {
+          scope.chaps = [];
+        } else {
+          var i = scope.chaps.indexOf(b.dataset.kchap);
+          if (i >= 0) scope.chaps.splice(i, 1); else scope.chaps.push(b.dataset.kchap);
+        }
         S.saveP();
         renderK408();
       };

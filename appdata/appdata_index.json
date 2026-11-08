@@ -1,6 +1,6 @@
 {
- "version": "2026-11-06",
- "t": 1793901355648,
+ "version": "2026-11-09",
+ "t": 1794164705002,
  "files": {
   "words.json": {
    "sha": "eafded7e2f49",
@@ -23,16 +23,16 @@
    "size": 216809
   },
   "notes.json": {
-   "sha": "fdd78d5beccd",
-   "size": 6172245
+   "sha": "a28beb8d0eff",
+   "size": 6246687
   },
   "manifest.json": {
-   "sha": "886a651113dc",
-   "size": 36529
+   "sha": "5a4edfaf9c58",
+   "size": 37328
   },
   "search.json": {
-   "sha": "d47ed107a7eb",
-   "size": 5299589
+   "sha": "5a6cb98f8b5c",
+   "size": 5356247
   }
  }
 }
